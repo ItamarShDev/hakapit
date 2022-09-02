@@ -1,10 +1,10 @@
 :root {
-  --color-primary: hsl(350, 85%, 42%);
+  --color-primary: hsl(350, 85%, 25%);
   --color-primary-opaque: hsl(350 85% 42% / 0.2);
   --color-secondary: #00b2a9;
   --color-tertiary: #f6eb61;
-  --color-background: offwhite;
-  --color-text: black;
+  --color-background: hsl(350, 85%, 5%);
+  --color-text: white;
 }
 html,
 body {
@@ -34,14 +34,6 @@ a {
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary: hsl(350, 85%, 25%);
-    --color-primary-opaque: hsl(350 85% 42% / 0.2);
-    --color-secondary: #00b2a9;
-    --color-tertiary: #f6eb61;
-    --color-background: hsl(350, 85%, 5%);
-    --color-text: white;
-  }
   html {
     color-scheme: dark;
   }
