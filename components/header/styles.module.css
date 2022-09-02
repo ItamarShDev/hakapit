@@ -1,0 +1,25 @@
+.header {
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--color-tertiary);
+  min-height: 10rem;
+  background-color: var(--color-primary);
+  z-index: 999;
+}
+.header h2 {
+  font-weight: 400;
+}
+.image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.author {
+  font-size: 0.8rem;
+}

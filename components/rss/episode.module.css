@@ -1,0 +1,43 @@
+.card {
+  border-radius: 2rem;
+  background-color: var(--color-primary-opaque);
+}
+.header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  place-content: center;
+}
+.title {
+  color: var(--color-tertiary);
+  font-size: 1.2rem;
+}
+.date {
+  font-size: 0.8rem;
+  filter: opacity(0.7);
+}
+.description {
+  line-height: 1.5rem;
+  padding: 0rem 2rem;
+}
+.audio {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+.audio audio {
+  width: 50%;
+}
+.audio audio::-webkit-media-controls-panel {
+  background-color: var(--color-secondary);
+}
+.audio audio::-webkit-media-controls-current-time-display {
+  color: var(--color-tertiary);
+}
+.audio audio::-webkit-media-controls-time-remaining-display {
+  color: var(--color-tertiary);
+}
+.audio audio::-webkit-media-controls-timeline-container {
+  background-color: var(--color-tertiary);
+}
