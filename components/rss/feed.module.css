@@ -1,3 +1,15 @@
 .wrapper {
   max-width: 50rem;
 }
+.more {
+  background-color: var(--color-tertiary);
+  color: var(--color-primary);
+  padding: 0.5rem 1rem;
+  text-align: center;
+  border-radius: 20px;
+  transition: opacity 0.2s;
+}
+.more:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}

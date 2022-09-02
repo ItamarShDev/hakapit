@@ -25,7 +25,7 @@ export default function Feed({ episodes }: { episodes: EpisodeData[] }) {
           <Episode key={index} episode={episode} />
         ))}
       </section>
-      <button onClick={() => loadMore()}>more</button>
+      <button className={styles.more} onClick={() => loadMore()}>more</button>
     </>
   );
 }
