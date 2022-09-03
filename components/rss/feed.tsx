@@ -22,10 +22,12 @@ export default function Feed({ episodes }: { episodes: EpisodeData[] }) {
     <>
       <section className={styles.wrapper}>
         {Array.from<EpisodeData>(currentEpisodes)?.map((episode, index) => (
-          <Episode key={index} episode={episode} />
+          <Episode key={index} episode={episode} round />
         ))}
       </section>
-      <button className={styles.more} onClick={() => loadMore()}>more</button>
+      <button className={styles.more} onClick={() => loadMore()}>
+        more
+      </button>
     </>
   );
 }

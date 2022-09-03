@@ -24,7 +24,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "pages/api/open-graph.tss"  ],
   "exclude": [
     "node_modules"
   ]
