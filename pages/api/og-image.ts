@@ -7,19 +7,21 @@ export default withOGImage<"query", "title">({
     inspectHtml: false,
   },
   template: {
-    html: ({ title }) => `<span>${title}
-                          </span>`,
-
-    // {
-    //   return (
-    //     <html>
-    //       <body
-    //         style={{ direction: "rtl", backgroundColor: "red", color: "white" }}
-    //       >
-    //         <span>{title}</span>
-    //       </body>
-    //     </html>
-    //   );
-    // },
+    html: async ({ title }) => {
+      return `
+        <html>
+          <body>
+            <h1>${title}</h1>
+          </body>
+          <style>
+          h1 {
+            direction: rtl;
+            background-color: red;
+            color: white;
+          }
+          </style>
+        </html>
+      `;
+    },
   },
 });
