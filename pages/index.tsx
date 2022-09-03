@@ -18,7 +18,7 @@ const Home: NextPage = ({
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
-        <link rel="icon" href={image.url} />
+        <link rel="icon" href={image} />
       </Head>
       <main>
         <Header data={{ author, description, title, image }} />
