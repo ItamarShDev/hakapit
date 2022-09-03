@@ -37,12 +37,12 @@ export function Episode({
       </dt>
 
       <dd>
-        <p
+        <div
           className={styles.description}
           dangerouslySetInnerHTML={{
             __html: episode.content,
           }}
-        ></p>
+        ></div>
         <div className={styles.audio}>
           <audio controls src={episode.enclosure.url}></audio>
         </div>
