@@ -22,7 +22,7 @@ const Home: NextPage = ({
 export default Home;
 export const getServerSideProps: GetServerSideProps = async () => {
   if (!process.env.RSS) return { props: {} };
-  const rss = await fetchFeed(process.env.RSS);
+  const rss = await fetchFeed(process.env.RSS, 1);
   return {
     props: {
       rss,

@@ -26,7 +26,8 @@ export async function fetchFeed(url: string, pageNumber: number = 1) {
       episodeNumber: items.length - index,
     }))
     .slice(start, end);
-  return { ...rss, episodes };
+
+  return { ...rss, items: episodes };
 }
 export default async function handler(
   req: NextApiRequest,

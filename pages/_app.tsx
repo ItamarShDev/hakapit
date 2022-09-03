@@ -7,7 +7,7 @@ import Head from "next/head";
 function MyApp({ Component, pageProps }: AppProps) {
   if (!pageProps?.rss) return <div></div>;
 
-  const { description, title, itunes } = pageProps?.rss;
+ const { description, title, itunes } = pageProps?.rss;
   const { author, image } = itunes;
   return (
     <ErrorBoundary>
