@@ -10,7 +10,7 @@ export default function Index({
       <Head>
         <meta
           property="og:image"
-          content={`https://hakapit.tech/api/og-image?title=${rss.episode.title}`}
+          content={`https://www.hakapit.tech/api/og-image?title=${rss.episode.title}`}
         />
       </Head>
       <Episode episode={rss.episode} />;
