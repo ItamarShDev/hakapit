@@ -1,11 +1,6 @@
 import { withOGImage } from "next-api-og-image";
 
-type QueryParams = {
-  title: string;
-  // logo: string;
-};
-
-export default withOGImage<"query", QueryParams>({
+export default withOGImage<"query", "title">({
   strategy: "query",
   cacheControl: "public, max-age=604800, immutable",
   dev: {
