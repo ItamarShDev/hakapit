@@ -1,0 +1,8 @@
+.timeline {
+  width: auto;
+  padding: 1rem;
+  position: sticky;
+  top: 10rem;
+  width: 30rem;
+  align-self: flex-start;
+}

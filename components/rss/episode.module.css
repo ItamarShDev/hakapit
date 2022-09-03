@@ -3,6 +3,7 @@
 }
 .card.round {
   border-radius: 2rem;
+  max-width: 50rem;
 }
 .header {
   display: grid;

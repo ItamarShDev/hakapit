@@ -5,6 +5,8 @@ import type {
 } from "next";
 import { fetchFeed } from "pages/api/feed";
 import Feed from "components/rss/feed";
+import { TwitterTimelineEmbed } from "components/twitter-timeline-embed";
+import styles from "styles/index.module.css";
 const Home: NextPage = ({
   rss,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -12,8 +14,9 @@ const Home: NextPage = ({
 
   return (
     <>
-      <main>
+      <main className={styles.main}>
         <Feed episodes={episodes} />
+        <TwitterTimelineEmbed />
       </main>
     </>
   );

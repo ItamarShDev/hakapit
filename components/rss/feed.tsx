@@ -19,7 +19,7 @@ export default function Feed({ episodes }: { episodes: EpisodeData[] }) {
   };
 
   return (
-    <>
+    <div>
       <section className={styles.wrapper}>
         {Array.from<EpisodeData>(currentEpisodes)?.map((episode, index) => (
           <Episode key={index} episode={episode} round />
@@ -28,6 +28,6 @@ export default function Feed({ episodes }: { episodes: EpisodeData[] }) {
       <button className={styles.more} onClick={() => loadMore()}>
         more
       </button>
-    </>
+    </div>
   );
 }

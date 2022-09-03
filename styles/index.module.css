@@ -1,0 +1,7 @@
+.main {
+  display: flex;
+  gap: 4rem;
+  width: 100vw;
+  place-content: center;
+  flex-wrap: wrap;
+}
