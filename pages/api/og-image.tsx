@@ -7,13 +7,14 @@ type QueryParams = {
 
 export default withOGImage<"query", QueryParams>({
   strategy: "query",
+  cacheControl: "public, max-age=604800, immutable",
+  dev: {
+    inspectHtml: false,
+  },
   template: {
     html: ({ title }) => `<span>${title}
-                          <style>
-                          direction: rtl;
-                          background-color: red;
-                          color: white;
-                          </style></span>`,
+                          </span>`,
+
     // {
     //   return (
     //     <html>
