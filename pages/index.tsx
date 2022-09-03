@@ -30,8 +30,9 @@ const Home: NextPage = ({
 
 export default Home;
 export const getServerSideProps: GetServerSideProps = async () => {
+  if (!process.env.RSS) return { props: {} };
   const parser: Parser = new Parser();
-  const rss = await parser.parseURL("https://pinecast.com/feed/hakapit");
+  const rss = await parser.parseURL(process.env.RSS);
   const { items } = rss;
   const first10 = items.slice(0, 10);
 

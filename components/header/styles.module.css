@@ -11,6 +11,7 @@
   min-height: 10rem;
   background-color: var(--color-primary);
   z-index: 999;
+  font-size: clamp(0.5rem, 2.5vw, 1rem);
 }
 .header h2 {
   font-weight: 400;
