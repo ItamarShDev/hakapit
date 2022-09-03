@@ -10,4 +10,5 @@ export type EpisodeData = {
   isoDate: string;
   itunes: { image: string; duration: string };
   enclosure: { url: string };
+  episodeNumber?: number;
 };

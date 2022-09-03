@@ -9,7 +9,7 @@ export default function Index({
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   if (!process.env.RSS) return { props: {} };
   const slug = params?.slug as string;
-  const rss = await fetchEpisode(process.env.RSS, parseInt(slug));
+  const rss = await fetchEpisode(process.env.RSS, slug);
   return {
     props: {
       rss,

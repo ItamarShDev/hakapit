@@ -10,23 +10,19 @@ async function _fetch(url: string) {
   }));
   return { ...rss, episodes };
 }
-export async function fetchEpisode(url: string, episodeNumber: number = 1) {
+export async function fetchEpisode(url: string, episodeGUID: string) {
   const { episodes, ...rss } = await _fetch(url);
-  const episode = episodes[episodeNumber - 1];
-  return { ...rss, title: episode?.title, episode };
+  const episode = episodes.find(
+    (episode) => episode?.guid?.split("/").pop() === episodeGUID
+  );
+  return { ...rss, episode };
 }
 
 export async function fetchFeed(url: string, pageNumber: number = 1) {
   const { episodes: items, ...rss } = await _fetch(url);
   const start = (pageNumber - 1) * 10;
   const end = start + 10;
-  const episodes = items
-    .map((item, index) => ({
-      ...item,
-      episodeNumber: items.length - index,
-    }))
-    .slice(start, end);
-
+  const episodes = items.slice(start, end);
   return { ...rss, items: episodes };
 }
 export default async function handler(

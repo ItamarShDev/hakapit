@@ -9,8 +9,8 @@ export function Episode({
   episode: EpisodeData;
   round?: boolean;
 }) {
-  const pageNumber = 1;
   const cardClass = styles.card + (round ? ` ${styles.round}` : "");
+  const guid = episode.guid.split("/").pop();
   return (
     <dl className={cardClass}>
       <dt className={styles.header}>
@@ -25,7 +25,7 @@ export function Episode({
           />
         )}
         <span>
-          <Link href={`/episodes/${pageNumber}`}>
+          <Link href={`/episodes/${guid}`}>
             <a className={styles.title}>{episode.title}</a>
           </Link>
           <div>
