@@ -37,6 +37,5 @@ export default async function handler(
   }
   const pageNumber = page ? parseInt(page as string) : 1;
   const feed = await fetchFeed(process.env.RSS, pageNumber);
-
-  res.status(200).json({ ...feed });
+  res.status(200).json(feed);
 }

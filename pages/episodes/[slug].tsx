@@ -5,7 +5,7 @@ import { fetchEpisode } from "pages/api/feed";
 export default function Index({
   rss,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return (
+  return (  
     <>
       <Head>
         <meta

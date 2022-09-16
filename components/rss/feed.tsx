@@ -10,11 +10,8 @@ export default function Feed({ episodes }: { episodes: EpisodeData[] }) {
     ref.current.page += 1;
     fetch(`/api/feed?page=${ref.current.page}`)
       .then((res) => res.json())
-      .then(({ episodes }: { episodes: EpisodeData[] }) => {
-        setCurrentEpisodes((currentEpisodes) => [
-          ...currentEpisodes,
-          ...episodes,
-        ]);
+      .then(({ items }: { items: EpisodeData[] }) => {
+        setCurrentEpisodes((currentEpisodes) => [...currentEpisodes, ...items]);
       });
   };
 
