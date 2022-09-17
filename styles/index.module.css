@@ -5,3 +5,11 @@
   place-content: center;
   flex-wrap: wrap;
 }
+.content {
+  display: flex;
+  gap: 4rem;
+  width: 100vw;
+  place-content: baseline center;
+  flex-wrap: wrap;
+  overflow: auto;
+}

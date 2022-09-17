@@ -1,4 +1,4 @@
-import Head from "next/head";
+import Script from "next/script";
 import styles from "./style.module.css";
 export function TwitterTimelineEmbed() {
   return (
@@ -15,13 +15,11 @@ export function TwitterTimelineEmbed() {
       >
         הכפית בטוויטר
       </a>
-      <Head>
-        <script
-          async
-          src="https://platform.twitter.com/widgets.js"
-          charSet="utf-8"
-        ></script>
-      </Head>
+      <Script
+        async
+        src="https://platform.twitter.com/widgets.js"
+        charSet="utf-8"
+      />
     </div>
   );
 }

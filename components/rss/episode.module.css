@@ -1,5 +1,6 @@
 .card {
   background-color: var(--color-primary-opaque);
+  height: max-content;
 }
 .card.round {
   border-radius: 2rem;

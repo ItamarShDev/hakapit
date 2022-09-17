@@ -1,5 +1,5 @@
 import { Episode } from "components/rss/Episode";
-import { EpisodeData } from "components/rss/types";
+import { EpisodeData } from "pages/api/feed";
 import { useRef, useState } from "react";
 import styles from "./feed.module.css";
 export default function Feed({ episodes }: { episodes: EpisodeData[] }) {
@@ -16,15 +16,13 @@ export default function Feed({ episodes }: { episodes: EpisodeData[] }) {
   };
 
   return (
-    <div>
-      <section className={styles.wrapper}>
-        {Array.from<EpisodeData>(currentEpisodes)?.map((episode, index) => (
-          <Episode key={index} episode={episode} round />
-        ))}
-      </section>
+    <section className={styles.feed}>
+      {Array.from<EpisodeData>(currentEpisodes)?.map((episode, index) => (
+        <Episode key={index} episode={episode} round />
+      ))}
       <button className={styles.more} onClick={() => loadMore()}>
         more
       </button>
-    </div>
+    </section>
   );
 }

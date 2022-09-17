@@ -1,34 +1,31 @@
-import type {
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-  NextPage,
-} from "next";
-import { fetchFeed } from "pages/api/feed";
+import type { GetServerSideProps } from "next";
 import Feed from "components/rss/feed";
 import { TwitterTimelineEmbed } from "components/twitter-timeline-embed";
 import styles from "styles/index.module.css";
-const Home: NextPage = ({
-  rss,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const { items: episodes } = rss;
+import { QueryClient, dehydrate } from "@tanstack/react-query";
+import { fetchFeed } from "pages/api/feed";
+import { Feed as FeedType } from "pages/api/feed";
 
+const Home = ({ rss }: { rss: FeedType }) => {
+  const { items: episodes } = rss;
   return (
-    <>
-      <main className={styles.main}>
-        <Feed episodes={episodes} />
-        <TwitterTimelineEmbed />
-      </main>
-    </>
+    <section className={styles.content}>
+      <Feed episodes={episodes} />
+      <TwitterTimelineEmbed />
+    </section>
   );
 };
 
 export default Home;
 export const getServerSideProps: GetServerSideProps = async () => {
   if (!process.env.RSS) return { props: {} };
-  const rss = await fetchFeed(process.env.RSS, 1);
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery(["feed", 1], () => fetchFeed(1));
+
   return {
     props: {
-      rss,
+      dehydratedState: dehydrate(queryClient),
     },
   };
 };
