@@ -1,5 +1,4 @@
 import "../styles/globals.css";
-import type { AppProps } from "next/app";
 import {
   Hydrate,
   QueryClient,
@@ -7,8 +6,12 @@ import {
 } from "@tanstack/react-query";
 import { Layout } from "layouts";
 import { useState } from "react";
-
-function MyApp(props: AppProps) {
+import { InferGetServerSidePropsType } from "next";
+import { getServerSideProps } from "pages";
+export type HomePageProps = InferGetServerSidePropsType<
+  typeof getServerSideProps
+>;
+function MyApp(props: HomePageProps) {
   const [queryClient] = useState(() => new QueryClient());
 
   return (

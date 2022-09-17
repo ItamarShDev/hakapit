@@ -1,14 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { EpisodeData } from "pages/api/feed";
-import styles from "./Episode.module.css";
+import styles from "./episode.module.css";
 export function Episode({
   episode,
   round = false,
 }: {
-  episode: EpisodeData;
+  episode?: EpisodeData;
   round?: boolean;
 }) {
+  if (!episode) return null;
   const cardClass = styles.card + (round ? ` ${styles.round}` : "");
   const guid = episode?.guid.split("/").pop();
   return (

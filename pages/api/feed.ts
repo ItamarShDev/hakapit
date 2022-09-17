@@ -59,7 +59,7 @@ export async function fetchFeed(pageNumber: number = 1): Promise<Feed> {
   const end = start + 10;
   const episodes = rss.items.slice(start, end);
   rss.items = episodes;
-  return rss;
+  return rss as Feed;
 }
 export default async function handler(
   req: NextApiRequest,

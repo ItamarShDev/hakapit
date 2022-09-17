@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Header from "components/header";
 import ErrorBoundary from "layouts/error-boudary";
-import { AppProps } from "next/app";
 import Head from "next/head";
 import { Feed, fetchFeed } from "pages/api/feed";
+import { HomePageProps } from "pages/_app";
 import styles from "./style.module.css";
-export function Layout({ Component, pageProps }: AppProps) {
+export function Layout({ Component, pageProps }: HomePageProps) {
   const { data: rss } = useQuery<Feed>(["feed", 1], () => fetchFeed(1), {
     useErrorBoundary: true,
     onError: (error) => {
