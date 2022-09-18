@@ -11,9 +11,9 @@ export default function Header(props: { data: Data }) {
   const { author, title, description, image } = props.data;
   return (
     <header className={styles.header}>
-      <div className={styles.image}>
-        {image && (
-          <Link href="/">
+      <Link href="/">
+        <div className={styles.image}>
+          {image && (
             <Image
               src={image}
               alt="podcast logo"
@@ -22,10 +22,10 @@ export default function Header(props: { data: Data }) {
               width={100}
               priority={true}
             />
-          </Link>
-        )}
-        <span className={styles.author}>{author}</span>
-      </div>
+          )}
+          <span className={styles.author}>{author}</span>
+        </div>
+      </Link>
       <Link href="/">
         <div>
           <h1>{title}</h1>
