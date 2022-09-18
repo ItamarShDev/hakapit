@@ -1,3 +1,4 @@
+import { useDate } from "hooks";
 import Image from "next/image";
 import Link from "next/link";
 import { EpisodeData } from "pages/api/feed";
@@ -9,6 +10,7 @@ export function Episode({
   episode?: EpisodeData;
   round?: boolean;
 }) {
+  const isoDate = useDate(episode?.isoDate);
   if (!episode) return null;
   const cardClass = styles.card + (round ? ` ${styles.round}` : "");
   const guid = episode?.guid.split("/").pop();
@@ -30,9 +32,7 @@ export function Episode({
             <a className={styles.title}>{episode?.title}</a>
           </Link>
           <div>
-            <span className={styles.date}>
-              {new Date(Date.parse(episode?.isoDate)).toLocaleString()}
-            </span>
+            <span className={styles.date}>{isoDate}</span>
           </div>
         </span>
       </dt>
