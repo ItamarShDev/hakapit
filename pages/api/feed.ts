@@ -73,5 +73,10 @@ export default async function handler(
   }
   const pageNumber = page ? parseInt(page as string) : 1;
   const feed = await fetchFeed(pageNumber);
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
+
   res.status(200).json(feed);
 }
