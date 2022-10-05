@@ -8,6 +8,8 @@ import { useFeedByRoute } from "queries";
 import styles from "./style.module.css";
 function useTheme() {
   const { pathname } = useRouter();
+  const isNitk = pathname?.startsWith("/nitk");
+
   const colors = {
     primary: "hsl(350, 85%, 25%)",
     primaryOpaque: "hsl(350 85% 42% / 0.2)",
@@ -16,7 +18,7 @@ function useTheme() {
     background: "hwb(349 1% 91%)",
     text: "white",
   };
-  if (pathname.includes("nitk"))
+  if (isNitk)
     return {
       primary: "rgb(56, 0, 60)",
       primaryOpaque: "hsl(296 100% 20% / 0.3)",

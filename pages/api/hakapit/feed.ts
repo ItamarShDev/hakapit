@@ -1,16 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { fetch_rss } from "queries/fetch-rss";
 import Parser from "rss-parser";
-async function _fetch() {
+
+function _fetch() {
   const url = process.env.HAKAPIT_RSS || process.env.NEXT_PUBLIC_HAKAPIT_RSS;
-  const parser: Parser = new Parser();
-  const rss = await parser.parseURL(url as string);
-  const { items } = rss;
-  const episodes = items.map((item, index) => ({
-    ...item,
-    episodeNumber: items.length - index,
-  }));
-  rss.items = episodes;
-  return { ...rss };
+  return fetch_rss(url);
 }
 
 export async function fetchEpisode(episodeGUID: string): Promise<EpisodeData> {
@@ -67,11 +61,12 @@ export default async function handler(
 ) {
   const { page } = req.query;
 
-  if (!process.env.RSS) {
+  if (!process.env.HAKAPIT_RSS) {
     res.status(500).json({ error: "Missing RSS URL" });
     return;
   }
   const pageNumber = page ? parseInt(page as string) : 1;
+
   const feed = await fetchFeed(pageNumber);
   res.setHeader(
     "Cache-Control",

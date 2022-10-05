@@ -1,16 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { fetch_rss } from "queries/fetch-rss";
 import Parser from "rss-parser";
-async function _fetch() {
-  const url = process.env.NITK_RSS || process.env.NEXT_PUBLIC_NITK_RSS;
-  const parser: Parser = new Parser();
-  const rss = await parser.parseURL(url as string);
-  const { items } = rss;
-  const episodes = items.map((item, index) => ({
-    ...item,
-    episodeNumber: items.length - index,
-  }));
-  rss.items = episodes;
-  return { ...rss };
+
+function _fetch() {
+  const url = process?.env?.NITK_RSS || process?.env?.NEXT_PUBLIC_NITK_RSS;
+  return fetch_rss(url);
 }
 
 export async function fetchEpisode(episodeGUID: string): Promise<EpisodeData> {
@@ -67,7 +61,7 @@ export default async function handler(
 ) {
   const { page } = req.query;
 
-  if (!process.env.RSS) {
+  if (!process.env.NITK_RSS) {
     res.status(500).json({ error: "Missing RSS URL" });
     return;
   }

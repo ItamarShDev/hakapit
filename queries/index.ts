@@ -7,9 +7,8 @@ import { fetchFeed as fetchKapitFeed } from "pages/api/hakapit/feed";
 
 export function useFeedByRoute(page: number) {
   const { pathname } = useRouter();
-  const fetcher = pathname.includes("nitk") ? fetchNitkFeed : fetchKapitFeed;
-  const getPagePath = pathname.includes("nitk")
-    ? getNitkPagePath
-    : getKapitPagePath;
+  const isNitk = pathname?.startsWith("/nitk") || false;
+  const fetcher = isNitk ? fetchNitkFeed : fetchKapitFeed;
+  const getPagePath = isNitk ? getNitkPagePath : getKapitPagePath;
   return useQuery(getPagePath(page), () => fetcher(page));
 }

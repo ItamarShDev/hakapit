@@ -11,6 +11,8 @@ type Data = {
 export default function Header(props: { data: Data }) {
   const { author, title, description, image } = props.data;
   const { pathname } = useRouter();
+  const isNitk = pathname?.startsWith("/nitk") || false;
+  const path = isNitk ? "/nitk" : "/";
   return (
     <header className={styles.header}>
       <Link href="/">
@@ -26,21 +28,21 @@ export default function Header(props: { data: Data }) {
             />
           )}
           <span className={styles.author}>{author}</span>
+          {!isNitk && (
+            <Link href="/what-is-kapit">
+              <a>מה זה כפית?</a>
+            </Link>
+          )}
         </div>
       </Link>
-      <Link href={pathname.includes("nitk") ? "/nitk" : "/"}>
+      <Link href={path}>
         <div>
           <h1>{title}</h1>
           <h2>{description}</h2>
         </div>
       </Link>
       <div className={styles.links}>
-        {pathname == "/" && (
-          <Link href="/what-is-kapit">
-            <a>מה זה כפית?</a>
-          </Link>
-        )}
-        {pathname == "/" ? (
+        {!isNitk ? (
           <Link href="/nitk">
             <a>שכונה בממלכה</a>
           </Link>
