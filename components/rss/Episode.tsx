@@ -10,7 +10,7 @@ export function Episode({
 }: {
   episode?: EpisodeData;
   round?: boolean;
-  podcastName: "hakapit" | "nitk";
+  podcastName: "hakapit" | "nitk" | "balcony-albums";
 }) {
   const isoDate = useDate(episode?.isoDate);
   if (!episode) return null;

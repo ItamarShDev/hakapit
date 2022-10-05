@@ -3,7 +3,7 @@ import styles from "./style.module.css";
 export function TwitterTimelineEmbed({
   podcastName,
 }: {
-  podcastName: "KapitPod" | "ShchunaPod";
+  podcastName: "KapitPod" | "ShchunaPod" | "balconyalbums";
 }) {
   const { scriptTag } = useScript(["https://platform.twitter.com/widgets.js"]);
   return (

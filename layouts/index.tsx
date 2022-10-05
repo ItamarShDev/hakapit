@@ -9,7 +9,7 @@ import styles from "./style.module.css";
 function useTheme() {
   const { pathname } = useRouter();
   const isNitk = pathname?.startsWith("/nitk");
-
+  const isBalconyAlbums = pathname?.startsWith("/balcony-albums");
   const colors = {
     primary: "hsl(350, 85%, 25%)",
     primaryOpaque: "hsl(350 85% 42% / 0.2)",
@@ -26,6 +26,15 @@ function useTheme() {
       text: "rgb(4, 245, 255)",
       background: "hsl(296, 100%, 5%)",
       tertiary: "rgb(0, 255, 133)",
+    };
+  if (isBalconyAlbums)
+    return {
+      primary: "rgb(180, 70, 71)",
+      primaryOpaque: "rgb(98 68 129 / 0.3)",
+      secondary: "black",
+      text: "rgb(242, 236, 219)",
+      background: "hsl(359.5 44% 6%)",
+      tertiary: "rgb(85, 152, 200)",
     };
   return colors;
 }

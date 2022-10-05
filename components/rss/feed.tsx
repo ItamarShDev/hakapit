@@ -7,7 +7,7 @@ export default function Feed({
   podcastName,
 }: {
   episodes: EpisodeData[] | undefined;
-  podcastName: "hakapit" | "nitk";
+  podcastName: "hakapit" | "nitk" | "balcony-albums";
 }) {
   const [currentEpisodes, setCurrentEpisodes] = useState<EpisodeData[]>(
     episodes || []
@@ -17,7 +17,7 @@ export default function Feed({
     ref.current.page += 1;
     fetch(`/api/${podcastName}/feed?page=${ref.current.page}`)
       .then((res) => res.json())
-      .then(({ items }: { items:  EpisodeData[] }) => {
+      .then(({ items }: { items: EpisodeData[] }) => {
         setCurrentEpisodes((currentEpisodes) => [...currentEpisodes, ...items]);
       });
   };
