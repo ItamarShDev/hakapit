@@ -14,12 +14,14 @@ const TwitterTimelineEmbed = dynamic(
   }
 );
 const Home = () => {
-  const { data, isLoading } = useFeedByPage(1);
-  if (isLoading)
-    return <section className={styles.content}>טוען פרקים...</section>;
+  const { data, isFetched } = useFeedByPage(1);
   return (
     <section className={styles.content}>
-      <Feed podcastName="nitk" episodes={data?.items} />
+      {isFetched ? (
+        <Feed podcastName="nitk" episodes={data?.items} />
+      ) : (
+        <section className={styles.content}>טוען פרקים...</section>
+      )}
       <TwitterTimelineEmbed podcastName="ShchunaPod" />
     </section>
   );
