@@ -38,10 +38,7 @@ export function Layout({ Component, pageProps }: HomePageProps) {
         <title>{rss?.title}</title>
         <meta name="description" content={rss?.description} />
         <meta name="author" content={rss?.itunes?.image} />
-        <meta
-          property="og:image"
-          content={`https://hakapit.tech/api/og-image?title=${rss?.title}`}
-        />
+        <meta property="og:image" content={rss?.itunes?.image} />
         <link rel="icon" href={rss?.itunes?.image} />
       </Head>
       <main className={styles.page}>
