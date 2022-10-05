@@ -3,7 +3,8 @@
   width: 100vw;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 10rem 1fr;
+  grid-template-rows: minmax(10rem, auto) 1fr;
   overflow: hidden;
   direction: rtl;
+  background-color: var(--color-background);
 }

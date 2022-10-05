@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Parser from "rss-parser";
 async function _fetch() {
-  const url = process.env.RSS || process.env.NEXT_PUBLIC_RSS;
+  const url = process.env.HAKAPIT_RSS || process.env.NEXT_PUBLIC_HAKAPIT_RSS;
   const parser: Parser = new Parser();
   const rss = await parser.parseURL(url as string);
   const { items } = rss;

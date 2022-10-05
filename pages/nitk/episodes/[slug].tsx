@@ -1,14 +1,13 @@
-import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
+import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { Episode } from "components/rss/Episode";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { EpisodeData, fetchEpisode } from "pages/api/feed";
+import { fetchEpisode } from "pages/api/hakapit/feed";
+import { useEpisode } from "queries/nitk";
 export default function Index() {
   const { query } = useRouter();
-  const { data: episode } = useQuery<EpisodeData>(["episode", query.slug], () =>
-    fetchEpisode(query.slug as string)
-  );
+  const { data: episode } = useEpisode(query.slug as string);
   return (
     <>
       <Head>
@@ -17,7 +16,7 @@ export default function Index() {
           content={`https://www.hakapit.tech/api/og-image?title=${episode?.title}`}
         />
       </Head>
-      <Episode episode={episode} />
+      <Episode episode={episode} podcastName="nitk" />
     </>
   );
 }

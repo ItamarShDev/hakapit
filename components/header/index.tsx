@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import styles from "./styles.module.css";
 type Data = {
   author?: string;
@@ -9,6 +10,7 @@ type Data = {
 };
 export default function Header(props: { data: Data }) {
   const { author, title, description, image } = props.data;
+  const { pathname } = useRouter();
   return (
     <header className={styles.header}>
       <Link href="/">
@@ -26,16 +28,28 @@ export default function Header(props: { data: Data }) {
           <span className={styles.author}>{author}</span>
         </div>
       </Link>
-      <Link href="/">
+      <Link href={pathname.includes("nitk") ? "/nitk" : "/"}>
         <div>
           <h1>{title}</h1>
           <h2>{description}</h2>
         </div>
       </Link>
-
-      <Link href="/what-is-kapit">
-        <a>מה זה כפית?</a>
-      </Link>
+      <div className={styles.links}>
+        {pathname == "/" && (
+          <Link href="/what-is-kapit">
+            <a>מה זה כפית?</a>
+          </Link>
+        )}
+        {pathname == "/" ? (
+          <Link href="/nitk">
+            <a>שכונה בממלכה</a>
+          </Link>
+        ) : (
+          <Link href="/">
+            <a>הכפית</a>
+          </Link>
+        )}
+      </div>
     </header>
   );
 }

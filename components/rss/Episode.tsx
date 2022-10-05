@@ -1,14 +1,16 @@
 import { useDate } from "hooks";
 import Image from "next/image";
 import Link from "next/link";
-import { EpisodeData } from "pages/api/feed";
+import { EpisodeData } from "pages/api/hakapit/feed";
 import styles from "./episode.module.css";
 export function Episode({
   episode,
   round = false,
+  podcastName,
 }: {
   episode?: EpisodeData;
   round?: boolean;
+  podcastName: "hakapit" | "nitk";
 }) {
   const isoDate = useDate(episode?.isoDate);
   if (!episode) return null;
@@ -28,7 +30,7 @@ export function Episode({
           />
         )}
         <span>
-          <Link href={`/episodes/${guid}`}>
+          <Link href={`/${podcastName}/episodes/${guid}`}>
             <a className={styles.title}>{episode?.title}</a>
           </Link>
           <div>

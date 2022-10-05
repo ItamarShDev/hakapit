@@ -1,9 +1,9 @@
 import type { GetServerSideProps } from "next";
 import Feed from "components/rss/feed";
-import styles from "styles/index.module.css";
+import styles from "styles/nitk.module.css";
 import { dehydrate } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
-import { prefetchFeed, useFeedByPage } from "queries/hakapit";
+import { prefetchFeed, useFeedByPage } from "queries/nitk";
 const TwitterTimelineEmbed = dynamic(
   () =>
     import("components/twitter-timeline-embed").then(
@@ -18,14 +18,14 @@ const Home = () => {
   if (isLoading) return <div>טוען פרקים...</div>;
   return (
     <section className={styles.content}>
-      <Feed podcastName="hakapit" episodes={data?.items} />
-      <TwitterTimelineEmbed podcastName="KapitPod" />
+      <Feed podcastName="nitk" episodes={data?.items} />
+      <TwitterTimelineEmbed podcastName="ShchunaPod" />
     </section>
   );
 };
 
 export default Home;
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=10, stale-while-revalidate=59"
