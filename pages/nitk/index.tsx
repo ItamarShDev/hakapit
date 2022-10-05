@@ -15,7 +15,8 @@ const TwitterTimelineEmbed = dynamic(
 );
 const Home = () => {
   const { data, isLoading } = useFeedByPage(1);
-  if (isLoading) return <div>טוען פרקים...</div>;
+  if (isLoading)
+    return <section className={styles.content}>טוען פרקים...</section>;
   return (
     <section className={styles.content}>
       <Feed podcastName="nitk" episodes={data?.items} />
@@ -31,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     "public, s-maxage=10, stale-while-revalidate=59"
   );
 
-  if (!process.env.RSS) return { props: {} };
+  if (!process.env.HAKAPIT_RSS) return { props: {} };
   const queryClient = await prefetchFeed();
 
   return {

@@ -14,8 +14,9 @@ const TwitterTimelineEmbed = dynamic(
   }
 );
 const Home = () => {
-  const { data, isLoading } = useFeedByPage(1);
-  if (isLoading) return <div>טוען פרקים...</div>;
+  const { data, isFetching } = useFeedByPage(1);
+  if (isFetching)
+    return <section className={styles.content}>טוען פרקים...</section>;
   return (
     <section className={styles.content}>
       <Feed podcastName="hakapit" episodes={data?.items} />
@@ -25,13 +26,13 @@ const Home = () => {
 };
 
 export default Home;
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=10, stale-while-revalidate=59"
   );
 
-  if (!process.env.RSS) return { props: {} };
+  if (!process.env.NITK_RSS) return { props: {} };
   const queryClient = await prefetchFeed();
 
   return {

@@ -22,7 +22,7 @@ export default function Index() {
   );
 }
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  if (!process.env.RSS) return { props: {} };
+  if (!process.env.HAKAPIT_RSS) return { props: {} };
   const slug = params?.slug as string;
   const queryClient = new QueryClient();
 
