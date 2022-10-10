@@ -9,6 +9,7 @@ import { useState } from "react";
 import { InferGetServerSidePropsType } from "next";
 import { getServerSideProps } from "pages";
 import ErrorBoundary from "layouts/error-boudary";
+import NextProgress from "next-progress";
 export type HomePageProps = InferGetServerSidePropsType<
   typeof getServerSideProps
 >;
@@ -19,6 +20,7 @@ function MyApp(props: HomePageProps) {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <Hydrate state={props?.pageProps?.dehydratedState}>
+          <NextProgress delay={300} />
           <Layout {...props} />
         </Hydrate>
       </QueryClientProvider>

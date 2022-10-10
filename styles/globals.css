@@ -17,6 +17,15 @@ a {
 * {
   box-sizing: border-box;
 }
+h1 {
+  font-size: 4rem;
+  font-weight: 400;
+  margin: 0;
+}
+a:hover {
+  color: var(--color-tertiary);
+  text-decoration: underline;
+}
 
 @media (prefers-color-scheme: dark) {
   html {

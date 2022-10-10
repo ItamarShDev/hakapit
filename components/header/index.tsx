@@ -50,7 +50,7 @@ export default function Header(props: { data: Data }) {
   const path = isNitk ? "/nitk" : "/";
   return (
     <header className={styles.header}>
-      <Link href="/">
+      <header className={styles.head}>
         <div className={styles.image}>
           {image && (
             <Image
@@ -69,14 +69,16 @@ export default function Header(props: { data: Data }) {
             </Link>
           )}
         </div>
-      </Link>
-      <Link href={path}>
-        <div>
-          <h1>{title}</h1>
-          <h2>{description}</h2>
-        </div>
-      </Link>
-      <Links />
+        <Link href={path}>
+          <span>
+            <h1>{title}</h1>
+            <Links />
+          </span>
+        </Link>
+      </header>
+      <footer className={styles.description}>
+        <h2>{description}</h2>
+      </footer>
     </header>
   );
 }

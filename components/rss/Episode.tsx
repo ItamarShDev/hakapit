@@ -16,6 +16,8 @@ export function Episode({
   if (!episode) return null;
   const cardClass = styles.card + (round ? ` ${styles.round}` : "");
   const guid = episode?.guid.split("/").pop();
+  console.log(episode);
+
   return (
     <dl className={cardClass}>
       <dt className={styles.header}>
