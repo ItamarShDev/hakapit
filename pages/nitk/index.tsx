@@ -1,9 +1,9 @@
-import type { GetServerSideProps } from "next";
-import Feed from "components/rss/feed";
+import type { GetStaticProps } from "next";
+import FeedComp from "components/rss/feed";
 import styles from "styles/nitk.module.css";
-import { dehydrate } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
-import { prefetchFeed, useFeedByPage } from "queries/nitk";
+import { useFeedByPage } from "queries/nitk";
+import { Feed, fetchFeed } from "pages/api/nitk/feed";
 const TwitterTimelineEmbed = dynamic(
   () =>
     import("components/twitter-timeline-embed").then(
@@ -13,12 +13,13 @@ const TwitterTimelineEmbed = dynamic(
     loading: () => <div>טוען ציוצים של הכפית...</div>,
   }
 );
-const Home = () => {
+const Home = ({ feed }: { feed: Feed }) => {
   const { data, isFetched } = useFeedByPage(1);
+  const feedData = isFetched ? data : feed;
   return (
     <section className={styles.content}>
       {isFetched ? (
-        <Feed podcastName="nitk" episodes={data?.items} />
+        <FeedComp podcastName="nitk" episodes={feedData?.items} />
       ) : (
         <section className={styles.content}>טוען פרקים...</section>
       )}
@@ -28,18 +29,13 @@ const Home = () => {
 };
 
 export default Home;
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=604800, stale-while-revalidate=59"
-  );
-
+export const getStaticProps: GetStaticProps = async () => {
   if (!process.env.HAKAPIT_RSS) return { props: {} };
-  const queryClient = await prefetchFeed();
+  const feed = await fetchFeed();
 
   return {
     props: {
-      dehydratedState: dehydrate(queryClient),
+      feed,
     },
   };
 };

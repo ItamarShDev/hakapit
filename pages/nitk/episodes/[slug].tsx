@@ -1,13 +1,13 @@
-import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { Episode } from "components/rss/Episode";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { fetchEpisode } from "pages/api/hakapit/feed";
+import { EpisodeData, fetchFeed, fetchEpisode } from "pages/api/nitk/feed";
 import { useEpisode } from "queries/nitk";
-export default function Index() {
+export default function Index({ episode }: { episode: EpisodeData }) {
   const { query } = useRouter();
-  const { data: episode } = useEpisode(query.slug as string);
+  const { data } = useEpisode(query.slug as string);
+  const episodeData = data || episode;
   return (
     <>
       <Head>
@@ -16,27 +16,27 @@ export default function Index() {
           content={`https://www.hakapit.tech/api/og-image?title=${episode?.title}`}
         />
       </Head>
-      <Episode episode={episode} podcastName="nitk" />
+      <Episode episode={episodeData} podcastName="nitk" />
     </>
   );
 }
-export const getServerSideProps: GetServerSideProps = async ({
-  res,
-  params,
-}) => {
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=604800, stale-while-revalidate=59"
-  );
-  if (!process.env.NITK_RSS) return { props: {} };
-  const slug = params?.slug as string;
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery(["episode", slug], () => fetchEpisode(slug));
+export async function getStaticPaths() {
+  const feed = await fetchFeed();
 
   return {
+    paths: feed.items.map((episode) => ({
+      params: { slug: episode?.guid.split("/").pop() },
+    })),
+    fallback: true,
+  };
+}
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  if (!process.env.NITK_RSS) return { props: {} };
+  const slug = params?.slug as string;
+  const episode = await fetchEpisode(slug);
+  return {
     props: {
-      dehydratedState: dehydrate(queryClient),
+      episode: episode,
     },
   };
 };
