@@ -1,28 +1,19 @@
 import "../styles/globals.css";
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Layout } from "layouts";
 import { useState } from "react";
-import { InferGetServerSidePropsType } from "next";
-import { getServerSideProps } from "pages";
 import ErrorBoundary from "layouts/error-boudary";
 import NextProgress from "next-progress";
-export type HomePageProps = InferGetServerSidePropsType<
-  typeof getServerSideProps
->;
+import { AppProps } from "next/app";
+export type HomePageProps = AppProps;
 function MyApp(props: HomePageProps) {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <Hydrate state={props?.pageProps?.dehydratedState}>
-          <NextProgress delay={300} />
-          <Layout {...props} />
-        </Hydrate>
+        <NextProgress delay={300} />
+        <Layout {...props} />
       </QueryClientProvider>
     </ErrorBoundary>
   );
