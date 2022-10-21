@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   res.setHeader(
     "Cache-Control",
-    "public, s-maxage=10, stale-while-revalidate=59"
+    "public, s-maxage=604800, stale-while-revalidate=59"
   );
   if (!process.env.NITK_RSS) return { props: {} };
   const slug = params?.slug as string;

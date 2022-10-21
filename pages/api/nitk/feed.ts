@@ -69,7 +69,7 @@ export default async function handler(
   const feed = await fetchFeed(pageNumber);
   res.setHeader(
     "Cache-Control",
-    "public, s-maxage=10, stale-while-revalidate=59"
+    "public, s-maxage=604800, stale-while-revalidate=59"
   );
 
   res.status(200).json(feed);
