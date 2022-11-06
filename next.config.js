@@ -5,6 +5,9 @@ const nextConfig = {
   images: {
     domains: ["storage.pinecast.net", "d3t3ozftmdmh3i.cloudfront.net"],
   },
+  experimental: {
+    appDir: true,
+  },
 };
 
 module.exports = nextConfig;

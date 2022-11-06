@@ -1,7 +1,9 @@
+"use client";
 import { Episode } from "components/rss/Episode";
-import { EpisodeData } from "pages/api/hakapit/feed";
+import { EpisodeData } from "api/types";
 import { useRef, useState } from "react";
 import styles from "./feed.module.css";
+import { fetchPage } from "api/fetch-page";
 export default function Feed({
   episodes,
   podcastName,
@@ -15,11 +17,11 @@ export default function Feed({
   const ref = useRef({ page: 0 });
   const loadMore = () => {
     ref.current.page += 1;
-    fetch(`/api/${podcastName}/feed?page=${ref.current.page}`)
-      .then((res) => res.json())
-      .then(({ items }: { items: EpisodeData[] }) => {
+    fetchPage(podcastName, ref.current.page).then(
+      ({ items }: { items: EpisodeData[] }) => {
         setCurrentEpisodes((currentEpisodes) => [...currentEpisodes, ...items]);
-      });
+      }
+    );
   };
 
   return (

@@ -1,7 +1,7 @@
 import { useDate } from "hooks";
 import Image from "next/legacy/image";
 import Link from "next/link";
-import { EpisodeData } from "pages/api/hakapit/feed";
+import { EpisodeData } from "api/types";
 import styles from "./episode.module.css";
 export function Episode({
   episode,
@@ -30,7 +30,10 @@ export function Episode({
           />
         )}
         <span>
-          <Link href={`/${podcastName}/episodes/${guid}`} className={styles.title}>
+          <Link
+            href={`/${podcastName}/episodes/${guid}`}
+            className={styles.title}
+          >
             {episode?.title}
           </Link>
           <div>

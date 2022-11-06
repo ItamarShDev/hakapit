@@ -1,0 +1,9 @@
+.page {
+  height: max-content;
+  width: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(13rem, auto) 1fr;
+  direction: rtl;
+  background-color: var(--color-background);
+}

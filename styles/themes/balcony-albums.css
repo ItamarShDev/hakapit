@@ -1,0 +1,8 @@
+:root {
+  --color-primary: rgb(180, 70, 71);
+  --color-primary-opaque: rgb(98 68 129 / 0.3);
+  --color-secondary: black;
+  --color-tertiary: rgb(242, 236, 219);
+  --color-background: hsl(359.5 44% 6%);
+  --color-text: rgb(85, 152, 200);
+}

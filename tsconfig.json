@@ -18,13 +18,23 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/api/open-graph.tss"  ],
+    "**/*.tsx",
+    "api/open-graph.tss",
+    ".next/types/**/*.ts",
+    "app/nitk/episodes/[slug]/page.tsx",
+    "app/nitk copy/episodes/[slug]/page.tsx",
+    "app/hakapit/episodes/[slug]/page.tsx"
+  ],
   "exclude": [
     "node_modules"
   ]

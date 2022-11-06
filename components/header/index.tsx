@@ -1,22 +1,23 @@
-import Image from "next/legacy/image";
+"use client";
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import styles from "./styles.module.css";
 type Data = {
   author?: string;
   title?: string;
   description?: string;
-  image?: string;
+  image?: { link?: string; url: string; title?: string };
 };
 
 function Links() {
-  const { pathname } = useRouter();
-  const isHakapit = pathname === "/";
+  const pathname = usePathname();
+  const isHakapit = pathname === "/hakapit";
   const isNitk = pathname?.startsWith("/nitk");
   const isBalconyAlbums = pathname?.startsWith("/balcony-albums");
   const links = [
     {
-      href: "/",
+      href: "/hakapit",
       label: "הכפית",
     },
     {
@@ -30,7 +31,7 @@ function Links() {
   ].filter((link) => {
     if (isNitk) return link.href !== "/nitk";
     if (isBalconyAlbums) return link.href !== "/balcony-albums";
-    if (isHakapit) return link.href !== "/";
+    if (isHakapit) return link.href !== "/hakapit";
     return true;
   });
   return (
@@ -43,18 +44,19 @@ function Links() {
     </div>
   );
 }
-export default function Header(props: { data: Data }) {
-  const { author, title, description, image } = props.data;
-  const { pathname } = useRouter();
+export default function Header({ data }: { data: Data }) {
+  const { author, title, description, image } = data;
+  const pathname = usePathname();
   const isNitk = pathname?.startsWith("/nitk") || false;
   const path = isNitk ? "/nitk" : "/";
+
   return (
     <header className={styles.header}>
       <header className={styles.head}>
         <div className={styles.image}>
           {image && (
             <Image
-              src={image}
+              src={image.url}
               alt="podcast logo"
               objectFit="contain"
               height={100}
@@ -63,11 +65,6 @@ export default function Header(props: { data: Data }) {
             />
           )}
           <span className={styles.author}>{author}</span>
-          {!isNitk && (
-            <Link href="/what-is-kapit">
-              מה זה כפית?
-            </Link>
-          )}
         </div>
         <Link href={path} legacyBehavior>
           <span>
