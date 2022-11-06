@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "next/legacy/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from "./styles.module.css";
@@ -37,7 +37,7 @@ function Links() {
     <div className={styles.links}>
       {links.map((link) => (
         <Link href={link.href} key={link.href}>
-          <a>{link.label}</a>
+          {link.label}
         </Link>
       ))}
     </div>
@@ -65,11 +65,11 @@ export default function Header(props: { data: Data }) {
           <span className={styles.author}>{author}</span>
           {!isNitk && (
             <Link href="/what-is-kapit">
-              <a>מה זה כפית?</a>
+              מה זה כפית?
             </Link>
           )}
         </div>
-        <Link href={path}>
+        <Link href={path} legacyBehavior>
           <span>
             <h1>{title}</h1>
             <Links />

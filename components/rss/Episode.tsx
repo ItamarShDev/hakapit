@@ -1,5 +1,5 @@
 import { useDate } from "hooks";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import Link from "next/link";
 import { EpisodeData } from "pages/api/hakapit/feed";
 import styles from "./episode.module.css";
@@ -30,8 +30,8 @@ export function Episode({
           />
         )}
         <span>
-          <Link href={`/${podcastName}/episodes/${guid}`}>
-            <a className={styles.title}>{episode?.title}</a>
+          <Link href={`/${podcastName}/episodes/${guid}`} className={styles.title}>
+            {episode?.title}
           </Link>
           <div>
             <span className={styles.date}>{isoDate}</span>
