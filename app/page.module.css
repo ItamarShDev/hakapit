@@ -1,0 +1,16 @@
+.section {
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+}
+.h1 {
+  font-size: 3rem;
+}
+
+.center {
+  text-align: center;
+}
+.center p {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}

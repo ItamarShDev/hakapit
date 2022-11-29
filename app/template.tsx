@@ -1,16 +1,17 @@
-import { fetchFeed } from "api/balcony-albums/feed";
+import { fetchFeed } from "api/hakapit/feed";
 import Header from "components/header";
-import "styles/themes/balcony-albums.css";
+import "styles/themes/main.css";
 
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const data = await fetchFeed();
+  const metadata = await fetchFeed();
+
   return (
     <>
-      <Header data={data} />
+      <Header data={metadata} />
       {children}
     </>
   );
