@@ -1,7 +1,7 @@
 import { Inter } from "@next/font/google";
-import { fetchFeed } from "api/hakapit/feed";
+import { fetchFeed } from "api/balcony-albums/feed";
 import Header from "components/header";
-import "styles/themes/main.css";
+import "styles/themes/balcony-albums.css";
 import "styles/globals.css";
 const font = Inter();
 
