@@ -11,7 +11,7 @@ function Links() {
   const isBalconyAlbums = pathname?.startsWith("/balcony-albums");
   const links = [
     {
-      href: "/hakapit",
+      href: "/",
       label: "הכפית",
     },
     {

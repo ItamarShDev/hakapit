@@ -1,4 +1,3 @@
-import useScript from "hooks/use-script";
 import Script from "next/script";
 import styles from "./style.module.css";
 export function TwitterTimelineEmbed({
@@ -6,7 +5,6 @@ export function TwitterTimelineEmbed({
 }: {
   podcastName: "KapitPod" | "ShchunaPod" | "balconyalbums";
 }) {
-  // const { scriptTag } = useScript(["https://platform.twitter.com/widgets.js"]);
   return (
     <div className={styles.timeline}>
       <Script src="https://platform.twitter.com/widgets.js" />
@@ -20,7 +18,6 @@ export function TwitterTimelineEmbed({
         data-chrome="noborders"
         href={`https://twitter.com/${podcastName}?ref_src=twsrc%5Etfw`}
       ></a>
-      {/* {scriptTag} */}
     </div>
   );
 }
