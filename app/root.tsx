@@ -30,7 +30,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
       charset: "utf-8",
       title: episode?.title,
       description: episode?.description,
-      "meta:image": episode?.image,
+      "meta:image": episode?.itunes?.image,
       viewport: "width=device-width,initial-scale=1",
     };
   }
