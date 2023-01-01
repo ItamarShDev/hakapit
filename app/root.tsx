@@ -11,6 +11,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useParams,
 } from "@remix-run/react";
 import { fetchEpisode, fetchPage } from "~/api/fetch-page";
 import type { EpisodeData } from "~/api/types";
@@ -28,6 +29,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
     );
     return {
       charset: "utf-8",
+
       title: episode?.title,
       description: episode?.description,
       "meta:image": episode?.itunes?.image,
@@ -54,6 +56,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export default function App() {
   const data = useLoaderData();
+  const { episode } = useParams();
   scrollHandler(
     () => {
       document.getElementById("page-header")!.classList.add("small");
@@ -62,12 +65,14 @@ export default function App() {
       document.getElementById("page-header")!.classList.remove("small");
     }
   );
+  const imageUrl = episode ? data.items[0]?.itunes?.image : data.image.url;
 
   return (
     <html lang="en">
       <head>
         <Meta />
         <Links />
+        <link rel="icon" href={imageUrl} />
         <script src="https://platform.twitter.com/widgets.js" />
       </head>
       <body style={{ direction: "rtl" }}>
