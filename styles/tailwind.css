@@ -18,6 +18,12 @@
   .feed-page {
     @apply bg-accent2 flex gap-6 w-full place-content-center flex-wrap overflow-auto;
   }
+  .full-page-episode {
+    @apply min-h-screen bg-accent2 w-full overflow-auto py-10 px-8;
+  }
+  .full-page-episode .episode-card {
+    @apply text-paragraph my-2 mx-4 bg-primary-opaque max-w-none h-max;
+  }
   .episode-card {
     @apply text-paragraph my-2 bg-primary-opaque max-w-3xl h-max;
   }

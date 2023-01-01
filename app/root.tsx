@@ -13,6 +13,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { fetchEpisode, fetchPage } from "~/api/fetch-page";
+import type { EpisodeData } from "~/api/types";
 import Header from "~/components/header";
 import { scrollHandler } from "~/hooks";
 import twStyles from "./tailwind.css";
@@ -20,11 +21,24 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: twStyles },
 ];
 
-export const meta: MetaFunction<typeof loader> = async ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
+  if (params?.episode) {
+    const episode = data.items.find(
+      (item: EpisodeData) => item.episodeGUID === params.episode
+    );
+    return {
+      charset: "utf-8",
+      title: episode?.title,
+      description: episode?.description,
+      "meta:image": episode?.image,
+      viewport: "width=device-width,initial-scale=1",
+    };
+  }
   return {
     charset: "utf-8",
     title: data.title,
     description: data.description,
+    "meta:image": data.image,
     viewport: "width=device-width,initial-scale=1",
   };
 };

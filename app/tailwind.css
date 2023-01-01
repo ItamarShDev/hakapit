@@ -536,6 +536,29 @@ body {
   background-color: var(--color-background);
 }
 
+.full-page-episode {
+  min-height: 100vh;
+  width: 100%;
+  overflow: auto;
+  background-color: var(--color-background);
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.full-page-episode .episode-card {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  height: -moz-max-content;
+  height: max-content;
+  max-width: none;
+  background-color: var(--color-primary-opaque);
+  color: var(--color-text);
+}
+
 .episode-card {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;

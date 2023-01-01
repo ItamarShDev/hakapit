@@ -381,17 +381,32 @@ function scrollHandler(onScroll, onScrollEnd) {
 }
 
 // app/tailwind.css
-var tailwind_default = "/build/_assets/tailwind-TKHUZBRP.css";
+var tailwind_default = "/build/_assets/tailwind-KV7GSBMT.css";
 
 // app/root.tsx
 var import_jsx_dev_runtime5 = require("react/jsx-dev-runtime"), links = () => [
   { rel: "stylesheet", href: tailwind_default }
-], meta = async ({ data }) => ({
-  charset: "utf-8",
-  title: data.title,
-  description: data.description,
-  viewport: "width=device-width,initial-scale=1"
-}), loader = async ({ request, params }) => {
+], meta = ({ data, params }) => {
+  if (params != null && params.episode) {
+    let episode = data.items.find(
+      (item) => item.episodeGUID === params.episode
+    );
+    return {
+      charset: "utf-8",
+      title: episode == null ? void 0 : episode.title,
+      description: episode == null ? void 0 : episode.description,
+      "meta:image": episode == null ? void 0 : episode.image,
+      viewport: "width=device-width,initial-scale=1"
+    };
+  }
+  return {
+    charset: "utf-8",
+    title: data.title,
+    description: data.description,
+    "meta:image": data.image,
+    viewport: "width=device-width,initial-scale=1"
+  };
+}, loader = async ({ request, params }) => {
   let podcastName = request.url.split("/").at(3) || "hakapit";
   return podcastName ? params != null && params.episode ? await fetchEpisode4(podcastName, params.episode) : await fetchPage(podcastName) : {};
 };
@@ -411,25 +426,25 @@ function App() {
         children: [
           /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Meta, {}, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 55,
+            lineNumber: 69,
             columnNumber: 9
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Links, {}, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 56,
+            lineNumber: 70,
             columnNumber: 9
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("script", {
             src: "https://platform.twitter.com/widgets.js"
           }, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 57,
+            lineNumber: 71,
             columnNumber: 9
           }, this)
         ]
       }, void 0, !0, {
         fileName: "app/root.tsx",
-        lineNumber: 54,
+        lineNumber: 68,
         columnNumber: 7
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("body", {
@@ -439,46 +454,46 @@ function App() {
             data
           }, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 60,
+            lineNumber: 74,
             columnNumber: 9
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("main", {
             className: "bg-accent2",
             children: /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Outlet, {}, void 0, !1, {
               fileName: "app/root.tsx",
-              lineNumber: 62,
+              lineNumber: 76,
               columnNumber: 11
             }, this)
           }, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 61,
+            lineNumber: 75,
             columnNumber: 9
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.ScrollRestoration, {}, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 64,
+            lineNumber: 78,
             columnNumber: 9
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Scripts, {}, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 65,
+            lineNumber: 79,
             columnNumber: 9
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.LiveReload, {}, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 66,
+            lineNumber: 80,
             columnNumber: 9
           }, this)
         ]
       }, void 0, !0, {
         fileName: "app/root.tsx",
-        lineNumber: 59,
+        lineNumber: 73,
         columnNumber: 7
       }, this)
     ]
   }, void 0, !0, {
     fileName: "app/root.tsx",
-    lineNumber: 53,
+    lineNumber: 67,
     columnNumber: 5
   }, this);
 }
@@ -605,7 +620,7 @@ var import_jsx_dev_runtime7 = require("react/jsx-dev-runtime"), links2 = () => [
 function Index() {
   let data = (0, import_react7.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("section", {
-    className: "feed-page",
+    className: "full-page-episode",
     children: /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)(Episode, {
       episode: data.items[0],
       podcastName: "balcony-albums"
@@ -638,7 +653,7 @@ var import_jsx_dev_runtime8 = require("react/jsx-dev-runtime"), links3 = () => [
 function Index2() {
   let data = (0, import_react8.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime8.jsxDEV)("section", {
-    className: "feed-page",
+    className: "full-page-episode",
     children: /* @__PURE__ */ (0, import_jsx_dev_runtime8.jsxDEV)(Episode, {
       episode: data.items[0],
       podcastName: "hakapit"
@@ -671,7 +686,7 @@ var import_jsx_dev_runtime9 = require("react/jsx-dev-runtime"), links4 = () => [
 function Index3() {
   let data = (0, import_react9.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime9.jsxDEV)("section", {
-    className: "feed-page",
+    className: "full-page-episode",
     children: /* @__PURE__ */ (0, import_jsx_dev_runtime9.jsxDEV)(Episode, {
       episode: data.items[0],
       podcastName: "nitk"
@@ -942,7 +957,7 @@ function Index6() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { version: "76f73f0f", entry: { module: "/build/entry.client-PA5BX2IV.js", imports: ["/build/_shared/chunk-HEA3LAGM.js", "/build/_shared/chunk-XBGKFPLQ.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-GXTN7NEU.js", imports: ["/build/_shared/chunk-PAVO2V34.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/balcony-albums/episodes/$episode": { id: "routes/balcony-albums/episodes/$episode", parentId: "root", path: "balcony-albums/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/balcony-albums/episodes/$episode-3ZYURT3D.js", imports: ["/build/_shared/chunk-YQLSDZWT.js", "/build/_shared/chunk-XCHCF4JA.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/balcony-albums/index": { id: "routes/balcony-albums/index", parentId: "root", path: "balcony-albums", index: !0, caseSensitive: void 0, module: "/build/routes/balcony-albums/index-US337DWV.js", imports: ["/build/_shared/chunk-YQLSDZWT.js", "/build/_shared/chunk-BJHB3HDI.js", "/build/_shared/chunk-XCHCF4JA.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/hakapit/episodes/$episode": { id: "routes/hakapit/episodes/$episode", parentId: "root", path: "hakapit/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/hakapit/episodes/$episode-QEXEKZFI.js", imports: ["/build/_shared/chunk-U233M3G5.js", "/build/_shared/chunk-XCHCF4JA.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/hakapit/index": { id: "routes/hakapit/index", parentId: "root", path: "hakapit", index: !0, caseSensitive: void 0, module: "/build/routes/hakapit/index-CVII3C5S.js", imports: ["/build/_shared/chunk-U233M3G5.js", "/build/_shared/chunk-BJHB3HDI.js", "/build/_shared/chunk-XCHCF4JA.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-YWEVMCIZ.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/nitk/episodes/$episode": { id: "routes/nitk/episodes/$episode", parentId: "root", path: "nitk/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/nitk/episodes/$episode-G7RB6U4F.js", imports: ["/build/_shared/chunk-JEGSFHKY.js", "/build/_shared/chunk-XCHCF4JA.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/nitk/index": { id: "routes/nitk/index", parentId: "root", path: "nitk", index: !0, caseSensitive: void 0, module: "/build/routes/nitk/index-FMX2YUOO.js", imports: ["/build/_shared/chunk-JEGSFHKY.js", "/build/_shared/chunk-BJHB3HDI.js", "/build/_shared/chunk-XCHCF4JA.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-76F73F0F.js" };
+var assets_manifest_default = { version: "65435c5e", entry: { module: "/build/entry.client-PA5BX2IV.js", imports: ["/build/_shared/chunk-HEA3LAGM.js", "/build/_shared/chunk-XBGKFPLQ.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-GYDKF54T.js", imports: ["/build/_shared/chunk-PLIW4ATO.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/balcony-albums/episodes/$episode": { id: "routes/balcony-albums/episodes/$episode", parentId: "root", path: "balcony-albums/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/balcony-albums/episodes/$episode-BUZNJTOD.js", imports: ["/build/_shared/chunk-YQLSDZWT.js", "/build/_shared/chunk-L3LFLSUW.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/balcony-albums/index": { id: "routes/balcony-albums/index", parentId: "root", path: "balcony-albums", index: !0, caseSensitive: void 0, module: "/build/routes/balcony-albums/index-M555OQT3.js", imports: ["/build/_shared/chunk-YQLSDZWT.js", "/build/_shared/chunk-AZFQZMHX.js", "/build/_shared/chunk-L3LFLSUW.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/hakapit/episodes/$episode": { id: "routes/hakapit/episodes/$episode", parentId: "root", path: "hakapit/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/hakapit/episodes/$episode-TU5PESCF.js", imports: ["/build/_shared/chunk-U233M3G5.js", "/build/_shared/chunk-L3LFLSUW.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/hakapit/index": { id: "routes/hakapit/index", parentId: "root", path: "hakapit", index: !0, caseSensitive: void 0, module: "/build/routes/hakapit/index-DLQDIKOS.js", imports: ["/build/_shared/chunk-U233M3G5.js", "/build/_shared/chunk-AZFQZMHX.js", "/build/_shared/chunk-L3LFLSUW.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-YWEVMCIZ.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/nitk/episodes/$episode": { id: "routes/nitk/episodes/$episode", parentId: "root", path: "nitk/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/nitk/episodes/$episode-2WYVB5C3.js", imports: ["/build/_shared/chunk-JEGSFHKY.js", "/build/_shared/chunk-L3LFLSUW.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/nitk/index": { id: "routes/nitk/index", parentId: "root", path: "nitk", index: !0, caseSensitive: void 0, module: "/build/routes/nitk/index-6W6WTYH4.js", imports: ["/build/_shared/chunk-JEGSFHKY.js", "/build/_shared/chunk-AZFQZMHX.js", "/build/_shared/chunk-L3LFLSUW.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-65435C5E.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public/build", future = { v2_meta: !1 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {

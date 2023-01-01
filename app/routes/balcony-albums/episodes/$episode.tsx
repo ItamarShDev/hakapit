@@ -10,7 +10,7 @@ export const loader = loaderFunction;
 export default function Index() {
   const data = useLoaderData<Feed>();
   return (
-    <section className="feed-page">
+    <section className="full-page-episode">
       <Episode episode={data.items[0]} podcastName="balcony-albums" />
     </section>
   );
