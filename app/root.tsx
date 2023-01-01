@@ -38,7 +38,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
     charset: "utf-8",
     title: data.title,
     description: data.description,
-    "meta:image": data.image,
+    "meta:image": data.image.url,
     viewport: "width=device-width,initial-scale=1",
   };
 };
