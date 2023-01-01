@@ -6,14 +6,11 @@ function _fetch() {
   return fetch_rss(url);
 }
 
-export async function fetchEpisode(
-  episodeNumber: number
-): Promise<EpisodeData> {
+export async function fetchEpisode(episodeGUID: string): Promise<Feed> {
   const { items, ...rss } = await _fetch();
-  const episode = items.find(
-    (episode) => episode?.episodeNumber === episodeNumber
-  );
-  return episode as EpisodeData;
+  const episode = items.find((episode) => episode?.episodeGUID == episodeGUID);
+  rss.items = [episode];
+  return rss as Feed;
 }
 
 export async function fetchFeed(pageNumber: number = 1): Promise<Feed> {

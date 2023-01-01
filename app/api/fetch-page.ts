@@ -20,13 +20,13 @@ export function fetchPage(podcastName: string, page: number = 1) {
       return fetchBalcony(page);
   }
 }
-export function fetchEpisode(podcastName: string, episodeNumber: number) {
+export function fetchEpisode(podcastName: string, episodeGUID: string) {
   switch (podcastName) {
     case "hakapit":
-      return fetchKapitEpisode(episodeNumber);
+      return fetchKapitEpisode(episodeGUID);
     case "nitk":
-      return fetchNitkEpisode(episodeNumber);
+      return fetchNitkEpisode(episodeGUID);
     case "balcony-albums":
-      return fetchBalconyEpisode(episodeNumber);
+      return fetchBalconyEpisode(episodeGUID);
   }
 }

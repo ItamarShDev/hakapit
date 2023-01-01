@@ -1,4 +1,4 @@
-import Parser from "rss-parser";
+import type Parser from "rss-parser";
 
 export type EpisodeData = {
   guid: string;
@@ -12,7 +12,7 @@ export type EpisodeData = {
   isoDate: string;
   itunes: { image: string; duration: string };
   enclosure: { url: string };
-  episodeNumber?: number;
+  episodeGUID?: number;
   contentSnippet?: string;
 };
 export type Feed = {

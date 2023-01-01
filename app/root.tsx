@@ -20,17 +20,20 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: twStyles },
 ];
 
-export const meta: MetaFunction = () => ({
-  charset: "utf-8",
-  title: "New Remix App",
-  viewport: "width=device-width,initial-scale=1",
-});
+export const meta: MetaFunction<typeof loader> = async ({ data }) => {
+  return {
+    charset: "utf-8",
+    title: data.title,
+    description: data.description,
+    viewport: "width=device-width,initial-scale=1",
+  };
+};
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const podcastName = request.url.split("/").at(3) || "hakapit";
   if (!podcastName) return {};
   if (params?.episode) {
-    return await fetchEpisode(podcastName, parseInt(params.episode));
+    return await fetchEpisode(podcastName, params.episode);
   }
   return await fetchPage(podcastName);
 };

@@ -23,7 +23,7 @@ export function Episode({
         />
         <span>
           <Link
-            to={`/${podcastName}/episodes/${episode?.episodeNumber}`}
+            to={`/${podcastName}/episodes/${episode?.episodeGUID}`}
             className="text-accent text-lg"
           >
             {episode?.title}
