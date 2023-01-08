@@ -2,7 +2,7 @@
   --color-primary: rgb(180, 70, 71);
   --color-primary-opaque: hsla(270, 31%, 39%, 0.3);
   --color-secondary: black;
-  --color-tertiary: rgb(85, 152, 200);
+  --color-accent: rgb(85, 152, 200);
   --color-background: hsl(270, 31%, 9%);
   --color-text: rgb(242, 236, 219);
 }

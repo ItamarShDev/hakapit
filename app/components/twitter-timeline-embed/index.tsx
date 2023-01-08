@@ -6,6 +6,7 @@ export function TwitterTimelineEmbed({
   return (
     <div className="timeline">
       <a
+        className="twitter-timeline"
         data-lang="he"
         data-dnt="true"
         data-theme="dark"
@@ -14,7 +15,7 @@ export function TwitterTimelineEmbed({
         data-chrome="noborders"
         href={`https://twitter.com/${podcastName}?ref_src=twsrc%5Etfw`}
       >
-        feed
+        Twitter
       </a>
     </div>
   );

@@ -6,7 +6,7 @@
     --color-primary: hsl(350, 85%, 25%);
     --color-primary-opaque: hsl(350 85% 42% / 0.2);
     --color-secondary: #00b2a9;
-    --color-tertiary: #f6eb61;
+    --color-accent: #f6eb61;
     --color-background: hwb(349 1% 91%);
     --color-text: white;
   }
@@ -16,7 +16,7 @@
 }
 @layer components {
   .body {
-    @apply min-h-screen h-screen grid gap-5 bg-accent2;
+    @apply min-h-screen h-screen grid gap-5 bg-accentBg;
     direction: rtl;
     grid-template-rows: auto 1fr;
   }
@@ -45,10 +45,10 @@
   }
   audio.audio::-webkit-media-controls-current-time-display,
   audio.audio::-webkit-media-controls-time-remaining-display {
-    color: var(--color-tertiary);
+    color: var(--color-accent);
   }
   audio.audio::-webkit-media-controls-timeline-container {
-    background-color: var(--color-tertiary);
+    background-color: var(--color-accent);
   }
   .header {
     @apply sticky top-0 w-full z-10 text-paragraph

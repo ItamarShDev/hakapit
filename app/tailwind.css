@@ -423,7 +423,7 @@ video {
   --color-primary: hsl(350, 85%, 25%);
   --color-primary-opaque: hsl(350 85% 42% / 0.2);
   --color-secondary: #00b2a9;
-  --color-tertiary: #f6eb61;
+  --color-accent: #f6eb61;
   --color-background: hwb(349 1% 91%);
   --color-text: white;
 }
@@ -585,7 +585,7 @@ body {
   max-width: -moz-fit-content;
   max-width: fit-content;
   border-radius: 0.375rem;
-  background-color: var(--color-tertiary);
+  background-color: var(--color-accent);
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   padding-top: 0.25rem;
@@ -608,11 +608,11 @@ audio.audio::-webkit-media-controls-panel {
 
 audio.audio::-webkit-media-controls-current-time-display,
   audio.audio::-webkit-media-controls-time-remaining-display {
-  color: var(--color-tertiary);
+  color: var(--color-accent);
 }
 
 audio.audio::-webkit-media-controls-timeline-container {
-  background-color: var(--color-tertiary);
+  background-color: var(--color-accent);
 }
 
 .header {
@@ -623,7 +623,7 @@ audio.audio::-webkit-media-controls-timeline-container {
   width: 100%;
   border-bottom-width: 2px;
   border-style: solid;
-  border-color: var(--color-tertiary);
+  border-color: var(--color-accent);
   background-color: var(--color-primary);
   color: var(--color-text);
   font-size: clamp(0.5em, 2.5vw, 1em);
@@ -713,12 +713,60 @@ audio.audio::-webkit-media-controls-timeline-container {
   min-height: calc(100vh - 188px);
 }
 
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.left-0 {
+  left: 0px;
+}
+
+.bottom-0 {
+  bottom: 0px;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
 .flex {
   display: flex;
 }
 
 .grid {
   display: grid;
+}
+
+.h-7 {
+  height: 1.75rem;
+}
+
+.w-7 {
+  width: 1.75rem;
+}
+
+.translate-y-0 {
+  --tw-translate-y: 0px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.translate-y-full {
+  --tw-translate-y: 100%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
 .grid-cols-auto-1fr-auto {
@@ -769,8 +817,12 @@ audio.audio::-webkit-media-controls-timeline-container {
   border-radius: 1.5rem;
 }
 
-.bg-accent2 {
+.bg-accentBg {
   background-color: var(--color-background);
+}
+
+.fill-accent {
+  fill: var(--color-accent);
 }
 
 .object-contain {
@@ -849,7 +901,7 @@ audio.audio::-webkit-media-controls-timeline-container {
 }
 
 .text-accent {
-  color: var(--color-tertiary);
+  color: var(--color-accent);
 }
 
 .underline {
@@ -858,6 +910,28 @@ audio.audio::-webkit-media-controls-timeline-container {
 
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.transition {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.duration-500 {
+  transition-duration: 500ms;
+}
+
+.ease-out {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
 @keyframes fadeIn {

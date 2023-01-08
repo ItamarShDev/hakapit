@@ -21,6 +21,10 @@ function Links({ selected }: { selected: string | undefined }) {
       href: "/balcony-albums",
       label: "אלבומים במרפסת",
     },
+    {
+      href: "/",
+      label: "מה זה כפית?",
+    },
   ].filter((link) => {
     if (isNitk) return link.href !== "/nitk";
     if (isBalconyAlbums) return link.href !== "/balcony-albums";

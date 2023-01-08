@@ -23,7 +23,7 @@ h1 {
   margin: 0;
 }
 a:hover {
-  color: var(--color-tertiary);
+  color: var(--color-accent);
   text-decoration: underline;
 }
 

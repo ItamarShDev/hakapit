@@ -119,9 +119,10 @@ __export(root_exports, {
   default: () => App,
   links: () => links,
   loader: () => loader,
+  mainLoader: () => mainLoader,
   meta: () => meta
 });
-var import_react5 = require("@remix-run/react");
+var import_react7 = require("@remix-run/react");
 
 // app/api/fetch-rss.ts
 var import_rss_parser = __toESM(require("rss-parser"));
@@ -203,10 +204,72 @@ function fetchEpisode4(podcastName, episodeGUID) {
   }
 }
 
+// app/components/global-loader.tsx
+var import_react2 = require("@remix-run/react"), import_react3 = require("react"), import_jsx_dev_runtime2 = require("react/jsx-dev-runtime"), cx = (...args) => args.flat().filter((x) => x != null && typeof x != "boolean").join(" ");
+function GlobalLoading() {
+  let transition = (0, import_react2.useTransition)(), fetchers = (0, import_react2.useFetchers)(), active = (0, import_react3.useMemo)(
+    function() {
+      return [
+        transition.state,
+        ...fetchers.map((fetcher) => fetcher.state)
+      ].every((state2) => state2 === "idle") ? "idle" : "loading";
+    },
+    [transition.state, fetchers]
+  ) !== "idle";
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", {
+    role: "progressbar",
+    "aria-valuetext": active ? "Loading" : void 0,
+    "aria-hidden": !active,
+    className: cx(
+      "pointer-events-none fixed left-0 bottom-0 z-50 p-4 transition-all duration-500 ease-out",
+      active ? "translate-y-0" : "translate-y-full"
+    ),
+    children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("svg", {
+      className: "h-7 w-7 animate-spin",
+      xmlns: "http://www.w3.org/2000/svg",
+      fill: "none",
+      viewBox: "0 0 24 24",
+      width: "1em",
+      height: "1em",
+      children: [
+        /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("circle", {
+          className: "stroke-accent/25",
+          cx: 12,
+          cy: 12,
+          r: 10,
+          strokeWidth: 4
+        }, void 0, !1, {
+          fileName: "app/components/global-loader.tsx",
+          lineNumber: 41,
+          columnNumber: 9
+        }, this),
+        /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("path", {
+          className: "fill-accent",
+          d: "M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        }, void 0, !1, {
+          fileName: "app/components/global-loader.tsx",
+          lineNumber: 48,
+          columnNumber: 9
+        }, this)
+      ]
+    }, void 0, !0, {
+      fileName: "app/components/global-loader.tsx",
+      lineNumber: 33,
+      columnNumber: 7
+    }, this)
+  }, void 0, !1, {
+    fileName: "app/components/global-loader.tsx",
+    lineNumber: 24,
+    columnNumber: 5
+  }, this);
+}
+
 // app/components/header/links.tsx
-var import_react2 = require("@remix-run/react"), import_jsx_dev_runtime2 = require("react/jsx-dev-runtime");
+var import_react4 = require("@remix-run/react"), import_jsx_dev_runtime3 = require("react/jsx-dev-runtime");
 function Links({ selected }) {
-  let isHakapit = selected === "/hakapit", isNitk = selected == null ? void 0 : selected.startsWith("/nitk"), isBalconyAlbums = selected == null ? void 0 : selected.startsWith("/balcony-albums"), links8 = [
+  let isHakapit = selected === "/hakapit", isNitk = selected == null ? void 0 : selected.startsWith("/nitk"), isBalconyAlbums = selected == null ? void 0 : selected.startsWith("/balcony-albums"), activeStyle = {
+    textDecoration: "underline"
+  }, links8 = [
     {
       href: "/hakapit",
       label: "\u05D4\u05DB\u05E4\u05D9\u05EA"
@@ -218,73 +281,82 @@ function Links({ selected }) {
     {
       href: "/balcony-albums",
       label: "\u05D0\u05DC\u05D1\u05D5\u05DE\u05D9\u05DD \u05D1\u05DE\u05E8\u05E4\u05E1\u05EA"
+    },
+    {
+      href: "/",
+      label: "\u05DE\u05D4 \u05D6\u05D4 \u05DB\u05E4\u05D9\u05EA?"
     }
   ].filter((link) => isNitk ? link.href !== "/nitk" : isBalconyAlbums ? link.href !== "/balcony-albums" : isHakapit ? link.href !== "/hakapit" : !0);
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", {
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)("div", {
     className: "flex gap-4",
-    children: links8.map((link) => /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Link, {
+    children: links8.map((link) => /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_react4.NavLink, {
       to: link.href,
-      prefetch: "render",
+      style: ({ isActive }) => isActive ? activeStyle : {},
       children: link.label
     }, link.href, !1, {
       fileName: "app/components/header/links.tsx",
-      lineNumber: 31,
+      lineNumber: 38,
       columnNumber: 9
     }, this))
   }, void 0, !1, {
     fileName: "app/components/header/links.tsx",
-    lineNumber: 29,
+    lineNumber: 36,
     columnNumber: 5
   }, this);
 }
 function HomeLink({ data }) {
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("span", {
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)("span", {
     children: [
-      /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("h1", {
+      /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)("h1", {
         className: "text-6xl",
         children: data.title
       }, void 0, !1, {
         fileName: "app/components/header/links.tsx",
-        lineNumber: 41,
+        lineNumber: 52,
         columnNumber: 7
       }, this),
-      /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(Links, {
+      /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(Links, {
         selected: data.title
       }, void 0, !1, {
         fileName: "app/components/header/links.tsx",
-        lineNumber: 42,
+        lineNumber: 53,
         columnNumber: 7
       }, this)
     ]
   }, void 0, !0, {
     fileName: "app/components/header/links.tsx",
-    lineNumber: 40,
+    lineNumber: 51,
     columnNumber: 5
   }, this);
 }
 
+// app/components/header/index.tsx
+var import_react6 = require("react");
+
 // app/components/header/header-scroll.tsx
-var import_react3 = require("react"), import_jsx_dev_runtime3 = require("react/jsx-dev-runtime");
-function scrollFunction() {
+var import_react5 = require("react");
+function scrollFunction(ref) {
   var _a, _b;
-  window.pageYOffset || document.documentElement.scrollTop > 30 ? (_a = document.getElementById("page-header")) == null || _a.classList.add("scrolled") : (_b = document.getElementById("page-header")) == null || _b.classList.remove("scrolled");
+  document.documentElement.scrollTop >= 60 ? (_a = ref.current) == null || _a.classList.add("scrolled") : document.documentElement.scrollTop == 0 && ((_b = ref.current) == null || _b.classList.remove("scrolled"));
 }
-function HeaderScroll() {
-  return (0, import_react3.useEffect)(() => {
-    window.onscroll = () => scrollFunction();
-  }, []), /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)(import_jsx_dev_runtime3.Fragment, {}, void 0, !1, {
-    fileName: "app/components/header/header-scroll.tsx",
-    lineNumber: 14,
-    columnNumber: 10
-  }, this);
+function useHeaderScroll() {
+  let [element, setElement] = (0, import_react5.useState)(
+    null
+  );
+  return (0, import_react5.useEffect)(() => {
+    element != null && element.current && (window.onscroll = () => scrollFunction(element));
+  }, [element]), [setElement];
 }
 
 // app/components/header/index.tsx
 var import_jsx_dev_runtime4 = require("react/jsx-dev-runtime");
 function Header({ data }) {
-  let { author, description, image } = data;
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)("header", {
+  let { author, description, image } = data, ref = (0, import_react6.useRef)(null), [setHeader] = useHeaderScroll();
+  return (0, import_react6.useEffect)(() => {
+    setHeader(ref);
+  }, [ref, setHeader]), /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)("header", {
     className: "header clamp-text",
+    ref,
     children: /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)("div", {
       id: "page-header",
       children: [
@@ -302,7 +374,7 @@ function Header({ data }) {
                   width: 100
                 }, void 0, !1, {
                   fileName: "app/components/header/index.tsx",
-                  lineNumber: 13,
+                  lineNumber: 19,
                   columnNumber: 13
                 }, this),
                 /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)("span", {
@@ -310,26 +382,26 @@ function Header({ data }) {
                   children: author
                 }, void 0, !1, {
                   fileName: "app/components/header/index.tsx",
-                  lineNumber: 20,
+                  lineNumber: 26,
                   columnNumber: 13
                 }, this)
               ]
             }, void 0, !0, {
               fileName: "app/components/header/index.tsx",
-              lineNumber: 12,
+              lineNumber: 18,
               columnNumber: 11
             }, this),
             /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)(HomeLink, {
               data
             }, void 0, !1, {
               fileName: "app/components/header/index.tsx",
-              lineNumber: 22,
+              lineNumber: 28,
               columnNumber: 11
             }, this)
           ]
         }, void 0, !0, {
           fileName: "app/components/header/index.tsx",
-          lineNumber: 11,
+          lineNumber: 17,
           columnNumber: 9
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)("footer", {
@@ -339,49 +411,29 @@ function Header({ data }) {
             children: description
           }, void 0, !1, {
             fileName: "app/components/header/index.tsx",
-            lineNumber: 25,
+            lineNumber: 31,
             columnNumber: 11
           }, this)
         }, void 0, !1, {
           fileName: "app/components/header/index.tsx",
-          lineNumber: 24,
-          columnNumber: 9
-        }, this),
-        /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)(HeaderScroll, {}, void 0, !1, {
-          fileName: "app/components/header/index.tsx",
-          lineNumber: 27,
+          lineNumber: 30,
           columnNumber: 9
         }, this)
       ]
     }, void 0, !0, {
       fileName: "app/components/header/index.tsx",
-      lineNumber: 10,
+      lineNumber: 16,
       columnNumber: 7
     }, this)
   }, void 0, !1, {
     fileName: "app/components/header/index.tsx",
-    lineNumber: 9,
+    lineNumber: 15,
     columnNumber: 5
   }, this);
 }
 
-// app/hooks/index.ts
-var import_react4 = require("react");
-function useDate(value) {
-  return (0, import_react4.useMemo)(
-    () => value && new Date(Date.parse(value)).toLocaleString(),
-    [value]
-  );
-}
-function scrollHandler(onScroll, onScrollEnd) {
-  function scrollFunction2() {
-    document.body.scrollTop > 50 || document.documentElement.scrollTop > 50 ? onScroll() : onScrollEnd();
-  }
-  typeof window < "u" && (window.onscroll = scrollFunction2);
-}
-
 // app/tailwind.css
-var tailwind_default = "/build/_assets/tailwind-KV7GSBMT.css";
+var tailwind_default = "/build/_assets/tailwind-GSEHAOOI.css";
 
 // app/root.tsx
 var import_jsx_dev_runtime5 = require("react/jsx-dev-runtime"), links = () => [
@@ -407,35 +459,31 @@ var import_jsx_dev_runtime5 = require("react/jsx-dev-runtime"), links = () => [
     "meta:image": data.image.url,
     viewport: "width=device-width,initial-scale=1"
   };
-}, loader = async ({ request, params }) => {
+}, mainLoader = async ({ request, params }) => {
   let podcastName = request.url.split("/").at(3) || "hakapit";
   return podcastName ? params != null && params.episode ? await fetchEpisode4(podcastName, params.episode) : await fetchPage(podcastName) : {};
-};
+}, loader = async ({ request, params, context }) => await mainLoader({ request, params, context });
+function lastMatchWithData(matches) {
+  for (let i = matches.length - 1; i >= 0; i--)
+    if (matches[i].data)
+      return matches[i].data;
+}
 function App() {
   var _a, _b;
-  let data = (0, import_react5.useLoaderData)(), { episode } = (0, import_react5.useParams)();
-  scrollHandler(
-    () => {
-      document.getElementById("page-header").classList.add("small");
-    },
-    () => {
-      document.getElementById("page-header").classList.remove("small");
-    }
-  );
-  let imageUrl = episode ? (_b = (_a = data.items[0]) == null ? void 0 : _a.itunes) == null ? void 0 : _b.image : data.image.url;
+  let matches = (0, import_react7.useMatches)(), data = lastMatchWithData(matches), { episode } = (0, import_react7.useParams)(), imageUrl = episode ? (_b = (_a = data == null ? void 0 : data.items[0]) == null ? void 0 : _a.itunes) == null ? void 0 : _b.image : data == null ? void 0 : data.image.url;
   return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("html", {
     lang: "en",
     children: [
       /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("head", {
         children: [
-          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Meta, {}, void 0, !1, {
+          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react7.Meta, {}, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 73,
+            lineNumber: 78,
             columnNumber: 9
           }, this),
-          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Links, {}, void 0, !1, {
+          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react7.Links, {}, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 74,
+            lineNumber: 79,
             columnNumber: 9
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("link", {
@@ -443,69 +491,74 @@ function App() {
             href: imageUrl
           }, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 75,
+            lineNumber: 80,
+            columnNumber: 9
+          }, this)
+        ]
+      }, void 0, !0, {
+        fileName: "app/root.tsx",
+        lineNumber: 77,
+        columnNumber: 7
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("body", {
+        className: "body",
+        children: [
+          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(GlobalLoading, {}, void 0, !1, {
+            fileName: "app/root.tsx",
+            lineNumber: 83,
+            columnNumber: 9
+          }, this),
+          data && /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(Header, {
+            data
+          }, void 0, !1, {
+            fileName: "app/root.tsx",
+            lineNumber: 84,
+            columnNumber: 18
+          }, this),
+          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("main", {
+            className: "bg-accentBg",
+            children: /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react7.Outlet, {}, void 0, !1, {
+              fileName: "app/root.tsx",
+              lineNumber: 86,
+              columnNumber: 11
+            }, this)
+          }, void 0, !1, {
+            fileName: "app/root.tsx",
+            lineNumber: 85,
+            columnNumber: 9
+          }, this),
+          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react7.ScrollRestoration, {}, void 0, !1, {
+            fileName: "app/root.tsx",
+            lineNumber: 88,
+            columnNumber: 9
+          }, this),
+          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react7.Scripts, {}, void 0, !1, {
+            fileName: "app/root.tsx",
+            lineNumber: 89,
             columnNumber: 9
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("script", {
             src: "https://platform.twitter.com/widgets.js"
           }, void 0, !1, {
             fileName: "app/root.tsx",
-            lineNumber: 76,
+            lineNumber: 90,
+            columnNumber: 9
+          }, this),
+          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react7.LiveReload, {}, void 0, !1, {
+            fileName: "app/root.tsx",
+            lineNumber: 91,
             columnNumber: 9
           }, this)
         ]
       }, void 0, !0, {
         fileName: "app/root.tsx",
-        lineNumber: 72,
-        columnNumber: 7
-      }, this),
-      /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("body", {
-        style: { direction: "rtl" },
-        children: [
-          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(Header, {
-            data
-          }, void 0, !1, {
-            fileName: "app/root.tsx",
-            lineNumber: 79,
-            columnNumber: 9
-          }, this),
-          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("main", {
-            className: "bg-accent2",
-            children: /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Outlet, {}, void 0, !1, {
-              fileName: "app/root.tsx",
-              lineNumber: 81,
-              columnNumber: 11
-            }, this)
-          }, void 0, !1, {
-            fileName: "app/root.tsx",
-            lineNumber: 80,
-            columnNumber: 9
-          }, this),
-          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.ScrollRestoration, {}, void 0, !1, {
-            fileName: "app/root.tsx",
-            lineNumber: 83,
-            columnNumber: 9
-          }, this),
-          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Scripts, {}, void 0, !1, {
-            fileName: "app/root.tsx",
-            lineNumber: 84,
-            columnNumber: 9
-          }, this),
-          /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.LiveReload, {}, void 0, !1, {
-            fileName: "app/root.tsx",
-            lineNumber: 85,
-            columnNumber: 9
-          }, this)
-        ]
-      }, void 0, !0, {
-        fileName: "app/root.tsx",
-        lineNumber: 78,
+        lineNumber: 82,
         columnNumber: 7
       }, this)
     ]
   }, void 0, !0, {
     fileName: "app/root.tsx",
-    lineNumber: 71,
+    lineNumber: 76,
     columnNumber: 5
   }, this);
 }
@@ -517,10 +570,19 @@ __export(episode_exports, {
   links: () => links2,
   loader: () => loader2
 });
-var import_react7 = require("@remix-run/react");
+var import_react10 = require("@remix-run/react");
+
+// app/hooks/index.ts
+var import_react8 = require("react");
+function useDate(value) {
+  return (0, import_react8.useMemo)(
+    () => value && new Date(Date.parse(value)).toLocaleString(),
+    [value]
+  );
+}
 
 // app/components/rss/Episode.tsx
-var import_react6 = require("@remix-run/react"), import_jsx_dev_runtime6 = require("react/jsx-dev-runtime");
+var import_react9 = require("@remix-run/react"), import_jsx_dev_runtime6 = require("react/jsx-dev-runtime");
 function Episode({
   episode,
   round = !1,
@@ -547,7 +609,7 @@ function Episode({
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime6.jsxDEV)("span", {
             children: [
-              /* @__PURE__ */ (0, import_jsx_dev_runtime6.jsxDEV)(import_react6.Link, {
+              /* @__PURE__ */ (0, import_jsx_dev_runtime6.jsxDEV)(import_react9.Link, {
                 to: `/${podcastName}/episodes/${episode == null ? void 0 : episode.episodeGUID}`,
                 className: "text-accent text-lg",
                 children: episode == null ? void 0 : episode.title
@@ -625,12 +687,12 @@ function Episode({
 }
 
 // styles/themes/balcony-albums.css
-var balcony_albums_default = "/build/_assets/balcony-albums-IGNH3DUZ.css";
+var balcony_albums_default = "/build/_assets/balcony-albums-G6Z7LAVE.css";
 
 // app/routes/balcony-albums/episodes/$episode.tsx
-var import_jsx_dev_runtime7 = require("react/jsx-dev-runtime"), links2 = () => [{ rel: "stylesheet", href: balcony_albums_default }], loader2 = loader;
+var import_jsx_dev_runtime7 = require("react/jsx-dev-runtime"), links2 = () => [{ rel: "stylesheet", href: balcony_albums_default }], loader2 = async ({ request, params, context }) => await mainLoader({ request, params, context });
 function Index() {
-  let data = (0, import_react7.useLoaderData)();
+  let data = (0, import_react10.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("section", {
     className: "full-page-episode",
     children: /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)(Episode, {
@@ -638,12 +700,12 @@ function Index() {
       podcastName: "balcony-albums"
     }, void 0, !1, {
       fileName: "app/routes/balcony-albums/episodes/$episode.tsx",
-      lineNumber: 14,
+      lineNumber: 16,
       columnNumber: 7
     }, this)
   }, void 0, !1, {
     fileName: "app/routes/balcony-albums/episodes/$episode.tsx",
-    lineNumber: 13,
+    lineNumber: 15,
     columnNumber: 5
   }, this);
 }
@@ -655,15 +717,15 @@ __export(episode_exports2, {
   links: () => links3,
   loader: () => loader3
 });
-var import_react8 = require("@remix-run/react");
+var import_react11 = require("@remix-run/react");
 
 // styles/themes/hakapit.css
-var hakapit_default = "/build/_assets/hakapit-46YXLH6Z.css";
+var hakapit_default = "/build/_assets/hakapit-3XD7UQYA.css";
 
 // app/routes/hakapit/episodes/$episode.tsx
-var import_jsx_dev_runtime8 = require("react/jsx-dev-runtime"), links3 = () => [{ rel: "stylesheet", href: hakapit_default }], loader3 = loader;
+var import_jsx_dev_runtime8 = require("react/jsx-dev-runtime"), links3 = () => [{ rel: "stylesheet", href: hakapit_default }], loader3 = async ({ request, params, context }) => await mainLoader({ request, params, context });
 function Index2() {
-  let data = (0, import_react8.useLoaderData)();
+  let data = (0, import_react11.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime8.jsxDEV)("section", {
     className: "full-page-episode",
     children: /* @__PURE__ */ (0, import_jsx_dev_runtime8.jsxDEV)(Episode, {
@@ -671,12 +733,12 @@ function Index2() {
       podcastName: "hakapit"
     }, void 0, !1, {
       fileName: "app/routes/hakapit/episodes/$episode.tsx",
-      lineNumber: 14,
+      lineNumber: 16,
       columnNumber: 7
     }, this)
   }, void 0, !1, {
     fileName: "app/routes/hakapit/episodes/$episode.tsx",
-    lineNumber: 13,
+    lineNumber: 15,
     columnNumber: 5
   }, this);
 }
@@ -688,15 +750,15 @@ __export(episode_exports3, {
   links: () => links4,
   loader: () => loader4
 });
-var import_react9 = require("@remix-run/react");
+var import_react12 = require("@remix-run/react");
 
 // styles/themes/nitk.css
-var nitk_default = "/build/_assets/nitk-POGBXVKZ.css";
+var nitk_default = "/build/_assets/nitk-FPYFKPCL.css";
 
 // app/routes/nitk/episodes/$episode.tsx
-var import_jsx_dev_runtime9 = require("react/jsx-dev-runtime"), links4 = () => [{ rel: "stylesheet", href: nitk_default }], loader4 = loader;
+var import_jsx_dev_runtime9 = require("react/jsx-dev-runtime"), links4 = () => [{ rel: "stylesheet", href: nitk_default }], loader4 = async ({ request, params, context }) => await mainLoader({ request, params, context });
 function Index3() {
-  let data = (0, import_react9.useLoaderData)();
+  let data = (0, import_react12.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime9.jsxDEV)("section", {
     className: "full-page-episode",
     children: /* @__PURE__ */ (0, import_jsx_dev_runtime9.jsxDEV)(Episode, {
@@ -704,12 +766,12 @@ function Index3() {
       podcastName: "nitk"
     }, void 0, !1, {
       fileName: "app/routes/nitk/episodes/$episode.tsx",
-      lineNumber: 16,
+      lineNumber: 18,
       columnNumber: 7
     }, this)
   }, void 0, !1, {
     fileName: "app/routes/nitk/episodes/$episode.tsx",
-    lineNumber: 15,
+    lineNumber: 17,
     columnNumber: 5
   }, this);
 }
@@ -721,19 +783,19 @@ __export(balcony_albums_exports, {
   links: () => links5,
   loader: () => loader5
 });
-var import_react11 = require("@remix-run/react");
+var import_react14 = require("@remix-run/react");
 
 // app/components/rss/feed.tsx
-var import_react10 = require("react");
+var import_react13 = require("react");
 var import_jsx_dev_runtime10 = require("react/jsx-dev-runtime");
 function Feed({
   episodes,
   podcastName
 }) {
   var _a;
-  let [currentEpisodes, setCurrentEpisodes] = (0, import_react10.useState)(
+  let [currentEpisodes, setCurrentEpisodes] = (0, import_react13.useState)(
     episodes || []
-  ), ref = (0, import_react10.useRef)({ page: 0 }), loadMore = () => {
+  ), ref = (0, import_react13.useRef)({ page: 0 }), loadMore = () => {
     var _a2;
     ref.current.page += 1, (_a2 = fetchPage(podcastName, ref.current.page)) == null || _a2.then(
       ({ items }) => {
@@ -778,6 +840,7 @@ function TwitterTimelineEmbed({
   return /* @__PURE__ */ (0, import_jsx_dev_runtime11.jsxDEV)("div", {
     className: "timeline",
     children: /* @__PURE__ */ (0, import_jsx_dev_runtime11.jsxDEV)("a", {
+      className: "twitter-timeline",
       "data-lang": "he",
       "data-dnt": "true",
       "data-theme": "dark",
@@ -785,7 +848,7 @@ function TwitterTimelineEmbed({
       "data-height": "720",
       "data-chrome": "noborders",
       href: `https://twitter.com/${podcastName}?ref_src=twsrc%5Etfw`,
-      children: "feed"
+      children: "Twitter"
     }, void 0, !1, {
       fileName: "app/components/twitter-timeline-embed/index.tsx",
       lineNumber: 8,
@@ -799,9 +862,9 @@ function TwitterTimelineEmbed({
 }
 
 // app/routes/balcony-albums/index.tsx
-var import_jsx_dev_runtime12 = require("react/jsx-dev-runtime"), links5 = () => [{ rel: "stylesheet", href: balcony_albums_default }], loader5 = loader;
+var import_jsx_dev_runtime12 = require("react/jsx-dev-runtime"), links5 = () => [{ rel: "stylesheet", href: balcony_albums_default }], loader5 = async ({ request, params, context }) => await mainLoader({ request, params, context });
 function Index4() {
-  let data = (0, import_react11.useLoaderData)();
+  let data = (0, import_react14.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("section", {
     className: "feed-page",
     children: [
@@ -810,20 +873,20 @@ function Index4() {
         episodes: data == null ? void 0 : data.items
       }, void 0, !1, {
         fileName: "app/routes/balcony-albums/index.tsx",
-        lineNumber: 14,
+        lineNumber: 16,
         columnNumber: 7
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(TwitterTimelineEmbed, {
         podcastName: "KapitPod"
       }, void 0, !1, {
         fileName: "app/routes/balcony-albums/index.tsx",
-        lineNumber: 15,
+        lineNumber: 17,
         columnNumber: 7
       }, this)
     ]
   }, void 0, !0, {
     fileName: "app/routes/balcony-albums/index.tsx",
-    lineNumber: 13,
+    lineNumber: 15,
     columnNumber: 5
   }, this);
 }
@@ -835,10 +898,10 @@ __export(hakapit_exports, {
   links: () => links6,
   loader: () => loader6
 });
-var import_react12 = require("@remix-run/react");
-var import_jsx_dev_runtime13 = require("react/jsx-dev-runtime"), links6 = () => [{ rel: "stylesheet", href: hakapit_default }], loader6 = loader;
+var import_react15 = require("@remix-run/react");
+var import_jsx_dev_runtime13 = require("react/jsx-dev-runtime"), links6 = () => [{ rel: "stylesheet", href: hakapit_default }], loader6 = async ({ request, params, context }) => await mainLoader({ request, params, context });
 function Page() {
-  let data = (0, import_react12.useLoaderData)();
+  let data = (0, import_react15.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime13.jsxDEV)("section", {
     className: "feed-page",
     children: [
@@ -847,20 +910,20 @@ function Page() {
         episodes: data == null ? void 0 : data.items
       }, void 0, !1, {
         fileName: "app/routes/hakapit/index.tsx",
-        lineNumber: 14,
+        lineNumber: 16,
         columnNumber: 7
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime13.jsxDEV)(TwitterTimelineEmbed, {
         podcastName: "KapitPod"
       }, void 0, !1, {
         fileName: "app/routes/hakapit/index.tsx",
-        lineNumber: 15,
+        lineNumber: 17,
         columnNumber: 7
       }, this)
     ]
   }, void 0, !0, {
     fileName: "app/routes/hakapit/index.tsx",
-    lineNumber: 13,
+    lineNumber: 15,
     columnNumber: 5
   }, this);
 }
@@ -872,10 +935,10 @@ __export(nitk_exports, {
   links: () => links7,
   loader: () => loader7
 });
-var import_react13 = require("@remix-run/react");
-var import_jsx_dev_runtime14 = require("react/jsx-dev-runtime"), links7 = () => [{ rel: "stylesheet", href: nitk_default }], loader7 = loader;
+var import_react16 = require("@remix-run/react");
+var import_jsx_dev_runtime14 = require("react/jsx-dev-runtime"), links7 = () => [{ rel: "stylesheet", href: nitk_default }], loader7 = async ({ request, params, context }) => await mainLoader({ request, params, context });
 function Index5() {
-  let data = (0, import_react13.useLoaderData)();
+  let data = (0, import_react16.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime14.jsxDEV)("section", {
     className: "feed-page",
     children: [
@@ -884,20 +947,20 @@ function Index5() {
         episodes: data == null ? void 0 : data.items
       }, void 0, !1, {
         fileName: "app/routes/nitk/index.tsx",
-        lineNumber: 15,
+        lineNumber: 17,
         columnNumber: 7
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime14.jsxDEV)(TwitterTimelineEmbed, {
         podcastName: "ShchunaPod"
       }, void 0, !1, {
         fileName: "app/routes/nitk/index.tsx",
-        lineNumber: 16,
+        lineNumber: 18,
         columnNumber: 7
       }, this)
     ]
   }, void 0, !0, {
     fileName: "app/routes/nitk/index.tsx",
-    lineNumber: 14,
+    lineNumber: 16,
     columnNumber: 5
   }, this);
 }
@@ -969,7 +1032,7 @@ function Index6() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { version: "e3ff514d", entry: { module: "/build/entry.client-C4L7CN5Q.js", imports: ["/build/_shared/chunk-VKRJFAMF.js", "/build/_shared/chunk-XBGKFPLQ.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-GZM27HRI.js", imports: ["/build/_shared/chunk-3MFH7CLC.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/balcony-albums/episodes/$episode": { id: "routes/balcony-albums/episodes/$episode", parentId: "root", path: "balcony-albums/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/balcony-albums/episodes/$episode-IMQQ725L.js", imports: ["/build/_shared/chunk-YQLSDZWT.js", "/build/_shared/chunk-RVSXYD3U.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/balcony-albums/index": { id: "routes/balcony-albums/index", parentId: "root", path: "balcony-albums", index: !0, caseSensitive: void 0, module: "/build/routes/balcony-albums/index-Q6DUYLWG.js", imports: ["/build/_shared/chunk-YQLSDZWT.js", "/build/_shared/chunk-EPXWKBYF.js", "/build/_shared/chunk-RVSXYD3U.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/hakapit/episodes/$episode": { id: "routes/hakapit/episodes/$episode", parentId: "root", path: "hakapit/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/hakapit/episodes/$episode-YH4PPDJM.js", imports: ["/build/_shared/chunk-U233M3G5.js", "/build/_shared/chunk-RVSXYD3U.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/hakapit/index": { id: "routes/hakapit/index", parentId: "root", path: "hakapit", index: !0, caseSensitive: void 0, module: "/build/routes/hakapit/index-TH7VZM2B.js", imports: ["/build/_shared/chunk-U233M3G5.js", "/build/_shared/chunk-EPXWKBYF.js", "/build/_shared/chunk-RVSXYD3U.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-YWEVMCIZ.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/nitk/episodes/$episode": { id: "routes/nitk/episodes/$episode", parentId: "root", path: "nitk/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/nitk/episodes/$episode-ALUG3CIP.js", imports: ["/build/_shared/chunk-JEGSFHKY.js", "/build/_shared/chunk-RVSXYD3U.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/nitk/index": { id: "routes/nitk/index", parentId: "root", path: "nitk", index: !0, caseSensitive: void 0, module: "/build/routes/nitk/index-6KDW36CD.js", imports: ["/build/_shared/chunk-JEGSFHKY.js", "/build/_shared/chunk-EPXWKBYF.js", "/build/_shared/chunk-RVSXYD3U.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-E3FF514D.js" };
+var assets_manifest_default = { version: "69d85e0a", entry: { module: "/build/entry.client-UUKKDE43.js", imports: ["/build/_shared/chunk-RKKZGEPB.js", "/build/_shared/chunk-XBGKFPLQ.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-MDU52356.js", imports: ["/build/_shared/chunk-JA2PKVQD.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/balcony-albums/episodes/$episode": { id: "routes/balcony-albums/episodes/$episode", parentId: "root", path: "balcony-albums/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/balcony-albums/episodes/$episode-NDJAYTF6.js", imports: ["/build/_shared/chunk-MNM5QSPB.js", "/build/_shared/chunk-AZJQBDRF.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/balcony-albums/index": { id: "routes/balcony-albums/index", parentId: "root", path: "balcony-albums", index: !0, caseSensitive: void 0, module: "/build/routes/balcony-albums/index-5VTGGKNR.js", imports: ["/build/_shared/chunk-MNM5QSPB.js", "/build/_shared/chunk-ZFCDFDAP.js", "/build/_shared/chunk-AZJQBDRF.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/hakapit/episodes/$episode": { id: "routes/hakapit/episodes/$episode", parentId: "root", path: "hakapit/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/hakapit/episodes/$episode-HYVI2P3Q.js", imports: ["/build/_shared/chunk-5S3UJIE4.js", "/build/_shared/chunk-AZJQBDRF.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/hakapit/index": { id: "routes/hakapit/index", parentId: "root", path: "hakapit", index: !0, caseSensitive: void 0, module: "/build/routes/hakapit/index-J5XHLJXQ.js", imports: ["/build/_shared/chunk-5S3UJIE4.js", "/build/_shared/chunk-ZFCDFDAP.js", "/build/_shared/chunk-AZJQBDRF.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-YWEVMCIZ.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/nitk/episodes/$episode": { id: "routes/nitk/episodes/$episode", parentId: "root", path: "nitk/episodes/:episode", index: void 0, caseSensitive: void 0, module: "/build/routes/nitk/episodes/$episode-CKAHQGPB.js", imports: ["/build/_shared/chunk-7W7EOQE2.js", "/build/_shared/chunk-AZJQBDRF.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/nitk/index": { id: "routes/nitk/index", parentId: "root", path: "nitk", index: !0, caseSensitive: void 0, module: "/build/routes/nitk/index-TNSTYW3F.js", imports: ["/build/_shared/chunk-7W7EOQE2.js", "/build/_shared/chunk-ZFCDFDAP.js", "/build/_shared/chunk-AZJQBDRF.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-69D85E0A.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public/build", future = { v2_meta: !1 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {

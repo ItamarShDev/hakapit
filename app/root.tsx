@@ -3,6 +3,7 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
+import type { RouteMatch } from "@remix-run/react";
 import {
   Links,
   LiveReload,
@@ -16,6 +17,7 @@ import {
 } from "@remix-run/react";
 import { fetchEpisode, fetchPage } from "~/api/fetch-page";
 import type { EpisodeData } from "~/api/types";
+import { GlobalLoading } from "~/components/global-loader";
 import Header from "~/components/header";
 import twStyles from "./tailwind.css";
 
@@ -58,10 +60,15 @@ export const mainLoader: LoaderFunction = async ({ request, params }) => {
 export const loader: LoaderFunction = async ({ request, params, context }) => {
   return await mainLoader({ request, params, context });
 };
-
+function lastMatchWithData(matches: RouteMatch[]) {
+  for (let i = matches.length - 1; i >= 0; i--) {
+    if (matches[i].data) return matches[i].data;
+  }
+}
 export default function App() {
   const matches = useMatches();
-  const data = matches.at(-1)?.data;
+  const data = lastMatchWithData(matches);
+
   const { episode } = useParams();
   const imageUrl = episode ? data?.items[0]?.itunes?.image : data?.image.url;
 
@@ -71,15 +78,16 @@ export default function App() {
         <Meta />
         <Links />
         <link rel="icon" href={imageUrl} />
-        <script src="https://platform.twitter.com/widgets.js" />
       </head>
       <body className="body">
+        <GlobalLoading />
         {data && <Header data={data} />}
-        <main className="bg-accent2">
+        <main className="bg-accentBg">
           <Outlet />
         </main>
         <ScrollRestoration />
         <Scripts />
+        <script src="https://platform.twitter.com/widgets.js"></script>
         <LiveReload />
       </body>
     </html>
