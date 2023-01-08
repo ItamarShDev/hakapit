@@ -1,10 +1,13 @@
 import type { Data } from "./types";
-import { Link } from "@remix-run/react";
+import { NavLink } from "@remix-run/react";
 
 function Links({ selected }: { selected: string | undefined }) {
   const isHakapit = selected === "/hakapit";
   const isNitk = selected?.startsWith("/nitk");
   const isBalconyAlbums = selected?.startsWith("/balcony-albums");
+  const activeStyle = {
+    textDecoration: "underline",
+  };
   const links = [
     {
       href: "/hakapit",
@@ -28,9 +31,13 @@ function Links({ selected }: { selected: string | undefined }) {
   return (
     <div className="flex gap-4">
       {links.map((link) => (
-        <Link to={link.href} key={link.href} prefetch="render">
+        <NavLink
+          to={link.href}
+          key={link.href}
+          style={({ isActive }) => (isActive ? activeStyle : {})}
+        >
           {link.label}
-        </Link>
+        </NavLink>
       ))}
     </div>
   );

@@ -1,12 +1,18 @@
 import { HomeLink } from "./links";
 import type { Data } from "./types";
-import HeaderScroll from "./header-scroll";
+import { useEffect, useRef } from "react";
+import useHeaderScroll from "./header-scroll";
 
 export default function Header({ data }: { data: Data }) {
   const { author, description, image } = data;
+  const ref = useRef<HTMLElement>(null);
+  const [setHeader] = useHeaderScroll();
+  useEffect(() => {
+    setHeader(ref);
+  }, [ref, setHeader]);
 
   return (
-    <header className="header clamp-text">
+    <header className="header clamp-text" ref={ref}>
       <div id="page-header">
         <header className="grid grid-cols-auto-1fr-auto justify-between items-center gap-2">
           <div className="flex flex-col items-center p-4">
@@ -24,7 +30,6 @@ export default function Header({ data }: { data: Data }) {
         <footer className="px-2 py-3 text-2xl">
           <h2 className="font-normal">{description}</h2>
         </footer>
-        <HeaderScroll />
       </div>
     </header>
   );

@@ -15,11 +15,16 @@
   }
 }
 @layer components {
+  .body {
+    @apply min-h-screen h-screen grid gap-5 bg-accent2;
+    direction: rtl;
+    grid-template-rows: auto 1fr;
+  }
   .feed-page {
-    @apply bg-accent2 flex gap-6 w-full place-content-center flex-wrap overflow-auto;
+    @apply flex gap-6 w-full place-content-center flex-wrap overflow-auto;
   }
   .full-page-episode {
-    @apply min-h-screen bg-accent2 w-full overflow-auto py-10 px-8;
+    @apply w-full overflow-auto py-10 px-8;
   }
   .full-page-episode .episode-card {
     @apply text-paragraph my-2 mx-4 bg-primary-opaque max-w-none h-max;
@@ -47,11 +52,12 @@
   }
   .header {
     @apply sticky top-0 w-full z-10 text-paragraph
-    border-b-2 border-accent border-solid bg-primary;
+    border-b-2 border-accent border-solid bg-primary max-h-56;
     font-size: clamp(0.5em, 2.5vw, 1em);
   }
   .scrolled {
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s linear;
+    @apply h-16;
   }
 
   .scrolled h1 {
@@ -59,9 +65,7 @@
   }
   .scrolled header > div,
   .scrolled header > div img {
-    width: 60px;
-    height: 60px;
-    padding: 0;
+    @apply h-12 w-12 p-0 m-1;
   }
   .scrolled footer {
     display: none;

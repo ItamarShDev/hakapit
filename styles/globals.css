@@ -40,25 +40,3 @@ a:hover {
   direction: rtl;
   background-color: var(--color-background);
 }
-
-.scrolled h1 {
-  font-size: 2rem;
-}
-.scrolled header > div,
-.scrolled header > div img {
-  width: 60px;
-  height: 60px;
-  padding: 0;
-}
-.scrolled footer {
-  display: none;
-}
-.scrolled header span {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 1rem;
-}
-.scrolled header {
-  grid-template-columns: auto;
-}

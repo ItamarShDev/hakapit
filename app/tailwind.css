@@ -526,6 +526,16 @@ body {
   --tw-backdrop-sepia:  ;
 }
 
+.body {
+  display: grid;
+  height: 100vh;
+  min-height: 100vh;
+  gap: 1.25rem;
+  background-color: var(--color-background);
+  direction: rtl;
+  grid-template-rows: auto 1fr;
+}
+
 .feed-page {
   display: flex;
   width: 100%;
@@ -533,14 +543,11 @@ body {
   place-content: center;
   gap: 1.5rem;
   overflow: auto;
-  background-color: var(--color-background);
 }
 
 .full-page-episode {
-  min-height: 100vh;
   width: 100%;
   overflow: auto;
-  background-color: var(--color-background);
   padding-top: 2.5rem;
   padding-bottom: 2.5rem;
   padding-left: 2rem;
@@ -612,6 +619,7 @@ audio.audio::-webkit-media-controls-timeline-container {
   position: sticky;
   top: 0px;
   z-index: 10;
+  max-height: 14rem;
   width: 100%;
   border-bottom-width: 2px;
   border-style: solid;
@@ -622,7 +630,8 @@ audio.audio::-webkit-media-controls-timeline-container {
 }
 
 .scrolled {
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s linear;
+  height: 4rem;
 }
 
 .scrolled h1 {
@@ -631,9 +640,10 @@ audio.audio::-webkit-media-controls-timeline-container {
 
 .scrolled header > div,
   .scrolled header > div img {
-  width: 60px;
-  height: 60px;
-  padding: 0;
+  margin: 0.25rem;
+  height: 3rem;
+  width: 3rem;
+  padding: 0px;
 }
 
 .scrolled footer {
@@ -840,6 +850,10 @@ audio.audio::-webkit-media-controls-timeline-container {
 
 .text-accent {
   color: var(--color-tertiary);
+}
+
+.underline {
+  text-decoration-line: underline;
 }
 
 .filter {
