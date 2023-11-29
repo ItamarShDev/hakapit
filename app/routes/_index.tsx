@@ -1,41 +1,33 @@
-import type { MetaFunction } from "@remix-run/node";
-
-export const meta: MetaFunction = () => {
-  return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
-};
+import { Link } from '@remix-run/react';
 
 export default function Index() {
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
+    <section className="flex flex-col justify-center py-4 text-center align-middle lg:about h-fit lg:py-0">
+      <div className="text-center text-paragraph">
+        <h1 className="text-5xl fade-in-bottom">אז מה זה כפית?</h1>
+        <div className="py-5 what-is-kapit">
+          <p className="py-5 fade-in-bottom a-delay-100">
+            כפית זה משחק של אופי.
+          </p>
+          <p className="py-5 fade-in-bottom a-delay-400">
+            כפית זה ניצחון ברגע האחרון.
+          </p>
+          <p className="py-5 fade-in-bottom a-delay-700">
+            כפית זה כל כך פשוט וכל כך קשה.
+          </p>
+        </div>
+      </div>
+      <div className="flex justify-center gap-2 ">
+        <Link to="https://twitter.com/KapitPod">Twitter</Link>
+        <span className="text-accent">|</span>
+        <Link to="https://www.threads.net/@kapitpod">Threads</Link>
+        <span className="text-accent">|</span>
+        <Link to="https://www.facebook.com/KapitPod">Facebook</Link>
+        <span className="text-accent">|</span>
+        <Link to="https://www.instagram.com/kapitpod/">Instagram</Link>
+        <span className="text-accent">|</span>
+        <Link to="https://pod.link/1546442506">Pod.link</Link>
+      </div>
+    </section>
   );
 }
