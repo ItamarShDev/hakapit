@@ -1,12 +1,7 @@
 import { cn } from "@/lib/utils";
-import {
-  defer,
-  type LinksFunction,
-  type LoaderFunctionArgs,
-} from "@remix-run/node";
+import { type LinksFunction, type LoaderFunctionArgs } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
 import {
-  Await,
   Links,
   LiveReload,
   Meta,
@@ -15,7 +10,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { fetchPage } from "~/api/fetch-page";
 import { AnalyticsWrapper } from "~/components/analytics";
 import Header from "~/components/header";
@@ -37,12 +32,11 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-  const metadata = fetchPage(params.podcast || "hakapit", 1);
-  return defer({ metadata, podcast: params.podcast } as {
-    limit: number;
+  const metadata = await fetchPage(params.podcast || "hakapit", 1);
+  return { metadata, podcast: params.podcast } as {
     metadata: typeof metadata;
     podcast: "hakapit" | "balcony-albums" | "nitk";
-  });
+  };
 };
 
 export function ScriptTwitter({ id }: { id: string }) {
@@ -71,13 +65,7 @@ export default function App() {
         <Links />
       </head>
       <body className={cn("body", podcast)}>
-        <Suspense fallback={<></>}>
-          <Await resolve={metadata}>
-            {(metadata) =>
-              metadata && <Header data={metadata} podcast={podcast} />
-            }
-          </Await>
-        </Suspense>
+        {metadata && <Header data={metadata} podcast={podcast} />}
         <main className="main-content">
           <Outlet />
         </main>
