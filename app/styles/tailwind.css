@@ -150,6 +150,12 @@ body {
     align-self: flex-start;
   }
 
+  .twitter-timeline {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
   .clamp-text {
     font-size: clamp(0.5em, 2.5vw, 1em);
   }

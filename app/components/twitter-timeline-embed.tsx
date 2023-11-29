@@ -1,4 +1,3 @@
-
 function getHandle(podcastName: "hakapit" | "balcony-albums" | "nitk") {
   switch (podcastName) {
     case "hakapit":
@@ -16,20 +15,19 @@ export function TwitterTimelineEmbed({
   podcastName: "hakapit" | "balcony-albums" | "nitk";
 }) {
   const handle = getHandle(podcastName);
+
   return (
-    <div className="timeline"
-      key={podcastName}>
+    <div className="timeline" key={podcastName}>
       <a
         className="twitter-timeline"
         data-lang="he"
-        data-dnt="true"
         data-theme="dark"
-        data-tweet-limit="10"
+        data-tweet-limit="3"
         data-height="640"
-        data-chrome="noborders"
+        data-chrome="noborders transparent"
         href={`https://twitter.com/${handle}?ref_src=twsrc%5Etfw`}
       >
-        Tweets by {handle}
+        {" "}
       </a>
     </div>
   );

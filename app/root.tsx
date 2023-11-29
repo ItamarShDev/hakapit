@@ -15,7 +15,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { fetchPage } from "~/api/fetch-page";
 import { AnalyticsWrapper } from "~/components/analytics";
 import { DancingIcon } from "~/components/dancing-icon";
@@ -46,14 +46,30 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   });
 };
 
+export function ScriptTwitter({ id }: { id: string }) {
+  useEffect(() => {
+    document.getElementById("twitter-wjs")?.remove();
+    const scriptTag = document.createElement("script");
+    scriptTag.id = "twitter-wjs";
+    scriptTag.src = `https://platform.twitter.com/widgets.js?v=${id}`;
+    document.body.appendChild(scriptTag);
+  }, [id]);
+  return null;
+}
+
 export default function App() {
   const { metadata, podcast } = useLoaderData<typeof loader>();
+  const id =
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15);
+  console.log(id);
+
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script src={`https://platform.twitter.com/widgets.js?v=${podcast}`} />
+        <ScriptTwitter id={id} />
         <Meta />
         <Links />
       </head>
