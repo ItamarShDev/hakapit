@@ -17,7 +17,6 @@ export function TwitterTimelineEmbed({
   podcastName: "hakapit" | "balcony-albums" | "nitk";
 }) {
   const handle = getHandle(podcastName);
-
   return (
     <div className="timeline" key={podcastName}>
       <a

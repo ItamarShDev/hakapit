@@ -18,7 +18,6 @@ import {
 import { Suspense, useEffect } from "react";
 import { fetchPage } from "~/api/fetch-page";
 import { AnalyticsWrapper } from "~/components/analytics";
-import { DancingIcon } from "~/components/dancing-icon";
 import Header from "~/components/header";
 import styles from "~/styles/tailwind.css";
 
@@ -62,8 +61,6 @@ export default function App() {
   const id =
     Math.random().toString(36).substring(2, 15) +
     Math.random().toString(36).substring(2, 15);
-  console.log(id);
-
   return (
     <html lang="en">
       <head>
@@ -74,7 +71,7 @@ export default function App() {
         <Links />
       </head>
       <body className={cn("body", podcast)}>
-        <Suspense fallback={<DancingIcon />}>
+        <Suspense fallback={<></>}>
           <Await resolve={metadata}>
             {(metadata) =>
               metadata && <Header data={metadata} podcast={podcast} />
@@ -82,9 +79,7 @@ export default function App() {
           </Await>
         </Suspense>
         <main className="main-content">
-          <Suspense fallback={<DancingIcon />}>
-            <Outlet />
-          </Suspense>
+          <Outlet />
         </main>
         <ScrollRestoration />
         <Scripts />

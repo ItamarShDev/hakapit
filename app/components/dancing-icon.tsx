@@ -4,7 +4,7 @@ export function DancingIcon() {
       <img
         className="go-crazy-animation"
         alt="liverpool logo"
-        src="/favicon.ico"
+        src="/liverpool-logo.webp"
         width="100"
         height="100"
       />

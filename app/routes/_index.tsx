@@ -1,4 +1,21 @@
+import type { LinksFunction } from "@remix-run/node";
+import type { MetaFunction } from "@remix-run/react";
 import { Link } from "@remix-run/react";
+
+export const meta: MetaFunction = () => [
+  { title: "הכפית" },
+  { meta: "viewport", content: "width=device-width, initial-scale=1.0" },
+  { meta: "description", content: "אתר הבית של משפחת הכפית" },
+  { meta: "author", content: "משפחת הכפית" },
+  { meta: "image", content: "/logo.webp" },
+];
+
+export const links: LinksFunction = () => [
+  {
+    rel: "icon",
+    href: "/logo.webp",
+  },
+];
 
 export default function Index() {
   return (
