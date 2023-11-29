@@ -2,7 +2,7 @@ import { useNavigation } from "@remix-run/react";
 import type { Feed } from "~/api/types";
 import { Episode, SkeletonCard } from "~/components/rss/Episode";
 
-export default function ShortFeed({
+export default function MasonryFeed({
   data,
   podcastName,
 }: {
@@ -16,14 +16,16 @@ export default function ShortFeed({
       <span className="max-w-xl p-4 py-12 font-light info crazy-font">
         {data?.description}
       </span>
-      {data?.items?.map((episode, index) => (
-        <Episode key={index} episode={episode} podcastName={podcastName} />
-      ))}
-      {pathname &&
-        navigation.state !== "idle" &&
-        new Array(5)
-          .fill(0)
-          ?.map((episode, index) => <SkeletonCard key={index} />)}
+      <div className="masonry">
+        {data?.items?.map((episode, index) => (
+          <Episode key={index} episode={episode} podcastName={podcastName} />
+        ))}
+        {pathname &&
+          navigation.state !== "idle" &&
+          new Array(5)
+            .fill(0)
+            ?.map((episode, index) => <SkeletonCard key={index} />)}
+      </div>
     </>
   );
 }

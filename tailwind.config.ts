@@ -19,6 +19,9 @@ module.exports = {
       },
     },
     extend: {
+      transitionProperty: {
+        'height': 'height'
+      },
       gridTemplateColumns: {
         "auto-1fr": "auto 1fr",
         "auto-1fr-auto": "auto 1fr auto",

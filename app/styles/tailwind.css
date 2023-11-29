@@ -43,10 +43,6 @@ body {
     --color-text: 0, 0%, 100%;
     --color-muted: 0, 0%, 50%;
   }
-
-  body {
-    transition: all 0.2s ease-in-out, background 0.2s ease-in-out;
-  }
 }
 
 @layer components {
@@ -54,11 +50,11 @@ body {
     @apply grid min-h-screen gap-5 bg-background text-paragraph;
     direction: rtl;
     max-height: 100dvh;
-    grid-template-rows: auto 1fr 50px;
+    grid-template-rows: auto 1fr;
   }
 
   .main-content {
-    overflow: auto;
+    @apply px-8 overflow-auto p-4;
   }
 
   .content {
@@ -71,6 +67,11 @@ body {
 
   .feed-page {
     @apply flex flex-col flex-wrap w-full gap-6 place-content-center lg:flex-row;
+  }
+
+  .masonry {
+    @apply w-full grid gap-8;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
 
   .feed-page .timeline {
@@ -108,18 +109,31 @@ body {
   }
 
   .header {
-    @apply sticky top-0 z-10 w-full border-b-2 border-solid clamp-text border-accent bg-primary text-paragraph motion-reduce:transition-none;
+    @apply sticky top-0 z-10 w-full border-b-2 border-solid border-accent bg-primary text-paragraph;
+  }
+
+  .hide-menu {
+    grid-template-rows: 0fr;
+  }
+
+  .show-menu {
+    grid-template-rows: 1fr;
   }
 
   .header-title {
-    @apply flex flex-col justify-around opacity-100;
+    font-size: clamp(1em, 6vw, 2.5em);
+    line-height: 3rem;
     font-family: "Rubik 80s Fade", Tofu;
   }
 
-  .header-image {
-    @apply relative w-12 max-h-12;
-    transition: all 0.2s linear;
+  .grid-transition {
+    transition: grid-template-rows 1s;
   }
+
+  .header-image {
+    @apply relative w-12 h-12;
+  }
+
 
   .info {
     font-size: clamp(1em, 5vw, 2em);

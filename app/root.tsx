@@ -20,7 +20,6 @@ import { fetchPage } from "~/api/fetch-page";
 import { AnalyticsWrapper } from "~/components/analytics";
 import { DancingIcon } from "~/components/dancing-icon";
 import Header from "~/components/header";
-import { HomeLink } from "~/components/links";
 import styles from "~/styles/tailwind.css";
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
@@ -74,9 +73,6 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
-        <footer className="footer">
-          <HomeLink />
-        </footer>
         <AnalyticsWrapper />
       </body>
     </html>

@@ -11,5 +11,7 @@
   "editor.wordWrap": "wordWrapColumn",
   "[ignore]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
-  }
+  },
+  "explorer.excludeGitIgnore": true,
+  "search.useGlobalIgnoreFiles": true
 }

@@ -1,8 +1,8 @@
-import { Link } from '@remix-run/react';
+import { Link } from "@remix-run/react";
 
 export default function Index() {
   return (
-    <section className="flex flex-col justify-center py-4 text-center align-middle lg:about h-fit lg:py-0">
+    <section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about h-fit lg:py-0">
       <div className="text-center text-paragraph">
         <h1 className="text-5xl fade-in-bottom">אז מה זה כפית?</h1>
         <div className="py-5 what-is-kapit">

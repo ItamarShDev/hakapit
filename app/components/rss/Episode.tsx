@@ -16,7 +16,10 @@ export function SkeletonCard({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <Card
-      className={cn("episode-card h-64 w-full max-w-xl rounded-3xl", className)}
+      className={cn(
+        "episode-card h-full w-full max-w-xl rounded-3xl",
+        className
+      )}
     >
       <CardHeader>
         <CardTitle>
