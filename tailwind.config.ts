@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import colors from "tailwindcss/colors";
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -6,11 +7,6 @@ module.exports = {
     "./@/**/*.{ts,tsx}",
   ],
   theme: {
-    colors: {
-      paragraph: "hsl(var(--color-text))",
-      "primary-opaque": "hsl(var(--color-primary-opaque))",
-      accent: "hsl(var(--color-accent))",
-    },
     container: {
       center: true,
       padding: "2rem",
@@ -37,6 +33,10 @@ module.exports = {
         40: ".4",
       },
       colors: {
+        ...colors,
+        paragraph: "hsl(var(--color-text))",
+        "primary-opaque": "hsl(var(--color-primary-opaque))",
+        accent: "hsl(var(--color-accent))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -56,10 +56,6 @@ module.exports = {
         },
         muted: {
           DEFAULT: "hsl(var(--color-muted))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--color-accent))",
-          foreground: "hsl(var(--color-accent))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
