@@ -4,6 +4,11 @@ import { Link } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [
   { title: "הכפית" },
+  { charset: "utf-8" },
+  { meta: "og:title", content: "הכפית" },
+  { meta: "og:description", content: "אתר הבית של משפחת הכפית" },
+  { meta: "og:image", content: "/logo.webp" },
+  { meta: "og:type", content: "website" },
   { meta: "viewport", content: "width=device-width, initial-scale=1.0" },
   { meta: "description", content: "אתר הבית של משפחת הכפית" },
   { meta: "author", content: "משפחת הכפית" },
