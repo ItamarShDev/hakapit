@@ -1,8 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { NavLink } from "@remix-run/react";
-import { useState } from "react";
-import MenuIcon from "~/components/icons/menu";
 function LinkItem({
   href,
   label,
@@ -33,7 +30,7 @@ function LinkItem({
     </>
   );
 }
-const Links: React.FC<
+export const Links: React.FC<
   React.HTMLAttributes<HTMLDivElement> & { visibilityClass?: string }
 > = (props) => {
   const links = [
@@ -72,26 +69,3 @@ const Links: React.FC<
     </nav>
   );
 };
-
-export function NavLinks() {
-  const [linksShown, setLinksShown] = useState(false);
-
-  return (
-    <div>
-      <div className="flex flex-col pt-2 items-end gap-2 lg:gap-4 lg:hidden overflow-hidden">
-        <Button variant="link" onClick={() => setLinksShown((prev) => !prev)}>
-          <MenuIcon />
-        </Button>
-        <div
-          className={cn(
-            "grid items-start grid-transition",
-            linksShown ? "show-menu" : "hide-menu"
-          )}
-        >
-          <Links className="flex flex-col"></Links>
-        </div>
-      </div>
-      <Links className="flex-row hidden lg:flex"></Links>
-    </div>
-  );
-}

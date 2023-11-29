@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Link, NavLink } from "@remix-run/react";
+import { cn } from "@/lib/utils";
+import { NavLink } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import type { Feed } from "~/api/types";
 import { Feed as MasonryFeed, Preview } from "~/components/rss/feed/feed";
@@ -24,11 +25,16 @@ export default function RSSFeed({
       {preview ? (
         <>
           <Preview data={data} podcastName={podcastName} />
-          <Link to={`episodes`}>
-            <Button variant="link" className="text-accent">
+          <NavLink
+            to={`episodes`}
+            className={({ isPending }) =>
+              isPending ? "animate-pulse text-accent" : "text-accent"
+            }
+          >
+            <Button variant="link" className="text-xl lg:text-sm text-accent">
               לכל הפרקים
             </Button>
-          </Link>
+          </NavLink>
         </>
       ) : (
         <>
@@ -36,7 +42,10 @@ export default function RSSFeed({
           <NavLink
             to={`?limit=${limit + 5}`}
             className={({ isPending }) =>
-              isPending ? "animate-pulse text-accent" : "text-accent"
+              cn(
+                "text-xl lg:text-md",
+                isPending ? "animate-pulse text-accent" : "text-accent"
+              )
             }
             onClick={() => setNewLimit(limit + 5)}
           >

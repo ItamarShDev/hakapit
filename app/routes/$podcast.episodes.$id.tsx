@@ -30,7 +30,7 @@ export default function RouteComponent() {
   const data = useLoaderData<typeof loader>();
   if (!params.podcast) return null;
   return (
-    <section className="relative flex flex-col justify-start w-4/5 h-full m-auto lg:flex-row lg:gap-8 lg:py-32">
+    <section className="relative flex flex-col justify-start h-full m-auto md:w-4/5 lg:flex-row lg:gap-8 lg:py-32">
       <img
         src={data.itunes.image}
         className="top-0 right-0 z-0 faded-image-vertical lg:no-mask max-h-96 max-w-max rounded-2xl"

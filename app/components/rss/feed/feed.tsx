@@ -16,7 +16,7 @@ export function Feed({
 
   return (
     <>
-      <span className="max-w-xl p-4 py-12 font-light info crazy-font">
+      <span className="max-w-xl p-4 font-light info crazy-font big-title">
         פרקים
       </span>
       <div className="masonry">
@@ -40,7 +40,7 @@ export function Preview({
 }) {
   return (
     <>
-      <span className="max-w-xl p-4 py-12 font-light info crazy-font">
+      <span className="max-w-xl p-4 font-light info crazy-font">
         {data?.description}
       </span>
       <Episode episode={data?.items[0]} podcastName={podcastName} />
