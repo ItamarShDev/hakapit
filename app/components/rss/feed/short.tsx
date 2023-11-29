@@ -10,6 +10,7 @@ export default function ShortFeed({
   podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
 }) {
   const navigation = useNavigation();
+  const pathname = navigation.location?.pathname.includes("episodes");
   return (
     <>
       <span className="max-w-xl p-4 py-12 font-light info crazy-font">
@@ -18,7 +19,8 @@ export default function ShortFeed({
       {data?.items?.map((episode, index) => (
         <Episode key={index} episode={episode} podcastName={podcastName} />
       ))}
-      {navigation.state !== "idle" &&
+      {pathname &&
+        navigation.state !== "idle" &&
         new Array(5)
           .fill(0)
           ?.map((episode, index) => <SkeletonCard key={index} />)}
