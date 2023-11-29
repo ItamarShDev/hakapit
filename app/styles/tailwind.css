@@ -127,7 +127,7 @@ body {
   .header-title {
     font-size: clamp(1.5em, 15vw, 2.5em);
     line-height: 3rem;
-    font-family: "Rubik 80s Fade", Tofu;
+    font-family: "Rubik Moonrocks", "Rubik 80s Fade", Tofu;
   }
 
   .grid-transition {
