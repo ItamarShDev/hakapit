@@ -125,7 +125,7 @@ body {
   }
 
   .header-title {
-    font-size: clamp(1.5em, 6vw, 2.5em);
+    font-size: clamp(1.5em, 15vw, 2.5em);
     line-height: 3rem;
     font-family: "Rubik 80s Fade", Tofu;
   }
