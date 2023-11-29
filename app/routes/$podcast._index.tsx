@@ -4,13 +4,13 @@ import { fetchPage } from "~/api/fetch-page";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  if (!data) {
-    return [];
-  }
+export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
   const metadata = data?.metadata;
   return [
-    { meta: "viewport", content: "width=device-width, initial-scale=1.0" },
+    {
+      meta: "og:url",
+      content: `https://hakapit.online/${params?.podcast}`,
+    },
     { meta: "description", content: metadata?.description },
     { meta: "author", content: metadata?.itunes?.author },
     { meta: "image", content: metadata?.itunes?.image },

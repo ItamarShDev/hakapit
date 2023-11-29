@@ -9,6 +9,7 @@ export const meta: MetaFunction = () => [
   { meta: "og:description", content: "אתר הבית של משפחת הכפית" },
   { meta: "og:image", content: "/logo.webp" },
   { meta: "og:type", content: "website" },
+  { meta: "og:url", content: "hakapit.online" },
   { meta: "viewport", content: "width=device-width, initial-scale=1.0" },
   { meta: "description", content: "אתר הבית של משפחת הכפית" },
   { meta: "author", content: "משפחת הכפית" },

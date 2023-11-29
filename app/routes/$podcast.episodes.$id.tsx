@@ -1,15 +1,16 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useLoaderData, useParams } from "@remix-run/react";
 import { fetchEpisode } from "~/api/fetch-page";
-import type { Feed } from "~/api/types";
 
-export const meta = ({ data }: { data: Feed }) => {
+export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
   return [
-    { meta: "viewport", content: "width=device-width, initial-scale=1.0" },
-    { meta: "description", content: data?.description },
-    { meta: "author", content: data?.itunes?.author },
+    { meta: "description", content: data?.contentSnippet },
     { meta: "image", content: data?.itunes?.image },
     { title: data?.title },
+    {
+      meta: "og:url",
+      content: `https://hakapit.online/${params?.podcast}/episodes/${params.id}`,
+    },
     { tagName: "link", rel: "icon", href: data?.itunes.image },
   ];
 };
