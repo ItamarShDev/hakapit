@@ -136,7 +136,7 @@ export const StatsTable: React.FC<{
     <Await resolve={stats}>
       {(stats: Stats[]) => {
         return (
-          <div className="grid items-start w-full grid-cols-2 gap-3">
+          <div className="grid items-start w-full gap-3 grid-col-responsive cols-f">
             {stats.map((stat) => (
               <div className="flex flex-col" key={stat.response.league.name}>
                 <div className="flex flex-row-reverse items-center justify-center gap-8 p-3 bg-accent text-slate-900">
