@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { NavLink } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import type { Feed } from "~/api/types";
+import type { Feed } from "~/api/rss/types";
 import { Feed as MasonryFeed, Preview } from "~/components/rss/feed/feed";
 
 export default function RSSFeed({
@@ -30,6 +30,7 @@ export default function RSSFeed({
             className={({ isPending }) =>
               isPending ? "animate-pulse text-accent" : "text-accent"
             }
+            unstable_viewTransition
           >
             <Button variant="link" className="text-xl lg:text-sm text-accent">
               לכל הפרקים

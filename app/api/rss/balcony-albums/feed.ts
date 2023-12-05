@@ -1,13 +1,13 @@
-import { fetch_rss } from "~/api/fetch-rss";
-import { EpisodeData, Feed } from "~/api/types";
+import { fetch_rss } from "~/api/rss/fetch-rss";
+import type { EpisodeData, Feed } from "~/api/rss/types";
 
 function _fetch() {
-  const url = process?.env?.NITK_RSS || process?.env?.NEXT_PUBLIC_NITK_RSS;
+  const url = process.env.BALCONY_RSS || process.env.NEXT_PUBLIC_BALCONY_RSS;
   return fetch_rss(url);
 }
 
 export async function fetchEpisode(episodeGUID: string): Promise<EpisodeData> {
-  const { items, ...rss } = await _fetch();
+  const { items } = await _fetch();
   const episode = items.find(
     (episode) => episode?.guid?.split("/").pop() === episodeGUID,
   );

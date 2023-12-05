@@ -11,7 +11,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { useEffect } from "react";
-import { fetchPage } from "~/api/fetch-page";
+import { fetchPage } from "~/api/rss/fetch-page";
 import { AnalyticsWrapper } from "~/components/analytics";
 import Header from "~/components/header";
 import styles from "~/styles/tailwind.css";

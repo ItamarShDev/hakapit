@@ -36,7 +36,7 @@ export const Links: React.FC<
   const links = [
     {
       href: "/",
-      label: "מה זה כפית?",
+      label: "בית",
     },
     {
       href: "/hakapit",

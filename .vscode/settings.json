@@ -13,5 +13,14 @@
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
   "explorer.excludeGitIgnore": true,
-  "search.useGlobalIgnoreFiles": true
+  "search.useGlobalIgnoreFiles": true,
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.useTabStops": true,
+  "window.density.editorTabHeight": "default",
+  "workbench.editor.showTabs": "multiple"
 }

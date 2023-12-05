@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Link } from "@remix-run/react";
-import type { EpisodeData } from "~/api/types";
+import { Link, unstable_useViewTransitionState } from "@remix-run/react";
+import type { EpisodeData } from "~/api/rss/types";
 import { isDate } from "~/hooks";
 export function SkeletonCard({
   className,
@@ -46,6 +46,9 @@ export function Episode({
   podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
   contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
 } & React.HTMLAttributes<HTMLDivElement>) {
+  const isTransitioning = unstable_useViewTransitionState(
+    `/${podcastName}/episodes/${episode?.episodeGUID}`
+  );
   const isoDate = isDate(episode?.isoDate);
   return (
     <Card
@@ -53,6 +56,9 @@ export function Episode({
         "episode-card relative max-w-xl rounded-3xl overflow-hidden",
         className
       )}
+      style={{
+        viewTransitionName: isTransitioning ? "image-expand" : "",
+      }}
     >
       {episode?.itunes?.image && (
         <img

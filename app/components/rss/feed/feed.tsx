@@ -1,5 +1,5 @@
 import { useNavigation } from "@remix-run/react";
-import type { Feed } from "~/api/types";
+import type { Feed } from "~/api/rss/types";
 import { Episode, SkeletonCard } from "~/components/rss/Episode";
 
 export function Feed({

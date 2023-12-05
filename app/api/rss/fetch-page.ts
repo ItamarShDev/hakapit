@@ -1,6 +1,6 @@
-import { fetchEpisode as fetchBalconyEpisode, fetchFeed as fetchBalcony } from "./balcony-albums/feed";
-import { fetchEpisode as fetchKapitEpisode, fetchFeed as fetchKapit } from "./hakapit/feed";
-import { fetchEpisode as fetchNitkEpisode, fetchFeed as fetchNitk } from "./nitk/feed";
+import { fetchFeed as fetchBalcony, fetchEpisode as fetchBalconyEpisode } from "./balcony-albums/feed";
+import { fetchFeed as fetchKapit, fetchEpisode as fetchKapitEpisode } from "./hakapit/feed";
+import { fetchFeed as fetchNitk, fetchEpisode as fetchNitkEpisode } from "./nitk/feed";
 export function fetchPage(
   podcastName: "hakapit" | "nitk" | "balcony-albums" | string,
   number: number = 5,
