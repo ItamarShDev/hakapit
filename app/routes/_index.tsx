@@ -41,7 +41,7 @@ export default function Index() {
   return (
     <section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
       <StatsTable stats={stats} standings={standings} />
-      <div className="text-center text-paragraph">
+      <div className="py-8 text-center text-paragraph">
         <h1 className="text-4xl fade-in-bottom text-accent">מה זה כפית?</h1>
         <div className="what-is-kapit text-slate-300">
           <p className="py-2 fade-in-bottom a-delay-100">
@@ -55,7 +55,7 @@ export default function Index() {
           </p>
         </div>
       </div>
-      <div className="flex justify-center gap-2 py-4">
+      <div className="flex flex-wrap justify-center gap-2 py-4">
         <Link to="https://twitter.com/KapitPod">Twitter</Link>
         <span className="text-accent">|</span>
         <Link to="https://www.threads.net/@kapitpod">Threads</Link>
