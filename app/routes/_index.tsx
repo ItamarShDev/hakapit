@@ -2,7 +2,7 @@ import type { LinksFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
 import { Link, useLoaderData } from "@remix-run/react";
-import { getTeamInfo, getTeamStats } from "~/api/football";
+import { getTeam } from "~/api/fortmob-api/index.server";
 import { StatsTable } from "~/components/stats/stats";
 
 export const meta: MetaFunction = () => [
@@ -27,20 +27,17 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = async () => {
-  const standings = await getTeamInfo();
-  const stats = getTeamStats(standings.response.map((res) => res.league.id));
+  const teamData = getTeam();
   return defer({
-    standings,
-    stats,
+    teamData,
   });
 };
 
 export default function Index() {
-  const { standings, stats } = useLoaderData<typeof loader>();
-
+  const { teamData } = useLoaderData<typeof loader>();
   return (
     <section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
-      <StatsTable stats={stats} standings={standings} />
+      <StatsTable teamData={teamData} />
       <div className="py-8 text-center text-paragraph">
         <h1 className="text-4xl fade-in-bottom text-accent">מה זה כפית?</h1>
         <div className="what-is-kapit text-slate-300">
