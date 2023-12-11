@@ -10,12 +10,12 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
+import { SpeedInsights } from "@vercel/speed-insights/remix";
 import { useEffect } from "react";
 import { fetchPage } from "~/api/rss/fetch-page";
 import { AnalyticsWrapper } from "~/components/analytics";
 import Header from "~/components/header";
 import styles from "~/styles/tailwind.css";
-
 export const shouldRevalidate: ShouldRevalidateFunction = ({
   currentUrl,
   nextUrl,
@@ -72,6 +72,7 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+        <SpeedInsights />
         <AnalyticsWrapper />
       </body>
     </html>
