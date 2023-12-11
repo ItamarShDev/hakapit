@@ -1,7 +1,7 @@
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 import { useMemo } from "react";
-import { LiverpoolId } from "~/api/fortmob-api/constants";
-import type { TeamFixtures } from "~/api/fortmob-api/src/types/team";
+import { LiverpoolId } from "~/api/fotmob-api/constants";
+import type { TeamFixtures } from "~/api/fotmob-api/src/types/team";
 
 type Result = { x: "home" | "away"; y: number };
 type ResultType = { id: "Win" | "Lose" | "Draw"; data: Result[] };

@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { TeamForm } from "~/api/fortmob-api/src/types/team";
+import type { TeamForm } from "~/api/fotmob-api/src/types/team";
 
 export function getFormColor(form: string) {
   if (form == "W") return "bg-green-400";
