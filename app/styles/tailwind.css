@@ -95,6 +95,16 @@ body {
     font-family: "Heebo";
   }
 
+  .heebo {
+    font-family: "Heebo";
+  }
+
+  .game-title {
+    @apply grid items-center gap-5;
+    font-family: "Heebo";
+    grid-template-columns: 1fr auto 1fr;
+  }
+
   .audio {
     @apply w-full;
   }

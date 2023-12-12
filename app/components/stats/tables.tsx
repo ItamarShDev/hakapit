@@ -2,8 +2,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { Jsonify } from "type-fest";
 import { LiverpoolId } from "~/api/fotmob-api/constants";
-import type { Team } from "~/api/fotmob-api/src/types/team";
+import type { NextOpponentClass, Team } from "~/api/fotmob-api/src/types/team";
 import { ResultTooltip, getFormColor } from "~/components/stats/form";
+import TeamAvatar from "~/components/team-avatar";
 
 function getLeagueInfo(league: Jsonify<Team["table"][0]>) {
   if (league.data.tables) {
@@ -24,6 +25,12 @@ export function TournamentInformation({
   if (!league) return null;
   const standings = getLeagueInfo(league);
   const form = league.teamForm[LiverpoolId];
+  const nextMatch = league.nextOpponent[LiverpoolId];
+  const nextOpponentId = nextMatch[0] as string;
+  const nextOpponent = nextMatch.find(
+    (team) => typeof team === "object" && team.id === nextOpponentId
+  ) as NextOpponentClass | undefined;
+
   return (
     <Table>
       <TableBody>
@@ -67,7 +74,7 @@ export function TournamentInformation({
           </TableCell>
         </TableRow>
         <TableRow className="border-0">
-          <TableCell className="p-3 text-start text-slate-300">XG</TableCell>
+          <TableCell className="p-3 text-start text-slate-300">xG</TableCell>
           <TableCell className="p-3 font-bold text-start">
             {
               stats?.teams.find(
@@ -103,6 +110,20 @@ export function TournamentInformation({
                 </ResultTooltip>
               ))}
             </div>
+          </TableCell>
+        </TableRow>
+        <TableRow className="border-0">
+          <TableCell className="p-3 text-start text-slate-300">
+            משחק הבא
+          </TableCell>
+          <TableCell className="p-3 font-bold text-start">
+            {nextOpponent && (
+              <TeamAvatar
+                teamId={nextOpponentId}
+                teamName={nextOpponent?.name}
+                teamShortName={nextOpponent?.shortName}
+              />
+            )}
           </TableCell>
         </TableRow>
       </TableBody>
