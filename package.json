@@ -37,7 +37,8 @@
     "react-dom": "^18.2.0",
     "rss-parser": "^3.13.0",
     "tailwind-merge": "^2.0.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "type-fest": "^4.8.3"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.3.1",

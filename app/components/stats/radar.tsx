@@ -1,5 +1,6 @@
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 import { useMemo } from "react";
+import type { Jsonify } from "type-fest";
 import { LiverpoolId } from "~/api/fotmob-api/constants";
 import type { TeamFixtures } from "~/api/fotmob-api/src/types/team";
 
@@ -25,7 +26,7 @@ export function GamesRadar({
   fixtures,
   leagueId,
 }: {
-  fixtures: TeamFixtures;
+  fixtures: Jsonify<TeamFixtures>;
   leagueId: number;
 }) {
   const { Win, Lose, Draw } = useMemo(

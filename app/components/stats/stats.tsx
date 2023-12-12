@@ -1,12 +1,13 @@
 import { Await } from "@remix-run/react";
 import { Suspense } from "react";
-import type { Team, TeamStats } from "~/api/fotmob-api/src/types/team";
+import type { Jsonify } from "type-fest";
+import type { Team } from "~/api/fotmob-api/src/types/team";
 import { GamesRadar } from "~/components/stats/radar";
 import { TournamentInformation } from "~/components/stats/tables";
 
 export const StatsTable: React.FC<{
-  teamData: Team;
-  leagueStats: Promise<TeamStats[]>;
+  teamData: Jsonify<Team>;
+  leagueStats: Promise<Record<string, unknown>[]>;
 }> = ({ teamData, leagueStats }) => (
   <Suspense fallback={<div>Loading...</div>}>
     <Await resolve={leagueStats}>

@@ -5,6 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import type { Jsonify } from "type-fest";
 import type { TeamForm } from "~/api/fotmob-api/src/types/team";
 
 export function getFormColor(form: string) {
@@ -19,7 +20,7 @@ function getFormTextColor(form: string) {
   if (form == "L") return "text-red-400";
 }
 
-const TooltipScore: React.FC<{ game: TeamForm }> = ({ game }) => {
+const TooltipScore: React.FC<{ game: Jsonify<TeamForm> }> = ({ game }) => {
   const score = game.tooltipText;
   return (
     <div className="flex flex-row gap-5">
@@ -47,7 +48,7 @@ const TooltipScore: React.FC<{ game: TeamForm }> = ({ game }) => {
 };
 
 export const ResultTooltip: React.FC<
-  React.HTMLAttributes<HTMLDivElement> & { game: TeamForm }
+  React.HTMLAttributes<HTMLDivElement> & { game: Jsonify<TeamForm> }
 > = ({ game, children }) => (
   <TooltipProvider key={game.linkToMatch}>
     <Tooltip>

@@ -2,7 +2,7 @@
 
 import got from "got";
 import { CastingError } from "./type-cast-error";
-import type { type League } from "./types/league";
+import type { League } from "./types/league";
 import { Convert as ConvertLeague } from "./types/league";
 import {
   Convert as ConvertMatchDetails,
@@ -10,7 +10,7 @@ import {
 } from "./types/match-details";
 import { Convert as ConvertMatches, type Matches } from "./types/matches";
 import { Convert as ConvertPlayer, type Player } from "./types/player";
-import type { TeamStats, type Team } from "./types/team";
+import type { Team } from "./types/team";
 import { Convert as ConvertTeam } from "./types/team";
 
 const baseUrl = "https://www.fotmob.com/api";
@@ -87,7 +87,7 @@ class Fotmob {
     let url =
       this.teamsSeasonStatsUrl + `teamId=${id}&tournamentId=${seasonId}`;
     const res = await got(url, { cache: this.map });
-    return JSON.parse(res.body) as TeamStats;
+    return JSON.parse(res.body) as Record<string, any>;
   }
 
   async getPlayer(id: number) {

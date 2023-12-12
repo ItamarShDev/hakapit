@@ -1,10 +1,11 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import type { Jsonify } from "type-fest";
 import { LiverpoolId } from "~/api/fotmob-api/constants";
-import type { Team, TeamStats } from "~/api/fotmob-api/src/types/team";
+import type { Team } from "~/api/fotmob-api/src/types/team";
 import { ResultTooltip, getFormColor } from "~/components/stats/form";
 
-function getLeagueInfo(league: Team["table"][0]) {
+function getLeagueInfo(league: Jsonify<Team["table"][0]>) {
   if (league.data.tables) {
     return league.data.tables
       .map((table) => table.table.all.find((team) => team.id === LiverpoolId))
@@ -17,8 +18,8 @@ export function TournamentInformation({
   league,
   stats,
 }: {
-  league?: Team["table"][0];
-  stats?: TeamStats;
+  league?: Jsonify<Team["table"][0]>;
+  stats?: Record<string, any>;
 }) {
   if (!league) return null;
   const standings = getLeagueInfo(league);
@@ -46,8 +47,9 @@ export function TournamentInformation({
           </TableCell>
           <TableCell className="p-3 font-bold text-start">
             {
-              stats?.teams.find((stat) => stat.name === "goals_team_match")
-                ?.participant.value
+              stats?.teams.find(
+                (stat: Record<string, any>) => stat.name === "goals_team_match"
+              )?.participant.value
             }
           </TableCell>
         </TableRow>
@@ -58,7 +60,8 @@ export function TournamentInformation({
           <TableCell className="p-3 font-bold text-start">
             {
               stats?.teams.find(
-                (stat) => stat.name === "possession_percentage_team"
+                (stat: Record<string, any>) =>
+                  stat.name === "possession_percentage_team"
               )?.participant.value
             }
           </TableCell>
@@ -67,8 +70,10 @@ export function TournamentInformation({
           <TableCell className="p-3 text-start text-slate-300">XG</TableCell>
           <TableCell className="p-3 font-bold text-start">
             {
-              stats?.teams.find((stat) => stat.name === "expected_goals_team")
-                ?.participant.value
+              stats?.teams.find(
+                (stat: Record<string, any>) =>
+                  stat.name === "expected_goals_team"
+              )?.participant.value
             }
           </TableCell>
         </TableRow>
