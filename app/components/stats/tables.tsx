@@ -25,9 +25,9 @@ export function TournamentInformation({
   if (!league) return null;
   const standings = getLeagueInfo(league);
   const form = league.teamForm[LiverpoolId];
-  const nextMatch = league.nextOpponent[LiverpoolId];
-  const nextOpponentId = nextMatch[0] as string;
-  const nextOpponent = nextMatch.find(
+  const nextMatch = league.nextOpponent?.[LiverpoolId];
+  const nextOpponentId = nextMatch?.[0] as string;
+  const nextOpponent = nextMatch?.find(
     (team) => typeof team === "object" && team.id === nextOpponentId
   ) as NextOpponentClass | undefined;
 
