@@ -12,7 +12,7 @@ function LinkItem({
 	return (
 		<>
 			<NavLink
-				prefetch="render"
+				// prefetch="render"
 				to={href}
 				className={({ isActive, isPending }) =>
 					cn(
