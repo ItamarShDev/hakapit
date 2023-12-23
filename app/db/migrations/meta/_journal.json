@@ -1,20 +1,20 @@
 {
-  "version": "5",
-  "dialect": "pg",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "5",
-      "when": 1701051994579,
-      "tag": "0000_flawless_stardust",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1701052976741,
-      "tag": "0001_silky_baron_zemo",
-      "breakpoints": true
-    }
-  ]
+	"version": "5",
+	"dialect": "pg",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "5",
+			"when": 1701051994579,
+			"tag": "0000_flawless_stardust",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "5",
+			"when": 1701052976741,
+			"tag": "0001_silky_baron_zemo",
+			"breakpoints": true
+		}
+	]
 }
