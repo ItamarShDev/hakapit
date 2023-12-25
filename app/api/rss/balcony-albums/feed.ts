@@ -2,7 +2,7 @@ import { fetch_rss } from "~/api/rss/fetch-rss";
 import type { EpisodeData, Feed } from "~/api/rss/types";
 
 function _fetch() {
-	const url = process.env.BALCONY_RSS || process.env.NEXT_PUBLIC_BALCONY_RSS;
+	const url = process.env.BALCONY_RSS;
 	return fetch_rss(url);
 }
 

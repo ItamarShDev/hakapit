@@ -5,15 +5,37 @@ import RSSFeed from "~/components/rss/feed";
 
 export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 	return [
-		{ meta: "description", content: data?.metadata?.description },
-		{ meta: "author", content: data?.metadata?.itunes?.author },
-		{ meta: "image", content: data?.metadata?.itunes?.image },
+		{ charset: "utf-8" },
+		{ name: "viewport", content: "width=device-width, initial-scale=1.0" },
+		{ title: `פרקים של ${data?.metadata?.title}` },
+		{ name: "description", content: data?.metadata?.description },
+		{ name: "author", content: data?.metadata?.itunes?.author },
+		{ name: "image", content: data?.metadata?.itunes?.image },
+		{ tagName: "link", rel: "icon", href: data?.metadata?.itunes.image },
+		// open graph
 		{
-			meta: "og:url",
+			property: "og:url",
 			content: `https://hakapit.online/${params?.podcast}/episodes`,
 		},
-		{ title: `פרקים של ${data?.metadata?.title}` },
-		{ tagName: "link", rel: "icon", href: data?.metadata?.itunes.image },
+		{ property: "og:type", content: "website" },
+		{ property: "og:title", content: `פרקים של ${data?.metadata?.title}` },
+		{ property: "og:description", content: data?.metadata?.description },
+		{ property: "og:image", content: data?.metadata?.itunes?.image },
+		// twitter
+		{ property: "twitter:card", content: "summary_large_image" },
+		{
+			property: "twitter:url",
+			content: `https://hakapit.online/${params?.podcast}/episodes`,
+		},
+		{
+			property: "twitter:title",
+			content: `פרקים של ${data?.metadata?.title}`,
+		},
+		{
+			property: "twitter:description",
+			content: data?.metadata?.description,
+		},
+		{ property: "twitter:image", content: data?.metadata?.itunes?.image },
 	];
 };
 

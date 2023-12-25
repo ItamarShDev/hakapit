@@ -3,15 +3,34 @@ import { useLoaderData, useParams } from "@remix-run/react";
 import { fetchEpisode } from "~/api/rss/fetch-page";
 
 export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
+	const contentWithoutNewLine = data?.contentSnippet?.replace(/\n/g, " ");
 	return [
-		{ meta: "description", content: data?.contentSnippet },
-		{ meta: "image", content: data?.itunes?.image },
+		{ charset: "utf-8" },
+		{ name: "viewport", content: "width=device-width, initial-scale=1.0" },
 		{ title: data?.title },
+		{ name: "image", content: data?.itunes?.image },
+		{ name: "description", content: contentWithoutNewLine },
+		{ tagName: "link", rel: "icon", href: data?.itunes.image },
+		{ tagName: "link", rel: "icon", href: data?.itunes.image },
+		// open graph
 		{
-			meta: "og:url",
+			property: "og:url",
 			content: `https://hakapit.online/${params?.podcast}/episodes/${params.id}`,
 		},
-		{ tagName: "link", rel: "icon", href: data?.itunes.image },
+		{ property: "og:type", content: "website" },
+		{ property: "og:title", content: data?.title },
+		{ property: "og:description", content: contentWithoutNewLine },
+		{ property: "og:image", content: data?.itunes?.image },
+
+		// twitter
+		{ property: "twitter:card", content: "summary_large_image" },
+		{
+			property: "twitter:url",
+			content: `https://hakapit.online/${params?.podcast}/episodes/${params.id}`,
+		},
+		{ property: "twitter:title", content: data?.title },
+		{ property: "twitter:description", content: contentWithoutNewLine },
+		{ property: "twitter:image", content: data?.itunes?.image },
 	];
 };
 

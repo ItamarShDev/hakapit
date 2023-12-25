@@ -9,15 +9,23 @@ import TeamAvatar from "~/components/team-avatar";
 export const meta: MetaFunction = () => [
 	{ title: "הכפית" },
 	{ charset: "utf-8" },
-	{ meta: "og:title", content: "הכפית" },
-	{ meta: "og:description", content: "אתר הבית של משפחת הכפית" },
-	{ meta: "og:image", content: "/logo.webp" },
-	{ meta: "og:type", content: "website" },
-	{ meta: "og:url", content: "hakapit.online" },
-	{ meta: "viewport", content: "width=device-width, initial-scale=1.0" },
-	{ meta: "description", content: "אתר הבית של משפחת הכפית" },
-	{ meta: "author", content: "משפחת הכפית" },
-	{ meta: "image", content: "/logo.webp" },
+	{ name: "viewport", content: "width=device-width, initial-scale=1.0" },
+	{ name: "description", content: "אתר הבית של משפחת הכפית" },
+	{ name: "author", content: "משפחת הכפית" },
+	{ name: "image", content: "https://hakapit.online/logo.webp" },
+	// open graph
+
+	{ property: "og:type", content: "website" },
+	{ property: "og:url", content: "https://hakapit.online" },
+	{ property: "og:title", content: "הכפית" },
+	{ property: "og:description", content: "אתר הבית של משפחת הכפית" },
+	{ property: "og:image", content: "https://hakapit.online/logo.webp" },
+	// twitter
+	{ property: "twitter:card", content: "summary_large_image" },
+	{ property: "twitter:url", content: "https://hakapit.online" },
+	{ property: "twitter:title", content: "הכפית" },
+	{ property: "twitter:description", content: "אתר הבית של משפחת הכפית" },
+	{ property: "twitter:image", content: "https://hakapit.online/logo.webp" },
 ];
 
 export const links: LinksFunction = () => [
@@ -29,7 +37,6 @@ export const links: LinksFunction = () => [
 
 export const loader = async () => {
 	const teamData = await getTeam();
-
 	const leagueStats = Promise.all(
 		teamData.history.tables.current[0].link.map((league) => {
 			return getLeague(parseInt(league.tournament_id[0]));

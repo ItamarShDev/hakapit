@@ -2,7 +2,7 @@ import { fetch_rss } from "~/api/rss/fetch-rss";
 import type { EpisodeData, Feed } from "~/api/rss/types";
 
 function _fetch() {
-	const url = process.env.HAKAPIT_RSS || process.env.NEXT_PUBLIC_HAKAPIT_RSS;
+	const url = process.env.HAKAPIT_RSS;
 	return fetch_rss(url);
 }
 

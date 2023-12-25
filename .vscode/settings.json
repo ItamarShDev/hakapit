@@ -1,15 +1,21 @@
 {
-	"files.autoSave": "afterDelay",
-	"editor.defaultFormatter": "biomejs.biome",
-	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "explicit",
-		"source.organizeImports": "explicit"
-	},
-	
-	"editor.wordWrap": "wordWrapColumn",
-	"explorer.excludeGitIgnore": true,
-	"search.useGlobalIgnoreFiles": true,
-	"editor.useTabStops": true,
-	"window.density.editorTabHeight": "default",
-	"workbench.editor.showTabs": "multiple"
+  "files.autoSave": "afterDelay",
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+
+  "editor.wordWrap": "wordWrapColumn",
+  "explorer.excludeGitIgnore": true,
+  "search.useGlobalIgnoreFiles": true,
+  "editor.useTabStops": true,
+  "window.density.editorTabHeight": "default",
+  "workbench.editor.showTabs": "multiple",
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
 }
