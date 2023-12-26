@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useLoaderData, useSearchParams } from "@remix-run/react";
-import { fetchPage } from "~/api/rss/fetch-page";
+import { PodcastName, fetchFeed } from "~/api/rss/feed";
 import RSSFeed from "~/components/rss/feed";
 
 export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
@@ -49,7 +49,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 	const url = new URL(request.url);
 	const limitString = url.searchParams.get("limit");
 	const limit = Number(limitString);
-	const metadata = await fetchPage(params.podcast, limit || 5);
+	const metadata = await fetchFeed(params.podcast as PodcastName, limit || 5);
 	return { metadata, podcast: params.podcast, limit } as {
 		limit: number;
 		metadata: typeof metadata;

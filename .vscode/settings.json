@@ -17,5 +17,6 @@
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
-  }
+  },
+  "errorLens.enabled": true
 }

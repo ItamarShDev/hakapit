@@ -1,96 +1,30 @@
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { Link, unstable_useViewTransitionState } from "@remix-run/react";
-import type { EpisodeData } from "~/api/rss/types";
-import { isDate } from "~/hooks";
-export function SkeletonCard({
-	className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-	return (
-		<Card
-			className={cn(
-				"episode-card h-full w-full max-w-xl rounded-3xl",
-				className,
-			)}
-		>
-			<CardHeader>
-				<CardTitle>
-					<Skeleton className="w-64 h-6 rounded-full bg-primary-opaque" />
-				</CardTitle>
-				<CardDescription>
-					<Skeleton className="w-32 h-4 rounded-full bg-primary-opaque" />
-				</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<Skeleton className="w-full h-32 rounded-2xl bg-primary-opaque" />
-			</CardContent>
-		</Card>
-	);
-}
+import { EpisodeData } from "~/api/rss/types";
 
-export function Episode({
-	episode,
-	podcastName,
-	className,
-	contentClassName,
-}: {
-	episode?: EpisodeData;
-	podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
-	contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
-} & React.HTMLAttributes<HTMLDivElement>) {
-	const isTransitioning = unstable_useViewTransitionState(
-		`/${podcastName}/episodes/${episode?.episodeGUID}`,
-	);
-	const isoDate = isDate(episode?.isoDate);
+export default function Episode({ data }: { data: EpisodeData }) {
 	return (
-		<Card
-			className={cn(
-				"episode-card relative max-w-xl rounded-3xl overflow-hidden",
-				className,
-			)}
-			style={{
-				viewTransitionName: isTransitioning ? "image-expand" : "",
-			}}
-		>
-			{episode?.itunes?.image && (
-				<img
-					src={episode?.itunes?.image}
-					alt="episode"
-					placeholder="blur"
-					className="absolute object-cover object-top -z-10 rounded-3xl brightness-40 filter"
-				/>
-			)}
-			<CardHeader>
-				<CardTitle className="text-accent">
-					<Link to={`/${podcastName}/episodes/${episode?.episodeGUID}`}>
-						{episode?.title}
-					</Link>
-				</CardTitle>
-				<CardDescription className="text-muted">{isoDate}</CardDescription>
-			</CardHeader>
-			<CardContent className={cn("flex-1 text-paragraph", contentClassName)}>
-				{episode?.content && (
+		<section className="relative flex flex-col justify-start h-full m-auto md:w-4/5 lg:flex-row lg:gap-8 lg:py-32">
+			<img
+				src={data.itunes.image}
+				className="top-0 right-0 z-0 faded-image-vertical lg:no-mask max-h-96 max-w-max rounded-2xl"
+				alt="episode"
+			/>
+			<div className="p-2 lg:p-8 flex gap-3 flex-col">
+				<div className="text-accent text-3xl" text-accent>
+					{data?.title}
+				</div>
+				<div className="flex flex-col max-w-xl gap-3  text-lg -translate-y-32 rounded-xl  lg:translate-y-0 lg:gap-14">
 					<div
-						// biome-ignore lint: noDangerouslySetInnerHtml
+						/* biome-ignore lint: noDangerouslySetInnerHtml */
 						dangerouslySetInnerHTML={{
-							__html: episode?.content,
+							__html: data.content,
 						}}
 					/>
-				)}
-			</CardContent>
-			<CardFooter>
-				<audio className="audio" controls src={episode?.enclosure?.url}>
-					<track kind="captions" />
-				</audio>
-			</CardFooter>
-		</Card>
+					<audio autoPlay className="audio" controls>
+						<source src={data?.enclosure?.url} type="audio/ogg" />
+						<track kind="captions" />
+					</audio>
+				</div>
+			</div>
+		</section>
 	);
 }

@@ -1,6 +1,6 @@
 import { useNavigation } from "@remix-run/react";
 import type { Feed } from "~/api/rss/types";
-import { Episode, SkeletonCard } from "~/components/rss/Episode";
+import { EpisodeCard, SkeletonCard } from "~/components/rss/EpisodeCard";
 
 export function MasonryFeed({
 	data,
@@ -21,7 +21,7 @@ export function MasonryFeed({
 			</span>
 			<div className="masonry">
 				{data?.items?.map((episode, index) => (
-					<Episode
+					<EpisodeCard
 						key={episode.episodeGUID}
 						episode={episode}
 						podcastName={podcastName}
@@ -30,7 +30,7 @@ export function MasonryFeed({
 				{navigation.state !== "idle" &&
 					new Array(skeletonCount)
 						.fill(0)
-						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+						// biome-ignore lint:noArrayIndexKey
 						?.map((_, index) => <SkeletonCard key={index} />)}
 			</div>
 		</>
@@ -48,7 +48,7 @@ export function Preview({
 			<span className="max-w-xl p-4 font-light info crazy-font">
 				{data?.description}
 			</span>
-			<Episode episode={data?.items[0]} podcastName={podcastName} />
+			<EpisodeCard episode={data?.items[0]} podcastName={podcastName} />
 		</>
 	);
 }

@@ -9,6 +9,10 @@
 	"organizeImports": {
 		"enabled": true
 	},
+	"formatter": {
+		"formatWithErrors": true,
+		"lineWidth": 120
+	},
 	"linter": {
 		"enabled": true,
 		"rules": {

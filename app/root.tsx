@@ -11,7 +11,7 @@ import {
 	useLoaderData,
 } from "@remix-run/react";
 import { useEffect } from "react";
-import { fetchPage } from "~/api/rss/fetch-page";
+import { PodcastName, fetchFeed } from "~/api/rss/feed";
 import Header from "~/components/header";
 import styles from "~/styles/tailwind.css";
 export const shouldRevalidate: ShouldRevalidateFunction = ({
@@ -30,7 +30,10 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-	const metadata = await fetchPage(params.podcast || "hakapit", 1);
+	const metadata = await fetchFeed(
+		(params.podcast as PodcastName) || "hakapit",
+		1,
+	);
 	return { metadata, podcast: params.podcast } as {
 		metadata: typeof metadata;
 		podcast: "hakapit" | "balcony-albums" | "nitk";

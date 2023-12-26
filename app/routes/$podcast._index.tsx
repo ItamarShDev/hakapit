@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { fetchPage } from "~/api/rss/fetch-page";
+import { PodcastName, fetchFeed } from "~/api/rss/feed";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 
@@ -45,7 +45,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		});
 	}
 
-	const metadata = await fetchPage(params.podcast, 1);
+	const metadata = await fetchFeed(params.podcast as PodcastName, 1);
 	return { metadata, podcast: params.podcast } as {
 		limit: number;
 		metadata: typeof metadata;

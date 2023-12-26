@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useLoaderData, useParams } from "@remix-run/react";
-import { PodcastName, fetchEpisode } from "~/api/rss/feed";
+import { PodcastName, fetchLatestEpisode } from "~/api/rss/feed";
 import Episode from "~/components/rss/episode";
 
 export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
@@ -36,13 +36,13 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 };
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-	if (!params.podcast || !params.id) {
+	if (!params.podcast) {
 		throw new Response(null, {
 			status: 404,
 			statusText: "Not Found",
 		});
 	}
-	return await fetchEpisode(params.podcast as PodcastName, params.id);
+	return await fetchLatestEpisode(params.podcast as PodcastName);
 };
 
 export default function RouteComponent() {
