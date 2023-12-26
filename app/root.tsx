@@ -2,11 +2,13 @@ import { cn } from "@/lib/utils";
 import { type LinksFunction, type LoaderFunctionArgs } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
+import { SpeedInsights } from "@vercel/speed-insights/remix";
 import { useEffect } from "react";
 import { PodcastName, fetchFeed } from "~/api/rss/feed";
 import { AnalyticsWrapper } from "~/components/analytics";
 import Header from "~/components/header";
 import styles from "~/styles/tailwind.css";
+
 export const shouldRevalidate: ShouldRevalidateFunction = ({ currentUrl, nextUrl }) => {
 	return currentUrl !== nextUrl;
 };
@@ -58,8 +60,7 @@ export default function App() {
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />
-				{/* <SpeedInsights />
-				 */}
+				<SpeedInsights />
 				<AnalyticsWrapper />
 			</body>
 		</html>
