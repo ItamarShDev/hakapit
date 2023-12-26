@@ -21,14 +21,7 @@ export default function Header({ data, podcast, className }: Props) {
 		<header className="overflow-hidden header">
 			<div className="flex flex-wrap items-start gap-4 p-4 lg:items-center ">
 				<div className="header-image">
-					{image?.url && (
-						<img
-							src={image?.url}
-							alt="podcast logo"
-							placeholder="blur"
-							className="object-contain"
-						/>
-					)}
+					{image?.url && <img src={image?.url} alt="podcast logo" placeholder="blur" className="object-contain" />}
 				</div>
 				<div className="flex-1 header-title">
 					<Link to={`/${podcast || ""}`}>
@@ -42,12 +35,7 @@ export default function Header({ data, podcast, className }: Props) {
 				</div>
 				<Links className="flex-row hidden lg:flex" />
 			</div>
-			<div
-				className={cn(
-					"grid items-start grid-transition",
-					linksShown ? "show-menu" : "hide-menu",
-				)}
-			>
+			<div className={cn("grid items-start grid-transition", linksShown ? "show-menu" : "hide-menu")}>
 				<Links className="flex flex-col items-center text-2xl" />
 			</div>
 		</header>

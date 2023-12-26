@@ -51,7 +51,7 @@ export function EpisodeCard({
 			)}
 			<CardHeader>
 				<CardTitle className="text-accent">
-					<Link to={`/${podcastName}/episodes/${episode?.episodeGUID}`}>{episode?.title}</Link>
+					<Link to={`/${podcastName}/episodes/${episode?.number}`}>{episode?.title}</Link>
 				</CardTitle>
 				<CardDescription className="text-muted">{isoDate}</CardDescription>
 			</CardHeader>

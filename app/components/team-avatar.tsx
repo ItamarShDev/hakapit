@@ -12,16 +12,10 @@ export default function TeamAvatar({
 	iconPosition?: "before" | "after";
 }) {
 	return (
-		<div
-			className={`flex items-center gap-3 ${
-				iconPosition === "after" ? "justify-end" : "justify-start"
-			}`}
-		>
+		<div className={`flex items-center gap-3 ${iconPosition === "after" ? "justify-end" : "justify-start"}`}>
 			{iconPosition === "after" && teamName}
 			<Avatar className="h-[25px] w-[25px]">
-				<AvatarImage
-					src={`https://images.fotmob.com/image_resources/logo/teamlogo/${teamId}_xsmall.png`}
-				/>
+				<AvatarImage src={`https://images.fotmob.com/image_resources/logo/teamlogo/${teamId}_xsmall.png`} />
 				<AvatarFallback className="scale-75">{teamShortName}</AvatarFallback>
 			</Avatar>
 			{iconPosition === "before" && teamName}

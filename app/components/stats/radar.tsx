@@ -32,20 +32,14 @@ export function GamesRadar({
 	const { Win, Lose, Draw } = useMemo(
 		() =>
 			fixtures.allFixtures.fixtures
-				.filter(
-					(fixture) =>
-						!fixture.notStarted && fixture.tournament.leagueId === leagueId,
-				)
+				.filter((fixture) => !fixture.notStarted && fixture.tournament.leagueId === leagueId)
 				.reduce(
 					(acc, fixture) => {
 						if (fixture.result == null) return acc;
-						const locationKey =
-							fixture.home.id === LiverpoolId ? "home" : "away";
+						const locationKey = fixture.home.id === LiverpoolId ? "home" : "away";
 						const typeKey = getKeyByNumber(fixture.result);
 						if (!typeKey) return acc;
-						const existingIDX = acc[typeKey].data.findIndex(
-							(item) => item.x === locationKey,
-						);
+						const existingIDX = acc[typeKey].data.findIndex((item) => item.x === locationKey);
 
 						if (existingIDX > -1) {
 							acc[typeKey].data[existingIDX].y += 1;

@@ -16,16 +16,10 @@ export function MasonryFeed({
 
 	return (
 		<>
-			<span className="max-w-xl p-4 font-light info crazy-font big-title">
-				פרקים
-			</span>
+			<span className="max-w-xl p-4 font-light info crazy-font big-title">פרקים</span>
 			<div className="masonry">
 				{data?.items?.map((episode, index) => (
-					<EpisodeCard
-						key={episode.episodeGUID}
-						episode={episode}
-						podcastName={podcastName}
-					/>
+					<EpisodeCard key={episode.episodeGUID} episode={episode} podcastName={podcastName} />
 				))}
 				{navigation.state !== "idle" &&
 					new Array(skeletonCount)
@@ -45,9 +39,7 @@ export function Preview({
 }) {
 	return (
 		<>
-			<span className="max-w-xl p-4 font-light info crazy-font">
-				{data?.description}
-			</span>
+			<span className="max-w-xl p-4 font-light info crazy-font">{data?.description}</span>
 			<EpisodeCard episode={data?.items[0]} podcastName={podcastName} />
 		</>
 	);

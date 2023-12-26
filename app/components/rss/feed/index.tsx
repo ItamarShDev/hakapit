@@ -27,9 +27,7 @@ export default function RSSFeed({
 					<Preview data={data} podcastName={podcastName} />
 					<NavLink
 						to={"episodes"}
-						className={({ isPending }) =>
-							isPending ? "animate-pulse text-accent" : "text-accent"
-						}
+						className={({ isPending }) => (isPending ? "animate-pulse text-accent" : "text-accent")}
 						unstable_viewTransition
 					>
 						<Button variant="link" className="text-xl lg:text-sm text-accent">
@@ -43,12 +41,10 @@ export default function RSSFeed({
 					<NavLink
 						to={`?limit=${limit + 5}`}
 						className={({ isPending }) =>
-							cn(
-								"text-xl lg:text-md",
-								isPending ? "animate-pulse text-accent" : "text-accent",
-							)
+							cn("text-xl lg:text-md", isPending ? "animate-pulse text-accent" : "text-accent")
 						}
 						onClick={() => setNewLimit(limit + 5)}
+						replace
 					>
 						הצג עוד
 					</NavLink>

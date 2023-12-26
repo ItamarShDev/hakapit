@@ -1,23 +1,12 @@
 import { cn } from "@/lib/utils";
 import { type LinksFunction, type LoaderFunctionArgs } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
-import {
-	Links,
-	LiveReload,
-	Meta,
-	Outlet,
-	Scripts,
-	ScrollRestoration,
-	useLoaderData,
-} from "@remix-run/react";
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import { PodcastName, fetchFeed } from "~/api/rss/feed";
 import Header from "~/components/header";
 import styles from "~/styles/tailwind.css";
-export const shouldRevalidate: ShouldRevalidateFunction = ({
-	currentUrl,
-	nextUrl,
-}) => {
+export const shouldRevalidate: ShouldRevalidateFunction = ({ currentUrl, nextUrl }) => {
 	return currentUrl !== nextUrl;
 };
 
@@ -30,10 +19,7 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-	const metadata = await fetchFeed(
-		(params.podcast as PodcastName) || "hakapit",
-		1,
-	);
+	const metadata = await fetchFeed((params.podcast as PodcastName) || "hakapit", 1);
 	return { metadata, podcast: params.podcast } as {
 		metadata: typeof metadata;
 		podcast: "hakapit" | "balcony-albums" | "nitk";
@@ -53,17 +39,12 @@ export function ScriptTwitter({ id }: { id: string }) {
 
 export default function App() {
 	const { metadata, podcast } = useLoaderData<typeof loader>();
-	const id =
-		Math.random().toString(36).substring(2, 15) +
-		Math.random().toString(36).substring(2, 15);
+	const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 	return (
 		<html lang="en">
 			<head>
 				<meta charSet="utf-8" />
-				<meta
-					name="viewport"
-					content="width=device-width, initial-scale=1"
-				/>
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<ScriptTwitter id={id} />
 				<Meta />
 				<Links />

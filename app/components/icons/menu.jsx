@@ -1,13 +1,6 @@
 export default function MenuIcon({ height = 30, width = 30 }) {
 	return (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			x="0px"
-			y="0px"
-			width={width}
-			height={height}
-			viewBox="0 0 50 50"
-		>
+		<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width={width} height={height} viewBox="0 0 50 50">
 			<title>Menu</title>
 			<path
 				className="fill-paragraph"

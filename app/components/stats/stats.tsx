@@ -16,8 +16,7 @@ export const StatsTable: React.FC<{
 					<div className="grid items-start w-full gap-3 grid-col-responsive cols-f">
 						{teamData.table.map((league) => {
 							const tournamentId = teamData.history.tables.current[0].link.find(
-								(season) =>
-									season.template_id[0] === league.data.leagueId.toString(),
+								(season) => season.template_id[0] === league.data.leagueId.toString(),
 							)?.tournament_id[0];
 
 							return (
@@ -33,16 +32,11 @@ export const StatsTable: React.FC<{
 									<div className="py-3">
 										<TournamentInformation
 											league={league}
-											stats={leagueStats.find(
-												(stats) => stats.tournamentId === tournamentId,
-											)}
+											stats={leagueStats.find((stats) => stats.tournamentId === tournamentId)}
 										/>
 									</div>
 									<div className="h-[250px]">
-										<GamesRadar
-											fixtures={teamData.fixtures}
-											leagueId={league.data.leagueId}
-										/>
+										<GamesRadar fixtures={teamData.fixtures} leagueId={league.data.leagueId} />
 									</div>
 								</div>
 							);

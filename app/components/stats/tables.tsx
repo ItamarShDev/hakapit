@@ -28,50 +28,33 @@ export function TournamentInformation({
 	const form = league.teamForm[LiverpoolId];
 	const nextMatch = league.nextOpponent?.[LiverpoolId];
 	const nextOpponentId = nextMatch?.[0] as string;
-	const nextOpponent = nextMatch?.find(
-		(team) => typeof team === "object" && team.id === nextOpponentId,
-	) as NextOpponentClass | undefined;
+	const nextOpponent = nextMatch?.find((team) => typeof team === "object" && team.id === nextOpponentId) as
+		| NextOpponentClass
+		| undefined;
 
 	return (
 		<Table>
 			<TableBody>
 				<TableRow className="border-0">
 					<TableCell className="p-3 text-start text-slate-300">מיקום</TableCell>
+					<TableCell className="p-3 font-bold text-start">{standings?.idx}</TableCell>
+				</TableRow>
+				<TableRow className="border-0">
+					<TableCell className="p-3 text-start text-slate-300">נקודות</TableCell>
+					<TableCell className="p-3 font-bold text-start">{standings?.pts}</TableCell>
+				</TableRow>
+				<TableRow className="border-0">
+					<TableCell className="p-3 text-start text-slate-300">ממוצע שערים למשחק</TableCell>
 					<TableCell className="p-3 font-bold text-start">
-						{standings?.idx}
+						{stats?.teams.find((stat: Record<string, unknown>) => stat.name === "goals_team_match")?.participant.value}
 					</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">
-						נקודות
-					</TableCell>
-					<TableCell className="p-3 font-bold text-start">
-						{standings?.pts}
-					</TableCell>
-				</TableRow>
-				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">
-						ממוצע שערים למשחק
-					</TableCell>
+					<TableCell className="p-3 text-start text-slate-300">ממוצע אחזקת כדור</TableCell>
 					<TableCell className="p-3 font-bold text-start">
 						{
-							stats?.teams.find(
-								(stat: Record<string, unknown>) =>
-									stat.name === "goals_team_match",
-							)?.participant.value
-						}
-					</TableCell>
-				</TableRow>
-				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">
-						ממוצע אחזקת כדור
-					</TableCell>
-					<TableCell className="p-3 font-bold text-start">
-						{
-							stats?.teams.find(
-								(stat: Record<string, unknown>) =>
-									stat.name === "possession_percentage_team",
-							)?.participant.value
+							stats?.teams.find((stat: Record<string, unknown>) => stat.name === "possession_percentage_team")
+								?.participant.value
 						}
 					</TableCell>
 				</TableRow>
@@ -79,33 +62,23 @@ export function TournamentInformation({
 					<TableCell className="p-3 text-start text-slate-300">xG</TableCell>
 					<TableCell className="p-3 font-bold text-start">
 						{
-							stats?.teams.find(
-								(stat: Record<string, unknown>) =>
-									stat.name === "expected_goals_team",
-							)?.participant.value
+							stats?.teams.find((stat: Record<string, unknown>) => stat.name === "expected_goals_team")?.participant
+								.value
 						}
 					</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">
-						נקודות
-					</TableCell>
-					<TableCell className="p-3 font-bold text-start">
-						{standings?.pts}
-					</TableCell>
+					<TableCell className="p-3 text-start text-slate-300">נקודות</TableCell>
+					<TableCell className="p-3 font-bold text-start">{standings?.pts}</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">
-						ביצועים
-					</TableCell>
+					<TableCell className="p-3 text-start text-slate-300">ביצועים</TableCell>
 					<TableCell className="p-3 text-start">
 						<div className="flex items-center">
 							{form?.map((game) => (
 								<ResultTooltip game={game} key={game.linkToMatch}>
 									<Avatar className="h-[25px] w-[25px]">
-										<AvatarFallback
-											className={`scale-75 ${getFormColor(game.resultString)}`}
-										>
+										<AvatarFallback className={`scale-75 ${getFormColor(game.resultString)}`}>
 											{game.resultString}
 										</AvatarFallback>
 									</Avatar>
@@ -115,9 +88,7 @@ export function TournamentInformation({
 					</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">
-						משחק הבא
-					</TableCell>
+					<TableCell className="p-3 text-start text-slate-300">משחק הבא</TableCell>
 					<TableCell className="p-3 font-bold text-start">
 						{nextOpponent && (
 							<TeamAvatar
