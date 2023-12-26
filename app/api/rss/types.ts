@@ -14,6 +14,7 @@ export type EpisodeData = {
 	enclosure: { url: string };
 	episodeGUID?: number;
 	contentSnippet?: string;
+	number?: number;
 };
 export type Feed = {
 	items: EpisodeData[];

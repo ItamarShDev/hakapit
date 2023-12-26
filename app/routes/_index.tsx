@@ -57,32 +57,18 @@ export default function Index() {
 			<div className="flex flex-col gap-2 py-6 heebo">
 				המשחק הבא
 				<div className="game-title">
-					<TeamAvatar
-						teamId={nextGame.away.id}
-						teamName={nextGame.away.name}
-						iconPosition="after"
-					/>
+					<TeamAvatar teamId={nextGame.away.id} teamName={nextGame.away.name} iconPosition="after" />
 					<div>{new Date(nextGame.status.utcTime).toLocaleString()}</div>
-					<TeamAvatar
-						teamId={nextGame.home.id}
-						teamName={nextGame.home.name}
-						iconPosition="before"
-					/>
+					<TeamAvatar teamId={nextGame.home.id} teamName={nextGame.home.name} iconPosition="before" />
 				</div>
 			</div>
 			<StatsTable teamData={teamData} leagueStats={leagueStats} />
 			<div className="py-8 text-center text-paragraph">
 				<h1 className="text-4xl fade-in-bottom text-accent">מה זה כפית?</h1>
 				<div className="what-is-kapit text-slate-300">
-					<p className="py-2 fade-in-bottom a-delay-100">
-						כפית זה משחק של אופי.
-					</p>
-					<p className="py-2 fade-in-bottom a-delay-400">
-						כפית זה ניצחון ברגע האחרון.
-					</p>
-					<p className="py-2 fade-in-bottom a-delay-700">
-						כפית זה כל כך פשוט וכל כך קשה.
-					</p>
+					<p className="py-2 fade-in-bottom a-delay-100">כפית זה משחק של אופי.</p>
+					<p className="py-2 fade-in-bottom a-delay-400">כפית זה ניצחון ברגע האחרון.</p>
+					<p className="py-2 fade-in-bottom a-delay-700">כפית זה כל כך פשוט וכל כך קשה.</p>
 				</div>
 			</div>
 			<div className="flex flex-wrap justify-center gap-2 py-4">

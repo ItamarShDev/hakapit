@@ -60,11 +60,5 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 export default function RouteComponent() {
 	const [params] = useSearchParams();
 	const data = useLoaderData<typeof loader>();
-	return (
-		<RSSFeed
-			podcastName={data.podcast}
-			data={data.metadata}
-			limit={parseInt(params.get("limit") || "5")}
-		/>
-	);
+	return <RSSFeed podcastName={data.podcast} data={data.metadata} limit={parseInt(params.get("limit") || "5")} />;
 }

@@ -1,26 +1,12 @@
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Link, unstable_useViewTransitionState } from "@remix-run/react";
 import type { EpisodeData } from "~/api/rss/types";
 import { isDate } from "~/hooks";
-export function SkeletonCard({
-	className,
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
 	return (
-		<Card
-			className={cn(
-				"episode-card h-full w-full max-w-xl rounded-3xl",
-				className,
-			)}
-		>
+		<Card className={cn("episode-card h-full w-full max-w-xl rounded-3xl", className)}>
 			<CardHeader>
 				<CardTitle>
 					<Skeleton className="w-64 h-6 rounded-full bg-primary-opaque" />
@@ -46,19 +32,14 @@ export function EpisodeCard({
 	podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
 	contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
 } & React.HTMLAttributes<HTMLDivElement>) {
-	const isTransitioning = unstable_useViewTransitionState(
-		`/${podcastName}/episodes/${episode?.episodeGUID}`,
-	);
+	const isTransitioning = unstable_useViewTransitionState(`/${podcastName}/episodes/${episode?.episodeGUID}`);
 	const isoDate = isDate(episode?.isoDate);
 	return (
 		<Card
-			className={cn(
-				"episode-card relative max-w-xl rounded-3xl overflow-hidden",
-				className,
-			)}
-			style={{
-				viewTransitionName: isTransitioning ? "image-expand" : "",
-			}}
+			className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className)}
+			// style={{
+			// 	viewTransitionName: isTransitioning ? "image-expand" : "",
+			// }}
 		>
 			{episode?.itunes?.image && (
 				<img
@@ -70,19 +51,11 @@ export function EpisodeCard({
 			)}
 			<CardHeader>
 				<CardTitle className="text-accent">
-					<Link
-						to={`/${podcastName}/episodes/${episode?.episodeGUID}`}
-					>
-						{episode?.title}
-					</Link>
+					<Link to={`/${podcastName}/episodes/${episode?.episodeGUID}`}>{episode?.title}</Link>
 				</CardTitle>
-				<CardDescription className="text-muted">
-					{isoDate}
-				</CardDescription>
+				<CardDescription className="text-muted">{isoDate}</CardDescription>
 			</CardHeader>
-			<CardContent
-				className={cn("flex-1 text-paragraph", contentClassName)}
-			>
+			<CardContent className={cn("flex-1 text-paragraph", contentClassName)}>
 				{episode?.content && (
 					<div
 						// biome-ignore lint: noDangerouslySetInnerHtml
