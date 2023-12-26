@@ -4,6 +4,7 @@ import type { ShouldRevalidateFunction } from "@remix-run/react";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import { PodcastName, fetchFeed } from "~/api/rss/feed";
+import { AnalyticsWrapper } from "~/components/analytics";
 import Header from "~/components/header";
 import styles from "~/styles/tailwind.css";
 export const shouldRevalidate: ShouldRevalidateFunction = ({ currentUrl, nextUrl }) => {
@@ -58,7 +59,8 @@ export default function App() {
 				<Scripts />
 				<LiveReload />
 				{/* <SpeedInsights />
-				<AnalyticsWrapper /> */}
+				 */}
+				<AnalyticsWrapper />
 			</body>
 		</html>
 	);
