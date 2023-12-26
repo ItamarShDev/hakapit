@@ -28,7 +28,6 @@ export default function RSSFeed({
 					<NavLink
 						to={"episodes"}
 						className={({ isPending }) => (isPending ? "animate-pulse text-accent" : "text-accent")}
-						unstable_viewTransition
 					>
 						<Button variant="link" className="text-xl lg:text-sm text-accent">
 							לכל הפרקים

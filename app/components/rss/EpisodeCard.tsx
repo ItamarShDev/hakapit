@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Link, unstable_useViewTransitionState } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 import type { EpisodeData } from "~/api/rss/types";
 import { isDate } from "~/hooks";
 export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
@@ -32,15 +32,9 @@ export function EpisodeCard({
 	podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
 	contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
 } & React.HTMLAttributes<HTMLDivElement>) {
-	const isTransitioning = unstable_useViewTransitionState(`/${podcastName}/episodes/${episode?.episodeGUID}`);
 	const isoDate = isDate(episode?.isoDate);
 	return (
-		<Card
-			className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className)}
-			// style={{
-			// 	viewTransitionName: isTransitioning ? "image-expand" : "",
-			// }}
-		>
+		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className)}>
 			{episode?.itunes?.image && (
 				<img
 					src={episode?.itunes?.image}
