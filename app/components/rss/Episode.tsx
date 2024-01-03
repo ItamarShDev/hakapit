@@ -8,11 +8,9 @@ export default function Episode({ data }: { data: EpisodeData }) {
 				className="top-0 right-0 z-0 faded-image-vertical lg:no-mask max-h-96 max-w-max rounded-2xl"
 				alt="episode"
 			/>
-			<div className="p-2 lg:p-8 flex gap-3 flex-col">
-				<div className="text-accent text-3xl" text-accent>
-					{data?.title}
-				</div>
-				<div className="flex flex-col max-w-xl gap-3  text-lg -translate-y-32 rounded-xl  lg:translate-y-0 lg:gap-14">
+			<div className="p-2 lg:p-8 flex gap-3 flex-col -translate-y-32 lg:translate-y-0">
+				<div className="text-accent text-3xl">{data?.title}</div>
+				<div className="flex flex-col max-w-xl gap-3 text-lg rounded-xl  lg:gap-14">
 					<div
 						/* biome-ignore lint: noDangerouslySetInnerHtml */
 						dangerouslySetInnerHTML={{
