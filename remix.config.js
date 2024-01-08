@@ -2,7 +2,7 @@
 export default {
 	tailwind: true,
 	ignoredRouteFiles: ["**/.*"],
-	serverDependenciesToBundle: [/@nivo\/.+/, /d3-.+/, /lodash/],
+	serverDependenciesToBundle: [/@nivo\/.+/, /d3-.+/, /lodash/, "fotmob"],
 	sourcemap: true,
 	// appDirectory: "app",
 	// assetsBuildDirectory: "public/build",

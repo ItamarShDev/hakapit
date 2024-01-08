@@ -1,5 +1,6 @@
+import Fotmob from "fotmob";
 import { LiverpoolId } from "~/api/fotmob-api/constants";
-import Fotmob from "~/api/fotmob-api/src/fotmob";
+import FotmobAPI from "~/api/fotmob-api/src/fotmob";
 import type { Team } from "~/api/fotmob-api/src/types/team";
 
 export async function getTeam() {
@@ -8,6 +9,6 @@ export async function getTeam() {
 }
 
 export function getLeague(league: number) {
-	const fotmob = new Fotmob();
+	const fotmob = new FotmobAPI();
 	return fotmob.getTeamSeasonStats(LiverpoolId, league);
 }
