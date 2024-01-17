@@ -50,6 +50,7 @@
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "drizzle-kit": "^0.20.6",
+    "remix-development-tools": "^3.7.2",
     "typescript": "^5.1.6"
   },
   "engines": {
