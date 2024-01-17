@@ -84,8 +84,10 @@ export function GamesRadar({
 						itemsSpacing: 5,
 						itemWidth: 70,
 						itemHeight: 10,
-						itemDirection: "left-to-right",
-						symbolSize: 1,
+						itemDirection: "right-to-left",
+						symbolSize: 10,
+						symbolSpacing: 25,
+						symbolShape: "circle",
 					},
 				]}
 				motionConfig="molasses"
