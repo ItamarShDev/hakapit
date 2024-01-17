@@ -3,8 +3,8 @@ import { defer } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
 import { Link, useLoaderData } from "@remix-run/react";
 import { getLeague, getTeam } from "~/api/fotmob-api/index.server";
+import NextMatchOverview from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
-import TeamAvatar from "~/components/team-avatar";
 
 export const meta: MetaFunction = () => [
 	{ title: "הכפית" },
@@ -54,14 +54,7 @@ export default function Index() {
 	const nextGame = teamData.overview.nextMatch;
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
-			<div className="flex flex-col gap-2 py-6 heebo">
-				המשחק הבא
-				<div className="game-title">
-					<TeamAvatar teamId={nextGame.away.id} teamName={nextGame.away.name} iconPosition="after" />
-					<div>{new Date(nextGame.status.utcTime).toLocaleString()}</div>
-					<TeamAvatar teamId={nextGame.home.id} teamName={nextGame.home.name} iconPosition="before" />
-				</div>
-			</div>
+			<NextMatchOverview nextGame={nextGame} />
 			<StatsTable teamData={teamData} leagueStats={leagueStats} />
 			<div className="py-8 text-center text-paragraph">
 				<h1 className="text-4xl fade-in-bottom text-accent">מה זה כפית?</h1>

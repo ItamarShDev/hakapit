@@ -12,3 +12,8 @@ export function getLeague(league: number) {
 	const fotmob = new FotmobAPI();
 	return fotmob.getTeamSeasonStats(LiverpoolId, league);
 }
+
+export function getMatchStats(matchId: number) {
+	const fotmob = new Fotmob();
+	return fotmob.getMatchDetails(matchId);
+}

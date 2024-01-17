@@ -2,7 +2,6 @@ import { Await } from "@remix-run/react";
 import { Suspense } from "react";
 import type { Jsonify } from "type-fest";
 import type { Team } from "~/api/fotmob-api/src/types/team";
-import { GamesRadar } from "~/components/stats/radar";
 import { TournamentInformation } from "~/components/stats/tables";
 
 export const StatsTable: React.FC<{
@@ -33,10 +32,8 @@ export const StatsTable: React.FC<{
 										<TournamentInformation
 											league={league}
 											stats={leagueStats.find((stats) => stats.tournamentId === tournamentId)}
+											teamData={teamData}
 										/>
-									</div>
-									<div className="h-[250px]">
-										<GamesRadar fixtures={teamData.fixtures} leagueId={league.data.leagueId} />
 									</div>
 								</div>
 							);

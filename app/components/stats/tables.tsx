@@ -4,6 +4,7 @@ import type { Jsonify } from "type-fest";
 import { LiverpoolId } from "~/api/fotmob-api/constants";
 import type { NextOpponentClass, Team } from "~/api/fotmob-api/src/types/team";
 import { ResultTooltip, getFormColor } from "~/components/stats/form";
+import { GamesRadar } from "~/components/stats/radar";
 import TeamAvatar from "~/components/team-avatar";
 
 function getLeagueInfo(league: Jsonify<Team["table"][0]>) {
@@ -18,10 +19,12 @@ function getLeagueInfo(league: Jsonify<Team["table"][0]>) {
 export function TournamentInformation({
 	league,
 	stats,
+	teamData,
 }: {
 	league?: Jsonify<Team["table"][0]>;
 	// biome-ignore lint:noExplicitAny: no type definition>
-	stats?: { teams: any } | undefined;
+	stats?: Record<string, unknown> | { teams: any } | undefined;
+	teamData: Jsonify<Team>;
 }) {
 	if (!league) return null;
 	const standings = getLeagueInfo(league);
@@ -97,6 +100,12 @@ export function TournamentInformation({
 								teamShortName={nextOpponent?.shortName}
 							/>
 						)}
+					</TableCell>
+				</TableRow>
+				<TableRow className="border-0">
+					<TableCell className="p-3 text-start text-slate-300">תוצאות עד כה</TableCell>
+					<TableCell className="p-3 font-bold text-start">
+						<GamesRadar fixtures={teamData.fixtures} leagueId={league.data.leagueId} />
 					</TableCell>
 				</TableRow>
 			</TableBody>
