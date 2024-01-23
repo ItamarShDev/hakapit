@@ -1,5 +1,5 @@
-import type { Config } from "drizzle-kit";
 import * as dotenv from "dotenv";
+import type { Config } from "drizzle-kit";
 dotenv.config();
 
 export default ({
@@ -7,7 +7,9 @@ export default ({
 	out: "./app/db/migrations",
 	driver: "pg",
 	dbCredentials: {
-		connectionString: process.env.POSTGRES_URL + "?sslmode=require",
+		connectionString: `${process.env.POSTGRES_URL}?sslmode=require`,
 		ssl: true,
 	},
+	verbose: true,
+	strict: true,
 } satisfies Config);
