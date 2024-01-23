@@ -38,6 +38,7 @@ export default function RSSFeed({
 				<>
 					<MasonryFeed data={data} podcastName={podcastName} limit={newLimit} />
 					<NavLink
+						preventScrollReset
 						to={`?limit=${limit + 5}`}
 						className={({ isPending }) =>
 							cn("text-xl lg:text-md", isPending ? "animate-pulse text-accent" : "text-accent")
