@@ -2,15 +2,6 @@ import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { EpisodeData } from "~/api/rss/types";
 import { toDate } from "~/hooks";
 
-export const posts = pgTable("post", {
-	id: serial("id").primaryKey(),
-	title: text("title").notNull(),
-	content: text("content"),
-	image_url: text("image_url"),
-	createdAt: timestamp("created_at"),
-	updatedAt: timestamp("updated_at"),
-});
-
 export const episodes = pgTable("episode", {
 	id: serial("id").primaryKey(),
 	title: text("title").notNull(),

@@ -7,7 +7,7 @@
   },
 
   "editor.wordWrap": "wordWrapColumn",
-  "explorer.excludeGitIgnore": true,
+  "explorer.excludeGitIgnore": false,
   "search.useGlobalIgnoreFiles": true,
   "editor.useTabStops": true,
   "window.density.editorTabHeight": "default",
