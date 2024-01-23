@@ -31,7 +31,9 @@ export async function fetchEpisode(podcast: PodcastName, episodeID: string): Pro
 
 export async function fetchFeed(podcast: PodcastName, number = 5): Promise<Feed> {
 	const rss = await _fetch(podcast);
-	const episodes = rss.items.slice(0, number);
-	rss.items = episodes;
+	if (number > 0) {
+		const episodes = rss.items.slice(0, number);
+		rss.items = episodes;
+	}
 	return rss as Feed;
 }

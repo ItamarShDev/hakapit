@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Link } from "@remix-run/react";
 import type { EpisodeData } from "~/api/rss/types";
-import { isDate } from "~/hooks";
+import { toDateString } from "~/hooks";
 export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
 	return (
 		<Card className={cn("episode-card h-full w-full max-w-xl rounded-3xl", className)}>
@@ -32,7 +32,7 @@ export function EpisodeCard({
 	podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
 	contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
 } & React.HTMLAttributes<HTMLDivElement>) {
-	const isoDate = isDate(episode?.isoDate);
+	const isoDate = toDateString(episode?.isoDate);
 	return (
 		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className)}>
 			{episode?.itunes?.image && (

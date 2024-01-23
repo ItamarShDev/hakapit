@@ -1,4 +1,5 @@
 import got from "got";
+import { Convert as ConvertTeamSeasonStats, TeamSeasonStats } from '~/api/fotmob-api/src/types/team-season-stats';
 import { CastingError } from "./type-cast-error";
 import type { League } from "./types/league";
 import { Convert as ConvertLeague } from "./types/league";
@@ -83,8 +84,7 @@ class Fotmob {
 	async getTeamSeasonStats(id: number, seasonId: number) {
 		const url =
 			this.teamsSeasonStatsUrl + `teamId=${id}&tournamentId=${seasonId}`;
-		const res = await got(url, { cache: this.map });
-		return JSON.parse(res.body) as Record<string, unknown>;
+		return await this.safeTypeCastFetch<TeamSeasonStats>(url, ConvertTeamSeasonStats.toTeamSeasonStats);
 	}
 
 	async getPlayer(id: number) {
