@@ -11,9 +11,9 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 		{ charset: "utf-8" },
 		{ title: metadata?.title },
 		{ name: "description", content: metadata?.description },
-		{ name: "author", content: metadata?.itunes?.author },
-		{ name: "image", content: metadata?.itunes?.image },
-		{ tagName: "link", rel: "icon", href: metadata?.itunes.image },
+		{ name: "author", content: metadata?.authorName },
+		{ name: "image", content: metadata?.imageUrl },
+		{ tagName: "link", rel: "icon", href: metadata?.imageUrl },
 
 		// open graph
 		{
@@ -23,7 +23,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 		{ property: "og:type", content: "website" },
 		{ property: "og:title", content: metadata?.title },
 		{ property: "og:description", content: metadata?.description },
-		{ property: "og:image", content: metadata?.itunes?.image },
+		{ property: "og:image", content: metadata?.imageUrl },
 
 		// twitter
 		{ property: "twitter:card", content: "summary_large_image" },
@@ -33,7 +33,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 		},
 		{ property: "twitter:title", content: metadata?.title },
 		{ property: "twitter:description", content: metadata?.description },
-		{ property: "twitter:image", content: metadata?.itunes?.image },
+		{ property: "twitter:image", content: metadata?.imageUrl },
 	];
 };
 
@@ -52,7 +52,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		podcast: "hakapit" | "balcony-albums" | "nitk";
 	};
 };
-
 export default function RouteComponent() {
 	const { podcast, metadata } = useLoaderData<typeof loader>();
 	return (

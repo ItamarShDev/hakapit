@@ -9,9 +9,9 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 		{ name: "viewport", content: "width=device-width, initial-scale=1.0" },
 		{ title: `פרקים של ${data?.metadata?.title}` },
 		{ name: "description", content: data?.metadata?.description },
-		{ name: "author", content: data?.metadata?.itunes?.author },
-		{ name: "image", content: data?.metadata?.itunes?.image },
-		{ tagName: "link", rel: "icon", href: data?.metadata?.itunes.image },
+		{ name: "author", content: data?.metadata?.authorName },
+		{ name: "image", content: data?.metadata?.imageUrl },
+		{ tagName: "link", rel: "icon", href: data?.metadata?.imageUrl },
 		// open graph
 		{
 			property: "og:url",
@@ -20,7 +20,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 		{ property: "og:type", content: "website" },
 		{ property: "og:title", content: `פרקים של ${data?.metadata?.title}` },
 		{ property: "og:description", content: data?.metadata?.description },
-		{ property: "og:image", content: data?.metadata?.itunes?.image },
+		{ property: "og:image", content: data?.metadata?.imageUrl },
 		// twitter
 		{ property: "twitter:card", content: "summary_large_image" },
 		{
@@ -35,7 +35,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 			property: "twitter:description",
 			content: data?.metadata?.description,
 		},
-		{ property: "twitter:image", content: data?.metadata?.itunes?.image },
+		{ property: "twitter:image", content: data?.metadata?.imageUrl },
 	];
 };
 

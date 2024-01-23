@@ -1,0 +1,1 @@
+ALTER TABLE "podcast" ADD CONSTRAINT "podcast_title_unique" UNIQUE("title");

@@ -1,24 +1,26 @@
-import { EpisodeData } from "~/api/rss/types";
+import { LoaderData } from "~/routes/$podcast.episodes.$id";
 
-export default function Episode({ data }: { data: EpisodeData }) {
+export default function Episode({ data }: { data: LoaderData }) {
 	return (
 		<section className="relative flex flex-col justify-start h-full m-auto md:w-4/5 lg:flex-row lg:gap-8 lg:py-32">
-			<img
-				src={data.itunes.image}
-				className="top-0 right-0 z-0 faded-image-vertical lg:no-mask max-h-96 max-w-max rounded-2xl"
-				alt="episode"
-			/>
-			<div className="p-2 lg:p-8 flex gap-3 flex-col -translate-y-32 lg:translate-y-0">
-				<div className="text-accent text-3xl">{data?.title}</div>
-				<div className="flex flex-col max-w-xl gap-3 text-lg rounded-xl  lg:gap-14">
+			{data.imageUrl && (
+				<img
+					src={data.imageUrl}
+					className="top-0 right-0 z-0 faded-image-vertical lg:no-mask max-h-96 max-w-max rounded-2xl"
+					alt="episode"
+				/>
+			)}
+			<div className="flex flex-col gap-3 p-2 -translate-y-32 lg:p-8 lg:translate-y-0">
+				<div className="text-3xl text-accent">{data?.title}</div>
+				<div className="flex flex-col max-w-xl gap-3 text-lg rounded-xl lg:gap-14">
 					<div
 						/* biome-ignore lint: noDangerouslySetInnerHtml */
 						dangerouslySetInnerHTML={{
-							__html: data.content,
+							__html: data.description || "",
 						}}
 					/>
 					<audio autoPlay className="audio" controls>
-						<source src={data?.enclosure?.url} type="audio/ogg" />
+						<source src={data.audioUrl} type="audio/ogg" />
 						<track kind="captions" />
 					</audio>
 				</div>

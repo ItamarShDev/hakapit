@@ -1,40 +1,43 @@
-import { eq } from "drizzle-orm";
-import { PODCAST_NAMES, PodcastName, fetchFeed } from "~/api/rss/feed";
+import { ilike, like } from "drizzle-orm";
+import { PODCAST_NAMES, PodcastName, fetchRSSFeed } from "~/api/rss/feed";
 import { db } from "~/db/config.server";
-import { episodes, podcasts, toSchemaEpisode } from "~/db/schema.server";
+import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema.server";
 import { toDate } from "~/hooks";
 
 async function updateFeedInDb(feedName: PodcastName) {
-	const feed = await fetchFeed(feedName, 0);
-	const lastEpisodeDate = toDate(feed.items.at(0)?.isoDate);
-	const lastUpdatedSelect = await db
-		.select()
-		.from(podcasts)
-		.where(eq(podcasts.title, feedName as string));
-	const lastUpdated = lastUpdatedSelect[0]?.updatedAt;
-	if (!lastUpdated || !lastEpisodeDate) {
-		console.log("No last updated date or last episode date");
-		return;
-	}
-	if (lastEpisodeDate.getTime() <= lastUpdated.getTime()) {
-		console.log("No new episodes");
-		return;
-	}
-	const newEpisodes = feed.items.filter((episode) => {
-		const episodeDate = toDate(episode.isoDate);
-		return episodeDate && episodeDate.getTime() > lastUpdated.getTime();
+	const feed = await fetchRSSFeed(feedName, 0);
+	const podcastsDB = await db.query.podcasts.findFirst({
+		where: ilike(podcasts.name, feedName),
 	});
+
+	let newEpisodes = feed.items;
+	if (!podcastsDB) {
+		console.log(`${feedName}: Creating new podcast`);
+		await db.insert(podcasts).values(toSchemaPodcast(feed, feedName)).execute();
+	} else {
+		console.log(`${feedName}: Updating podcast`);
+		const lastUpdated = podcastsDB?.updatedAt;
+		await db
+			.update(podcasts)
+			.set(toSchemaPodcast(feed, feedName))
+			.where(like(podcasts.name, feedName as string))
+			.execute();
+		newEpisodes = feed.items.filter((episode) => {
+			const episodeDate = toDate(episode.isoDate);
+			return episodeDate && episodeDate.getTime() > lastUpdated.getTime();
+		});
+	}
 	if (newEpisodes.length === 0) {
-		console.log("No new episodes");
+		console.log(`${feedName}: No new episodes`);
 		return;
 	}
-	console.log(`${newEpisodes.length} new episodes found`);
 
 	const insertResult = await db
 		.insert(episodes)
-		.values(newEpisodes.map((ep) => toSchemaEpisode(ep)))
+		.values(newEpisodes.map((ep) => toSchemaEpisode(ep, feedName)))
+		.onConflictDoNothing()
 		.execute();
-	console.log(`Inserted ${insertResult.rowCount} new episodes`);
+	console.log(`${feedName}: Added ${insertResult.rowCount} new episodes`);
 
 	return insertResult;
 }

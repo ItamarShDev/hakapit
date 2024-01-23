@@ -14,14 +14,14 @@ export type EpisodeData = {
 	enclosure: { url: string };
 	episodeGUID?: string;
 	contentSnippet?: string;
-	number?: number;
+	number: number;
 };
 export type Feed = {
 	items: EpisodeData[];
 	image?: { link?: string; url: string; title?: string };
 	paginationLinks?: Parser.PaginationLinks;
 	link?: string;
-	title?: string;
+	title: string;
 	feedUrl?: string;
 	description?: string;
 	itunes: {

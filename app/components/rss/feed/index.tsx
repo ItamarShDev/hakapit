@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { NavLink } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import type { Feed } from "~/api/rss/types";
 import { MasonryFeed, Preview } from "~/components/rss/feed/feed";
+import { Podcast } from "~/db/types";
 
 export default function RSSFeed({
 	data,
@@ -11,7 +11,7 @@ export default function RSSFeed({
 	limit = 1,
 	preview = false,
 }: {
-	data: Feed | undefined;
+	data?: Podcast;
 	podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
 	limit?: number;
 	preview?: boolean;

@@ -1,5 +1,8 @@
+import { eq, max } from "drizzle-orm";
 import { fetch_rss } from "~/api/rss/fetch-rss";
-import type { EpisodeData, Feed } from "~/api/rss/types";
+import type { Feed } from "~/api/rss/types";
+import { db } from "~/db/config.server";
+import { episodes, podcasts } from "~/db/schema.server";
 
 const PODCAST_URLS = {
 	hakapit: process.env.HAKAPIT_RSS,
@@ -14,27 +17,28 @@ function _fetch(podcast: PodcastName) {
 	return fetch_rss(url);
 }
 
-export async function fetchLatestEpisode(podcast: PodcastName): Promise<EpisodeData | undefined> {
-	const { items } = await _fetch(podcast);
-	const episode = items.at(0);
-	return episode;
-}
-
-export async function fetchEpisode(podcast: PodcastName, episodeID: string): Promise<EpisodeData | undefined> {
-	const { items } = await _fetch(podcast);
-	const episodeNumber = parseInt(episodeID);
-	if (episodeNumber) {
-		const episode = items.find((episode) => episode?.number === episodeNumber);
-		return episode;
-	}
-	return items.find((episode) => episode?.guid?.split("/").pop() === episodeID);
-}
-
-export async function fetchFeed(podcast: PodcastName, number = 5): Promise<Feed> {
+export async function fetchRSSFeed(podcast: PodcastName, number = 5): Promise<Feed> {
 	const rss = await _fetch(podcast);
 	if (number > 0) {
 		const episodes = rss.items.slice(0, number);
 		rss.items = episodes;
 	}
 	return rss as Feed;
+}
+export async function fetchLatestEpisode(podcast: PodcastName) {
+	const episodesId = await db.select({ value: max(episodes.episodeNumber) }).from(episodes);
+	if (episodesId[0].value)
+		return await db.query.episodes.findFirst({ where: eq(episodes.episodeNumber, episodesId[0].value) });
+}
+
+export function fetchEpisode(episodeID: string) {
+	return db.query.episodes.findFirst({ where: eq(episodes.episodeNumber, parseInt(episodeID)) });
+}
+
+export function fetchFeed(podcast: PodcastName, number = 5) {
+	const limit = number > 0 ? { limit: number } : true;
+	return db.query.podcasts.findFirst({
+		where: eq(podcasts.name, podcast),
+		with: { episodes: limit },
+	});
 }

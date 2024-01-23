@@ -1,4 +1,4 @@
-export function toDateString(value?: string) {
+export function toDateString(value?: string | null) {
 	return value && new Date(Date.parse(value)).toLocaleDateString();
 }
 

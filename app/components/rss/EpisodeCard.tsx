@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Link } from "@remix-run/react";
-import type { EpisodeData } from "~/api/rss/types";
+import { Episode } from "~/db/types";
 import { toDateString } from "~/hooks";
 export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
 	return (
@@ -28,16 +28,16 @@ export function EpisodeCard({
 	className,
 	contentClassName,
 }: {
-	episode?: EpisodeData;
+	episode?: Episode;
 	podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
 	contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
 } & React.HTMLAttributes<HTMLDivElement>) {
-	const isoDate = toDateString(episode?.isoDate);
+	const isoDate = toDateString(episode?.publishedAt);
 	return (
 		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className)}>
-			{episode?.itunes?.image && (
+			{episode?.imageUrl && (
 				<img
-					src={episode?.itunes?.image}
+					src={episode?.imageUrl}
 					alt="episode"
 					placeholder="blur"
 					className="absolute object-cover object-top -z-10 rounded-3xl brightness-40 filter"
@@ -45,22 +45,22 @@ export function EpisodeCard({
 			)}
 			<CardHeader>
 				<CardTitle className="text-accent">
-					<Link to={`/${podcastName}/episodes/${episode?.number}`}>{episode?.title}</Link>
+					<Link to={`/${podcastName}/episodes/${episode?.episodeNumber}`}>{episode?.title}</Link>
 				</CardTitle>
 				<CardDescription className="text-muted">{isoDate}</CardDescription>
 			</CardHeader>
 			<CardContent className={cn("flex-1 text-paragraph", contentClassName)}>
-				{episode?.content && (
+				{episode?.htmlDescription && (
 					<div
 						// biome-ignore lint: noDangerouslySetInnerHtml
 						dangerouslySetInnerHTML={{
-							__html: episode?.content,
+							__html: episode?.htmlDescription,
 						}}
 					/>
 				)}
 			</CardContent>
 			<CardFooter>
-				<audio className="audio" controls src={episode?.enclosure?.url}>
+				<audio className="audio" controls src={episode?.audioUrl}>
 					<track kind="captions" />
 				</audio>
 			</CardFooter>
