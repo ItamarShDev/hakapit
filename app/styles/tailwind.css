@@ -15,9 +15,9 @@
   --color-primary: 296, 100%, 11.8%;
   --color-primary-opaque: 296 100% 20% / 0.3;
   --color-secondary: 338.9, 100%, 45.7%;
-  --color-accent: 182.4, 100%, 50.8%;
+  --color-text: 182.4, 100%, 50.8%;
   --color-background: 296, 100%, 20%;
-  --color-text: 151.3, 100%, 50%;
+  --color-accent: 151.3, 100%, 50%;
 }
 
 .balcony-albums {
