@@ -13,9 +13,11 @@ async function updateFeedInDb(feedName: PodcastName) {
 		.where(eq(podcasts.title, feedName as string));
 	const lastUpdated = lastUpdatedSelect[0]?.updatedAt;
 	if (!lastUpdated || !lastEpisodeDate) {
+		console.log("No last updated date or last episode date");
 		return;
 	}
 	if (lastEpisodeDate.getTime() <= lastUpdated.getTime()) {
+		console.log("No new episodes");
 		return;
 	}
 	const newEpisodes = feed.items.filter((episode) => {
@@ -23,12 +25,17 @@ async function updateFeedInDb(feedName: PodcastName) {
 		return episodeDate && episodeDate.getTime() > lastUpdated.getTime();
 	});
 	if (newEpisodes.length === 0) {
+		console.log("No new episodes");
 		return;
 	}
+	console.log(`${newEpisodes.length} new episodes found`);
+
 	const insertResult = await db
 		.insert(episodes)
 		.values(newEpisodes.map((ep) => toSchemaEpisode(ep)))
 		.execute();
+	console.log(`Inserted ${insertResult.rowCount} new episodes`);
+
 	return insertResult;
 }
 
