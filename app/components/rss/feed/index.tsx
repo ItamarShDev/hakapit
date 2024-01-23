@@ -7,12 +7,10 @@ import { Podcast } from "~/db/types";
 
 export default function RSSFeed({
 	data,
-	podcastName,
 	limit = 1,
 	preview = false,
 }: {
 	data?: Podcast;
-	podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
 	limit?: number;
 	preview?: boolean;
 }) {
@@ -24,7 +22,7 @@ export default function RSSFeed({
 		<div className="flex flex-col items-center gap-3">
 			{preview ? (
 				<>
-					<Preview data={data} podcastName={podcastName} />
+					<Preview data={data} />
 					<NavLink
 						to={"episodes"}
 						className={({ isPending }) => (isPending ? "animate-pulse text-accent" : "text-accent")}
@@ -36,7 +34,7 @@ export default function RSSFeed({
 				</>
 			) : (
 				<>
-					<MasonryFeed data={data} podcastName={podcastName} limit={newLimit} />
+					<MasonryFeed data={data} limit={newLimit} />
 					<NavLink
 						preventScrollReset
 						to={`?limit=${limit + 5}`}

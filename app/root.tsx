@@ -7,6 +7,7 @@ import rdtStylesheet from "remix-development-tools/index.css";
 import { PodcastName, fetchFeed } from "~/api/rss/feed";
 import { AnalyticsWrapper } from "~/components/analytics";
 import Header from "~/components/header";
+import { PlayerProvider } from "~/components/player/provider";
 import styles from "~/styles/tailwind.css";
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({ currentUrl, nextUrl }) => {
@@ -61,7 +62,9 @@ export function App() {
 			<body className={cn("body", podcast)}>
 				{metadata && <Header data={metadata} podcast={podcast} />}
 				<main className="main-content">
-					<Outlet />
+					<PlayerProvider>
+						<Outlet />
+					</PlayerProvider>
 				</main>
 				<ScrollRestoration />
 				<Scripts />

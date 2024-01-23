@@ -1,14 +1,12 @@
 import { useNavigation } from "@remix-run/react";
 import { EpisodeCard, SkeletonCard } from "~/components/rss/EpisodeCard";
-import { Podcast } from "~/db/types";
+import { Episode, Podcast } from "~/db/types";
 
 export function MasonryFeed({
 	data,
-	podcastName,
 	limit,
 }: {
 	data?: Podcast;
-	podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
 	limit: number;
 }) {
 	const navigation = useNavigation();
@@ -19,7 +17,7 @@ export function MasonryFeed({
 			<span className="max-w-xl p-4 font-light info crazy-font big-title">פרקים</span>
 			<div className="masonry">
 				{data?.episodes?.map((episode) => (
-					<EpisodeCard key={episode.guid} episode={episode} podcastName={podcastName} />
+					<EpisodeCard key={episode.guid} episode={episode as Episode} />
 				))}
 				{navigation.state !== "idle" &&
 					new Array(skeletonCount)
@@ -32,15 +30,13 @@ export function MasonryFeed({
 }
 export function Preview({
 	data,
-	podcastName,
 }: {
 	data?: Podcast;
-	podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
 }) {
 	return (
 		<>
 			<span className="max-w-xl p-4 font-light info crazy-font">{data?.description}</span>
-			<EpisodeCard episode={data?.episodes[0]} podcastName={podcastName} />
+			<EpisodeCard episode={data?.episodes[0] as Episode} />
 		</>
 	);
 }

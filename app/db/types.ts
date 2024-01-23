@@ -22,4 +22,4 @@ export type InferResultType<
 	>
 >;
 export type Podcast = InferResultType<"podcasts", { episodes: true }>;
-export type Episode = InferResultType<"episodes">;
+export type Episode = InferResultType<"episodes", { podcast: true }>;

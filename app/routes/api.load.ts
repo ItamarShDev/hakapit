@@ -12,10 +12,10 @@ async function updateFeedInDb(feedName: PodcastName) {
 
 	let newEpisodes = feed.items;
 	if (!podcastsDB) {
-		console.log(`${feedName}: Creating new podcast`);
+		console.info(`${feedName}: Creating new podcast`);
 		await db.insert(podcasts).values(toSchemaPodcast(feed, feedName)).execute();
 	} else {
-		console.log(`${feedName}: Updating podcast`);
+		console.info(`${feedName}: Updating podcast`);
 		const lastUpdated = podcastsDB?.updatedAt;
 		await db
 			.update(podcasts)
@@ -28,7 +28,7 @@ async function updateFeedInDb(feedName: PodcastName) {
 		});
 	}
 	if (newEpisodes.length === 0) {
-		console.log(`${feedName}: No new episodes`);
+		console.info(`${feedName}: No new episodes`);
 		return;
 	}
 
@@ -37,7 +37,7 @@ async function updateFeedInDb(feedName: PodcastName) {
 		.values(newEpisodes.map((ep) => toSchemaEpisode(ep, feedName)))
 		.onConflictDoNothing()
 		.execute();
-	console.log(`${feedName}: Added ${insertResult.rowCount} new episodes`);
+	console.info(`${feedName}: Added ${insertResult.rowCount} new episodes`);
 
 	return insertResult;
 }

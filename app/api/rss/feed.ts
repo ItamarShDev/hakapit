@@ -1,4 +1,4 @@
-import { eq, max } from "drizzle-orm";
+import { desc, eq, max } from "drizzle-orm";
 import { fetch_rss } from "~/api/rss/fetch-rss";
 import type { Feed } from "~/api/rss/types";
 import { db } from "~/db/config.server";
@@ -26,19 +26,26 @@ export async function fetchRSSFeed(podcast: PodcastName, number = 5): Promise<Fe
 	return rss as Feed;
 }
 export async function fetchLatestEpisode(podcast: PodcastName) {
-	const episodesId = await db.select({ value: max(episodes.episodeNumber) }).from(episodes);
+	const episodesId = await db
+		.select({ value: max(episodes.episodeNumber) })
+		.from(episodes)
+		.leftJoin(podcasts, eq(episodes.podcast, podcasts.name))
+		.where(eq(podcasts.name, podcast));
 	if (episodesId[0].value)
 		return await db.query.episodes.findFirst({ where: eq(episodes.episodeNumber, episodesId[0].value) });
 }
 
 export function fetchEpisode(episodeID: string) {
-	return db.query.episodes.findFirst({ where: eq(episodes.episodeNumber, parseInt(episodeID)) });
+	return db.query.episodes.findFirst({
+		where: eq(episodes.episodeNumber, parseInt(episodeID)),
+		with: { podcast: true },
+	});
 }
 
 export function fetchFeed(podcast: PodcastName, number = 5) {
-	const limit = number > 0 ? { limit: number } : true;
+	const limit = number > 0 ? { limit: number } : {};
 	return db.query.podcasts.findFirst({
 		where: eq(podcasts.name, podcast),
-		with: { episodes: limit },
+		with: { episodes: { ...limit, orderBy: [desc(episodes.episodeNumber)], with: { podcast: true } } },
 	});
 }

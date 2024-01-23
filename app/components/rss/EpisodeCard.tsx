@@ -1,7 +1,10 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { PlayIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
+import { usePlayer } from "~/components/player/provider";
 import { Episode } from "~/db/types";
 import { toDateString } from "~/hooks";
 export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
@@ -24,15 +27,15 @@ export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>
 
 export function EpisodeCard({
 	episode,
-	podcastName,
 	className,
 	contentClassName,
 }: {
 	episode?: Episode;
-	podcastName: "hakapit" | "nitk" | "balcony-albums" | string;
 	contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
 } & React.HTMLAttributes<HTMLDivElement>) {
 	const isoDate = toDateString(episode?.publishedAt);
+	const playerProps = usePlayer();
+
 	return (
 		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className)}>
 			{episode?.imageUrl && (
@@ -45,7 +48,7 @@ export function EpisodeCard({
 			)}
 			<CardHeader>
 				<CardTitle className="text-accent">
-					<Link to={`/${podcastName}/episodes/${episode?.episodeNumber}`}>{episode?.title}</Link>
+					<Link to={`/${episode?.podcast}/episodes/${episode?.episodeNumber}`}>{episode?.title}</Link>
 				</CardTitle>
 				<CardDescription className="text-muted">{isoDate}</CardDescription>
 			</CardHeader>
@@ -60,9 +63,25 @@ export function EpisodeCard({
 				)}
 			</CardContent>
 			<CardFooter>
-				<audio className="audio" controls src={episode?.audioUrl}>
-					<track kind="captions" />
-				</audio>
+				{playerProps ? (
+					<Button
+						disabled={playerProps.currentlyPlaying?.guid === episode?.guid}
+						className="w-full"
+						onClick={() => playerProps.setCurrentlyPlaying(episode)}
+					>
+						{playerProps.currentlyPlaying?.guid === episode?.guid ? (
+							<>מנגן כרגע</>
+						) : (
+							<>
+								נגן פרק <PlayIcon className="ms-4" />
+							</>
+						)}
+					</Button>
+				) : (
+					<audio className="audio" controls src={episode?.audioUrl}>
+						<track kind="captions" />
+					</audio>
+				)}
 			</CardFooter>
 		</Card>
 	);

@@ -56,7 +56,7 @@ export default function RouteComponent() {
 	const { podcast, metadata } = useLoaderData<typeof loader>();
 	return (
 		<section className="feed-page">
-			<RSSFeed podcastName={podcast} data={metadata} preview />
+			<RSSFeed data={metadata} preview />
 			<TwitterTimelineEmbed podcastName={podcast} />
 		</section>
 	);

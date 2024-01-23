@@ -2,15 +2,15 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import type { Data } from "~/components/header/types";
 import MenuIcon from "~/components/icons/menu";
 import { Links } from "~/components/links";
+import { Podcast } from "~/db/types";
 type Props = {
-	data: Data;
+	data: Podcast;
 	podcast: string;
 } & React.HTMLAttributes<HTMLElement>;
 export default function Header({ data, podcast, className }: Props) {
-	const { image } = data;
+	const { imageUrl } = data;
 	const [linksShown, setLinksShown] = useState(false);
 
 	useEffect(() => {
@@ -21,7 +21,7 @@ export default function Header({ data, podcast, className }: Props) {
 		<header className="overflow-hidden header">
 			<div className="flex flex-wrap items-start gap-4 p-4 lg:items-center ">
 				<div className="header-image">
-					{image?.url && <img src={image?.url} alt="podcast logo" placeholder="blur" className="object-contain" />}
+					{imageUrl && <img src={imageUrl} alt="podcast logo" placeholder="blur" className="object-contain" />}
 				</div>
 				<div className="flex-1 header-title">
 					<Link to={`/${podcast || ""}`}>
