@@ -1,16 +1,8 @@
 {
     "crons": [
         {
-            "path": "/api/load/hakapit",
-            "schedule": "10 * * * *"
-        },
-        {
-            "path": "/api/load/balcony-albums",
-            "schedule": "10 * * * *"
-        },
-        {
-            "path": "/api/load/nitk",
-            "schedule": "10 * * * *"
+            "path": "/api/load",
+            "schedule": "0 12 * * *"
         }
     ]
 }

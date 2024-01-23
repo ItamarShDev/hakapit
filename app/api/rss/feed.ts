@@ -6,13 +6,14 @@ const PODCAST_URLS = {
 	nitk: process.env.NITK_RSS,
 	"balcony-albums": process.env.BALCONY_RSS,
 };
-
+export const PODCAST_NAMES = Object.keys(PODCAST_URLS) as PodcastName[];
 export type PodcastName = keyof typeof PODCAST_URLS;
 
 function _fetch(podcast: PodcastName) {
 	const url = PODCAST_URLS[podcast];
 	return fetch_rss(url);
 }
+
 export async function fetchLatestEpisode(podcast: PodcastName): Promise<EpisodeData | undefined> {
 	const { items } = await _fetch(podcast);
 	const episode = items.at(0);

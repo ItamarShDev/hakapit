@@ -11,8 +11,6 @@ export const StatsTable: React.FC<{
 	<Suspense fallback={<div>Loading...</div>}>
 		<Await resolve={leagueStats}>
 			{(leagueStats) => {
-				console.log(leagueStats);
-
 				return (
 					<div className="grid items-start w-full gap-3 grid-col-responsive cols-f">
 						{teamData.table.map((league) => {

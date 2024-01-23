@@ -1,6 +1,5 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
 import { eq } from "drizzle-orm";
-import { PodcastName, fetchFeed } from "~/api/rss/feed";
+import { PODCAST_NAMES, PodcastName, fetchFeed } from "~/api/rss/feed";
 import { db } from "~/db/config.server";
 import { episodes, podcasts, toSchemaEpisode } from "~/db/schema.server";
 import { toDate } from "~/hooks";
@@ -32,9 +31,13 @@ async function updateFeedInDb(feedName: PodcastName) {
 		.execute();
 	return insertResult;
 }
-export const loader = async ({ params }: LoaderFunctionArgs) => {
-	const feedName = params.podcast as PodcastName;
-	const insertResult = await updateFeedInDb(feedName);
+
+function updateFeedsInDb() {
+	return Promise.all(PODCAST_NAMES.map((key) => updateFeedInDb(key as PodcastName)));
+}
+
+export const loader = async () => {
+	const insertResult = await updateFeedsInDb();
 	if (insertResult) {
 		return {
 			status: 200,
