@@ -127,6 +127,14 @@ body {
     @apply sticky top-0 z-10 w-full border-b-2 border-solid border-accent bg-primary text-paragraph;
   }
 
+  .header:has(.menu-button:focus-within) .header-links {
+    @apply show-menu;
+  }
+
+  .header:has(.menu-button:not(:focus-within)) .grid-transition {
+    transition-delay: 1s;
+  }
+
   .hide-menu {
     grid-template-rows: 0fr;
   }
@@ -143,6 +151,7 @@ body {
 
   .grid-transition {
     transition: grid-template-rows 1s;
+
   }
 
   .header-image {
