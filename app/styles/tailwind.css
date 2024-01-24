@@ -106,12 +106,16 @@ body {
   }
 
   .audio {
-    @apply w-full;
+    @apply w-full rounded-none;
   }
 
   audio.audio::-webkit-media-controls-panel {
     color-scheme: dark;
     background-color: hsl(var(--color-primary));
+  }
+
+  audio::-webkit-media-controls-enclosure {
+    border-radius: 0;
   }
 
   audio.audio::-webkit-media-controls-current-time-display,
