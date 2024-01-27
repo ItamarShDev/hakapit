@@ -44,7 +44,7 @@ export function GamesRadar({
 	}, [fixtures, leagueId]);
 
 	return (
-		<div className="h-36 w-[60%]">
+		<div className="h-36 w-auto max-w-md">
 			<ResponsiveBar
 				groupMode="stacked"
 				layout="horizontal"
