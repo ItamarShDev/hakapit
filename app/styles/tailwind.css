@@ -70,6 +70,10 @@ body {
     @apply flex flex-col flex-wrap w-full gap-6 place-content-center lg:flex-row;
   }
 
+  .card-content>* {
+    @apply text-ellipsis;
+  }
+
   .masonry {
     @apply grid w-full gap-8;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

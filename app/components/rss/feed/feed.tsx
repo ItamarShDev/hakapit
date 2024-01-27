@@ -35,8 +35,10 @@ export function Preview({
 }) {
 	return (
 		<>
-			<span className="max-w-xl p-4 font-light info crazy-font">{data?.description}</span>
-			<EpisodeCard episode={data?.episodes[0] as Episode} />
+			<span className="max-w-xl p-4 font-light info crazy-font w-full">{data?.description}</span>
+			<div className="masonry">
+				<EpisodeCard episode={data?.episodes[0] as Episode} />
+			</div>
 		</>
 	);
 }

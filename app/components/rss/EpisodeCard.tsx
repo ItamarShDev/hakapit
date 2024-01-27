@@ -55,6 +55,7 @@ export function EpisodeCard({
 			<CardContent className={cn("flex-1 text-paragraph", contentClassName)}>
 				{episode?.htmlDescription && (
 					<div
+						className="card-content"
 						// biome-ignore lint: noDangerouslySetInnerHtml
 						dangerouslySetInnerHTML={{
 							__html: episode?.htmlDescription,
