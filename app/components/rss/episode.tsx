@@ -2,7 +2,7 @@ import { Episode as DBEpisode } from "~/db/types";
 
 export default function Episode({ data }: { data: DBEpisode }) {
 	return (
-		<section className="relative flex flex-col justify-start h-full m-auto md:w-4/5 lg:flex-row lg:gap-8 lg:py-32">
+		<section className="relative flex flex-col justify-start items-center lg:items-start h-full m-auto  w-full lg:flex-row lg:gap-8 lg:py-32">
 			{data.imageUrl && (
 				<img
 					src={data.imageUrl}
