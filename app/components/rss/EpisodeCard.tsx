@@ -35,6 +35,7 @@ export function EpisodeCard({
 } & React.HTMLAttributes<HTMLDivElement>) {
 	const isoDate = toDateString(episode?.publishedAt);
 	const playerProps = usePlayer();
+	console.log(episode);
 
 	return (
 		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className)}>
@@ -48,7 +49,7 @@ export function EpisodeCard({
 			)}
 			<CardHeader>
 				<CardTitle className="text-accent">
-					<Link to={`/${episode?.podcast}/episodes/${episode?.episodeNumber}`}>{episode?.title}</Link>
+					<Link to={`/${episode?.podcast?.name}/episodes/${episode?.episodeNumber}`}>{episode?.title}</Link>
 				</CardTitle>
 				<CardDescription className="text-muted">{isoDate}</CardDescription>
 			</CardHeader>
