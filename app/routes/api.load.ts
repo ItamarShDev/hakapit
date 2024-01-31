@@ -4,7 +4,7 @@ import { db } from "~/db/config.server";
 import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema.server";
 import { toDate } from "~/hooks";
 
-async function updateFeedInDb(feedName: PodcastName) {
+export async function updateFeedInDb(feedName: PodcastName) {
 	const feed = await fetchRSSFeed(feedName, 0);
 	const podcastsDB = await db.query.podcasts.findFirst({
 		where: ilike(podcasts.name, feedName),
@@ -12,10 +12,8 @@ async function updateFeedInDb(feedName: PodcastName) {
 
 	let newEpisodes = feed.items;
 	if (!podcastsDB) {
-		console.info(`${feedName}: Creating new podcast`);
 		await db.insert(podcasts).values(toSchemaPodcast(feed, feedName)).execute();
 	} else {
-		console.info(`${feedName}: Updating podcast`);
 		const lastUpdated = podcastsDB?.updatedAt;
 		await db
 			.update(podcasts)
@@ -28,7 +26,6 @@ async function updateFeedInDb(feedName: PodcastName) {
 		});
 	}
 	if (newEpisodes.length === 0) {
-		console.info(`${feedName}: No new episodes`);
 		return;
 	}
 
@@ -37,12 +34,12 @@ async function updateFeedInDb(feedName: PodcastName) {
 		.values(newEpisodes.map((ep) => toSchemaEpisode(ep, feedName)))
 		.onConflictDoNothing()
 		.execute();
-	console.info(`${feedName}: Added ${insertResult.rowCount} new episodes`);
 
+	console.info(`${feedName}: Added ${insertResult.rowCount} new episodes`);
 	return insertResult;
 }
 
-function updateFeedsInDb() {
+export function updateFeedsInDb() {
 	return Promise.all(PODCAST_NAMES.map((key) => updateFeedInDb(key as PodcastName)));
 }
 

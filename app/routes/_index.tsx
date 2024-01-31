@@ -37,11 +37,13 @@ export const links: LinksFunction = () => [
 
 export const loader = async () => {
 	const teamData = await getTeam();
-	const leagueStats = Promise.all(
-		teamData.history.tables.current[0].link.map((league) => {
-			return getLeague(parseInt(league.tournament_id[0]));
-		}),
-	);
+	const fetches = teamData.history?.tables?.current?.[0]?.link?.map((league) => {
+		const tournamentId = league?.template_id?.[0];
+		if (tournamentId !== undefined) {
+			return getLeague(parseInt(tournamentId));
+		}
+	});
+	const leagueStats = fetches ? Promise.all(fetches.filter((league) => league !== undefined)) : Promise.resolve([]);
 
 	return defer({
 		teamData,
@@ -51,10 +53,10 @@ export const loader = async () => {
 
 export default function Index() {
 	const { teamData, leagueStats } = useLoaderData<typeof loader>();
-	const nextGame = teamData.overview.nextMatch;
+	const nextGame = teamData?.overview?.nextMatch;
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
-			<NextMatchOverview nextGame={nextGame} />
+			{nextGame && <NextMatchOverview nextGame={nextGame} />}
 			<StatsTable teamData={teamData} leagueStats={leagueStats} />
 			<div className="py-8 text-center text-paragraph">
 				<h1 className="text-4xl fade-in-bottom text-accent">מה זה כפית?</h1>

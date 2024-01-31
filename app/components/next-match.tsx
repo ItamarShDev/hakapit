@@ -1,4 +1,4 @@
-import { NextMatch, OpponentClass } from "fotmob/dist/types/team";
+import { NextMatch, OpponentClass } from "fotmob/dist/esm/types/team";
 import { useEffect, useState } from "react";
 import type { Jsonify } from "type-fest";
 import TeamAvatar from "~/components/team-avatar";

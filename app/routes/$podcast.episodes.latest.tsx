@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { useLoaderData, useParams } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { PodcastName, fetchLatestEpisode } from "~/api/rss/feed";
 import Episode from "~/components/rss/episode";
 
@@ -45,10 +45,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	return await fetchLatestEpisode(params.podcast as PodcastName);
 };
 
-
 export default function RouteComponent() {
-	const params = useParams();
-	const data = useLoaderData<typeof loader>();
-	if (!params.podcast) return null;
-	return <Episode data={data} />;
+	const episode = useLoaderData<typeof loader>();
+	return <Episode data={episode} />;
 }

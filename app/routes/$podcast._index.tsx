@@ -1,8 +1,8 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
 import { PodcastName, fetchFeed } from "~/api/rss/feed";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
+import { usePodcastData } from "~/hooks";
 
 export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 	const metadata = data?.metadata;
@@ -46,14 +46,10 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	}
 
 	const metadata = await fetchFeed(params.podcast as PodcastName, 1);
-	return { metadata, podcast: params.podcast } as {
-		limit: number;
-		metadata: typeof metadata;
-		podcast: "hakapit" | "balcony-albums" | "nitk";
-	};
+	return { metadata, podcast: params.podcast };
 };
 export default function RouteComponent() {
-	const { podcast, metadata } = useLoaderData<typeof loader>();
+	const { podcast, metadata } = usePodcastData({ limit: 1 });
 	return (
 		<section className="feed-page">
 			<RSSFeed data={metadata} preview />

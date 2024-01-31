@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { NavLink } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { MasonryFeed, Preview } from "~/components/rss/feed/feed";
-import { Podcast } from "~/db/types";
+import { FeedData } from "~/hooks";
 function getLinkClass(isPending: boolean) {
 	return cn("text-xl lg:text-sm text-accent", isPending ? "animate-pulse" : "");
 }
@@ -11,7 +11,7 @@ export default function RSSFeed({
 	limit = 1,
 	preview = false,
 }: {
-	data?: Podcast;
+	data?: FeedData;
 	limit?: number;
 	preview?: boolean;
 }) {

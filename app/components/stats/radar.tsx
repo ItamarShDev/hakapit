@@ -1,8 +1,8 @@
 import { ResponsiveBar } from "@nivo/bar";
+import { TeamFixtures } from "fotmob/dist/esm/types/team";
 import { useMemo } from "react";
 import type { Jsonify } from "type-fest";
 import { LiverpoolId } from "~/api/fotmob-api/constants";
-import type { TeamFixtures } from "~/api/fotmob-api/src/types/team";
 
 function getKeyByNumber(number: number) {
 	switch (number) {
@@ -23,12 +23,12 @@ export function GamesRadar({
 	leagueId: number;
 }) {
 	const barData = useMemo(() => {
-		const data = fixtures.allFixtures.fixtures
-			.filter((fixture) => !fixture.notStarted && fixture.tournament.leagueId === leagueId)
+		const data = fixtures?.allFixtures?.fixtures
+			?.filter((fixture) => !fixture.notStarted && fixture?.tournament?.leagueId === leagueId)
 			.reduce(
 				(acc, fixture) => {
 					if (fixture.result == null) return acc;
-					const locationKey = fixture.home.id === LiverpoolId ? "בית" : "חוץ";
+					const locationKey = fixture?.home?.id === LiverpoolId ? "בית" : "חוץ";
 					const typeKey = getKeyByNumber(fixture.result);
 					if (!typeKey) return acc;
 					acc[typeKey][locationKey] += 1;
@@ -40,11 +40,12 @@ export function GamesRadar({
 					Draw: { id: "תיקו", בית: 0, חוץ: 0 },
 				},
 			);
-		return [data.Win, data.Lose, data.Draw];
+		if (!data) return null;
+		return [data?.Win, data?.Lose, data?.Draw];
 	}, [fixtures, leagueId]);
-
+	if (!barData) return null;
 	return (
-		<div className="h-36 w-auto max-w-md">
+		<div className="w-auto max-w-md h-36">
 			<ResponsiveBar
 				groupMode="stacked"
 				layout="horizontal"

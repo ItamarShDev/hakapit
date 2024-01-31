@@ -3,12 +3,14 @@ import { fetch_rss } from "~/api/rss/fetch-rss";
 import type { Feed } from "~/api/rss/types";
 import { db } from "~/db/config.server";
 import { episodes, podcasts } from "~/db/schema.server";
+import { updateFeedInDb } from "~/routes/api.load";
 
 const PODCAST_URLS = {
 	hakapit: process.env.HAKAPIT_RSS,
 	nitk: process.env.NITK_RSS,
 	"balcony-albums": process.env.BALCONY_RSS,
 };
+
 export const PODCAST_NAMES = Object.keys(PODCAST_URLS) as PodcastName[];
 export type PodcastName = keyof typeof PODCAST_URLS;
 
@@ -25,14 +27,19 @@ export async function fetchRSSFeed(podcast: PodcastName, number = 5): Promise<Fe
 	}
 	return rss as Feed;
 }
+
 export async function fetchLatestEpisode(podcast: PodcastName) {
+	await updateFeedInDb(podcast);
 	const episodesId = await db
 		.select({ value: max(episodes.episodeNumber) })
 		.from(episodes)
 		.leftJoin(podcasts, eq(episodes.podcast, podcasts.name))
 		.where(eq(podcasts.name, podcast));
 	if (episodesId[0].value)
-		return await db.query.episodes.findFirst({ where: eq(episodes.episodeNumber, episodesId[0].value) });
+		return await db.query.episodes.findFirst({
+			where: eq(episodes.episodeNumber, episodesId[0].value),
+			with: { podcast: true },
+		});
 }
 
 export function fetchEpisode(episodeID: string) {

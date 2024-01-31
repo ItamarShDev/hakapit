@@ -1,19 +1,19 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import type { NextOpponentClass, OverviewTable, Team } from "fotmob/dist/esm/types/team";
 import type { Jsonify } from "type-fest";
 import { LiverpoolId } from "~/api/fotmob-api/constants";
-import type { NextOpponentClass, Team } from "~/api/fotmob-api/src/types/team";
 import { ResultTooltip, getFormColor } from "~/components/stats/form";
 import { GamesRadar } from "~/components/stats/radar";
 import TeamAvatar from "~/components/team-avatar";
 
-function getLeagueInfo(league: Jsonify<Team["table"][0]>) {
-	if (league.data.tables) {
-		return league.data.tables
-			.map((table) => table.table.all.find((team) => team.id === LiverpoolId))
+function getLeagueInfo(league: Jsonify<OverviewTable>) {
+	if (league?.data?.tables) {
+		return league?.data?.tables
+			.map((table) => table?.table?.all?.find((team) => team.id === LiverpoolId))
 			.filter((team) => team)[0];
 	}
-	return league.data.table?.all.find((team) => team.id === LiverpoolId);
+	return league?.data?.table?.all?.find((team) => team.id === LiverpoolId);
 }
 
 export function TournamentInformation({
@@ -21,14 +21,14 @@ export function TournamentInformation({
 	stats,
 	teamData,
 }: {
-	league?: Jsonify<Team["table"][0]>;
+	league?: Jsonify<OverviewTable>;
 	// biome-ignore lint:noExplicitAny: no type definition>
 	stats?: Record<string, unknown> | { teams: any } | undefined;
 	teamData: Jsonify<Team>;
 }) {
 	if (!league) return null;
 	const standings = getLeagueInfo(league);
-	const form = league.teamForm[LiverpoolId];
+	const form = league?.teamForm?.[LiverpoolId];
 	const nextMatch = league.nextOpponent?.[LiverpoolId];
 	const nextOpponentId = nextMatch?.[0] as string;
 	const nextOpponent = nextMatch?.find((team) => typeof team === "object" && team.id === nextOpponentId) as
@@ -81,7 +81,7 @@ export function TournamentInformation({
 							{form?.map((game) => (
 								<ResultTooltip game={game} key={game.linkToMatch}>
 									<Avatar className="h-[25px] w-[25px]">
-										<AvatarFallback className={`scale-75 ${getFormColor(game.resultString)}`}>
+										<AvatarFallback className={`scale-75 ${game?.resultString && getFormColor(game?.resultString)}`}>
 											{game.resultString}
 										</AvatarFallback>
 									</Avatar>
@@ -105,7 +105,9 @@ export function TournamentInformation({
 				<TableRow className="border-0">
 					<TableCell className="p-3 text-start text-slate-300">תוצאות עד כה</TableCell>
 					<TableCell className="p-3 font-bold text-start">
-						<GamesRadar fixtures={teamData.fixtures} leagueId={league.data.leagueId} />
+						{teamData.fixtures && league.data?.leagueId && (
+							<GamesRadar fixtures={teamData.fixtures} leagueId={league.data.leagueId} />
+						)}
 					</TableCell>
 				</TableRow>
 			</TableBody>

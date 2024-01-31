@@ -5,8 +5,7 @@ import { cn } from "@/lib/utils";
 import { PlayIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { usePlayer } from "~/components/player/provider";
-import { Episode } from "~/db/types";
-import { toDateString } from "~/hooks";
+import { EpisodeData, toDateString } from "~/hooks";
 export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
 	return (
 		<Card className={cn("episode-card h-full w-full max-w-xl rounded-3xl", className)}>
@@ -30,12 +29,11 @@ export function EpisodeCard({
 	className,
 	contentClassName,
 }: {
-	episode?: Episode;
+	episode?: EpisodeData;
 	contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
 } & React.HTMLAttributes<HTMLDivElement>) {
 	const isoDate = toDateString(episode?.publishedAt);
 	const playerProps = usePlayer();
-	console.log(episode);
 
 	return (
 		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className)}>
