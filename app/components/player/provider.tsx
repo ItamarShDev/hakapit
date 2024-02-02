@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { createContext, forwardRef, useCallback, useContext, useRef, useState } from "react";
+import { toast } from "sonner";
 import { Episode } from "~/db/types";
+
 type PlayerContextType = {
 	currentlyPlaying: Episode | undefined;
 	setCurrentlyPlaying: (episode?: Episode) => void;
@@ -18,6 +21,10 @@ const Player = forwardRef(function Player(
 	},
 	ref: React.ForwardedRef<HTMLAudioElement>,
 ) {
+	const showError = useCallback(() => {
+		closePlayer();
+		toast.error("הניגון נכשל", { description: "סביר להניח שנחסמת על ידי השירות" });
+	}, [closePlayer]);
 	return (
 		<div className={`bottom-0 left-0 flex flex-col w-full p-2 bg-primary ${episode ? "fixed" : "hidden"}`}>
 			<div className="flex flex-row items-start py-2">
@@ -30,7 +37,7 @@ const Player = forwardRef(function Player(
 					<Cross1Icon />
 				</Button>
 			</div>
-			<audio ref={ref} className="audio" controls src={episode?.audioUrl}>
+			<audio ref={ref} className="audio" controls src={episode?.audioUrl} onError={(e) => showError()}>
 				<track kind="captions" />
 			</audio>
 		</div>
@@ -57,6 +64,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 		<PlayerContext.Provider value={{ currentlyPlaying, setCurrentlyPlaying: setCurrentEpisode }}>
 			<div className={`${currentlyPlaying ? "mb-36" : ""}`}>{children}</div>
 			<Player episode={currentlyPlaying} ref={ref} closePlayer={closePlayer} />
+			<Toaster richColors closeButton dir="rtl" />
 		</PlayerContext.Provider>
 	);
 }
