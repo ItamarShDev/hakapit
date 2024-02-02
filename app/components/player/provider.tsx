@@ -57,7 +57,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 	}, []);
 	return (
 		<PlayerContext.Provider value={{ currentlyPlaying, setCurrentlyPlaying: setCurrentEpisode }}>
-			{children}
+			<div className={`${currentlyPlaying ? "mb-36" : ""}`}>{children}</div>
 			<Player episode={currentlyPlaying} ref={ref} closePlayer={closePlayer} />
 		</PlayerContext.Provider>
 	);

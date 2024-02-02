@@ -61,11 +61,11 @@ export function App() {
 			</head>
 			<body className={cn("body", podcast)}>
 				{metadata && <Header data={metadata} podcast={podcast} />}
-				<main className="main-content">
-					<PlayerProvider>
+				<PlayerProvider>
+					<main className="main-content">
 						<Outlet />
-					</PlayerProvider>
-				</main>
+					</main>
+				</PlayerProvider>
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />
