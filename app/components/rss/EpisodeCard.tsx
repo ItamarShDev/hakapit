@@ -41,7 +41,6 @@ export function EpisodeCard({
 				<img
 					src={episode?.imageUrl}
 					alt="episode"
-					placeholder="blur"
 					className="absolute object-cover object-top -z-10 rounded-3xl brightness-40 filter"
 				/>
 			)}
