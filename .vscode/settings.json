@@ -18,5 +18,9 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "errorLens.enabled": true
+  "errorLens.enabled": true,
+  "files.exclude": {
+    ".cache": true,
+    "public/build": true
+  }
 }
