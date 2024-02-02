@@ -1,7 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { useEffect } from "react";
 import { PodcastName, fetchFeed } from "~/api/rss/feed";
-import { usePlayer } from "~/components/player/provider";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 import { usePodcastData } from "~/hooks";
@@ -52,11 +50,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 };
 export default function RouteComponent() {
 	const { podcast, metadata } = usePodcastData({ limit: 1 });
-	const context = usePlayer();
-	const { setCurrentlyPlaying } = context;
-	useEffect(() => {
-		setCurrentlyPlaying(metadata?.episodes[0]);
-	}, [metadata, setCurrentlyPlaying]);
 	return (
 		<section className="feed-page">
 			<RSSFeed data={metadata} preview />
