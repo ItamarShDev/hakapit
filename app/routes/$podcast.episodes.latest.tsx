@@ -18,6 +18,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 			property: "og:url",
 			content: `https://hakapit.online/${params?.podcast}/episodes/latest`,
 		},
+		{ property: "og:updated_time", content: data?.updatedAt },
 		{ property: "og:type", content: "website" },
 		{ property: "og:title", content: data?.title },
 		{ property: "og:description", content: contentWithoutNewLine },
