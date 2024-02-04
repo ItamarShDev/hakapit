@@ -2,27 +2,34 @@ import { ilike, like } from "drizzle-orm";
 import { PODCAST_NAMES, PodcastName, fetchRSSFeed } from "~/api/rss/feed";
 import { db } from "~/db/config.server";
 import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema.server";
-import { toDate } from "~/hooks";
 
 export async function updateFeedInDb(feedName: PodcastName) {
 	const feed = await fetchRSSFeed(feedName, 0);
+
 	const podcastsDB = await db.query.podcasts.findFirst({
 		where: ilike(podcasts.name, feedName),
+		with: {
+			episodes: true,
+		},
 	});
 
 	let newEpisodes = feed.items;
 	if (!podcastsDB) {
 		await db.insert(podcasts).values(toSchemaPodcast(feed, feedName)).execute();
 	} else {
-		const lastUpdated = podcastsDB?.updatedAt;
 		await db
 			.update(podcasts)
 			.set(toSchemaPodcast(feed, feedName))
 			.where(like(podcasts.name, feedName as string))
 			.execute();
 		newEpisodes = feed.items.filter((episode) => {
-			const episodeDate = toDate(episode.isoDate);
-			return episodeDate && episodeDate.getTime() > lastUpdated.getTime();
+			console.log(
+				episode.number,
+				podcastsDB.episodes[0].episodeNumber,
+				episode.number > podcastsDB.episodes[0].episodeNumber,
+			);
+
+			return episode.number > podcastsDB.episodes[0].episodeNumber;
 		});
 	}
 	if (newEpisodes.length === 0) {

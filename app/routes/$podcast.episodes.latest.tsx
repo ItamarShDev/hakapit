@@ -16,7 +16,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 		// open graph
 		{
 			property: "og:url",
-			content: `https://hakapit.online/${params?.podcast}/episodes/${params.id}`,
+			content: `https://hakapit.online/${params?.podcast}/episodes/latest`,
 		},
 		{ property: "og:type", content: "website" },
 		{ property: "og:title", content: data?.title },

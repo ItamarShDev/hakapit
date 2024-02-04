@@ -20,11 +20,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	return eventStream(request.signal, (send, abort) => {
 		async function sync() {
 			const updateFeeds = await updateFeedsInDb();
-			// if (!updateFeeds) {
-			// 	console.info("no update feeds");
-			// 	abort();
-			// 	return;
-			// }
+			if (!updateFeeds) {
+				console.info("no update feeds");
+				abort();
+				return;
+			}
 			const url = new URL(request.url);
 			const params = Object.fromEntries(url.searchParams);
 			const data = await getData(params);
