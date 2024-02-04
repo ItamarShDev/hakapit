@@ -22,7 +22,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 		{ property: "og:type", content: "website" },
 		{ property: "og:title", content: data?.title },
 		{ property: "og:description", content: contentWithoutNewLine },
-		{ property: "og:image", content: data?.imageUrl },
+		{ property: "og:image", content: `${data?.imageUrl}?from=${data?.updatedAt}` },
 
 		// twitter
 		{ property: "twitter:card", content: "summary_large_image" },
