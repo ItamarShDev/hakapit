@@ -55,7 +55,7 @@ body {
   }
 
   .main-content {
-    @apply p-4 px-8 overflow-auto;
+    @apply p-4 px-8 overflow-auto w-screen;
   }
 
   .content {
@@ -132,7 +132,8 @@ body {
   }
 
   .header {
-    @apply sticky top-0 z-10 w-full border-b-2 border-solid border-accent bg-primary text-paragraph;
+
+    @apply sticky top-0 z-10 w-screen border-b-2 border-solid border-accent bg-primary text-paragraph;
   }
 
   .header:has(.menu-button:focus-within) .header-links {

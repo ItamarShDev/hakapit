@@ -14,7 +14,7 @@ export default function Header({ data, podcast, className }: Props) {
 		<header className="overflow-hidden header">
 			<div className="flex flex-wrap items-start gap-4 p-4 lg:items-center ">
 				<div className="header-image">
-					{imageUrl && <img src={imageUrl} alt="podcast logo" placeholder="blur" className="object-contain" />}
+					{imageUrl && <img src={imageUrl} alt="podcast logo" className="object-contain" />}
 				</div>
 				<div className="flex-1 header-title">
 					<Link to={`/${podcast || ""}`}>
