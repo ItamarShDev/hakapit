@@ -25,7 +25,7 @@ export default function RSSFeed({
 			{preview ? (
 				<>
 					<Preview data={data} />
-					<NavLink to={"episodes"} className={({ isPending }) => getLinkClass(isPending)}>
+					<NavLink to={"episodes"} reloadDocument className={({ isPending }) => getLinkClass(isPending)}>
 						לכל הפרקים
 					</NavLink>
 				</>

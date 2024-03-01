@@ -22,15 +22,7 @@ export async function updateFeedInDb(feedName: PodcastName) {
 			.set(toSchemaPodcast(feed, feedName))
 			.where(like(podcasts.name, feedName as string))
 			.execute();
-		newEpisodes = feed.items.filter((episode) => {
-			console.log(
-				episode.number,
-				podcastsDB.episodes[0].episodeNumber,
-				episode.number > podcastsDB.episodes[0].episodeNumber,
-			);
-
-			return episode.number > podcastsDB.episodes[0].episodeNumber;
-		});
+		newEpisodes = feed.items.filter((episode) => episode.number > podcastsDB.episodes[0].episodeNumber);
 	}
 	if (newEpisodes.length === 0) {
 		return;

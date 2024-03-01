@@ -13,6 +13,7 @@ function LinkItem({
 		<>
 			<NavLink
 				prefetch="intent"
+				reloadDocument
 				to={href}
 				className={({ isActive, isPending }) =>
 					cn("hover:text-accent hover:opacity-80", isActive ? "text-accent" : "", isPending ? "pending" : "")
