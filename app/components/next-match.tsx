@@ -61,7 +61,7 @@ function NextMatchInner({
 				<img
 					className="h-[20px]"
 					src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${nextGame.tournament?.leagueId}.png`}
-					alt={nextGame.tournament?.name}
+					alt={`${nextGame.tournament?.name} logo`}
 				/>
 				<div className="font-bold">{nextGame.tournament?.name}</div>
 			</div>

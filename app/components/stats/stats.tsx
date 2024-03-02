@@ -24,7 +24,7 @@ export const StatsTable: React.FC<{
 										<img
 											className="h-[50px]"
 											src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${league?.data?.leagueId}.png`}
-											alt={league?.data?.leagueName}
+											alt={`${league?.data?.leagueName} logo`}
 										/>
 										<div className="font-bold">{league?.data?.leagueName}</div>
 									</div>
