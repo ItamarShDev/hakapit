@@ -40,6 +40,7 @@ function NextMatchInner({
 	nextMatchOpponent,
 	teamData,
 }: { nextGame: Jsonify<NextMatch>; teamData: Jsonify<Team>; nextMatchOpponent: Jsonify<Team> }) {
+	if (!nextGame.away || !nextGame.home) return null;
 	const isHome = nextGame.home?.id === teamData.details?.id;
 	const homeTeam = isHome ? teamData : nextMatchOpponent;
 	const awayTeam = isHome ? nextMatchOpponent : teamData;
