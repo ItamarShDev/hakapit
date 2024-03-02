@@ -8,7 +8,7 @@ export const StatsTable: React.FC<{
 	teamData: Jsonify<Team>;
 	leagueStats: Promise<Record<string, unknown>[]>;
 }> = ({ teamData, leagueStats }) => (
-	<Suspense fallback={<div>Loading...</div>}>
+	<Suspense fallback={<div>טוען סטטיסטיקה...</div>}>
 		<Await resolve={leagueStats}>
 			{(leagueStats) => {
 				return (

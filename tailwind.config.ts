@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import colors from "tailwindcss/colors";
 module.exports = {
 	darkMode: ["class"],
 	content: ["./app/**/*.{js,jsx,ts,tsx}", "./@/**/*.{ts,tsx}"],
@@ -30,7 +29,6 @@ module.exports = {
 				40: ".4",
 			},
 			colors: {
-				...colors,
 				paragraph: "hsl(var(--color-text))",
 				"primary-opaque": "hsl(var(--color-primary-opaque))",
 				accent: "hsl(var(--color-accent))",

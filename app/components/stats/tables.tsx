@@ -1,9 +1,8 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { NextOpponentClass, OverviewTable, Team } from "fotmob/dist/esm/types/team";
 import type { Jsonify } from "type-fest";
 import { LiverpoolId } from "~/api/fotmob-api/constants";
-import { ResultTooltip, getFormColor } from "~/components/stats/form";
+import Form from "~/components/stats/form";
 import { GamesRadar } from "~/components/stats/radar";
 import TeamAvatar from "~/components/team-avatar";
 
@@ -77,17 +76,7 @@ export function TournamentInformation({
 				<TableRow className="border-0">
 					<TableCell className="p-3 text-start text-slate-300">ביצועים</TableCell>
 					<TableCell className="p-3 text-start">
-						<div className="flex items-center">
-							{form?.map((game) => (
-								<ResultTooltip game={game} key={game.linkToMatch}>
-									<Avatar className="h-[25px] w-[25px]">
-										<AvatarFallback className={`scale-75 ${game?.resultString && getFormColor(game?.resultString)}`}>
-											{game.resultString}
-										</AvatarFallback>
-									</Avatar>
-								</ResultTooltip>
-							))}
-						</div>
+						<div className="flex items-center">{form && <Form form={form} />}</div>
 					</TableCell>
 				</TableRow>
 				<TableRow className="border-0">

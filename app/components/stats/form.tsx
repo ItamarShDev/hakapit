@@ -47,3 +47,17 @@ export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { ga
 		</Tooltip>
 	</TooltipProvider>
 );
+
+const Form: React.FC<{ form: Jsonify<TeamForm>[] }> = ({ form }) => {
+	return form.map((game) => (
+		<ResultTooltip game={game} key={game.linkToMatch}>
+			<Avatar className="h-[25px] w-[25px]">
+				<AvatarFallback className={`scale-75 ${game?.resultString && getFormColor(game?.resultString)}`}>
+					{game.resultString}
+				</AvatarFallback>
+			</Avatar>
+		</ResultTooltip>
+	));
+};
+
+export default Form;

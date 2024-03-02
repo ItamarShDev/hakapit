@@ -37,6 +37,8 @@ export const links: LinksFunction = () => [
 
 export const loader = async () => {
 	const teamData = await getTeam();
+	const nextGame = teamData?.overview?.nextMatch;
+	const nextMatchOpponent = getTeam(nextGame?.opponent?.id);
 	const fetches = teamData.history?.tables?.current?.[0]?.link?.map((league) => {
 		const tournamentId = league?.template_id?.[0];
 		if (tournamentId !== undefined) {
@@ -48,16 +50,16 @@ export const loader = async () => {
 	return defer({
 		teamData,
 		leagueStats,
+		nextMatchOpponent,
 	});
 };
 
 export default function Index() {
-	const { teamData, leagueStats } = useLoaderData<typeof loader>();
+	const { teamData, leagueStats, nextMatchOpponent } = useLoaderData<typeof loader>();
 	const nextGame = teamData?.overview?.nextMatch;
+
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
-			{nextGame && <NextMatchOverview nextGame={nextGame} />}
-			<StatsTable teamData={teamData} leagueStats={leagueStats} />
 			<div className="py-8 text-center text-paragraph">
 				<h1 className="text-4xl fade-in-bottom text-accent">מה זה כפית?</h1>
 				<div className="what-is-kapit text-slate-300">
@@ -66,6 +68,9 @@ export default function Index() {
 					<p className="py-2 fade-in-bottom a-delay-700">כפית זה כל כך פשוט וכל כך קשה.</p>
 				</div>
 			</div>
+
+			<NextMatchOverview nextGame={nextGame} nextMatchOpponent={nextMatchOpponent} teamData={teamData} />
+			<StatsTable teamData={teamData} leagueStats={leagueStats} />
 			<div className="flex flex-wrap justify-center gap-2 py-4">
 				<Link to="https://twitter.com/KapitPod">Twitter</Link>
 				<span className="text-accent">|</span>
