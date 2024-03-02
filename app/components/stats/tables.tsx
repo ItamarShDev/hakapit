@@ -38,21 +38,21 @@ export function TournamentInformation({
 		<Table>
 			<TableBody>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">מיקום</TableCell>
+					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">מיקום</TableCell>
 					<TableCell className="p-3 font-bold text-start">{standings?.idx}</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">נקודות</TableCell>
+					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">נקודות</TableCell>
 					<TableCell className="p-3 font-bold text-start">{standings?.pts}</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">ממוצע שערים למשחק</TableCell>
+					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">ממוצע שערים למשחק</TableCell>
 					<TableCell className="p-3 font-bold text-start">
 						{stats?.teams.find((stat: Record<string, unknown>) => stat.name === "goals_team_match")?.participant.value}
 					</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">ממוצע אחזקת כדור</TableCell>
+					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">ממוצע אחזקת כדור</TableCell>
 					<TableCell className="p-3 font-bold text-start">
 						{
 							stats?.teams.find((stat: Record<string, unknown>) => stat.name === "possession_percentage_team")
@@ -61,7 +61,7 @@ export function TournamentInformation({
 					</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">xG</TableCell>
+					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">xG</TableCell>
 					<TableCell className="p-3 font-bold text-start">
 						{
 							stats?.teams.find((stat: Record<string, unknown>) => stat.name === "expected_goals_team")?.participant
@@ -70,17 +70,17 @@ export function TournamentInformation({
 					</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">נקודות</TableCell>
+					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">נקודות</TableCell>
 					<TableCell className="p-3 font-bold text-start">{standings?.pts}</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">ביצועים</TableCell>
+					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">ביצועים</TableCell>
 					<TableCell className="p-3 text-start">
 						<div className="flex items-center">{form && <Form form={form} />}</div>
 					</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">משחק הבא</TableCell>
+					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">משחק הבא</TableCell>
 					<TableCell className="p-3 font-bold text-start">
 						{nextOpponent && (
 							<TeamAvatar
@@ -92,7 +92,7 @@ export function TournamentInformation({
 					</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
-					<TableCell className="p-3 text-start text-slate-300">תוצאות עד כה</TableCell>
+					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">תוצאות עד כה</TableCell>
 					<TableCell className="p-3 font-bold text-start">
 						{teamData.fixtures && league.data?.leagueId && (
 							<GamesRadar fixtures={teamData.fixtures} leagueId={league.data.leagueId} />
