@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { NextOpponentClass, OverviewTable, Team } from "fotmob/dist/esm/types/team";
+import { useMemo } from "react";
 import type { Jsonify } from "type-fest";
 import { LiverpoolId } from "~/api/fotmob-api/constants";
 import Form from "~/components/stats/form";
@@ -26,13 +27,15 @@ export function TournamentInformation({
 	teamData: Jsonify<Team>;
 }) {
 	if (!league) return null;
-	const standings = getLeagueInfo(league);
-	const form = league?.teamForm?.[LiverpoolId];
+	if (!stats) return null;
+	const standings = useMemo(() => getLeagueInfo(league), [league]);
+	const form = league.teamForm?.[LiverpoolId];
 	const nextMatch = league.nextOpponent?.[LiverpoolId];
 	const nextOpponentId = nextMatch?.[0] as string;
 	const nextOpponent = nextMatch?.find((team) => typeof team === "object" && team.id === nextOpponentId) as
 		| NextOpponentClass
 		| undefined;
+	console.log(stats);
 
 	return (
 		<Table>
@@ -48,14 +51,14 @@ export function TournamentInformation({
 				<TableRow className="border-0">
 					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">ממוצע שערים למשחק</TableCell>
 					<TableCell className="p-3 font-bold text-start">
-						{stats?.teams.find((stat: Record<string, unknown>) => stat.name === "goals_team_match")?.participant.value}
+						{stats?.teams?.find((stat: Record<string, unknown>) => stat.name === "goals_team_match")?.participant.value}
 					</TableCell>
 				</TableRow>
 				<TableRow className="border-0">
 					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">ממוצע אחזקת כדור</TableCell>
 					<TableCell className="p-3 font-bold text-start">
 						{
-							stats?.teams.find((stat: Record<string, unknown>) => stat.name === "possession_percentage_team")
+							stats?.teams?.find((stat: Record<string, unknown>) => stat.name === "possession_percentage_team")
 								?.participant.value
 						}
 					</TableCell>
@@ -64,7 +67,7 @@ export function TournamentInformation({
 					<TableCell className="p-3 text-start text-slate-300 whitespace-nowrap">xG</TableCell>
 					<TableCell className="p-3 font-bold text-start">
 						{
-							stats?.teams.find((stat: Record<string, unknown>) => stat.name === "expected_goals_team")?.participant
+							stats?.teams?.find((stat: Record<string, unknown>) => stat.name === "expected_goals_team")?.participant
 								.value
 						}
 					</TableCell>

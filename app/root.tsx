@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
-import { type LinksFunction, type LoaderFunctionArgs } from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import rdtStylesheet from "remix-development-tools/index.css";
-import { PodcastName, fetchFeed } from "~/api/rss/feed";
+import { fetchFeed, type PodcastName } from "~/api/rss/feed";
 import { AnalyticsWrapper } from "~/components/analytics";
 import Header from "~/components/header";
 import { PlayerProvider } from "~/components/player/provider";
@@ -74,10 +74,10 @@ export function App() {
 		</html>
 	);
 }
-let AppExport = App;
+// let AppExport = App;
 
-if (process.env.NODE_ENV === "development") {
-	const { withDevTools } = await import("remix-development-tools");
-	AppExport = withDevTools(AppExport);
-}
-export default AppExport;
+// if (process.env.NODE_ENV === "development") {
+// 	const { withDevTools } = await import("remix-development-tools");
+// 	AppExport = withDevTools(AppExport);
+// }
+export default App;

@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { PodcastName, fetchFeed } from "~/api/rss/feed";
+import { fetchFeed, type PodcastName } from "~/api/rss/feed";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 import { usePodcastData } from "~/hooks";

@@ -1,5 +1,5 @@
 {
-  "files.autoSave": "afterDelay",
+  "files.autoSave": "off",
   "editor.defaultFormatter": "biomejs.biome",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
@@ -22,5 +22,6 @@
   "files.exclude": {
     ".cache": true,
     "public/build": true
-  }
+  },
+  "workbench.editor.wrapTabs": false
 }

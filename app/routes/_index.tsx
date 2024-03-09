@@ -39,9 +39,9 @@ async function loadData() {
 	const nextGame = teamData?.overview?.nextMatch;
 	const nextMatchOpponent = getTeam(nextGame?.opponent?.id);
 	const fetches = teamData.history?.tables?.current?.[0]?.link?.map((league) => {
-		const tournamentId = league?.template_id?.[0];
+		const tournamentId = league?.tournament_id?.[0];
 		if (tournamentId !== undefined) {
-			return getLeague(parseInt(tournamentId));
+			return getLeague(Number.parseInt(tournamentId));
 		}
 	});
 	const leagueStats = fetches ? Promise.all(fetches.filter((league) => league !== undefined)) : Promise.resolve([]);
