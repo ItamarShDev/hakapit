@@ -1,7 +1,7 @@
 import type { LinksFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
 import { getLeague, getTeam } from "~/api/fotmob-api/index.server";
 import NextMatchOverview from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
@@ -34,8 +34,7 @@ export const links: LinksFunction = () => [
 		href: "/logo.webp",
 	},
 ];
-
-export const loader = async () => {
+async function loadData() {
 	const teamData = await getTeam();
 	const nextGame = teamData?.overview?.nextMatch;
 	const nextMatchOpponent = getTeam(nextGame?.opponent?.id);
@@ -47,6 +46,11 @@ export const loader = async () => {
 	});
 	const leagueStats = fetches ? Promise.all(fetches.filter((league) => league !== undefined)) : Promise.resolve([]);
 
+	return { teamData, leagueStats, nextMatchOpponent };
+}
+export const loader = async () => {
+	const { leagueStats, nextMatchOpponent } = await loadData();
+	const teamData = await getTeam();
 	return defer({
 		teamData,
 		leagueStats,
@@ -84,4 +88,12 @@ export default function Index() {
 			</div>
 		</section>
 	);
+}
+
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		return <div>{error.data.message}</div>;
+	}
+	return <div />;
 }
