@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { TeamForm } from "fotmob/dist/esm/types/team";
+import type { TeamForm } from "fotmob/dist/esm/types/team";
 import type { Jsonify } from "type-fest";
 
 export function getFormColor(form: string) {
@@ -41,7 +41,7 @@ export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { ga
 	<TooltipProvider key={game.linkToMatch}>
 		<Tooltip>
 			<TooltipTrigger>{children}</TooltipTrigger>
-			<TooltipContent side="bottom" className="rounded-xl">
+			<TooltipContent side="bottom" className="rounded-xl bg-slate-700 border-primary">
 				<TooltipScore game={game} />
 			</TooltipContent>
 		</Tooltip>
