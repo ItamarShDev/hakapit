@@ -5,14 +5,20 @@ export default function TeamAvatar({
 	teamShortName = teamName,
 	teamId,
 	iconPosition = "before",
+	color,
 }: {
 	teamId?: string | number;
 	teamName?: string;
 	teamShortName?: string;
 	iconPosition?: "before" | "after";
+	color?: string;
 }) {
 	if (!teamId) return null;
-	const teamNameComponent = <div className="text-amber-100">{teamName}</div>;
+	const teamNameComponent = (
+		<div className="text-amber-100" style={{ color }}>
+			{teamName}
+		</div>
+	);
 	return (
 		<div className={`flex items-center gap-3 ${iconPosition === "after" ? "justify-end" : "justify-start"}`}>
 			{iconPosition === "after" && teamNameComponent}

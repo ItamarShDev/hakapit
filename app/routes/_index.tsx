@@ -2,7 +2,8 @@ import type { LinksFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
 import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
-import { getLeague, getTeam } from "~/api/fotmob-api/index.server";
+import type { MatchDetails } from "fotmob/dist/esm/types/match-details";
+import { getGame, getLeague, getTeam } from "~/api/fotmob-api/index.server";
 import NextMatchOverview from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
 
@@ -51,15 +52,20 @@ async function loadData() {
 export const loader = async () => {
 	const { leagueStats, nextMatchOpponent } = await loadData();
 	const teamData = await getTeam();
+	const nextGameID = teamData.overview?.nextMatch?.id;
+	const nextGameData = nextGameID
+		? getGame<MatchDetails>(nextGameID)
+		: (new Promise(() => {}) as Promise<MatchDetails>);
 	return defer({
 		teamData,
 		leagueStats,
 		nextMatchOpponent,
+		nextGameData,
 	});
 };
 
 export default function Index() {
-	const { teamData, leagueStats, nextMatchOpponent } = useLoaderData<typeof loader>();
+	const { teamData, leagueStats, nextMatchOpponent, nextGameData } = useLoaderData<typeof loader>();
 	const nextGame = teamData?.overview?.nextMatch;
 
 	return (
@@ -73,7 +79,12 @@ export default function Index() {
 				</div>
 			</div>
 
-			<NextMatchOverview nextGame={nextGame} nextMatchOpponent={nextMatchOpponent} teamData={teamData} />
+			<NextMatchOverview
+				nextGame={nextGame}
+				nextMatchOpponent={nextMatchOpponent}
+				teamData={teamData}
+				nextGameData={nextGameData}
+			/>
 			<StatsTable teamData={teamData} leagueStats={leagueStats} />
 			<div className="flex flex-wrap justify-center gap-2 py-4">
 				<Link to="https://twitter.com/KapitPod">Twitter</Link>

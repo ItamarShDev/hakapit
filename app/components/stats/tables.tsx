@@ -35,8 +35,6 @@ export function TournamentInformation({
 	const nextOpponent = nextMatch?.find((team) => typeof team === "object" && team.id === nextOpponentId) as
 		| NextOpponentClass
 		| undefined;
-	console.log(stats);
-
 	return (
 		<Table>
 			<TableBody>

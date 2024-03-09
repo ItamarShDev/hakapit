@@ -1,6 +1,7 @@
 import { Await } from "@remix-run/react";
-import { NextMatch, OpponentClass, Team } from "fotmob/dist/esm/types/team";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import type { MatchDetails } from "fotmob/dist/esm/types/match-details";
+import type { NextMatch, OpponentClass, Team } from "fotmob/dist/esm/types/team";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import type { Jsonify } from "type-fest";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
@@ -39,7 +40,13 @@ function NextMatchInner({
 	nextGame,
 	nextMatchOpponent,
 	teamData,
-}: { nextGame: Jsonify<NextMatch>; teamData: Jsonify<Team>; nextMatchOpponent: Jsonify<Team> }) {
+	nextGameData,
+}: {
+	nextGame: Jsonify<NextMatch>;
+	teamData: Jsonify<Team>;
+	nextMatchOpponent: Jsonify<Team>;
+	nextGameData: Promise<Jsonify<MatchDetails>>;
+}) {
 	if (!nextGame.away || !nextGame.home) return null;
 	const isHome = nextGame.home?.id === teamData.details?.id;
 	const homeTeam = isHome ? teamData : nextMatchOpponent;
@@ -53,7 +60,6 @@ function NextMatchInner({
 	const awayForm = table?.teamForm?.[awayTeam.details?.id];
 	const homeForm = table?.teamForm?.[homeTeam.details?.id];
 	if (!awayForm || !homeForm) return;
-
 	return (
 		<div className="flex flex-col gap-2 pb-6 heebo">
 			<div className="text-sm text-slate-300">{nextGame.notStarted ? "המשחק הבא" : "כרגע"}</div>
@@ -85,6 +91,39 @@ function NextMatchInner({
 					<Form form={homeForm} />
 				</div>
 			</div>
+			<Suspense fallback={<div />}>
+				<Await resolve={nextGameData}>
+					{(nextGameData) => {
+						// console.log(nextGameData);
+						const color = useCallback(
+							(idx: number, color: "text" | "team" = "team") => {
+								if (idx === 1) return "gray";
+								const colorMap = {
+									text: nextGameData?.general?.teamColors?.fontDarkMode,
+									team: nextGameData?.general?.teamColors?.darkMode,
+								};
+								return colorMap[color]?.[idx === 0 ? "home" : "away"];
+							},
+							[nextGameData],
+						);
+
+						return (
+							<div className="w-full flex justify-around flex-row-reverse">
+								{nextGameData.content?.h2h?.summary?.map((game, index) => (
+									<div className="flex flex-col items-center gap-1">
+										<div className="text-sm" style={{ color: color(index) }}>
+											{game}
+										</div>
+										<div className="text-xs" style={{ color: color(index, "text") }}>
+											{index === 1 ? "תיקו" : "נצחונות"}
+										</div>
+									</div>
+								))}
+							</div>
+						);
+					}}
+				</Await>
+			</Suspense>
 		</div>
 	);
 }
@@ -92,21 +131,32 @@ export default function NextMatchOverview({
 	teamData,
 	nextGame,
 	nextMatchOpponent,
+	nextGameData,
 }: {
 	teamData: Jsonify<Team>;
 	nextGame: Jsonify<NextMatch> | undefined;
 	nextMatchOpponent: Promise<Jsonify<Team>>;
+	nextGameData: Promise<Jsonify<MatchDetails>>;
 }) {
 	if (!nextGame) return null;
 	return (
-		<Suspense fallback={<div>טוען פרטי משחק הבא...</div>}>
-			<Await resolve={nextMatchOpponent}>
-				{(nextMatchOpponent) => {
-					return (
-						nextGame && <NextMatchInner nextGame={nextGame} nextMatchOpponent={nextMatchOpponent} teamData={teamData} />
-					);
-				}}
-			</Await>
-		</Suspense>
+		<>
+			<Suspense fallback={<div>טוען פרטי משחק הבא...</div>}>
+				<Await resolve={nextMatchOpponent}>
+					{(nextMatchOpponent) => {
+						return (
+							nextGame && (
+								<NextMatchInner
+									nextGame={nextGame}
+									nextMatchOpponent={nextMatchOpponent}
+									teamData={teamData}
+									nextGameData={nextGameData}
+								/>
+							)
+						);
+					}}
+				</Await>
+			</Suspense>
+		</>
 	);
 }
