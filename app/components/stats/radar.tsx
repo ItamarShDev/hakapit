@@ -1,8 +1,7 @@
 import { ResponsiveBar } from "@nivo/bar";
-import { TeamFixtures } from "fotmob/dist/esm/types/team";
 import { useMemo } from "react";
 import type { Jsonify } from "type-fest";
-import { LiverpoolId } from "~/api/fotmob-api/constants";
+import { LIVERPOOL_ID } from "~/api/sofascore-api/constants";
 
 function getKeyByNumber(number: number) {
 	switch (number) {
@@ -19,7 +18,7 @@ export function GamesRadar({
 	fixtures,
 	leagueId,
 }: {
-	fixtures: Jsonify<TeamFixtures>;
+	fixtures: Jsonify<any>;
 	leagueId: number;
 }) {
 	const barData = useMemo(() => {
@@ -28,7 +27,7 @@ export function GamesRadar({
 			.reduce(
 				(acc, fixture) => {
 					if (fixture.result == null) return acc;
-					const locationKey = fixture?.home?.id === LiverpoolId ? "בית" : "חוץ";
+					const locationKey = fixture?.home?.id === LIVERPOOL_ID ? "בית" : "חוץ";
 					const typeKey = getKeyByNumber(fixture.result);
 					if (!typeKey) return acc;
 					acc[typeKey][locationKey] += 1;

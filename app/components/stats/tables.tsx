@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { NextOpponentClass, OverviewTable, Team } from "fotmob/dist/esm/types/team";
 import { useMemo } from "react";
 import type { Jsonify } from "type-fest";
-import { LiverpoolId } from "~/api/fotmob-api/constants";
+import { LIVERPOOL_ID } from "~/api/sofascore-api/constants";
 import Form from "~/components/stats/form";
 import { GamesRadar } from "~/components/stats/radar";
 import TeamAvatar from "~/components/team-avatar";
@@ -10,10 +10,10 @@ import TeamAvatar from "~/components/team-avatar";
 function getLeagueInfo(league: Jsonify<OverviewTable>) {
 	if (league?.data?.tables) {
 		return league?.data?.tables
-			.map((table) => table?.table?.all?.find((team) => team.id === LiverpoolId))
+			.map((table) => table?.table?.all?.find((team) => team.id === LIVERPOOL_ID))
 			.filter((team) => team)[0];
 	}
-	return league?.data?.table?.all?.find((team) => team.id === LiverpoolId);
+	return league?.data?.table?.all?.find((team) => team.id === LIVERPOOL_ID);
 }
 
 export function TournamentInformation({
@@ -29,8 +29,8 @@ export function TournamentInformation({
 	if (!league) return null;
 	if (!stats) return null;
 	const standings = useMemo(() => getLeagueInfo(league), [league]);
-	const form = league.teamForm?.[LiverpoolId];
-	const nextMatch = league.nextOpponent?.[LiverpoolId];
+	const form = league.teamForm?.[LIVERPOOL_ID];
+	const nextMatch = league.nextOpponent?.[LIVERPOOL_ID];
 	const nextOpponentId = nextMatch?.[0] as string;
 	const nextOpponent = nextMatch?.find((team) => typeof team === "object" && team.id === nextOpponentId) as
 		| NextOpponentClass

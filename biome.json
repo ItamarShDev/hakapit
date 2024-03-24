@@ -2,8 +2,7 @@
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"files": {
 		"ignore": [
-			"build/*.js",
-			"app/api/fotmob-api/*.ts"
+			"build/*.js"
 		]
 	},
 	"organizeImports": {

@@ -6,7 +6,7 @@
     "source.organizeImports": "explicit"
   },
 
-  "editor.wordWrap": "wordWrapColumn",
+  "editor.wordWrap": "bounded",
   "explorer.excludeGitIgnore": true,
   "search.useGlobalIgnoreFiles": true,
   "editor.useTabStops": true,
@@ -23,5 +23,20 @@
     ".cache": true,
     "public/build": true
   },
-  "workbench.editor.wrapTabs": false
+  "workbench.editor.wrapTabs": false,
+  "editor.wrappingIndent": "indent",
+  "errorLens.delayMode": "debounce",
+  "errorLens.onSave": true,
+  "errorLens.enableOnDiffView": true,
+  "errorLens.gutterIconsEnabled": false,
+  "errorLens.statusBarMessageType": "activeLine",
+  "errorLens.statusBarMessageEnabled": true,
+  "errorLens.scrollbarHackEnabled": false,
+  "errorLens.enabledInMergeConflict": false,
+  "errorLens.followCursor": "closestProblem",
+  "errorLens.enabledDiagnosticLevels": [
+    "error",
+    "warning"
+  ],
+  "errorLens.gutterIconsFollowCursorOverride": false
 }

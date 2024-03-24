@@ -1,9 +1,9 @@
-import { Await } from "@remix-run/react";
-import type { MatchDetails } from "fotmob/dist/esm/types/match-details";
-import type { NextMatch, OpponentClass, Team } from "fotmob/dist/esm/types/team";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import type { OpponentClass } from "fotmob/dist/esm/types/team";
+import { useEffect, useMemo, useState } from "react";
 import type { Jsonify } from "type-fest";
-import Form from "~/components/stats/form";
+import type { getNextMatchData } from "~/api/sofascore-api/index.server";
+import type { LeagueForm } from "~/api/sofascore-api/types/forms";
+import { TeamForm } from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
 
 function GameTimer({ start }: { start: string }) {
@@ -14,6 +14,7 @@ function GameTimer({ start }: { start: string }) {
 		}, 1000);
 		return () => clearInterval(interval);
 	}, [start]);
+
 	const minutes = Math.floor(time / 1000 / 60);
 	const seconds = Math.floor((time / 1000) % 60);
 	return (
@@ -36,66 +37,78 @@ function TeamStatus({
 	);
 }
 
-function NextMatchInner({
-	nextGame,
-	nextMatchOpponent,
-	teamData,
-	nextGameData,
-}: {
-	nextGame: Jsonify<NextMatch>;
-	teamData: Jsonify<Team>;
-	nextMatchOpponent: Jsonify<Team>;
-	nextGameData: Promise<Jsonify<MatchDetails>>;
-}) {
-	if (!nextGame.away || !nextGame.home) return null;
-	const isHome = nextGame.home?.id === teamData.details?.id;
-	const homeTeam = isHome ? teamData : nextMatchOpponent;
-	const awayTeam = isHome ? nextMatchOpponent : teamData;
+export function getTeamForm(form: LeagueForm, teamId: number) {
+	return form.events
+		.filter(
+			(event, index) =>
+				event.status.code === 100 && (event.awayTeam.id === teamId || event.homeTeam.id === teamId) && index < 5,
+		)
+		.map((event) => {
+			const isHome = event.awayTeam.id === teamId;
+			let letter = null;
+			let result = null;
+			const awayTeam = event.awayTeam;
+			const homeTeam = event.homeTeam.id;
+			if (isHome) {
+				letter = event.winnerCode === 1 ? "W" : event.winnerCode === 0 ? "D" : "L";
+				result = `${event.homeScore.current}-${event.awayScore.current}`;
+			} else {
+				letter = event.winnerCode === 2 ? "W" : event.winnerCode === 0 ? "D" : "L";
+				result = `${event.awayScore.current}-${event.homeScore.current}`;
+			}
+			return {
+				letter,
+				result,
+				homeTeam,
+				awayTeam,
+			};
+		});
+}
 
-	const table = useMemo(
-		() => awayTeam.table?.find((table) => table.data?.leagueId === nextGame.tournament?.leagueId),
-		[awayTeam.table, nextGame.tournament?.leagueId],
-	);
-	if (!awayTeam.details?.id || !homeTeam.details?.id) return;
-	const awayForm = table?.teamForm?.[awayTeam.details?.id];
-	const homeForm = table?.teamForm?.[homeTeam.details?.id];
-	if (!awayForm || !homeForm) return;
+export function NextMatchOverview({
+	nextMatch: { nextMatch, form },
+}: {
+	nextMatch: Jsonify<Awaited<ReturnType<typeof getNextMatchData>>>;
+}) {
+	const _homeTeam = useMemo(() => nextMatch?.homeTeam, [nextMatch]);
+	const _awayTeam = useMemo(() => nextMatch?.awayTeam, [nextMatch]);
+	if (!_homeTeam || !_awayTeam) return null;
+
+	const awayForm = getTeamForm(form, _awayTeam.id);
+	const homeForm = getTeamForm(form, _homeTeam.id);
+
 	return (
 		<div className="flex flex-col gap-2 pb-6 heebo">
-			<div className="text-sm text-slate-300">{nextGame.notStarted ? "המשחק הבא" : "כרגע"}</div>
+			<div className="text-sm text-slate-300">{nextMatch?.startTimestamp ? "המשחק הבא" : "כרגע"}</div>
 			<div className="flex flex-row-reverse items-center justify-center gap-2">
 				<img
 					className="h-[20px]"
-					src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${nextGame.tournament?.leagueId}.png`}
-					alt={`${nextGame.tournament?.name} logo`}
+					src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${nextMatch?.tournament.id}.png`}
+					alt={`${nextMatch} logo`}
 				/>
-				<div className="font-bold">{nextGame.tournament?.name}</div>
+				<div className="font-bold">{nextMatch?.tournament.name}</div>
 			</div>
 			<div className="game-title">
 				<div>
-					<TeamStatus game={nextGame.away} isRunning={!nextGame.notStarted} iconPosition="after" />
-					<Form form={awayForm} />
+					{/* <TeamStatus game={nextGame.away} isRunning={!nextGame.notStarted} iconPosition="after" /> */}
+					<TeamForm form={awayForm} />
 				</div>
 
-				{nextGame?.status?.utcTime && (
+				{nextMatch?.status.type && (
 					<div className="text-xs">
-						{nextGame.notStarted ? (
-							new Date(nextGame.status.utcTime).toLocaleString()
+						{nextMatch?.status.type ? (
+							new Date(nextMatch.startTimestamp).toLocaleString()
 						) : (
-							<GameTimer start={nextGame.status.utcTime} />
+							<GameTimer start={nextMatch.startTimestamp} />
 						)}
 					</div>
 				)}
 				<div>
-					<TeamStatus game={nextGame.home} isRunning={!nextGame.notStarted} />
-					<Form form={homeForm} />
+					{/* <TeamStatus game={nextGame.home} isRunning={!nextGame.notStarted} /> */}
+					<TeamForm form={homeForm} />
 				</div>
 			</div>
-			<Suspense fallback={<div />}>
-				<Await resolve={nextGameData}>
-					{(nextGameData) => {
-						// console.log(nextGameData);
-						const color = useCallback(
+			{/* const color = useCallback(
 							(idx: number, color: "text" | "team" = "team") => {
 								if (idx === 1) return "gray";
 								const colorMap = {
@@ -119,44 +132,7 @@ function NextMatchInner({
 										</div>
 									</div>
 								))}
-							</div>
-						);
-					}}
-				</Await>
-			</Suspense>
+							</div> */}
 		</div>
-	);
-}
-export default function NextMatchOverview({
-	teamData,
-	nextGame,
-	nextMatchOpponent,
-	nextGameData,
-}: {
-	teamData: Jsonify<Team>;
-	nextGame: Jsonify<NextMatch> | undefined;
-	nextMatchOpponent: Promise<Jsonify<Team>>;
-	nextGameData: Promise<Jsonify<MatchDetails>>;
-}) {
-	if (!nextGame) return null;
-	return (
-		<>
-			<Suspense fallback={<div>טוען פרטי משחק הבא...</div>}>
-				<Await resolve={nextMatchOpponent}>
-					{(nextMatchOpponent) => {
-						return (
-							nextGame && (
-								<NextMatchInner
-									nextGame={nextGame}
-									nextMatchOpponent={nextMatchOpponent}
-									teamData={teamData}
-									nextGameData={nextGameData}
-								/>
-							)
-						);
-					}}
-				</Await>
-			</Suspense>
-		</>
 	);
 }

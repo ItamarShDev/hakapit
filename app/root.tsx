@@ -3,7 +3,6 @@ import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
-import rdtStylesheet from "remix-development-tools/index.css";
 import { fetchFeed, type PodcastName } from "~/api/rss/feed";
 import { AnalyticsWrapper } from "~/components/analytics";
 import Header from "~/components/header";
@@ -22,9 +21,7 @@ export const links: LinksFunction = () => {
 			href: "https://fonts.googleapis.com/css2?family=Heebo&family=Amatic+SC&family=Rubik+80s+Fade&family=Rubik+Moonrocks&family=Karantina:wght@300&display=swap",
 		},
 	];
-	if (process.env.NODE_ENV === "development") {
-		links.push({ rel: "stylesheet", href: rdtStylesheet });
-	}
+
 	return links;
 };
 
@@ -74,10 +71,4 @@ export function App() {
 		</html>
 	);
 }
-// let AppExport = App;
-
-// if (process.env.NODE_ENV === "development") {
-// 	const { withDevTools } = await import("remix-development-tools");
-// 	AppExport = withDevTools(AppExport);
-// }
 export default App;

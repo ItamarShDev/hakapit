@@ -1,11 +1,11 @@
 import type { LinksFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
-import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
-import type { MatchDetails } from "fotmob/dist/esm/types/match-details";
-import { getGame, getLeague, getTeam } from "~/api/fotmob-api/index.server";
-import NextMatchOverview from "~/components/next-match";
-import { StatsTable } from "~/components/stats/stats";
+import { Await, Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
+import { Suspense } from "react";
+
+import { getNextMatchData, getTeamData } from "~/api/sofascore-api/index.server";
+import { NextMatchOverview } from "~/components/next-match";
 
 export const meta: MetaFunction = () => [
 	{ title: "הכפית" },
@@ -36,37 +36,21 @@ export const links: LinksFunction = () => [
 	},
 ];
 async function loadData() {
-	const teamData = await getTeam();
-	const nextGame = teamData?.overview?.nextMatch;
-	const nextMatchOpponent = getTeam(nextGame?.opponent?.id);
-	const fetches = teamData.history?.tables?.current?.[0]?.link?.map((league) => {
-		const tournamentId = league?.tournament_id?.[0];
-		if (tournamentId !== undefined) {
-			return getLeague(Number.parseInt(tournamentId));
-		}
-	});
-	const leagueStats = fetches ? Promise.all(fetches.filter((league) => league !== undefined)) : Promise.resolve([]);
+	const teamData = await getTeamData();
 
-	return { teamData, leagueStats, nextMatchOpponent };
+	return { teamData };
 }
+
 export const loader = async () => {
-	const { leagueStats, nextMatchOpponent } = await loadData();
-	const teamData = await getTeam();
-	const nextGameID = teamData.overview?.nextMatch?.id;
-	const nextGameData = nextGameID
-		? getGame<MatchDetails>(nextGameID)
-		: (new Promise(() => {}) as Promise<MatchDetails>);
+	const nextMatch = getNextMatchData();
 	return defer({
-		teamData,
-		leagueStats,
-		nextMatchOpponent,
-		nextGameData,
+		nextMatch,
 	});
 };
 
 export default function Index() {
-	const { teamData, leagueStats, nextMatchOpponent, nextGameData } = useLoaderData<typeof loader>();
-	const nextGame = teamData?.overview?.nextMatch;
+	const { nextMatch } = useLoaderData<typeof loader>();
+	// const nextGame = teamData?.overview?.nextMatch;
 
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
@@ -78,14 +62,10 @@ export default function Index() {
 					<p className="py-2 fade-in-bottom a-delay-700">כפית זה כל כך פשוט וכל כך קשה.</p>
 				</div>
 			</div>
-
-			<NextMatchOverview
-				nextGame={nextGame}
-				nextMatchOpponent={nextMatchOpponent}
-				teamData={teamData}
-				nextGameData={nextGameData}
-			/>
-			<StatsTable teamData={teamData} leagueStats={leagueStats} />
+			<Suspense fallback={<div>טוען פרטי משחק הבא...</div>}>
+				<Await resolve={nextMatch}>{(nextMatch) => <NextMatchOverview nextMatch={nextMatch} />}</Await>
+			</Suspense>
+			{/* <StatsTable teamData={teamData} leagueStats={leagueStats} /> */}
 			<div className="flex flex-wrap justify-center gap-2 py-4">
 				<Link to="https://twitter.com/KapitPod">Twitter</Link>
 				<span className="text-accent">|</span>
