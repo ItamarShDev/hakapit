@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { createContext, forwardRef, useCallback, useContext, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Episode } from "~/db/types";
+import type { Episode } from "~/db/types";
 
 type PlayerContextType = {
 	currentlyPlaying: Episode | undefined;

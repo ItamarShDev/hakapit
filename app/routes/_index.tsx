@@ -1,11 +1,10 @@
 import type { LinksFunction } from "@remix-run/node";
-import { defer } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
-import { Await, Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
-import { Suspense } from "react";
+import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
 
-import { getNextMatchData, getTeamData } from "~/api/sofascore-api/index.server";
+import { getNextMatchData, getTeamLeaguesAndStats } from "~/api/sofascore-api/index.server";
 import { NextMatchOverview } from "~/components/next-match";
+import { StatsTable } from "~/components/stats/stats";
 
 export const meta: MetaFunction = () => [
 	{ title: "הכפית" },
@@ -35,23 +34,18 @@ export const links: LinksFunction = () => [
 		href: "/logo.webp",
 	},
 ];
-async function loadData() {
-	const teamData = await getTeamData();
-
-	return { teamData };
-}
 
 export const loader = async () => {
-	const nextMatch = getNextMatchData();
-	return defer({
+	const leaguesData = await getTeamLeaguesAndStats();
+	const nextMatch = await getNextMatchData();
+	return {
 		nextMatch,
-	});
+		leaguesData,
+	};
 };
 
 export default function Index() {
-	const { nextMatch } = useLoaderData<typeof loader>();
-	// const nextGame = teamData?.overview?.nextMatch;
-
+	const { nextMatch, leaguesData } = useLoaderData<typeof loader>();
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
 			<div className="py-8 text-center text-paragraph">
@@ -62,10 +56,9 @@ export default function Index() {
 					<p className="py-2 fade-in-bottom a-delay-700">כפית זה כל כך פשוט וכל כך קשה.</p>
 				</div>
 			</div>
-			<Suspense fallback={<div>טוען פרטי משחק הבא...</div>}>
-				<Await resolve={nextMatch}>{(nextMatch) => <NextMatchOverview nextMatch={nextMatch} />}</Await>
-			</Suspense>
-			{/* <StatsTable teamData={teamData} leagueStats={leagueStats} /> */}
+			<NextMatchOverview nextMatch={nextMatch} />
+			<StatsTable leaguesData={leaguesData} />
+
 			<div className="flex flex-wrap justify-center gap-2 py-4">
 				<Link to="https://twitter.com/KapitPod">Twitter</Link>
 				<span className="text-accent">|</span>

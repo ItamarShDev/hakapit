@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getTeamImage } from "~/api/sofascore-api/constants";
 
 export default function TeamAvatar({
 	teamName,
@@ -7,7 +8,7 @@ export default function TeamAvatar({
 	iconPosition = "before",
 	color,
 }: {
-	teamId?: string | number;
+	teamId?: number;
 	teamName?: string;
 	teamShortName?: string;
 	iconPosition?: "before" | "after";
@@ -23,7 +24,7 @@ export default function TeamAvatar({
 		<div className={`flex items-center gap-3 ${iconPosition === "after" ? "justify-end" : "justify-start"}`}>
 			{iconPosition === "after" && teamNameComponent}
 			<Avatar className="h-[25px] w-[25px]">
-				<AvatarImage src={`https://images.fotmob.com/image_resources/logo/teamlogo/${teamId}_xsmall.png`} />
+				<AvatarImage src={getTeamImage(teamId)} />
 				<AvatarFallback className="scale-75">{teamShortName}</AvatarFallback>
 			</Avatar>
 			{iconPosition === "before" && teamNameComponent}

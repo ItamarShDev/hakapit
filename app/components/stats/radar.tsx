@@ -1,47 +1,42 @@
 import { ResponsiveBar } from "@nivo/bar";
 import { useMemo } from "react";
-import type { Jsonify } from "type-fest";
 import { LIVERPOOL_ID } from "~/api/sofascore-api/constants";
+import type { getLetter, getTeamForm } from "~/components/next-match";
 
-function getKeyByNumber(number: number) {
-	switch (number) {
-		case 1:
+function getKeyByNumber(letter: ReturnType<typeof getLetter>) {
+	switch (letter) {
+		case "W":
 			return "Win";
-		case -1:
+		case "L":
 			return "Lose";
-		case 0:
+		case "D":
 			return "Draw";
 	}
 }
 
 export function GamesRadar({
-	fixtures,
-	leagueId,
+	form,
 }: {
-	fixtures: Jsonify<any>;
-	leagueId: number;
+	form: ReturnType<typeof getTeamForm>;
 }) {
 	const barData = useMemo(() => {
-		const data = fixtures?.allFixtures?.fixtures
-			?.filter((fixture) => !fixture.notStarted && fixture?.tournament?.leagueId === leagueId)
-			.reduce(
-				(acc, fixture) => {
-					if (fixture.result == null) return acc;
-					const locationKey = fixture?.home?.id === LIVERPOOL_ID ? "בית" : "חוץ";
-					const typeKey = getKeyByNumber(fixture.result);
-					if (!typeKey) return acc;
-					acc[typeKey][locationKey] += 1;
-					return acc;
-				},
-				{
-					Win: { id: "נצחון", בית: 0, חוץ: 0 },
-					Lose: { id: "הפסד", בית: 0, חוץ: 0 },
-					Draw: { id: "תיקו", בית: 0, חוץ: 0 },
-				},
-			);
+		const data = form.reduce(
+			(acc, fixture) => {
+				const locationKey = fixture?.homeTeam?.id === LIVERPOOL_ID ? "בית" : "חוץ";
+				const typeKey = getKeyByNumber(fixture.letter);
+				if (!typeKey) return acc;
+				acc[typeKey][locationKey] += 1;
+				return acc;
+			},
+			{
+				Win: { id: "נצחון", בית: 0, חוץ: 0 },
+				Lose: { id: "הפסד", בית: 0, חוץ: 0 },
+				Draw: { id: "תיקו", בית: 0, חוץ: 0 },
+			},
+		);
 		if (!data) return null;
 		return [data?.Win, data?.Lose, data?.Draw];
-	}, [fixtures, leagueId]);
+	}, [form]);
 	if (!barData) return null;
 	return (
 		<div className="w-auto max-w-md h-36">

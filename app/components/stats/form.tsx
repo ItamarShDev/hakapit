@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { getTeamImage } from "~/api/sofascore-api/constants";
 import type { getTeamForm } from "~/components/next-match";
 
 export function getFormColor(form: string) {
@@ -18,12 +19,12 @@ const TooltipScore: React.FC<{ game: Form[0] }> = ({ game }) => {
 	return (
 		<div className="flex flex-row gap-5">
 			<Avatar className="h-[25px] w-[25px]">
-				<AvatarImage src={`https://images.fotmob.com/image_resources/logo/teamlogo/${game.homeTeam.id}_xsmall.png`} />
+				<AvatarImage src={getTeamImage(game.homeTeam.id)} />
 				<AvatarFallback>{game.homeTeam.name}</AvatarFallback>
 			</Avatar>
 			<div className={`text-xl direction-alternate ${getFormTextColor(game.letter)}`}>{game.result}</div>
 			<Avatar className="h-[25px] w-[25px]">
-				<AvatarImage src={`https://images.fotmob.com/image_resources/logo/teamlogo/${game.awayTeam.id}_xsmall.png`} />
+				<AvatarImage src={getTeamImage(game.awayTeam.id)} />
 				<AvatarFallback>{game.awayTeam.name}</AvatarFallback>
 			</Avatar>
 		</div>
