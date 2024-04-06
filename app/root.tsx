@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import rdtStylesheet from "remix-development-tools/index.css";
 import { fetchFeed, type PodcastName } from "~/api/rss/feed";
 import { AnalyticsWrapper } from "~/components/analytics";
 import Header from "~/components/header";
 import { PlayerProvider } from "~/components/player/provider";
-import styles from "~/styles/tailwind.css";
+import styles from "~/styles/tailwind.css?url";
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({ currentUrl, nextUrl }) => {
 	return currentUrl !== nextUrl;
@@ -68,7 +68,6 @@ export function App() {
 				</PlayerProvider>
 				<ScrollRestoration />
 				<Scripts />
-				<LiveReload />
 				<AnalyticsWrapper />
 			</body>
 		</html>
