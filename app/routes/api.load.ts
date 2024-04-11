@@ -1,7 +1,7 @@
 import { ilike, like } from "drizzle-orm";
 import { PODCAST_NAMES, fetchRSSFeed, type PodcastName } from "~/api/rss/feed";
-import { db } from "~/db/config.server";
-import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema.server";
+import { db } from "~/db/config";
+import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema";
 
 export async function updateFeedInDb(feedName: PodcastName) {
 	const feed = await fetchRSSFeed(feedName, 0);

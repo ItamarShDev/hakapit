@@ -1,5 +1,5 @@
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
-import { db } from "~/db/config.server";
+import { db } from "~/db/config";
 async function migrateDb() {
 	try {
 		console.info("Migrating...");

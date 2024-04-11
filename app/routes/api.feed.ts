@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { eventStream } from "remix-utils/sse/server";
 import { fetchFeed, fetchLatestEpisode, type PodcastName } from "~/api/rss/feed";
-import { updateFeedsInDb } from "~/routes/api.load.server";
+import { updateFeedsInDb } from "~/routes/api.load";
 function getData(params: LoaderFunctionArgs["params"]) {
 	if (!params) return;
 	const podcast = params?.podcast as PodcastName;

@@ -1,6 +1,6 @@
 import type { BuildQueryResult, DBQueryConfig, ExtractTablesWithRelations } from "drizzle-orm";
-import { Jsonify } from "type-fest";
-import * as schema from "~/db/schema.server";
+import type { Jsonify } from "type-fest";
+import type * as schema from "~/db/schema";
 
 type Schema = typeof schema;
 type TSchema = ExtractTablesWithRelations<Schema>;
