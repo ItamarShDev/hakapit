@@ -8,7 +8,7 @@ export default defineConfig({
 		port: 3000,
 	},
 	ssr: {
-		noExternal: [/@nivo\/.+/, /d3-.+/],
+		noExternal: [/@nivo\/.+/, /d3-.+/, /fotmob/],
 	},
 	plugins: [
 		remix({
