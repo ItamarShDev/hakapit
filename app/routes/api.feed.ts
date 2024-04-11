@@ -1,7 +1,7 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { eventStream } from "remix-utils/sse/server";
-import { PodcastName, fetchFeed, fetchLatestEpisode } from "~/api/rss/feed";
-import { updateFeedsInDb } from "~/routes/api.load";
+import { fetchFeed, fetchLatestEpisode, type PodcastName } from "~/api/rss/feed";
+import { updateFeedsInDb } from "~/routes/api.load.server";
 function getData(params: LoaderFunctionArgs["params"]) {
 	if (!params) return;
 	const podcast = params?.podcast as PodcastName;
@@ -12,7 +12,7 @@ function getData(params: LoaderFunctionArgs["params"]) {
 	if (latest === "true") {
 		return fetchLatestEpisode(podcast);
 	}
-	const amount = limit ? parseInt(limit) : 0;
+	const amount = limit ? Number.parseInt(limit) : 0;
 	return fetchFeed(podcast, amount);
 }
 

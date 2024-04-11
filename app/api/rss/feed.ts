@@ -3,7 +3,7 @@ import { fetch_rss } from "~/api/rss/fetch-rss";
 import type { Feed } from "~/api/rss/types";
 import { db } from "~/db/config.server";
 import { episodes, podcasts } from "~/db/schema.server";
-import { updateFeedInDb } from "~/routes/api.load";
+import { updateFeedInDb } from "~/routes/api.load.server";
 
 const PODCAST_URLS = {
 	hakapit: process.env.HAKAPIT_RSS,
@@ -44,7 +44,7 @@ export async function fetchLatestEpisode(podcast: PodcastName) {
 
 export function fetchEpisode(episodeID: string) {
 	return db.query.episodes.findFirst({
-		where: eq(episodes.episodeNumber, parseInt(episodeID)),
+		where: eq(episodes.episodeNumber, Number.parseInt(episodeID)),
 		with: { podcast: true },
 	});
 }

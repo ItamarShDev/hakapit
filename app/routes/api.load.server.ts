@@ -1,5 +1,5 @@
 import { ilike, like } from "drizzle-orm";
-import { PODCAST_NAMES, PodcastName, fetchRSSFeed } from "~/api/rss/feed";
+import { PODCAST_NAMES, fetchRSSFeed, type PodcastName } from "~/api/rss/feed";
 import { db } from "~/db/config.server";
 import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema.server";
 
