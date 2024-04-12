@@ -1,5 +1,4 @@
 import type { LinksFunction } from "@remix-run/node";
-import { defer } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
 import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
 import type { MatchDetails } from "fotmob/dist/esm/types/match-details";
@@ -38,14 +37,14 @@ export const links: LinksFunction = () => [
 async function loadData() {
 	const teamData = await getTeam();
 	const nextGame = teamData?.overview?.nextMatch;
-	const nextMatchOpponent = getTeam(nextGame?.opponent?.id);
+	const nextMatchOpponent = await getTeam(nextGame?.opponent?.id);
 	const fetches = teamData.history?.tables?.current?.[0]?.link?.map((league) => {
 		const tournamentId = league?.tournament_id?.[0];
 		if (tournamentId !== undefined) {
 			return getLeague(Number.parseInt(tournamentId));
 		}
 	});
-	const leagueStats = fetches ? Promise.all(fetches.filter((league) => league !== undefined)) : Promise.resolve([]);
+	const leagueStats = fetches ? await Promise.all(fetches.filter((league) => league !== undefined)) : [];
 
 	return { teamData, leagueStats, nextMatchOpponent };
 }
@@ -53,20 +52,19 @@ export const loader = async () => {
 	const { leagueStats, nextMatchOpponent } = await loadData();
 	const teamData = await getTeam();
 	const nextGameID = teamData.overview?.nextMatch?.id;
-	const nextGameData = nextGameID
-		? getGame<MatchDetails>(nextGameID)
-		: (new Promise(() => {}) as Promise<MatchDetails>);
-	return defer({
+	const nextGameData = await getGame<MatchDetails>(nextGameID);
+	const nextGame = teamData?.overview?.nextMatch;
+	return {
 		teamData,
 		leagueStats,
 		nextMatchOpponent,
 		nextGameData,
-	});
+		nextGame,
+	};
 };
 
 export default function Index() {
-	const { teamData, leagueStats, nextMatchOpponent, nextGameData } = useLoaderData<typeof loader>();
-	const nextGame = teamData?.overview?.nextMatch;
+	const { teamData, leagueStats, nextMatchOpponent, nextGameData, nextGame } = useLoaderData<typeof loader>();
 
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">

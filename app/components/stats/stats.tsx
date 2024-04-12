@@ -1,6 +1,4 @@
-import { Await } from "@remix-run/react";
 import type { Team } from "fotmob/dist/esm/types/team";
-import { Suspense } from "react";
 import type { Jsonify } from "type-fest";
 import { TournamentInformation } from "~/components/stats/tables";
 function Table({ teamData, leagueStats }: { teamData: Jsonify<Team>; leagueStats: Record<string, unknown>[] }) {
@@ -36,9 +34,5 @@ function Table({ teamData, leagueStats }: { teamData: Jsonify<Team>; leagueStats
 }
 export const StatsTable: React.FC<{
 	teamData: Jsonify<Team>;
-	leagueStats: Promise<Record<string, unknown>[]>;
-}> = ({ teamData, leagueStats }) => (
-	<Suspense fallback={<div>טוען סטטיסטיקה...</div>}>
-		<Await resolve={leagueStats}>{(leagueStats) => <Table teamData={teamData} leagueStats={leagueStats} />}</Await>
-	</Suspense>
-);
+	leagueStats: Record<string, unknown>[];
+}> = ({ teamData, leagueStats }) => <Table teamData={teamData} leagueStats={leagueStats} />;

@@ -16,7 +16,8 @@ export function getMatchStats(matchId: number) {
 	return fotmob.getMatchDetails(matchId);
 }
 
-export function getGame<T>(gameID: number) {
+export function getGame<T>(gameID?: number) {
+	if (!gameID) return;
 	const fotmob = new Fotmob();
 	return fotmob.request<T>(`matchDetails`, { matchId: `${gameID}` });
 }
