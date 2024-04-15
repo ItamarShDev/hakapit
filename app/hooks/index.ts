@@ -1,7 +1,9 @@
-import { useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
+import type { League } from "fotmob/dist/esm/types/league";
+import { useEffect } from "react";
 import { useEventSource } from "remix-utils/sse/react";
-import { Jsonify } from "type-fest";
-import { fetchFeed, fetchLatestEpisode } from "~/api/rss/feed";
+import type { Jsonify } from "type-fest";
+import type { fetchFeed, fetchLatestEpisode } from "~/api/rss/feed";
 
 export function toDateString(value?: string | null) {
 	return value && new Date(Date.parse(value)).toLocaleDateString();
@@ -34,4 +36,18 @@ export function usePodcastData<T extends Options>({ latest = false, limit = 0 }:
 	const feed = useEventSource(`/api/feed?podcast=${podcast}&latest=${latest}&limit=${limit}`, { event: "sync" });
 	const feedData: typeof metadata = feed ? JSON.parse(feed) : metadata;
 	return { metadata: feedData, podcast } as Metadata<T>;
+}
+
+export function useLeague(leagueId?: number | string) {
+	const fetcher = useFetcher<League>({ key: `${leagueId}` });
+	useEffect(() => {
+		if (leagueId !== undefined) {
+			if (fetcher.state === "idle" && !fetcher.data) {
+				fetcher.load(`api/get-league/${leagueId}`);
+			}
+		}
+	}, [leagueId, fetcher]);
+	if (fetcher.state === "loading") return null;
+
+	return fetcher.data;
 }

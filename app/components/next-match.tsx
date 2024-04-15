@@ -1,6 +1,5 @@
-import type { MatchDetails } from "fotmob/dist/esm/types/match-details";
-import type { NextMatch, OpponentClass, Team } from "fotmob/dist/esm/types/team";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import type { OpponentClass, Team } from "fotmob/dist/esm/types/team";
+import { useEffect, useState } from "react";
 import type { Jsonify } from "type-fest";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
@@ -35,41 +34,25 @@ function TeamStatus({
 	);
 }
 
-function NextMatchInner({
-	nextGame,
+export function NextMatchOverview({
 	nextMatchOpponent,
 	teamData,
-	nextGameData,
 }: {
-	nextGame: Jsonify<NextMatch>;
 	teamData: Jsonify<Team>;
 	nextMatchOpponent: Jsonify<Team>;
-	nextGameData: Jsonify<MatchDetails> | undefined;
 }) {
-	if (!nextGame.away || !nextGame.home) return null;
+	const nextGame = teamData?.overview?.nextMatch;
+
+	if (!nextGame?.away || !nextGame?.home) return null;
 	const isHome = nextGame.home?.id === teamData.details?.id;
 	const homeTeam = isHome ? teamData : nextMatchOpponent;
 	const awayTeam = isHome ? nextMatchOpponent : teamData;
-
-	const table = useMemo(
-		() => awayTeam.table?.find((table) => table.data?.leagueId === nextGame.tournament?.leagueId),
-		[awayTeam.table, nextGame.tournament?.leagueId],
-	);
-	if (!awayTeam.details?.id || !homeTeam.details?.id) return;
-	const awayForm = table?.teamForm?.[awayTeam.details?.id];
-	const homeForm = table?.teamForm?.[homeTeam.details?.id];
+	const awayGames = awayTeam?.fixtures?.allFixtures?.fixtures?.filter((game) => !game.notStarted);
+	const homeGames = homeTeam?.fixtures?.allFixtures?.fixtures?.filter((game) => !game.notStarted);
+	const awayForm = awayGames?.slice(awayGames.length - 5, awayGames.length);
+	const homeForm = homeGames?.slice(homeGames.length - 5, homeGames.length).reverse();
 	if (!awayForm || !homeForm) return;
-	const color = useCallback(
-		(idx: number, color: "text" | "team" = "team") => {
-			if (idx === 1) return "gray";
-			const colorMap = {
-				text: nextGameData?.general?.teamColors?.fontDarkMode,
-				team: nextGameData?.general?.teamColors?.darkMode,
-			};
-			return colorMap[color]?.[idx === 0 ? "home" : "away"];
-		},
-		[nextGameData],
-	);
+
 	return (
 		<div className="flex flex-col gap-2 pb-6 heebo">
 			<div className="text-sm text-slate-300">{nextGame.notStarted ? "המשחק הבא" : "כרגע"}</div>
@@ -101,39 +84,6 @@ function NextMatchInner({
 					<Form form={homeForm} />
 				</div>
 			</div>
-			<div className="w-full flex justify-around flex-row-reverse">
-				{nextGameData?.content?.h2h?.summary?.map((game, index) => (
-					<div className="flex flex-col items-center gap-1">
-						<div className="text-sm" style={{ color: color(index) }}>
-							{game}
-						</div>
-						<div className="text-xs" style={{ color: color(index, "text") }}>
-							{index === 1 ? "תיקו" : "נצחונות"}
-						</div>
-					</div>
-				))}
-			</div>
 		</div>
-	);
-}
-export default function NextMatchOverview({
-	teamData,
-	nextGame,
-	nextMatchOpponent,
-	nextGameData,
-}: {
-	teamData: Jsonify<Team>;
-	nextGame: Jsonify<NextMatch> | undefined;
-	nextMatchOpponent: Jsonify<Team>;
-	nextGameData: Jsonify<MatchDetails> | undefined;
-}) {
-	if (!nextGame) return null;
-	return (
-		<NextMatchInner
-			nextGame={nextGame}
-			nextMatchOpponent={nextMatchOpponent}
-			teamData={teamData}
-			nextGameData={nextGameData}
-		/>
 	);
 }

@@ -1,9 +1,9 @@
 import type { LinksFunction } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
-import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
-import type { MatchDetails } from "fotmob/dist/esm/types/match-details";
-import { getGame, getLeague, getTeam } from "~/api/fotmob-api/index.server";
-import NextMatchOverview from "~/components/next-match";
+import { Await, Link, defer, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
+import { Suspense } from "react";
+import { getTeam } from "~/api/fotmob-api/index";
+import { NextMatchOverview } from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
 
 export const meta: MetaFunction = () => [
@@ -34,37 +34,31 @@ export const links: LinksFunction = () => [
 		href: "/logo.webp",
 	},
 ];
-async function loadData() {
-	const teamData = await getTeam();
-	const nextGame = teamData?.overview?.nextMatch;
-	const nextMatchOpponent = await getTeam(nextGame?.opponent?.id);
-	const fetches = teamData.history?.tables?.current?.[0]?.link?.map((league) => {
-		const tournamentId = league?.tournament_id?.[0];
-		if (tournamentId !== undefined) {
-			return getLeague(Number.parseInt(tournamentId));
-		}
-	});
-	const leagueStats = fetches ? await Promise.all(fetches.filter((league) => league !== undefined)) : [];
 
-	return { teamData, leagueStats, nextMatchOpponent };
-}
 export const loader = async () => {
-	const { leagueStats, nextMatchOpponent } = await loadData();
 	const teamData = await getTeam();
-	const nextGameID = teamData.overview?.nextMatch?.id;
-	const nextGameData = await getGame<MatchDetails>(nextGameID);
 	const nextGame = teamData?.overview?.nextMatch;
-	return {
+	const nextMatchOpponent = getTeam(nextGame?.opponent?.id);
+	return defer({
 		teamData,
-		leagueStats,
 		nextMatchOpponent,
-		nextGameData,
-		nextGame,
-	};
+	});
 };
 
+export function ErrorBoundary() {
+	const error = useRouteError();
+	if (isRouteErrorResponse(error)) {
+		return <div>{error.statusText}</div>;
+	}
+	return (
+		<div>
+			<code>Error</code>
+		</div>
+	);
+}
+
 export default function Index() {
-	const { teamData, leagueStats, nextMatchOpponent, nextGameData, nextGame } = useLoaderData<typeof loader>();
+	const { teamData, nextMatchOpponent } = useLoaderData<typeof loader>();
 
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
@@ -76,14 +70,13 @@ export default function Index() {
 					<p className="py-2 fade-in-bottom a-delay-700">כפית זה כל כך פשוט וכל כך קשה.</p>
 				</div>
 			</div>
+			<Suspense fallback={<>...</>}>
+				<Await resolve={nextMatchOpponent}>
+					{(nextMatchOpponent) => <NextMatchOverview nextMatchOpponent={nextMatchOpponent} teamData={teamData} />}
+				</Await>
+			</Suspense>
+			<StatsTable teamData={teamData} />
 
-			<NextMatchOverview
-				nextGame={nextGame}
-				nextMatchOpponent={nextMatchOpponent}
-				teamData={teamData}
-				nextGameData={nextGameData}
-			/>
-			<StatsTable teamData={teamData} leagueStats={leagueStats} />
 			<div className="flex flex-wrap justify-center gap-2 py-4">
 				<Link to="https://twitter.com/KapitPod">Twitter</Link>
 				<span className="text-accent">|</span>
@@ -97,12 +90,4 @@ export default function Index() {
 			</div>
 		</section>
 	);
-}
-
-export function ErrorBoundary() {
-	const error = useRouteError();
-	if (isRouteErrorResponse(error)) {
-		return <div>{error.data.message}</div>;
-	}
-	return <div />;
 }

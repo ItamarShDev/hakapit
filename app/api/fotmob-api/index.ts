@@ -8,16 +8,11 @@ export async function getTeam(id = LiverpoolId) {
 
 export function getLeague(league: number) {
 	const fotmob = new Fotmob();
-	return fotmob.getTeamSeasonStats(LiverpoolId, league);
+	return fotmob.getLeague(league);
 }
 
-export function getMatchStats(matchId: number) {
+export function getLeagues(teamId = LiverpoolId) {
 	const fotmob = new Fotmob();
-	return fotmob.getMatchDetails(matchId);
+	return fotmob.getAllLeagues();
 }
 
-export function getGame<T>(gameID?: number) {
-	if (!gameID) return;
-	const fotmob = new Fotmob();
-	return fotmob.request<T>(`matchDetails`, { matchId: `${gameID}` });
-}

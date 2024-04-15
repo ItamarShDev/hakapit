@@ -69,10 +69,5 @@ export function App() {
 		</html>
 	);
 }
-// let AppExport = App;
 
-// if (process.env.NODE_ENV === "development") {
-// 	const { withDevTools } = await import("remix-development-tools");
-// 	AppExport = withDevTools(AppExport);
-// }
 export default App;
