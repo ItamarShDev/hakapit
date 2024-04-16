@@ -54,7 +54,7 @@ export function NextMatchOverview({
 	if (!awayForm || !homeForm) return;
 
 	return (
-		<div className="flex flex-col gap-2 pb-6 heebo bg-primary py-3">
+		<div className="flex flex-col gap-2 pb-6 heebo bg-primary py-3 full-bleed">
 			<div className="text-sm text-slate-200">{nextGame.notStarted ? "המשחק הבא" : "כרגע"}</div>
 			<div className="flex flex-row-reverse items-center justify-center gap-2">
 				<img
