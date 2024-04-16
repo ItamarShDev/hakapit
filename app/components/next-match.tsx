@@ -59,7 +59,7 @@ export function NextMatchOverview({
 			<div className="flex flex-row-reverse items-center justify-center gap-2">
 				<img
 					className="h-[20px]"
-					src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${nextGame.tournament?.leagueId}.png`}
+					src={`https://images.fotmob.com/image_resources/logo/leaguelogo/dark/${nextGame.tournament?.leagueId}.png`}
 					alt={`${nextGame.tournament?.name} logo`}
 				/>
 				<div className="font-bold">{nextGame.tournament?.name}</div>

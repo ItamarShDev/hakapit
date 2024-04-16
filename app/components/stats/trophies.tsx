@@ -19,7 +19,7 @@ export function Trophies({ teamData }: { teamData: Jsonify<Team> }) {
 									<TooltipTrigger>
 										<Avatar className="h-[50px] w-[50px]">
 											<AvatarImage
-												src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${tournamentId}.png`}
+												src={`https://images.fotmob.com/image_resources/logo/leaguelogo/dark/${tournamentId}.png`}
 											/>
 											<AvatarFallback className="scale-75">{leagueName}</AvatarFallback>
 										</Avatar>
