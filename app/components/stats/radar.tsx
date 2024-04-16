@@ -1,35 +1,34 @@
 import { ResponsiveBar } from "@nivo/bar";
-import { TeamFixtures } from "fotmob/dist/esm/types/team";
+import type { Matches } from "fotmob/dist/esm/types/league";
 import { useMemo } from "react";
 import type { Jsonify } from "type-fest";
 import { LiverpoolId } from "~/api/fotmob-api/constants";
 
-function getKeyByNumber(number: number) {
-	switch (number) {
-		case 1:
-			return "Win";
-		case -1:
-			return "Lose";
-		case 0:
-			return "Draw";
-	}
+function getKeyByNumber(isHome: boolean, scoresStr: string) {
+	const scores = scoresStr.split("-").map((score) => Number.parseInt(score.trim()));
+	const number = isHome ? scores[0] - scores[1] : scores[1] - scores[0];
+	if (number === 0) return "Draw";
+	if (number > 0) return "Win";
+	if (number < 0) return "Lose";
 }
 
 export function GamesRadar({
 	fixtures,
-	leagueId,
 }: {
-	fixtures: Jsonify<TeamFixtures>;
-	leagueId: number;
+	fixtures?: Jsonify<Matches>;
 }) {
 	const barData = useMemo(() => {
-		const data = fixtures?.allFixtures?.fixtures
-			?.filter((fixture) => !fixture.notStarted && fixture?.tournament?.leagueId === leagueId)
+		if (!fixtures?.allMatches) return null;
+		const liverpoolId = `${LiverpoolId}`;
+		const data = fixtures?.allMatches
+			?.filter(
+				(fixture) => fixture.status?.finished && (fixture.home?.id === liverpoolId || fixture.away?.id === liverpoolId),
+			)
 			.reduce(
 				(acc, fixture) => {
-					if (fixture.result == null) return acc;
-					const locationKey = fixture?.home?.id === LiverpoolId ? "בית" : "חוץ";
-					const typeKey = getKeyByNumber(fixture.result);
+					const locationKey = fixture?.home?.id === liverpoolId ? "בית" : "חוץ";
+					if (!fixture?.status?.scoreStr) return acc;
+					const typeKey = getKeyByNumber(fixture?.home?.id === liverpoolId, fixture?.status?.scoreStr);
 					if (!typeKey) return acc;
 					acc[typeKey][locationKey] += 1;
 					return acc;
@@ -42,7 +41,7 @@ export function GamesRadar({
 			);
 		if (!data) return null;
 		return [data?.Win, data?.Lose, data?.Draw];
-	}, [fixtures, leagueId]);
+	}, [fixtures]);
 	if (!barData) return null;
 	return (
 		<div className="w-auto max-w-md h-36">

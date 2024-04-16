@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { PlayIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { usePlayer } from "~/components/player/provider";
-import { EpisodeData, toDateString } from "~/hooks";
+import { type EpisodeData, toDateString } from "~/hooks";
 export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
 	return (
 		<Card className={cn("episode-card h-full w-full max-w-xl rounded-3xl", className)}>

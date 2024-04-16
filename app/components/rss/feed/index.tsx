@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { NavLink } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { MasonryFeed, Preview } from "~/components/rss/feed/feed";
-import { FeedData } from "~/hooks";
+import type { FeedData } from "~/hooks";
 function getLinkClass(isPending: boolean) {
 	return cn("text-xl lg:text-sm text-accent", isPending ? "animate-pulse" : "");
 }

@@ -4,7 +4,7 @@ import type { Jsonify } from "type-fest";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
 
-function GameTimer({ start }: { start: string }) {
+export function GameTimer({ start }: { start: string }) {
 	const [time, setTime] = useState(new Date(start).getTime() - Date.now());
 	useEffect(() => {
 		const interval = setInterval(() => {

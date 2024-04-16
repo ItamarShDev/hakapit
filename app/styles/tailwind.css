@@ -48,6 +48,10 @@ body {
 }
 
 @layer components {
+  .ltr {
+    direction: ltr;
+  }
+
   .body {
     @apply grid min-h-screen gap-5 bg-background text-paragraph;
     direction: rtl;
@@ -80,7 +84,7 @@ body {
   }
 
   .grid-col-responsive {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   }
 
   .feed-page .timeline {

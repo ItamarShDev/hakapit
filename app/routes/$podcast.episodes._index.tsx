@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useSearchParams } from "@remix-run/react";
-import { PodcastName, fetchFeed } from "~/api/rss/feed";
+import { type PodcastName, fetchFeed } from "~/api/rss/feed";
 import RSSFeed from "~/components/rss/feed";
 import { usePodcastData } from "~/hooks";
 
@@ -60,7 +60,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
 export default function RouteComponent() {
 	const [params] = useSearchParams();
-	const limit = parseInt(params.get("limit") || "5");
+	const limit = Number.parseInt(params.get("limit") || "5");
 	const { metadata } = usePodcastData({ limit: limit });
 	return <RSSFeed data={metadata} limit={limit} />;
 }

@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { PodcastName, fetchLatestEpisode } from "~/api/rss/feed";
+import { type PodcastName, fetchLatestEpisode } from "~/api/rss/feed";
 import Episode from "~/components/rss/episode";
 
 export const meta: MetaFunction<typeof loader> = ({ data, params }) => {

@@ -1,11 +1,12 @@
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
-import { getLeague } from "~/api/fotmob-api";
+import { getLeagues } from "~/api/fotmob-api";
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
 	const leagueId = params.id;
 	if (!leagueId) {
 		return json("Missing id", 404);
 	}
-	const league = await getLeague(Number.parseInt(leagueId));
-	return json(league, 200);
+	console.info(`Fetching league data for leagueId: ${leagueId}`);
+	const leagues = await getLeagues(leagueId);
+	return json(leagues, 200);
 };

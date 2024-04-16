@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Link } from "@remix-run/react";
 import MenuIcon from "~/components/icons/menu";
 import { Links } from "~/components/links";
-import { Podcast } from "~/db/types";
+import type { Podcast } from "~/db/types";
 type Props = {
 	data: Podcast;
 	podcast: string;

@@ -1,6 +1,6 @@
 import { useNavigation } from "@remix-run/react";
 import { EpisodeCard, SkeletonCard } from "~/components/rss/EpisodeCard";
-import { FeedData } from "~/hooks";
+import type { FeedData } from "~/hooks";
 
 export function MasonryFeed({
 	data,

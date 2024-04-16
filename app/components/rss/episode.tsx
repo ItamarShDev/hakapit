@@ -1,4 +1,4 @@
-import { Episode as DBEpisode } from "~/db/types";
+import type { Episode as DBEpisode } from "~/db/types";
 
 export default function Episode({ data }: { data: DBEpisode }) {
 	const a = 1;

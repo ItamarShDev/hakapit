@@ -23,5 +23,9 @@
     ".cache": true,
     "public/build": true
   },
-  "workbench.editor.wrapTabs": false
+  "workbench.editor.wrapTabs": false,
+  "biome.rename": true,
+  "[css]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+  }
 }

@@ -38,13 +38,11 @@ export function usePodcastData<T extends Options>({ latest = false, limit = 0 }:
 	return { metadata: feedData, podcast } as Metadata<T>;
 }
 
-export function useLeague(leagueId?: number | string) {
-	const fetcher = useFetcher<League>({ key: `${leagueId}` });
+export function useLeagues(leagueId?: number | string) {
+	const fetcher = useFetcher<League[]>({ key: `${leagueId}` });
 	useEffect(() => {
-		if (leagueId !== undefined) {
-			if (fetcher.state === "idle" && !fetcher.data) {
-				fetcher.load(`api/get-league/${leagueId}`);
-			}
+		if (leagueId !== undefined && fetcher.state === "idle" && !fetcher.data) {
+			fetcher.load(`api/get-league/${leagueId}`);
 		}
 	}, [leagueId, fetcher]);
 	if (fetcher.state === "loading") return null;
