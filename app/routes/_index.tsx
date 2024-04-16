@@ -1,3 +1,4 @@
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { LinksFunction } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
 import { Await, Link, defer, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
@@ -5,7 +6,7 @@ import { Suspense } from "react";
 import { getTeam } from "~/api/fotmob-api/index";
 import { NextMatchOverview } from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
-
+import { Trophies } from "~/components/stats/trophies";
 export const meta: MetaFunction = () => [
 	{ title: "הכפית" },
 	{ charset: "utf-8" },
@@ -62,20 +63,29 @@ export default function Index() {
 
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
-			<div className="py-8 text-center text-paragraph">
-				<h1 className="text-4xl fade-in-bottom text-accent">מה זה כפית?</h1>
-				<div className="what-is-kapit text-slate-300">
-					<p className="py-2 fade-in-bottom a-delay-100">כפית זה משחק של אופי.</p>
-					<p className="py-2 fade-in-bottom a-delay-400">כפית זה ניצחון ברגע האחרון.</p>
-					<p className="py-2 fade-in-bottom a-delay-700">כפית זה כל כך פשוט וכל כך קשה.</p>
-				</div>
+			<div className="flex flex-col w-full gap-10">
+				<Trophies teamData={teamData} />
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger>
+							<div className="text-2xl fade-in-bottom text-accent">מה זה כפית?</div>
+						</TooltipTrigger>
+						<TooltipContent side="bottom" className="rounded-xl bg-primary border-accent">
+							<div className="what-is-kapit text-slate-300 py-2">
+								<p className="fade-in-bottom a-delay-100">כפית זה משחק של אופי.</p>
+								<p className="fade-in-bottom a-delay-400">כפית זה ניצחון ברגע האחרון.</p>
+								<p className="fade-in-bottom a-delay-700">כפית זה כל כך פשוט וכל כך קשה.</p>
+							</div>
+						</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
+				<Suspense fallback={<>...</>}>
+					<Await resolve={nextMatchOpponent}>
+						{(nextMatchOpponent) => <NextMatchOverview nextMatchOpponent={nextMatchOpponent} teamData={teamData} />}
+					</Await>
+				</Suspense>
+				<StatsTable teamData={teamData} />
 			</div>
-			<Suspense fallback={<>...</>}>
-				<Await resolve={nextMatchOpponent}>
-					{(nextMatchOpponent) => <NextMatchOverview nextMatchOpponent={nextMatchOpponent} teamData={teamData} />}
-				</Await>
-			</Suspense>
-			<StatsTable teamData={teamData} />
 
 			<div className="flex flex-wrap justify-center gap-2 py-4">
 				<Link to="https://twitter.com/KapitPod">Twitter</Link>

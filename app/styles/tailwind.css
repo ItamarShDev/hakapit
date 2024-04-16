@@ -204,7 +204,7 @@ body {
   .what-is-kapit>p {
     font-size: clamp(0.5em, 2.5vw, 1em);
     line-height: 2rem;
-    @apply text-2xl;
+    @apply text-xl;
   }
 
   .fade-in-bottom {

@@ -54,8 +54,8 @@ export function NextMatchOverview({
 	if (!awayForm || !homeForm) return;
 
 	return (
-		<div className="flex flex-col gap-2 pb-6 heebo">
-			<div className="text-sm text-slate-300">{nextGame.notStarted ? "המשחק הבא" : "כרגע"}</div>
+		<div className="flex flex-col gap-2 pb-6 heebo bg-primary py-3">
+			<div className="text-sm text-slate-200">{nextGame.notStarted ? "המשחק הבא" : "כרגע"}</div>
 			<div className="flex flex-row-reverse items-center justify-center gap-2">
 				<img
 					className="h-[20px]"
@@ -65,9 +65,11 @@ export function NextMatchOverview({
 				<div className="font-bold">{nextGame.tournament?.name}</div>
 			</div>
 			<div className="game-title">
-				<div>
+				<div className="flex flex-col gap-1 items-end">
 					<TeamStatus game={nextGame.away} isRunning={!nextGame.notStarted} iconPosition="after" />
-					<Form form={awayForm} />
+					<div>
+						<Form form={awayForm} />
+					</div>
 				</div>
 
 				{nextGame?.status?.utcTime && (
@@ -79,9 +81,11 @@ export function NextMatchOverview({
 						)}
 					</div>
 				)}
-				<div>
+				<div className="flex flex-col gap-1 items-start">
 					<TeamStatus game={nextGame.home} isRunning={!nextGame.notStarted} />
-					<Form form={homeForm} />
+					<div>
+						<Form form={homeForm} />
+					</div>
 				</div>
 			</div>
 		</div>
