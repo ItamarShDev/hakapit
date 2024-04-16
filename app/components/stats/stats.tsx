@@ -16,7 +16,7 @@ export function StatsTable({ teamData }: { teamData: Jsonify<Team> }) {
 				if (!leagueId || !leagueName) return null;
 				return (
 					<div className="flex flex-col" key={leagueId}>
-						<div className="flex flex-row-reverse items-center justify-center gap-8 p-3 bg-accent text-slate-900">
+						<div className="flex items-center justify-center gap-8 p-3 bg-accent text-slate-900">
 							<img
 								className="h-[50px]"
 								src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${leagueId}.png`}

@@ -13,7 +13,7 @@ export function Trophies({ teamData }: { teamData: Jsonify<Team> }) {
 					const leagueName = trophy.name?.[0];
 					const won = trophy.won?.[0];
 					return (
-						<div className="flex flex-col gap-1">
+						<div className="flex flex-col gap-1" key={tournamentId}>
 							<TooltipProvider>
 								<Tooltip>
 									<TooltipTrigger>
