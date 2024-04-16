@@ -45,7 +45,6 @@ export function useLeagues(leagueId?: number | string) {
 			fetcher.load(`api/get-league/${leagueId}`);
 		}
 	}, [leagueId, fetcher]);
-	if (fetcher.state === "loading") return null;
 
-	return fetcher.data;
+	return fetcher;
 }

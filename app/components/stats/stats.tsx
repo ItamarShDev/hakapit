@@ -6,10 +6,12 @@ import { useLeagues } from "~/hooks";
 
 export function StatsTable({ teamData }: { teamData: Jsonify<Team> }) {
 	const leaguesData = useLeagues(teamData.stats?.primaryLeagueId);
-	const leagues = leaguesData ? leaguesData : [teamData as Jsonify<League>];
+	if (leaguesData?.state === "loading" && leaguesData.data === undefined) {
+		return <div>טוען טבלאות...</div>;
+	}
 	return (
 		<div className="grid items-start w-full gap-3 grid-col-responsive ">
-			{leagues?.map((league) => {
+			{leaguesData?.data?.map((league) => {
 				const table = league?.table?.[0];
 				const leagueId = table ? table?.data?.leagueId : league.details?.id;
 				const leagueName = table ? table?.data?.leagueName : league.details?.name;
