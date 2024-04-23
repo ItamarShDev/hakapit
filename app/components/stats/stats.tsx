@@ -1,4 +1,3 @@
-import type { League } from "fotmob/dist/esm/types/league";
 import type { Team } from "fotmob/dist/esm/types/team";
 import type { Jsonify } from "type-fest";
 import { TournamentInformation } from "~/components/stats/tables";
@@ -6,6 +5,7 @@ import { useLeagues } from "~/hooks";
 
 export function StatsTable({ teamData }: { teamData: Jsonify<Team> }) {
 	const leaguesData = useLeagues(teamData.stats?.primaryLeagueId);
+
 	if (leaguesData?.state === "loading" && leaguesData.data === undefined) {
 		return <div>טוען טבלאות...</div>;
 	}

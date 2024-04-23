@@ -61,7 +61,6 @@ export function ErrorBoundary() {
 
 export default function Index() {
 	const { teamData, nextMatchOpponent } = useLoaderData<typeof loader>();
-
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
 			<div className="flex flex-col w-full gap-10">

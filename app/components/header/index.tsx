@@ -3,12 +3,11 @@ import { cn } from "@/lib/utils";
 import { Link } from "@remix-run/react";
 import MenuIcon from "~/components/icons/menu";
 import { Links } from "~/components/links";
-import type { Podcast } from "~/db/types";
 type Props = {
-	data: Podcast;
-	podcast: string;
+	data: { imageUrl: string; title: string };
+	podcast: string | undefined;
 } & React.HTMLAttributes<HTMLElement>;
-export default function Header({ data, podcast, className }: Props) {
+export default function Header({ data, podcast }: Props) {
 	const { imageUrl } = data;
 	return (
 		<header className="overflow-hidden header">

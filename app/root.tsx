@@ -1,9 +1,8 @@
 import { cn } from "@/lib/utils";
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import type { LinksFunction } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useParams } from "@remix-run/react";
 import { useEffect } from "react";
-import { fetchFeed, type PodcastName } from "~/api/rss/feed";
 import { AnalyticsWrapper } from "~/components/analytics";
 import Header from "~/components/header";
 import { PlayerProvider } from "~/components/player/provider";
@@ -24,14 +23,6 @@ export const links: LinksFunction = () => {
 	return links;
 };
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
-	const metadata = await fetchFeed((params.podcast as PodcastName) || "hakapit", 1);
-	return { metadata, podcast: params.podcast } as {
-		metadata: typeof metadata;
-		podcast: "hakapit" | "balcony-albums" | "nitk";
-	};
-};
-
 export function ScriptTwitter({ id }: { id: string }) {
 	useEffect(() => {
 		document.getElementById("twitter-wjs")?.remove();
@@ -44,7 +35,8 @@ export function ScriptTwitter({ id }: { id: string }) {
 }
 
 export function App() {
-	const { metadata, podcast } = useLoaderData<typeof loader>();
+	const params = useParams();
+	const podcast = params.podcast;
 	const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 	return (
 		<html lang="en">
@@ -56,7 +48,14 @@ export function App() {
 				<Links />
 			</head>
 			<body className={cn("body", podcast)}>
-				{metadata && <Header data={metadata} podcast={podcast} />}
+				<Header
+					data={{
+						imageUrl:
+							"https://storage.pinecast.net/podcasts/covers/29ae23b9-9411-48e0-a947-efd71e9e82ea/Kapit_Logo_Red_Background.jpg",
+						title: "הכפית",
+					}}
+					podcast={podcast}
+				/>
 				<PlayerProvider>
 					<main className="main-content">
 						<Outlet />
