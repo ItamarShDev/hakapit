@@ -4,6 +4,7 @@ import type { MetaFunction } from "@remix-run/react";
 import { Await, Link, defer, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
 import { Suspense } from "react";
 import { getTeam } from "~/api/fotmob-api/index";
+import { DeferError } from "~/components/defer-error";
 import { NextMatchOverview } from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
