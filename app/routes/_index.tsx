@@ -80,7 +80,7 @@ export default function Index() {
 					</Tooltip>
 				</TooltipProvider>
 				<Suspense fallback={<>...</>}>
-					<Await resolve={nextMatchOpponent}>
+					<Await resolve={nextMatchOpponent} errorElement={<DeferError />}>
 						{(nextMatchOpponent) => <NextMatchOverview nextMatchOpponent={nextMatchOpponent} teamData={teamData} />}
 					</Await>
 				</Suspense>
