@@ -1,9 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Team } from "fotmob/dist/esm/types/team";
-import type { Jsonify } from "type-fest";
 
-export function Trophies({ teamData }: { teamData: Jsonify<Team> }) {
+export function Trophies({ teamData }: { teamData: Team }) {
 	return (
 		<div className="flex gap-2 flex-wrap justify-center">
 			{teamData.history?.trophyList

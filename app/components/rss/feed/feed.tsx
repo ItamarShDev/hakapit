@@ -1,6 +1,5 @@
-import { useNavigation } from "@remix-run/react";
 import { EpisodeCard, SkeletonCard } from "~/components/rss/EpisodeCard";
-import type { FeedData } from "~/hooks";
+import type { FeedData } from "~/utils";
 
 export function MasonryFeed({
 	data,
@@ -9,9 +8,7 @@ export function MasonryFeed({
 	data?: FeedData;
 	limit: number;
 }) {
-	const navigation = useNavigation();
 	const skeletonCount = Math.max(limit - (data?.episodes?.length || 0), 0);
-
 	return (
 		<>
 			<span className="max-w-xl p-4 font-light info crazy-font big-title">פרקים</span>
@@ -19,11 +16,10 @@ export function MasonryFeed({
 				{data?.episodes?.map((episode) => (
 					<EpisodeCard key={episode.guid} episode={episode} />
 				))}
-				{navigation.state !== "idle" &&
-					new Array(skeletonCount)
-						.fill(0)
-						// biome-ignore lint:noArrayIndexKey
-						?.map((_, index) => <SkeletonCard key={index} />)}
+				{new Array(skeletonCount).fill(0)?.map((_, index) => (
+					// biome-ignore lint:noArrayIndexKey
+					<SkeletonCard key={index} />
+				))}
 			</div>
 		</>
 	);

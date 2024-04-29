@@ -1,25 +1,8 @@
 import type { OpponentClass, Team } from "fotmob/dist/esm/types/team";
-import { useEffect, useState } from "react";
 import type { Jsonify } from "type-fest";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
-
-export function GameTimer({ start }: { start: string }) {
-	const [time, setTime] = useState(new Date(start).getTime() - Date.now());
-	useEffect(() => {
-		const interval = setInterval(() => {
-			setTime(new Date(start).getTime() - Date.now());
-		}, 1000);
-		return () => clearInterval(interval);
-	}, [start]);
-	const minutes = Math.floor(time / 1000 / 60);
-	const seconds = Math.floor((time / 1000) % 60);
-	return (
-		<div>
-			{minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-		</div>
-	);
-}
+import { GameTimer } from "~/game-timer";
 
 function TeamStatus({
 	game,
@@ -38,8 +21,8 @@ export function NextMatchOverview({
 	nextMatchOpponent,
 	teamData,
 }: {
-	teamData: Jsonify<Team>;
-	nextMatchOpponent: Jsonify<Team>;
+	teamData: Team;
+	nextMatchOpponent: Team;
 }) {
 	const nextGame = teamData?.overview?.nextMatch;
 

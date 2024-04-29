@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { NavLink } from "@remix-run/react";
+import Link from "next/link";
 function LinkItem({
 	href,
 	label,
@@ -11,16 +11,16 @@ function LinkItem({
 }) {
 	return (
 		<>
-			<NavLink
-				prefetch="intent"
-				reloadDocument
-				to={href}
-				className={({ isActive, isPending }) =>
-					cn("hover:text-accent hover:opacity-80", isActive ? "text-accent" : "", isPending ? "pending" : "")
-				}
+			<Link
+				prefetch={false}
+				// reloadDocument
+				href={href}
+				// className={({ isActive, isPending }) =>
+				// 	cn("hover:text-accent hover:opacity-80", isActive ? "text-accent" : "", isPending ? "pending" : "")
+				// }
 			>
 				{label}
-			</NavLink>
+			</Link>
 			{withBorder && <span className="hidden text-accent lg:inline-block">|</span>}
 		</>
 	);

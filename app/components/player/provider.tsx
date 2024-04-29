@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { Cross1Icon } from "@radix-ui/react-icons";

@@ -1,7 +1,6 @@
 import { ResponsiveBar } from "@nivo/bar";
 import type { Matches } from "fotmob/dist/esm/types/league";
 import { useMemo } from "react";
-import type { Jsonify } from "type-fest";
 import { LiverpoolId } from "~/server/fotmob-api/constants";
 
 function getKeyByNumber(isHome: boolean, scoresStr: string) {
@@ -15,7 +14,7 @@ function getKeyByNumber(isHome: boolean, scoresStr: string) {
 export function GamesRadar({
 	fixtures,
 }: {
-	fixtures?: Jsonify<Matches>;
+	fixtures?: Matches;
 }) {
 	const barData = useMemo(() => {
 		if (!fixtures?.allMatches) return null;

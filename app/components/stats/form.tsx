@@ -1,7 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { OverviewFixture } from "fotmob/dist/esm/types/team";
-import type { Jsonify } from "type-fest";
 export function resultToString(result?: number) {
 	if (result === 1) return "W";
 	if (result === 0) return "D";
@@ -19,7 +18,7 @@ function getFormTextColor(form: number) {
 	if (form === -1) return "text-red-400";
 }
 
-const TooltipScore: React.FC<{ game: Jsonify<OverviewFixture> }> = ({ game }) => {
+const TooltipScore: React.FC<{ game: OverviewFixture }> = ({ game }) => {
 	return (
 		<div className="flex flex-row gap-5">
 			<Avatar className="h-[25px] w-[25px]">
@@ -37,7 +36,7 @@ const TooltipScore: React.FC<{ game: Jsonify<OverviewFixture> }> = ({ game }) =>
 	);
 };
 
-export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { game: Jsonify<OverviewFixture> }> = ({
+export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { game: OverviewFixture }> = ({
 	game,
 	children,
 }) => (
@@ -51,7 +50,7 @@ export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { ga
 	</TooltipProvider>
 );
 
-const Form: React.FC<{ form: Jsonify<OverviewFixture>[] }> = ({ form }) => {
+const Form: React.FC<{ form: OverviewFixture[] }> = ({ form }) => {
 	return form.map((game) => (
 		<ResultTooltip game={game} key={game.id}>
 			<Avatar className="h-[25px] w-[25px]">

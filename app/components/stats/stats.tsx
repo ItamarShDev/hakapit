@@ -1,17 +1,8 @@
-import type { Jsonify } from "type-fest";
 import { TournamentInformation } from "~/components/stats/tables";
-import { useLeague } from "~/hooks";
+import { getLeague } from "~/server/fotmob-api";
 
-export function StatTable({ leagueId }: { leagueId: string }) {
-	const fetcher = useLeague(leagueId);
-	const league = fetcher.data;
-	if (!league) return null;
-	if (typeof league === "string") {
-		console.log(fetcher);
-
-		return null;
-	}
-
+export async function StatTable({ leagueId }: { leagueId: string }) {
+	const league = await getLeague(Number.parseInt(leagueId));
 	const table = league?.table?.[0];
 	const leagueID = table ? table?.data?.leagueId : league.details?.id;
 	const leagueName = table ? table?.data?.leagueName : league.details?.name;
@@ -33,12 +24,10 @@ export function StatTable({ leagueId }: { leagueId: string }) {
 	);
 }
 
-export function StatsTable({ leaguesIds }: { leaguesIds: Jsonify<(string | undefined)[]> }) {
+export function StatsTable({ leaguesIds }: { leaguesIds: (string | undefined)[] }) {
 	return (
 		<div className="grid items-start w-full gap-3 grid-col-responsive ">
-			{leaguesIds?.map((league) => (
-				<StatTable key={league} leagueId={league} />
-			))}
+			{leaguesIds?.map((league) => league && <StatTable key={league} leagueId={league} />)}
 		</div>
 	);
 }

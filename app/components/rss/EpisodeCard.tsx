@@ -1,11 +1,15 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { PlayIcon } from "@radix-ui/react-icons";
-import { Link } from "@remix-run/react";
+import Image from "next/image";
+import Link from "next/link";
 import { usePlayer } from "~/components/player/provider";
-import { type EpisodeData, toDateString } from "~/hooks";
+import { toDateString, type EpisodeData } from "~/utils";
+
 export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
 	return (
 		<Card className={cn("episode-card h-full w-full max-w-xl rounded-3xl", className)}>
@@ -38,21 +42,22 @@ export function EpisodeCard({
 	return (
 		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className)}>
 			{episode?.imageUrl && (
-				<img
+				<Image
 					src={episode?.imageUrl}
 					alt="episode"
-					className="absolute object-cover object-top -z-10 rounded-3xl brightness-40 filter"
+					fill={true}
+					loading="eager"
+					objectFit="cover"
+					className="absolute object-cover object-top z-0 rounded-3xl brightness-40 filter"
 				/>
 			)}
-			<CardHeader>
+			<CardHeader className="z-10">
 				<CardTitle className="text-accent">
-					<Link to={`/${episode?.podcast?.name}/episodes/${episode?.episodeNumber}`} reloadDocument>
-						{episode?.title}
-					</Link>
+					<Link href={`/${episode?.podcast?.name}/episodes/${episode?.episodeNumber}`}>{episode?.title}</Link>
 				</CardTitle>
 				<CardDescription className="text-muted">{isoDate}</CardDescription>
 			</CardHeader>
-			<CardContent className={cn("flex-1 text-paragraph", contentClassName)}>
+			<CardContent className={cn("flex-1 text-paragraph z-10", contentClassName)}>
 				{episode?.htmlDescription && (
 					<div
 						className="card-content"
@@ -67,7 +72,7 @@ export function EpisodeCard({
 				{playerProps ? (
 					<Button
 						disabled={playerProps.currentlyPlaying?.guid === episode?.guid}
-						className="w-full"
+						className="w-full z-10"
 						onClick={() => playerProps.setCurrentlyPlaying(episode)}
 					>
 						{playerProps.currentlyPlaying?.guid === episode?.guid ? (
