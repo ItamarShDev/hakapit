@@ -8,14 +8,14 @@ export function resultToString(result?: number) {
 }
 export function getFormColor(form: number) {
 	if (form === 1) return "bg-green-400";
-	if (form === 0) return "bg-slate-400";
 	if (form === -1) return "bg-red-400";
+	return "bg-slate-400";
 }
 
 function getFormTextColor(form: number) {
 	if (form === 1) return "text-green-400";
-	if (form === 0) return "text-slate-400";
 	if (form === -1) return "text-red-400";
+	return "bg-slate-400";
 }
 
 const TooltipScore: React.FC<{ game: OverviewFixture }> = ({ game }) => {

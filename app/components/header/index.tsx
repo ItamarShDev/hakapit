@@ -11,6 +11,7 @@ type Props = {
 } & React.HTMLAttributes<HTMLElement>;
 export default function Header({ data, podcast }: Props) {
 	const { imageUrl } = data;
+
 	return (
 		<header className="overflow-hidden header z-20">
 			<div className="flex flex-wrap items-start gap-4 p-4 lg:items-center ">
