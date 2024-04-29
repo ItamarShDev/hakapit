@@ -1,8 +1,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import type { Team } from "fotmob/dist/esm/types/team";
+import { Suspense } from "react";
+import { getTeam } from "~/server/fotmob-api";
 
-export function Trophies({ teamData }: { teamData: Team }) {
+export function Trophies() {
+	return (
+		<Suspense fallback={<div>טוען תארים</div>}>
+			<TrophiesList />
+		</Suspense>
+	);
+}
+
+async function TrophiesList() {
+	const teamData = await getTeam();
 	return (
 		<div className="flex gap-2 flex-wrap justify-center">
 			{teamData.history?.trophyList

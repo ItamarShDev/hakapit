@@ -1,11 +1,9 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
 import { NextMatchOverview } from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
-import { getLeagues, getTeam } from "~/server/fotmob-api";
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1.0,
@@ -25,29 +23,11 @@ export const metadata: Metadata = {
 	},
 };
 
-async function getTeams() {
-	const teamData = await getTeam();
-	const nextGame = teamData?.overview?.nextMatch;
-	const nextMatchOpponent = await getTeam(nextGame?.opponent?.id);
-	return { teamData, nextMatchOpponent };
-}
-
-const loader = async () => {
-	const leaguesIds = await getLeagues(47);
-	const { teamData, nextMatchOpponent } = await getTeams();
-	return {
-		teamData,
-		nextMatchOpponent,
-		leaguesIds,
-	};
-};
-
 export default async function Index() {
-	const { teamData, nextMatchOpponent, leaguesIds } = await loader();
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
 			<div className="flex flex-col w-full gap-10">
-				<Trophies teamData={teamData} />
+				<Trophies />
 				<TooltipProvider>
 					<Tooltip>
 						<TooltipTrigger>
@@ -62,12 +42,8 @@ export default async function Index() {
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>
-				<Suspense fallback={<>...</>}>
-					<NextMatchOverview nextMatchOpponent={nextMatchOpponent} teamData={teamData} />
-				</Suspense>
-				<Suspense fallback={<>...</>}>
-					<StatsTable leaguesIds={leaguesIds} />
-				</Suspense>
+				<NextMatchOverview />
+				<StatsTable />
 			</div>
 
 			<div className="flex flex-wrap justify-center gap-2 py-4">

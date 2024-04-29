@@ -1,3 +1,4 @@
+"use client";
 import { ResponsiveBar } from "@nivo/bar";
 import type { Matches } from "fotmob/dist/esm/types/league";
 import { useMemo } from "react";

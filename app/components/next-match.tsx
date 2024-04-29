@@ -1,9 +1,11 @@
-import type { OpponentClass, Team } from "fotmob/dist/esm/types/team";
+import type { OpponentClass } from "fotmob/dist/esm/types/team";
+import { Suspense } from "react";
 import type { Jsonify } from "type-fest";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
 import { heebo } from "~/fonts";
 import { GameTimer } from "~/game-timer";
+import { getTeam } from "~/server/fotmob-api";
 
 function TeamStatus({
 	game,
@@ -18,15 +20,16 @@ function TeamStatus({
 	);
 }
 
-export function NextMatchOverview({
-	nextMatchOpponent,
-	teamData,
-}: {
-	teamData: Team;
-	nextMatchOpponent: Team;
-}) {
+async function getTeams() {
+	const teamData = await getTeam();
 	const nextGame = teamData?.overview?.nextMatch;
+	const nextMatchOpponent = await getTeam(nextGame?.opponent?.id);
+	return { teamData, nextMatchOpponent };
+}
 
+async function NextMatch() {
+	const { teamData, nextMatchOpponent } = await getTeams();
+	const nextGame = teamData?.overview?.nextMatch;
 	if (!nextGame?.away || !nextGame?.home) return null;
 	const isHome = nextGame.home?.id === teamData.details?.id;
 	const homeTeam = isHome ? teamData : nextMatchOpponent;
@@ -73,5 +76,12 @@ export function NextMatchOverview({
 				</div>
 			</div>
 		</div>
+	);
+}
+export function NextMatchOverview() {
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+			<NextMatch />
+		</Suspense>
 	);
 }

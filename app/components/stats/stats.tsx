@@ -1,5 +1,6 @@
+import { Suspense } from "react";
 import { TournamentInformation } from "~/components/stats/tables";
-import { getLeague } from "~/server/fotmob-api";
+import { getLeague, getLeagues } from "~/server/fotmob-api";
 
 export async function StatTable({ leagueId }: { leagueId: string }) {
 	const league = await getLeague(Number.parseInt(leagueId));
@@ -23,11 +24,38 @@ export async function StatTable({ leagueId }: { leagueId: string }) {
 		</div>
 	);
 }
+function StatsSkeleton({ leagueId }: { leagueId: string }) {
+	return (
+		<div className="flex flex-col" key={leagueId}>
+			<div className="flex items-center justify-center gap-8 p-3 bg-accent text-slate-900">
+				<img
+					className="h-[50px]"
+					src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${leagueId}.png`}
+					alt={"logo"}
+				/>
+				<div className="font-bold">טוען טורניר</div>
+			</div>
+		</div>
+	);
+}
+async function StatsList() {
+	const leaguesIds = await getLeagues(47);
+	return leaguesIds?.map(
+		(league) =>
+			league && (
+				<Suspense key={league} fallback={<StatsSkeleton leagueId={league} />}>
+					<StatTable key={league} leagueId={league} />
+				</Suspense>
+			),
+	);
+}
 
-export function StatsTable({ leaguesIds }: { leaguesIds: (string | undefined)[] }) {
+export function StatsTable() {
 	return (
 		<div className="grid items-start w-full gap-3 grid-col-responsive ">
-			{leaguesIds?.map((league) => league && <StatTable key={league} leagueId={league} />)}
+			<Suspense fallback={<div>טוען טורנירים....</div>}>
+				<StatsList />
+			</Suspense>
 		</div>
 	);
 }
