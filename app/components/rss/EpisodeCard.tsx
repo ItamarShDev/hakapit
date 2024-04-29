@@ -8,11 +8,12 @@ import { PlayIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
 import { usePlayer } from "~/components/player/provider";
+import { heebo } from "~/fonts";
 import { toDateString, type EpisodeData } from "~/utils";
 
 export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
 	return (
-		<Card className={cn("episode-card h-full w-full max-w-xl rounded-3xl", className)}>
+		<Card className={cn("episode-card h-full w-full max-w-xl rounded-3xl", className, heebo.className)}>
 			<CardHeader>
 				<CardTitle>
 					<Skeleton className="w-64 h-6 rounded-full bg-primary-opaque" />
@@ -40,7 +41,7 @@ export function EpisodeCard({
 	const playerProps = usePlayer();
 
 	return (
-		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className)}>
+		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className, heebo.className)}>
 			{episode?.imageUrl && (
 				<Image
 					src={episode?.imageUrl}

@@ -2,6 +2,7 @@ import type { OpponentClass, Team } from "fotmob/dist/esm/types/team";
 import type { Jsonify } from "type-fest";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
+import { heebo } from "~/fonts";
 import { GameTimer } from "~/game-timer";
 
 function TeamStatus({
@@ -37,7 +38,7 @@ export function NextMatchOverview({
 	if (!awayForm || !homeForm) return;
 
 	return (
-		<div className="flex flex-col gap-2 pb-6 heebo bg-primary py-3 full-bleed">
+		<div className={`flex flex-col gap-2 pb-6 heebo bg-primary py-3 full-bleed ${heebo.className}`}>
 			<div className="text-sm text-slate-200">{nextGame.notStarted ? "המשחק הבא" : "כרגע"}</div>
 			<div className="flex flex-row-reverse items-center justify-center gap-2">
 				<img
@@ -47,7 +48,7 @@ export function NextMatchOverview({
 				/>
 				<div className="font-bold">{nextGame.tournament?.name}</div>
 			</div>
-			<div className="game-title">
+			<div className={`game-title ${heebo.className}`}>
 				<div className="flex flex-col gap-1 items-end">
 					<TeamStatus game={nextGame.away} isRunning={!nextGame.notStarted} iconPosition="after" />
 					<div>
