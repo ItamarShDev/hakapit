@@ -11,7 +11,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		const league = await getLeague(Number.parseInt(leagueId));
 		return json(league, 200);
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		return json("Error fetching league", 500);
 	}
 };
