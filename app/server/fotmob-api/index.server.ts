@@ -1,5 +1,5 @@
 import Fotmob from "fotmob";
-import { LiverpoolId } from "~/api/fotmob-api/constants";
+import { LiverpoolId } from "~/server/fotmob-api/constants";
 
 export async function getTeam(id = LiverpoolId) {
 	const fotmob = new Fotmob();
@@ -18,9 +18,11 @@ export function getLeagueStats(league: number, teamId = LiverpoolId) {
 
 export async function getLeagues(leagueId: string | number) {
 	const leagueID = Number.parseInt(`${leagueId}`);
-	const leagueStats = await getLeagueStats(leagueID);	
-	const leaguesToFetch = leagueStats?.tournamentSeasons
-		?.filter((t) => t.season?.includes(`${new Date().getFullYear()}`))
-		.map((tournament) => tournament.parentLeagueId && Number.parseInt(tournament.parentLeagueId));
-	return await Promise.all(leaguesToFetch?.map((league) => league && getLeague(league)) || []);
+	const leagueStats = await getLeagueStats(leagueID);
+	const leaguesToFetch = (leagueStats?.tournamentSeasons || [])
+		.filter((t) => t.season?.includes(`${new Date().getFullYear()}`) && t.parentLeagueId)
+		.map((tournament) => tournament.parentLeagueId);
+	return leaguesToFetch;
+	// const leagues = leaguesToFetch.map((league) => getLeague(Number.parseInt(league.parentLeagueId)));
+	// return await Promise.all(leagues as League[]);
 }

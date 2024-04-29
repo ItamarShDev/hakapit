@@ -1,5 +1,5 @@
 import Parser from "rss-parser";
-import type { EpisodeData } from "~/api/rss/types";
+import type { EpisodeData } from "~/server/rss/types";
 export async function fetch_rss(url: string | undefined) {
 	if (!url) {
 		throw new Error("No RSS URL provided");

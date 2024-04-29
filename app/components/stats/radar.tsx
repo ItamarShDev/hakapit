@@ -2,7 +2,7 @@ import { ResponsiveBar } from "@nivo/bar";
 import type { Matches } from "fotmob/dist/esm/types/league";
 import { useMemo } from "react";
 import type { Jsonify } from "type-fest";
-import { LiverpoolId } from "~/api/fotmob-api/constants";
+import { LiverpoolId } from "~/server/fotmob-api/constants";
 
 function getKeyByNumber(isHome: boolean, scoresStr: string) {
 	const scores = scoresStr.split("-").map((score) => Number.parseInt(score.trim()));

@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { type PodcastName, fetchLatestEpisode } from "~/api/rss/feed";
 import Episode from "~/components/rss/episode";
+import { fetchLatestEpisode, type PodcastName } from "~/server/rss/feed";
 
 export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 	const contentWithoutNewLine = data?.description?.replace(/\n/g, " ");

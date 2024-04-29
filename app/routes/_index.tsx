@@ -1,13 +1,11 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { LinksFunction } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
-import { Await, Link, defer, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
-import { Suspense } from "react";
-import { getTeam } from "~/api/fotmob-api/index";
-import { DeferError } from "~/components/defer-error";
+import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
 import { NextMatchOverview } from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
+import { getLeagues, getTeam } from "~/server/fotmob-api/index.server";
 export const meta: MetaFunction = () => [
 	{ title: "הכפית" },
 	{ charset: "utf-8" },
@@ -36,15 +34,21 @@ export const links: LinksFunction = () => [
 		href: "/logo.webp",
 	},
 ];
-
-export const loader = async () => {
+async function getTeams() {
 	const teamData = await getTeam();
 	const nextGame = teamData?.overview?.nextMatch;
-	const nextMatchOpponent = getTeam(nextGame?.opponent?.id);
-	return defer({
+	const nextMatchOpponent = await getTeam(nextGame?.opponent?.id);
+	return { teamData, nextMatchOpponent };
+}
+
+export const loader = async () => {
+	const leaguesIds = await getLeagues(47);
+	const { teamData, nextMatchOpponent } = await getTeams();
+	return {
 		teamData,
 		nextMatchOpponent,
-	});
+		leaguesIds,
+	};
 };
 
 export function ErrorBoundary() {
@@ -60,7 +64,8 @@ export function ErrorBoundary() {
 }
 
 export default function Index() {
-	const { teamData, nextMatchOpponent } = useLoaderData<typeof loader>();
+	const { leaguesIds, teamData, nextMatchOpponent } = useLoaderData<typeof loader>();
+
 	return (
 		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
 			<div className="flex flex-col w-full gap-10">
@@ -79,12 +84,18 @@ export default function Index() {
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>
-				<Suspense fallback={<>...</>}>
+				{/* <Suspense fallback={<>...</>}>
 					<Await resolve={nextMatchOpponent} errorElement={<DeferError />}>
 						{(nextMatchOpponent) => <NextMatchOverview nextMatchOpponent={nextMatchOpponent} teamData={teamData} />}
 					</Await>
-				</Suspense>
-				<StatsTable teamData={teamData} />
+				</Suspense> */}
+				<NextMatchOverview nextMatchOpponent={nextMatchOpponent} teamData={teamData} />
+				{/* <Suspense fallback={<>...</>}>
+					<Await resolve={leaguesIds} errorElement={<DeferError />}>
+						{(leaguesIds) => <StatsTable leaguesIds={leaguesIds} />}
+					</Await>
+				</Suspense> */}
+				<StatsTable leaguesIds={leaguesIds} />
 			</div>
 
 			<div className="flex flex-wrap justify-center gap-2 py-4">

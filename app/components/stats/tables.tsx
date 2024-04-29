@@ -2,9 +2,9 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { DataTable, League } from "fotmob/dist/esm/types/league";
 import type { NextOpponentClass } from "fotmob/dist/esm/types/team";
 import type { Jsonify } from "type-fest";
-import { LiverpoolId } from "~/api/fotmob-api/constants";
 import { GamesRadar } from "~/components/stats/radar";
 import TeamAvatar from "~/components/team-avatar";
+import { LiverpoolId } from "~/server/fotmob-api/constants";
 
 function getStandings(league: Jsonify<League>) {
 	if (league.table !== undefined) {

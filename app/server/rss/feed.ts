@@ -1,9 +1,9 @@
 import { desc, eq, max } from "drizzle-orm";
-import { fetch_rss } from "~/api/rss/fetch-rss";
-import type { Feed } from "~/api/rss/types";
 import { db } from "~/db/config";
 import { episodes, podcasts } from "~/db/schema";
 import { updateFeedInDb } from "~/routes/api.load";
+import { fetch_rss } from "~/server/rss/fetch-rss";
+import type { Feed } from "~/server/rss/types";
 
 const PODCAST_URLS = {
 	hakapit: process.env.HAKAPIT_RSS,

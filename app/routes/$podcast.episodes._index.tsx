@@ -1,8 +1,8 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useSearchParams } from "@remix-run/react";
-import { type PodcastName, fetchFeed } from "~/api/rss/feed";
 import RSSFeed from "~/components/rss/feed";
 import { usePodcastData } from "~/hooks";
+import { fetchFeed, type PodcastName } from "~/server/rss/feed";
 
 export const meta: MetaFunction<typeof loader> = ({ data, params }) => {
 	return [

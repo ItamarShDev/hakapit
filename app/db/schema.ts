@@ -1,8 +1,8 @@
 import { relations } from "drizzle-orm";
 import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
-import type { PodcastName } from "~/api/rss/feed";
-import type { EpisodeData, Feed } from "~/api/rss/types";
 import { toDate } from "~/hooks";
+import type { PodcastName } from "~/server/rss/feed";
+import type { EpisodeData, Feed } from "~/server/rss/types";
 
 export const podcasts = pgTable("podcast", {
 	id: serial("id").primaryKey(),
