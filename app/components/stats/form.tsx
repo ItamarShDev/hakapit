@@ -6,16 +6,16 @@ export function resultToString(result?: number) {
 	if (result === 0) return "D";
 	if (result === -1) return "L";
 }
-export function getFormColor(form: number) {
+export function getFormColor(form: number | undefined) {
 	if (form === 1) return "bg-green-400";
 	if (form === -1) return "bg-red-400";
 	return "bg-slate-400";
 }
 
-function getFormTextColor(form: number) {
+function getFormTextColor(form: number | undefined) {
 	if (form === 1) return "text-green-400";
 	if (form === -1) return "text-red-400";
-	return "bg-slate-400";
+	return "text-slate-200";
 }
 
 const TooltipScore: React.FC<{ game: OverviewFixture }> = ({ game }) => {
@@ -25,9 +25,7 @@ const TooltipScore: React.FC<{ game: OverviewFixture }> = ({ game }) => {
 				<AvatarImage src={`https://images.fotmob.com/image_resources/logo/teamlogo/${game?.home?.id}_xsmall.png`} />
 				<AvatarFallback>{game?.home?.name}</AvatarFallback>
 			</Avatar>
-			<div className={`text-xl direction-alternate ${game?.result && getFormTextColor(game?.result)}`}>
-				{game.status?.scoreStr}
-			</div>
+			<div className={`text-xl direction-alternate ${getFormTextColor(game?.result)}`}>{game.status?.scoreStr}</div>
 			<Avatar className="h-[25px] w-[25px]">
 				<AvatarImage src={`https://images.fotmob.com/image_resources/logo/teamlogo/${game?.away?.id}_xsmall.png`} />
 				<AvatarFallback>{game?.away?.name}</AvatarFallback>
@@ -54,7 +52,7 @@ const Form: React.FC<{ form: OverviewFixture[] }> = ({ form }) => {
 	return form.map((game) => (
 		<ResultTooltip game={game} key={game.id}>
 			<Avatar className="h-[25px] w-[25px]">
-				<AvatarFallback className={`scale-75 ${game?.result && getFormColor(game?.result)}`}>
+				<AvatarFallback className={`scale-75 ${getFormColor(game?.result)}`}>
 					{resultToString(game.result)}
 				</AvatarFallback>
 			</Avatar>
