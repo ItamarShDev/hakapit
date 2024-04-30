@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import MenuIcon from "~/components/icons/menu";
 import { Links } from "~/components/links";
-import { karantina, rubik80sFade, rubikMoonrocks } from "~/fonts";
+import { karantina } from "~/fonts";
 
 type Props = {
 	data: { imageUrl: string; title: string };
@@ -18,9 +18,7 @@ export default function Header({ data, podcast }: Props) {
 				<div className="header-image">
 					{imageUrl && <img src={imageUrl} alt="podcast logo" className="object-contain" />}
 				</div>
-				<div
-					className={cn("flex-1 header-title", karantina.className, rubik80sFade.className, rubikMoonrocks.className)}
-				>
+				<div className={cn("flex-1 header-title", karantina.className)}>
 					<Link href={`/${podcast || ""}`}>
 						<h1>{data.title}</h1>
 					</Link>
