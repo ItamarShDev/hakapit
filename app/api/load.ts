@@ -42,7 +42,7 @@ export function updateFeedsInDb() {
 	return Promise.all(PODCAST_NAMES.map((key) => updateFeedInDb(key as PodcastName)));
 }
 
-export const loader = async () => {
+export const GET = async (request: Request) => {
 	const insertResult = await updateFeedsInDb();
 	if (insertResult) {
 		return {

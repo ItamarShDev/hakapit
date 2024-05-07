@@ -1,5 +1,5 @@
 import { desc, eq, max } from "drizzle-orm";
-import { updateFeedInDb } from "~/api.load";
+import { updateFeedInDb } from "~/api/load";
 import { db } from "~/db/config";
 import { episodes, podcasts } from "~/db/schema";
 import { fetch_rss } from "~/server/rss/fetch-rss";
@@ -49,9 +49,10 @@ export function fetchEpisode(episodeID: string) {
 	});
 }
 
-export function fetchFeed(podcast: PodcastName, number = 5) {
+export async function fetchFeed(podcast: PodcastName, number = 5) {
+	await fetchLatestEpisode(podcast);
 	const limit = number > 0 ? { limit: number } : {};
-	return db.query.podcasts.findFirst({
+	return await db.query.podcasts.findFirst({
 		where: eq(podcasts.name, podcast),
 		with: { episodes: { ...limit, orderBy: [desc(episodes.episodeNumber)], with: { podcast: true } } },
 	});
