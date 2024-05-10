@@ -4,11 +4,15 @@ import Link from "next/link";
 import { NextMatchOverview } from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
+
+export const fetchCache = "auto";
+
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1.0,
 	themeColor: "currentColor",
 };
+
 export const metadata: Metadata = {
 	title: "הכפית",
 	icons: "/logo.webp",

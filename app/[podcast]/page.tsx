@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 import { fetchFeed, type PodcastName } from "~/server/rss/feed";
+export const fetchCache = "auto";
 
 export async function generateMetadata({ params }: { params: { podcast: string } }): Promise<Metadata> {
 	const metadata = await fetchFeed(params.podcast as PodcastName, 1);

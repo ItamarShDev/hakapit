@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Episode from "~/components/rss/episode";
 import { fetchLatestEpisode, type PodcastName } from "~/server/rss/feed";
+export const fetchCache = "auto";
 
 export async function generateMetadata({ params }: { params: { podcast: string } }): Promise<Metadata> {
 	const episode = await fetchLatestEpisode(params.podcast as PodcastName);
