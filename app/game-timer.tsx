@@ -3,18 +3,14 @@
 import { useEffect, useState } from "react";
 
 export function GameTimer({ start }: { start: Date }) {
-	const [time, setTime] = useState(new Date(start).getTime() - Date.now());
+	const [time, setTime] = useState(Date.now() - new Date(start).getTime());
 	useEffect(() => {
 		const interval = setInterval(() => {
-			setTime(new Date(start).getTime() - Date.now());
+			setTime(Date.now() - new Date(start).getTime());
 		}, 1000);
 		return () => clearInterval(interval);
 	}, [start]);
-	const minutes = Math.floor(time / 1000 / 60);
-	const seconds = Math.floor((time / 1000) % 60);
-	return (
-		<div>
-			{minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-		</div>
-	);
+	const timeMinutes = time / 1000;
+	const minutes = Math.floor(timeMinutes / 60);
+	return <div>'{minutes}</div>;
 }

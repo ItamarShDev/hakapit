@@ -1,3 +1,5 @@
+"use server";
+
 import Fotmob from "fotmob";
 import { LiverpoolId } from "~/server/fotmob-api/constants";
 
@@ -6,14 +8,14 @@ export async function getTeam(id = LiverpoolId) {
 	return await fotmob.getTeam(id);
 }
 
-export function getLeague(league: number) {
+export async function getLeague(league: number) {
 	const fotmob = new Fotmob();
-	return fotmob.getLeague(league);
+	return await fotmob.getLeague(league);
 }
 
-export function getLeagueStats(league: number, teamId = LiverpoolId) {
+export async function getLeagueStats(league: number, teamId = LiverpoolId) {
 	const fotmob = new Fotmob();
-	return fotmob.getTeamSeasonStats(teamId, league);
+	return await fotmob.getTeamSeasonStats(teamId, league);
 }
 
 export async function getLeagues(leagueId: string | number) {
@@ -23,6 +25,10 @@ export async function getLeagues(leagueId: string | number) {
 		.filter((t) => t.season?.includes(`${new Date().getFullYear()}`) && t.parentLeagueId)
 		.map((tournament) => tournament.parentLeagueId);
 	return leaguesToFetch;
-	// const leagues = leaguesToFetch.map((league) => getLeague(Number.parseInt(league.parentLeagueId)));
-	// return await Promise.all(leagues as League[]);
+}
+export async function getNextMatchData() {
+	const teamData = await getTeam();
+	const nextGame = teamData?.overview?.nextMatch;
+	const nextMatchOpponent = await getTeam(nextGame?.opponent?.id);
+	return { teamData, nextMatchOpponent };
 }

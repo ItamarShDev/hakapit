@@ -1,11 +1,12 @@
+"use client";
 import type { OpponentClass } from "fotmob/dist/esm/types/team";
-import { Suspense } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Jsonify } from "type-fest";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
 import { heebo } from "~/fonts";
 import { GameTimer } from "~/game-timer";
-import { getTeam } from "~/server/fotmob-api";
+import { getNextMatchData } from "~/server/fotmob-api";
 
 function TeamStatus({
 	game,
@@ -20,15 +21,37 @@ function TeamStatus({
 	);
 }
 
-async function getTeams() {
-	const teamData = await getTeam();
-	const nextGame = teamData?.overview?.nextMatch;
-	const nextMatchOpponent = await getTeam(nextGame?.opponent?.id);
-	return { teamData, nextMatchOpponent };
+function useGameStatus() {
+	const [data, setData] = useState<Awaited<ReturnType<typeof getNextMatchData>>>();
+	const intervalRef = useRef<NodeJS.Timeout>();
+	const updateData = useCallback(() => {
+		getNextMatchData().then((data) => setData(data));
+	}, []);
+
+	useEffect(() => {
+		if (!data) {
+			return updateData();
+		}
+		const nextGame = data.teamData?.overview?.nextMatch;
+
+		if (nextGame?.status?.started) {
+			if (!intervalRef.current) {
+				intervalRef.current = setInterval(updateData, 1000);
+			}
+		} else {
+			clearInterval(intervalRef.current);
+		}
+	}, [data, updateData]);
+	useEffect(() => {
+		return () => clearInterval(intervalRef.current);
+	}, []);
+	return data;
 }
 
-async function NextMatch() {
-	const { teamData, nextMatchOpponent } = await getTeams();
+function NextMatch() {
+	const gameData = useGameStatus();
+	if (!gameData) return null;
+	const { teamData, nextMatchOpponent } = gameData;
 	const nextGame = teamData?.overview?.nextMatch;
 	if (!nextGame?.away || !nextGame?.home) return null;
 	const isHome = nextGame.home?.id === teamData.details?.id;
@@ -38,11 +61,12 @@ async function NextMatch() {
 	const homeGames = homeTeam?.fixtures?.allFixtures?.fixtures?.filter((game) => !game.notStarted);
 	const awayForm = awayGames?.slice(awayGames.length - 5, awayGames.length);
 	const homeForm = homeGames?.slice(homeGames.length - 5, homeGames.length).reverse();
+
 	if (!awayForm || !homeForm) return;
 
 	return (
 		<div className={`flex flex-col gap-2 pb-6 bg-primary py-3 full-bleed ${heebo.className}`}>
-			<div className="text-sm text-slate-200">{nextGame.notStarted ? "המשחק הבא" : "כרגע"}</div>
+			<div className="text-sm text-slate-200">{nextGame.status?.started ? "כרגע" : "המשחק הבא"}</div>
 			<div className="flex flex-row-reverse items-center justify-center gap-2">
 				<img
 					className="h-[20px]"
@@ -53,7 +77,7 @@ async function NextMatch() {
 			</div>
 			<div className={`game-title ${heebo.className}`}>
 				<div className="flex flex-col gap-1 items-end">
-					<TeamStatus game={nextGame.away} isRunning={!nextGame.notStarted} iconPosition="after" />
+					<TeamStatus game={nextGame.away} isRunning={nextGame.status?.started} iconPosition="after" />
 					<div>
 						<Form form={awayForm} />
 					</div>
@@ -61,15 +85,15 @@ async function NextMatch() {
 
 				{nextGame?.status?.utcTime && (
 					<div className="text-xs">
-						{nextGame.notStarted ? (
-							new Date(nextGame.status.utcTime).toLocaleString()
-						) : (
+						{nextGame.status?.started ? (
 							<GameTimer start={nextGame.status.utcTime} />
+						) : (
+							new Date(nextGame.status.utcTime).toLocaleString()
 						)}
 					</div>
 				)}
 				<div className="flex flex-col gap-1 items-start">
-					<TeamStatus game={nextGame.home} isRunning={!nextGame.notStarted} />
+					<TeamStatus game={nextGame.home} isRunning={nextGame.status?.started} />
 					<div>
 						<Form form={homeForm} />
 					</div>
@@ -79,9 +103,5 @@ async function NextMatch() {
 	);
 }
 export function NextMatchOverview() {
-	return (
-		<Suspense fallback={<div>Loading...</div>}>
-			<NextMatch />
-		</Suspense>
-	);
+	return <NextMatch />;
 }
