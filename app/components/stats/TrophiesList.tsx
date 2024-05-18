@@ -1,17 +1,8 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import Image from "next/image";
-import { Suspense } from "react";
 import { getTeam } from "~/server/fotmob-api";
-export function Trophies() {
-	return (
-		<Suspense fallback={<div>טוען תארים</div>}>
-			<TrophiesList />
-		</Suspense>
-	);
-}
 
-async function TrophiesList() {
+export async function TrophiesList() {
 	const teamData = await getTeam();
 	return (
 		<div className="flex gap-2 flex-wrap justify-center">
@@ -21,20 +12,17 @@ async function TrophiesList() {
 					const tournamentId = trophy.tournamentTemplateId?.[0];
 					const leagueName = trophy.name?.[0];
 					const won = trophy.won?.[0];
-					if (!leagueName || !won) return null;
 					return (
 						<div className="flex flex-col gap-1" key={tournamentId}>
 							<TooltipProvider>
 								<Tooltip>
 									<TooltipTrigger>
 										<Avatar className="h-[50px] w-[50px]">
-											<Image
-												priority
-												height={50}
-												width={50}
-												alt={leagueName}
-												src={`https://images.fotmob.com/image_resources/logo/leaguelogo/dark/${tournamentId}.png`}
-											/>
+											<AvatarImage>
+												<Image
+													src={`https://images.fotmob.com/image_resources/logo/leaguelogo/dark/${tournamentId}.png`}
+												/>
+											</AvatarImage>
 											<AvatarFallback className="scale-75">{leagueName}</AvatarFallback>
 										</Avatar>
 									</TooltipTrigger>

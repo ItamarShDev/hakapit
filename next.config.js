@@ -6,6 +6,11 @@ module.exports = {
         hostname: 'storage.pinecast.net',
         port: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.fotmob.com',
+        port: '',
+      },
     ],
   },
 }

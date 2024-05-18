@@ -1,5 +1,7 @@
+"use client";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 function LinkItem({
 	href,
 	label,
@@ -9,16 +11,10 @@ function LinkItem({
 	label: string;
 	withBorder: boolean;
 }) {
+	const pathname = usePathname();
 	return (
 		<>
-			<Link
-				prefetch={false}
-				// reloadDocument
-				href={href}
-				// className={({ isActive, isPending }) =>
-				// 	cn("hover:text-accent hover:opacity-80", isActive ? "text-accent" : "", isPending ? "pending" : "")
-				// }
-			>
+			<Link prefetch={false} href={href} className={cn(pathname === href && "underline")}>
 				{label}
 			</Link>
 			{withBorder && <span className="hidden text-accent lg:inline-block">|</span>}
