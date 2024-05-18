@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 import MenuIcon from "~/components/icons/menu";
 import { Links } from "~/components/links";
@@ -9,17 +10,19 @@ type Props = {
 	data: { imageUrl: string; title: string };
 	podcast: string | undefined;
 } & React.HTMLAttributes<HTMLElement>;
-export default function Header({ data, podcast }: Props) {
+export default function Header({ data }: Props) {
 	const { imageUrl } = data;
 
 	return (
 		<header className="overflow-hidden header z-20">
 			<div className="flex flex-wrap items-start gap-4 p-4 lg:items-center ">
 				<div className="header-image">
-					{imageUrl && <img src={imageUrl} alt="podcast logo" className="object-contain" />}
+					{imageUrl && (
+						<Image src={imageUrl} alt="podcast logo" className="object-contain" priority width={48} height={48} />
+					)}
 				</div>
 				<div className={cn("flex-1 header-title", karantina.className)}>
-					<Link href={`/${podcast || ""}`}>
+					<Link href="/">
 						<h1>{data.title}</h1>
 					</Link>
 				</div>
