@@ -57,7 +57,7 @@ export function TournamentInformation({
 	const table = league?.table?.[0];
 	const standings = getStandings(league);
 	const position = getPosition(league);
-	const round = league.matches?.firstUnplayedMatch?.firstRoundWithUnplayedMatch;
+	const round = position === "Winner" ? "Final" : league.matches?.firstUnplayedMatch?.firstRoundWithUnplayedMatch;
 	const nextMatch = table?.nextOpponent?.[LiverpoolId];
 
 	const nextGame = league.matches?.allMatches?.find((m) => m.id === nextMatch?.[2]);
@@ -74,7 +74,7 @@ export function TournamentInformation({
 				<TableBody>
 					<TableRow className="border-0">
 						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מחזור / סבב</TableCell>
-						<TableCell className="p-3 font-bold text-start">{round}</TableCell>
+						<TableCell className="p-3 font-bold text-start capitalize">{round}</TableCell>
 					</TableRow>
 					<TableRow className="border-0">
 						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מיקום</TableCell>
@@ -86,10 +86,12 @@ export function TournamentInformation({
 							<TableCell className="p-3 font-bold text-start">{teamStats?.pts}</TableCell>
 						</TableRow>
 					)}
-					<TableRow className="border-0">
-						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">יחס שערים</TableCell>
-						<TableCell className="p-3 font-bold text-start">{teamStats?.scoresStr}</TableCell>
-					</TableRow>
+					{teamStats?.scoresStr && (
+						<TableRow className="border-0">
+							<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">יחס שערים</TableCell>
+							<TableCell className="p-3 font-bold text-start">{teamStats?.scoresStr}</TableCell>
+						</TableRow>
+					)}
 
 					{teamXg && (
 						<>

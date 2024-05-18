@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import RSSFeed from "~/components/rss/feed";
-import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 import { fetchFeed, type PodcastName } from "~/server/rss/feed";
 export const fetchCache = "auto";
 
@@ -32,10 +31,5 @@ export default async function RouteComponent({
 	params: { podcast },
 }: { params: { podcast: "hakapit" | "balcony-albums" | "nitk" } }) {
 	const metadata = await fetchFeed(podcast as PodcastName, 1);
-	return (
-		<section className="feed-page">
-			<RSSFeed data={metadata} preview podcast={podcast} />
-			<TwitterTimelineEmbed podcastName={podcast} />
-		</section>
-	);
+	return <RSSFeed data={metadata} preview podcast={podcast} />;
 }
