@@ -38,7 +38,7 @@ async function TrophiesList() {
 											<AvatarFallback className="scale-75">{leagueName}</AvatarFallback>
 										</Avatar>
 									</TooltipTrigger>
-									<TooltipContent side="bottom" className="rounded-xl bg-primary border-primary">
+									<TooltipContent side="bottom" className="rounded-xl bg-primary border-primary text-accent">
 										<div>{leagueName}</div>
 									</TooltipContent>
 								</Tooltip>
