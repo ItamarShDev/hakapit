@@ -1,32 +1,8 @@
 import { desc, eq, max } from "drizzle-orm";
-import { updateFeedInDb } from "~/api.load";
+import { updateFeedInDb, type PodcastName } from "~/api/load/route";
 import { db } from "~/db/config";
 import { episodes, podcasts } from "~/db/schema";
-import { fetch_rss } from "~/server/rss/fetch-rss";
-import type { Feed } from "~/server/rss/types";
-
-const PODCAST_URLS = {
-	hakapit: process.env.HAKAPIT_RSS,
-	nitk: process.env.NITK_RSS,
-	"balcony-albums": process.env.BALCONY_RSS,
-};
-
-export const PODCAST_NAMES = Object.keys(PODCAST_URLS) as PodcastName[];
-export type PodcastName = keyof typeof PODCAST_URLS;
-
-function _fetch(podcast: PodcastName) {
-	const url = PODCAST_URLS[podcast];
-	return fetch_rss(url);
-}
-
-export async function fetchRSSFeed(podcast: PodcastName, number = 5): Promise<Feed> {
-	const rss = await _fetch(podcast);
-	if (number > 0) {
-		const episodes = rss.items.slice(0, number);
-		rss.items = episodes;
-	}
-	return rss as Feed;
-}
+export { type PodcastName } from "~/api/load/route";
 
 export async function fetchLatestEpisode(podcast: PodcastName) {
 	await updateFeedInDb(podcast);
@@ -42,14 +18,15 @@ export async function fetchLatestEpisode(podcast: PodcastName) {
 		});
 }
 
-export function fetchEpisode(episodeID: string) {
+export async function fetchEpisode(episodeID: string) {
 	return db.query.episodes.findFirst({
 		where: eq(episodes.episodeNumber, Number.parseInt(episodeID)),
 		with: { podcast: true },
 	});
 }
 
-export function fetchFeed(podcast: PodcastName, number = 5) {
+export async function fetchFeed(podcast: PodcastName, number = 5) {
+	await updateFeedInDb(podcast);
 	const limit = number > 0 ? { limit: number } : {};
 	return db.query.podcasts.findFirst({
 		where: eq(podcasts.name, podcast),
