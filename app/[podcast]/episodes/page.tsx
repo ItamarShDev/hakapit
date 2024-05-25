@@ -30,6 +30,5 @@ export default async function RouteComponent({
 	searchParams: { limit },
 }: { params: { podcast: "hakapit" | "balcony-albums" | "nitk" }; searchParams: { limit?: string } }) {
 	const episodeLimit = Number.parseInt(limit || "5");
-	const metadata = await fetchFeed(podcast as PodcastName, episodeLimit || 5);
-	return <RSSFeed data={metadata} limit={episodeLimit} podcast={podcast} />;
+	return <RSSFeed limit={episodeLimit} podcast={podcast} />;
 }
