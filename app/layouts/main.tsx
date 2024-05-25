@@ -9,7 +9,7 @@ export function MainLayout({
 	params: { podcast: string };
 }) {
 	return (
-		<body className={cn("body", podcast)}>
+		<div className={cn("body", podcast)}>
 			<Header
 				data={{
 					imageUrl:
@@ -18,7 +18,7 @@ export function MainLayout({
 				}}
 				podcast={podcast}
 			/>
-			<main className="main-content">{children}</main>
-		</body>
+			<div className="main-content">{children}</div>
+		</div>
 	);
 }

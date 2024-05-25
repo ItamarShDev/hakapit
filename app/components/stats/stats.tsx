@@ -60,7 +60,9 @@ function TableSkeleton() {
 export function StatsTable() {
 	return (
 		<div className="grid items-start w-full gap-3 grid-col-responsive ">
-			<StatsList />
+			<Suspense fallback={<TableSkeleton />}>
+				<StatsList />
+			</Suspense>
 		</div>
 	);
 }

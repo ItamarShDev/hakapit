@@ -1,5 +1,3 @@
-import { AnalyticsWrapper } from "~/components/analytics";
-
 export default function RootLayout({
 	children,
 }: {
@@ -7,8 +5,8 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
-			{children}
-			<AnalyticsWrapper />
+			<body>{children}</body>
+			{/* <AnalyticsWrapper /> */}
 		</html>
 	);
 }

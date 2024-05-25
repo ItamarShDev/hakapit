@@ -2,19 +2,17 @@
 
 import Fotmob from "fotmob";
 import { LiverpoolId } from "~/server/fotmob-api/constants";
+const fotmob = new Fotmob();
 
 export async function getTeam(id = LiverpoolId) {
-	const fotmob = new Fotmob();
 	return await fotmob.getTeam(id);
 }
 
 export async function getLeague(league: number) {
-	const fotmob = new Fotmob();
 	return await fotmob.getLeague(league);
 }
 
 export async function getLeagueStats(league: number, teamId = LiverpoolId) {
-	const fotmob = new Fotmob();
 	return await fotmob.getTeamSeasonStats(teamId, league);
 }
 

@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
 import { MasonryFeed, Preview } from "~/components/rss/feed/feed";
-import { fetchFeed, type PodcastName } from "~/server/rss/feed";
+import { fetchUpdatedFeed, type PodcastName } from "~/server/rss/feed";
 function getLinkClass(isPending = false) {
 	return cn("text-xl lg:text-sm text-accent", isPending ? "animate-pulse" : "");
 }
@@ -16,7 +16,7 @@ async function Feed({
 	preview?: boolean;
 	podcast: PodcastName;
 }) {
-	const data = await fetchFeed(podcast, limit);
+	const data = await fetchUpdatedFeed(podcast, limit);
 	if (preview)
 		return (
 			<>
