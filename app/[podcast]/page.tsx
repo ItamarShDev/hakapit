@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import RSSFeed from "~/components/rss/feed";
+import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 import { fetchFeed, type PodcastName } from "~/server/rss/feed";
 export const dynamic = "force-dynamic";
 
@@ -30,5 +31,10 @@ export async function generateMetadata({ params }: { params: { podcast: string }
 export default function RouteComponent({
 	params: { podcast },
 }: { params: { podcast: "hakapit" | "balcony-albums" | "nitk" } }) {
-	return <RSSFeed preview podcast={podcast} />;
+	return (
+		<section className="feed-page">
+			<RSSFeed preview podcast={podcast} />
+			<TwitterTimelineEmbed podcastName={podcast} />
+		</section>
+	);
 }

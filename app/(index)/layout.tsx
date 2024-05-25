@@ -1,5 +1,4 @@
 import { MainLayout } from "~/layouts/main";
-import "./globals.css";
 
 export default function RootLayout({
 	children,

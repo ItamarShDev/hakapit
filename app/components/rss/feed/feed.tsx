@@ -20,7 +20,7 @@ export function MasonryFeed({
 				))}
 				{new Array(skeletonCount).fill(0)?.map((_, index) => (
 					// biome-ignore lint:noArrayIndexKey
-					<SkeletonCard key={index} />
+					<SkeletonCard key={index} className="h-[500px]" />
 				))}
 			</div>
 		</>

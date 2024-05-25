@@ -1,7 +1,7 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
+import { SkeletonCard } from "~/components/rss/EpisodeCard";
 import { MasonryFeed, Preview } from "~/components/rss/feed/feed";
 import { fetchUpdatedFeed, type PodcastName } from "~/server/rss/feed";
 function getLinkClass(isPending = false) {
@@ -35,17 +35,7 @@ async function Feed({
 		</>
 	);
 }
-function SkeletonCard() {
-	return (
-		<div className="flex flex-col space-y-3">
-			<Skeleton className="h-[125px] w-[250px] rounded-xl" />
-			<div className="space-y-2">
-				<Skeleton className="h-4 w-[250px]" />
-				<Skeleton className="h-4 w-[200px]" />
-			</div>
-		</div>
-	);
-}
+
 function FeedSkeletons({
 	limit = 1,
 	preview = false,
@@ -54,10 +44,9 @@ function FeedSkeletons({
 	preview?: boolean;
 }) {
 	if (preview) {
-		return <SkeletonCard />;
+		return <SkeletonCard className="w-[576px] h-80 my-32 " />;
 	}
-	// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-	return new Array(limit).fill(null).map((_, index) => <SkeletonCard key={index} />);
+	return <MasonryFeed limit={limit} />;
 }
 export default async function RSSFeed({
 	limit = 1,
