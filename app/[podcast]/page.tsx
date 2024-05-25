@@ -27,9 +27,8 @@ export async function generateMetadata({ params }: { params: { podcast: string }
 	};
 }
 
-export default async function RouteComponent({
+export default function RouteComponent({
 	params: { podcast },
 }: { params: { podcast: "hakapit" | "balcony-albums" | "nitk" } }) {
-	const metadata = await fetchFeed(podcast as PodcastName, 1);
-	return <RSSFeed data={metadata} preview podcast={podcast} />;
+	return <RSSFeed preview podcast={podcast} />;
 }
