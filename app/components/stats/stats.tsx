@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
 import { TournamentInformation } from "~/components/stats/tables";
 import { getLeague, getLeagues } from "~/server/fotmob-api";
@@ -49,11 +50,17 @@ async function StatsList() {
 			),
 	);
 }
-
+function TableSkeleton() {
+	return (
+		<Skeleton className="h-96 w-full flex items-center justify-center rounded-2xl bg-slate-500 bg-opacity-30">
+			טוען טבלאות
+		</Skeleton>
+	);
+}
 export function StatsTable() {
 	return (
 		<div className="grid items-start w-full gap-3 grid-col-responsive ">
-			<Suspense fallback={<div>טוען טורנירים....</div>}>
+			<Suspense fallback={<TableSkeleton />}>
 				<StatsList />
 			</Suspense>
 		</div>

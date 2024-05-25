@@ -1,4 +1,5 @@
 "use client";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { OpponentClass } from "fotmob/dist/esm/types/team";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Jsonify } from "type-fest";
@@ -47,10 +48,26 @@ function useGameStatus() {
 	}, []);
 	return data;
 }
+function FullBleed({ children }: { children: React.ReactNode }) {
+	return (
+		<div className={`flex flex-col gap-2 h-36 pb-6 bg-primary py-3 full-bleed ${heebo.className}`}>{children}</div>
+	);
+}
 
-function NextMatch() {
+function NextMatchSkeleton() {
+	return (
+		<FullBleed>
+			<div className="flex flex-col items-center justify-center gap-2">
+				<Skeleton className="w-20 h-4 rounded-2xl bg-slate-500 bg-opacity-30" />
+				<Skeleton className="w-24 h-6 rounded-2xl bg-slate-500 bg-opacity-30" />
+				<Skeleton className="w-80 h-16 rounded-2xl bg-slate-500 bg-opacity-30" />
+			</div>
+		</FullBleed>
+	);
+}
+export function NextMatchOverview() {
 	const gameData = useGameStatus();
-	if (!gameData) return null;
+	if (!gameData) return <NextMatchSkeleton />;
 	const { teamData, nextMatchOpponent } = gameData;
 	const nextGame = teamData?.overview?.nextMatch;
 	if (!nextGame?.away || !nextGame?.home) return null;
@@ -65,7 +82,7 @@ function NextMatch() {
 	if (!awayForm || !homeForm) return;
 
 	return (
-		<div className={`flex flex-col gap-2 pb-6 bg-primary py-3 full-bleed ${heebo.className}`}>
+		<FullBleed>
 			<div className="text-sm text-slate-200">{nextGame.status?.started ? "כרגע" : "המשחק הבא"}</div>
 			<div className="flex flex-row-reverse items-center justify-center gap-2">
 				<img
@@ -99,9 +116,6 @@ function NextMatch() {
 					</div>
 				</div>
 			</div>
-		</div>
+		</FullBleed>
 	);
-}
-export function NextMatchOverview() {
-	return <NextMatch />;
 }
