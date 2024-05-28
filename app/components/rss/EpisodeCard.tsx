@@ -45,7 +45,7 @@ export function EpisodeCard({
 					src={episode?.imageUrl}
 					alt="episode"
 					fill={true}
-					priority
+					priority={true}
 					sizes="576px"
 					className="absolute object-cover object-top z-0 rounded-3xl brightness-40 filter"
 				/>

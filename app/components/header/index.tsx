@@ -18,7 +18,14 @@ export default function Header({ data }: Props) {
 			<div className="flex flex-wrap items-start gap-4 p-4 lg:items-center ">
 				<div className="header-image">
 					{imageUrl && (
-						<Image src={imageUrl} alt="podcast logo" className="object-contain" priority width={48} height={48} />
+						<Image
+							src={imageUrl}
+							alt="podcast logo"
+							className="object-contain"
+							priority={true}
+							width={48}
+							height={48}
+						/>
 					)}
 				</div>
 				<div className={cn("flex-1 header-title", karantina.className)}>
