@@ -1,18 +1,14 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Image from "next/image";
-import { Suspense } from "react";
+import { cache } from "react";
 import { getTeam } from "~/server/fotmob-api";
 export function Trophies() {
-	return (
-		<Suspense fallback={<div>טוען תארים</div>}>
-			<TrophiesList />
-		</Suspense>
-	);
+	return <TrophiesList />;
 }
 
 async function TrophiesList() {
-	const teamData = await getTeam();
+	const teamData = await cache(getTeam)();
 	return (
 		<div className="flex gap-2 flex-wrap justify-center">
 			{teamData.history?.trophyList
@@ -29,7 +25,7 @@ async function TrophiesList() {
 									<TooltipTrigger>
 										<Avatar className="h-[50px] w-[50px]">
 											<Image
-												priority
+												priority={true}
 												height={50}
 												width={50}
 												alt={leagueName}

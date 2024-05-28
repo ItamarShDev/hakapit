@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Suspense } from "react";
 import { SkeletonCard } from "~/components/rss/EpisodeCard";
 import { MasonryFeed, Preview } from "~/components/rss/feed/feed";
 import { fetchUpdatedFeed, type PodcastName } from "~/server/rss/feed";
@@ -59,9 +58,7 @@ export default async function RSSFeed({
 }) {
 	return (
 		<div className="flex flex-col items-center gap-3">
-			<Suspense fallback={<FeedSkeletons limit={limit} preview={preview} />}>
-				<Feed limit={limit} preview={preview} podcast={podcast} />
-			</Suspense>
+			<Feed limit={limit} preview={preview} podcast={podcast} />
 		</div>
 	);
 }
