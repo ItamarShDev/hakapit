@@ -27,5 +27,6 @@
   "biome.rename": true,
   "[css]": {
     "editor.defaultFormatter": "vscode.css-language-features"
-  }
+  },
+  "editor.wordWrapColumn": 120
 }

@@ -49,9 +49,7 @@ function useGameStatus() {
 	return data;
 }
 function FullBleed({ children }: { children: React.ReactNode }) {
-	return (
-		<div className={`flex flex-col gap-2 h-36 pb-6 bg-primary py-3 full-bleed ${heebo.className}`}>{children}</div>
-	);
+	return <div className={`flex flex-col gap-2  pb-6 bg-primary py-3 full-bleed ${heebo.className}`}>{children}</div>;
 }
 
 function NextMatchSkeleton() {
@@ -80,7 +78,6 @@ export function NextMatchOverview() {
 	const homeForm = homeGames?.slice(homeGames.length - 5, homeGames.length).reverse();
 
 	if (!awayForm || !homeForm) return;
-
 	return (
 		<FullBleed>
 			<div className="text-sm text-slate-200">{nextGame.status?.started ? "כרגע" : "המשחק הבא"}</div>
@@ -101,11 +98,13 @@ export function NextMatchOverview() {
 				</div>
 
 				{nextGame?.status?.utcTime && (
-					<div className="text-xs">
+					<div className="text-xs max-w-24 text-wrap">
 						{nextGame.status?.started ? (
 							<GameTimer start={nextGame.status.utcTime} />
 						) : (
-							new Date(nextGame.status.utcTime).toLocaleString()
+							`${new Date(nextGame.status.utcTime).toLocaleDateString()} ${new Date(
+								nextGame.status.utcTime,
+							).toLocaleTimeString()}`
 						)}
 					</div>
 				)}
