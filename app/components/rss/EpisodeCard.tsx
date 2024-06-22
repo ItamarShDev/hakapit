@@ -16,12 +16,12 @@ export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>
 		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden bg-primary-opaque", className)}>
 			<CardHeader>
 				<CardTitle>
-					<Skeleton className="w-64 h-6 rounded-full bg-primary-opaque" />
+					<Skeleton className="bg-primary-opaque w-64 h-6 rounded-full" />
 				</CardTitle>
-				<Skeleton className="w-32 h-4 rounded-full bg-primary-opaque" />
+				<Skeleton className="bg-primary-opaque w-32 h-4 rounded-full" />
 			</CardHeader>
 			<CardContent>
-				<Skeleton className="w-full h-32 rounded-2xl bg-primary-opaque" />
+				<Skeleton className="rounded-2xl bg-primary-opaque w-full h-32" />
 			</CardContent>
 		</Card>
 	);
@@ -62,7 +62,7 @@ export function EpisodeCard({
 					placeholder="blur"
 					blurDataURL={rgbDataURL(255, 0, 0)}
 					sizes="576px"
-					className="absolute object-cover object-top z-0 rounded-3xl brightness-40 filter"
+					className="rounded-3xl brightness-40 filter absolute z-0 object-cover object-top"
 				/>
 			)}
 			<CardHeader className="z-10">
@@ -86,7 +86,7 @@ export function EpisodeCard({
 				{playerProps ? (
 					<Button
 						disabled={playerProps.currentlyPlaying?.guid === episode?.guid}
-						className="w-full z-10"
+						className="z-10 w-full"
 						onClick={() => playerProps.setCurrentlyPlaying(episode)}
 					>
 						{playerProps.currentlyPlaying?.guid === episode?.guid ? (

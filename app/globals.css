@@ -118,34 +118,35 @@ body {
   }
 
   .body {
-    @apply grid min-h-screen gap-5 bg-background text-paragraph;
+    @apply bg-background text-paragraph grid min-h-screen gap-5;
     direction: rtl;
     grid-template-rows: auto 1fr;
   }
 
   .main-content {
-    @apply p-4 lg:px-8 overflow-auto w-screen;
+    @apply lg:px-8 w-screen p-4 overflow-auto;
   }
 
   .content {
-    @apply flex flex-col gap-5 m-auto lg:max-w-7xl;
+    @apply lg:max-w-7xl flex flex-col gap-5 m-auto;
   }
 
   .footer {
-    @apply flex flex-wrap items-center justify-center bg-primary-opaque;
+    @apply bg-primary-opaque flex flex-wrap items-center justify-center;
   }
 
   .feed-page {
-    @apply flex flex-col flex-wrap w-full gap-6 place-content-center lg:flex-row;
+    @apply place-content-center lg:flex-row flex flex-col flex-wrap w-full gap-6;
   }
 
   .card-content>* {
-    @apply text-ellipsis;
+    @apply text-ellipsis overflow-hidden;
   }
 
   .masonry {
     @apply grid w-full gap-8;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-auto-rows: minmax(200px, auto);
   }
 
   .grid-col-responsive {
@@ -153,7 +154,7 @@ body {
   }
 
   .feed-page .timeline {
-    @apply hidden lg:block;
+    @apply lg:block hidden;
   }
 
   .full-page-episode {
@@ -196,7 +197,7 @@ body {
 
   .header {
 
-    @apply sticky top-0 z-10 w-screen border-b-2 border-solid border-accent bg-primary text-paragraph;
+    @apply border-accent bg-primary text-paragraph sticky top-0 z-10 w-screen border-b-2 border-solid;
   }
 
   .header:has(.menu-button:focus-within) .header-links {
