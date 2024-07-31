@@ -81,29 +81,24 @@ export function TournamentInformation({
 						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מיקום</TableCell>
 						<TableCell className="p-3 font-bold text-start">{position}</TableCell>
 					</TableRow>
-					{teamStats?.pts && (
-						<TableRow className="border-0">
-							<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">נקודות</TableCell>
-							<TableCell className="p-3 font-bold text-start">{teamStats?.pts}</TableCell>
-						</TableRow>
-					)}
+					<TableRow className="border-0" hidden={teamStats?.pts === undefined}>
+						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">נקודות</TableCell>
+						<TableCell className="p-3 font-bold text-start">{teamStats?.pts}</TableCell>
+					</TableRow>
 					<TableRow className="border-0">
 						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">יחס שערים</TableCell>
 						<TableCell className="p-3 font-bold text-start">{teamStats?.scoresStr}</TableCell>
 					</TableRow>
 
-					{teamXg && (
-						<>
-							<TableRow className="border-0">
-								<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap ">xG למשחק</TableCell>
-								<TableCell className="p-3 font-bold text-end ltr">{teamXg && roundToDecimal(teamXg.xgDiff)}</TableCell>
-							</TableRow>
-							<TableRow className="border-0">
-								<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">xG</TableCell>
-								<TableCell className="p-3 font-bold text-end ltr">{teamXg && roundToDecimal(teamXg.xg)}</TableCell>
-							</TableRow>
-						</>
-					)}
+					<TableRow className="border-0" hidden={!teamXg}>
+						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap ">xG למשחק</TableCell>
+						<TableCell className="p-3 font-bold text-end ltr">{teamXg && roundToDecimal(teamXg.xgDiff)}</TableCell>
+					</TableRow>
+					<TableRow className="border-0" hidden={!teamXg}>
+						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">xG</TableCell>
+						<TableCell className="p-3 font-bold text-end ltr">{teamXg && roundToDecimal(teamXg.xg)}</TableCell>
+					</TableRow>
+
 					<TableRow className="border-0">
 						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">משחק הבא</TableCell>
 						<TableCell className="p-3 font-bold text-start">

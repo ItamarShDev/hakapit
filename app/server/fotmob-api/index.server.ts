@@ -23,6 +23,4 @@ export async function getLeagues(leagueId: string | number) {
 		.filter((t) => t.season?.includes(`${new Date().getFullYear()}`) && t.parentLeagueId)
 		.map((tournament) => tournament.parentLeagueId);
 	return leaguesToFetch;
-	// const leagues = leaguesToFetch.map((league) => getLeague(Number.parseInt(league.parentLeagueId)));
-	// return await Promise.all(leagues as League[]);
 }

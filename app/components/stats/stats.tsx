@@ -36,7 +36,7 @@ export function StatTable({ leagueId }: { leagueId: string }) {
 export function StatsTable({ leaguesIds }: { leaguesIds: Jsonify<(string | undefined)[]> }) {
 	return (
 		<div className="grid items-start w-full gap-3 grid-col-responsive ">
-			{leaguesIds?.map((league) => (
+			{Array.from(new Set(leaguesIds))?.map((league) => (
 				<StatTable key={league} leagueId={league} />
 			))}
 		</div>

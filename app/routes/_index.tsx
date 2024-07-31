@@ -1,7 +1,9 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { LinksFunction } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
-import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
+import { Await, Link, defer, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
+import { Suspense } from "react";
+import { DeferError } from "~/components/defer-error";
 import { NextMatchOverview } from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
@@ -42,13 +44,23 @@ async function getTeams() {
 }
 
 export const loader = async () => {
-	const leaguesIds = await getLeagues(47);
+	const leaguesIds = getLeagues(47);
+	console.log("after getLeagues");
+
 	const { teamData, nextMatchOpponent } = await getTeams();
-	return {
-		teamData,
-		nextMatchOpponent,
-		leaguesIds,
-	};
+	console.log("after getTeams");
+	return defer(
+		{
+			teamData,
+			nextMatchOpponent,
+			leaguesIds,
+		},
+		{
+			headers: {
+				"Cache-Control": "no-store",
+			},
+		},
+	);
 };
 
 export function ErrorBoundary() {
@@ -84,18 +96,17 @@ export default function Index() {
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>
+				<NextMatchOverview nextMatchOpponent={nextMatchOpponent} teamData={teamData} />
 				{/* <Suspense fallback={<>...</>}>
 					<Await resolve={nextMatchOpponent} errorElement={<DeferError />}>
 						{(nextMatchOpponent) => <NextMatchOverview nextMatchOpponent={nextMatchOpponent} teamData={teamData} />}
 					</Await>
 				</Suspense> */}
-				<NextMatchOverview nextMatchOpponent={nextMatchOpponent} teamData={teamData} />
-				{/* <Suspense fallback={<>...</>}>
+				<Suspense fallback={<>...</>}>
 					<Await resolve={leaguesIds} errorElement={<DeferError />}>
 						{(leaguesIds) => <StatsTable leaguesIds={leaguesIds} />}
 					</Await>
-				</Suspense> */}
-				<StatsTable leaguesIds={leaguesIds} />
+				</Suspense>
 			</div>
 
 			<div className="flex flex-wrap justify-center gap-2 py-4">
