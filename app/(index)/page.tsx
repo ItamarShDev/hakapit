@@ -29,13 +29,13 @@ export const metadata: Metadata = {
 
 export default async function Index() {
 	return (
-		<section className="flex flex-col items-center justify-center h-full py-4 text-center lg:about lg:py-0">
+		<section className="lg:about lg:py-0 flex flex-col items-center justify-center h-full py-4 text-center">
 			<div className="flex flex-col w-full gap-10">
 				<Trophies />
 				<TooltipProvider>
 					<Tooltip>
 						<TooltipTrigger>
-							<div className="text-2xl fade-in-bottom text-accent">מה זה כפית?</div>
+							<div className="fade-in-bottom text-accent text-2xl">מה זה כפית?</div>
 						</TooltipTrigger>
 						<TooltipContent side="bottom" className="rounded-xl bg-primary border-accent">
 							<div className="what-is-kapit text-slate-300 py-2">

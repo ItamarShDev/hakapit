@@ -11,7 +11,7 @@ export async function StatTable({ leagueId }: { leagueId: string }) {
 	if (!leagueID || !leagueName) return null;
 	return (
 		<div className="flex flex-col" key={leagueID}>
-			<div className="flex items-center justify-center gap-8 p-3 bg-accent text-slate-900">
+			<div className="bg-accent text-slate-900 flex items-center justify-center gap-8 p-3">
 				<img
 					className="h-[50px]"
 					src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${leagueID}.png`}
@@ -28,7 +28,7 @@ export async function StatTable({ leagueId }: { leagueId: string }) {
 function StatsSkeleton({ leagueId }: { leagueId: string }) {
 	return (
 		<div className="flex flex-col" key={leagueId}>
-			<div className="flex items-center justify-center gap-8 p-3 bg-accent text-slate-900">
+			<div className="bg-accent text-slate-900 flex items-center justify-center gap-8 p-3">
 				<img
 					className="h-[50px]"
 					src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${leagueId}.png`}
@@ -41,7 +41,7 @@ function StatsSkeleton({ leagueId }: { leagueId: string }) {
 }
 async function StatsList() {
 	const leaguesIds = await getLeagues(47);
-	return leaguesIds?.map(
+	return Array.from(new Set(leaguesIds)).map(
 		(league) =>
 			league && (
 				<Suspense key={league} fallback={<StatsSkeleton leagueId={league} />}>
@@ -52,14 +52,14 @@ async function StatsList() {
 }
 function TableSkeleton() {
 	return (
-		<Skeleton className="h-96 w-full flex items-center justify-center rounded-2xl bg-slate-500 bg-opacity-30">
+		<Skeleton className="h-96 rounded-2xl bg-slate-500 bg-opacity-30 flex items-center justify-center w-full">
 			טוען טבלאות
 		</Skeleton>
 	);
 }
 export function StatsTable() {
 	return (
-		<div className="grid items-start w-full gap-3 grid-col-responsive ">
+		<div className="grid-col-responsive  grid items-start w-full gap-3">
 			<Suspense fallback={<TableSkeleton />}>
 				<StatsList />
 			</Suspense>

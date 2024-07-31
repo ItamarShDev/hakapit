@@ -74,48 +74,40 @@ export function TournamentInformation({
 				<TableBody>
 					<TableRow className="border-0">
 						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מחזור / סבב</TableCell>
-						<TableCell className="p-3 font-bold text-start capitalize">{round}</TableCell>
+						<TableCell className="text-start p-3 font-bold capitalize">{round}</TableCell>
 					</TableRow>
 					<TableRow className="border-0">
 						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מיקום</TableCell>
-						<TableCell className="p-3 font-bold text-start">{position}</TableCell>
+						<TableCell className="text-start p-3 font-bold">{position}</TableCell>
 					</TableRow>
-					{teamStats?.pts && (
-						<TableRow className="border-0">
-							<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">נקודות</TableCell>
-							<TableCell className="p-3 font-bold text-start">{teamStats?.pts}</TableCell>
-						</TableRow>
-					)}
-					{teamStats?.scoresStr && (
-						<TableRow className="border-0">
-							<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">יחס שערים</TableCell>
-							<TableCell className="p-3 font-bold text-start">{teamStats?.scoresStr}</TableCell>
-						</TableRow>
-					)}
+					<TableRow className="border-0" hidden={teamStats?.pts === undefined}>
+						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">נקודות</TableCell>
+						<TableCell className="text-start p-3 font-bold">{teamStats?.pts}</TableCell>
+					</TableRow>
+					<TableRow className="border-0" hidden={teamStats?.scoresStr === undefined}>
+						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">יחס שערים</TableCell>
+						<TableCell className="text-start p-3 font-bold">{teamStats?.scoresStr}</TableCell>
+					</TableRow>
 
-					{teamXg && (
-						<>
-							<TableRow className="border-0">
-								<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap ">xG למשחק</TableCell>
-								<TableCell className="p-3 font-bold text-end ltr">{teamXg && roundToDecimal(teamXg.xgDiff)}</TableCell>
-							</TableRow>
-							<TableRow className="border-0">
-								<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">xG</TableCell>
-								<TableCell className="p-3 font-bold text-end ltr">{teamXg && roundToDecimal(teamXg.xg)}</TableCell>
-							</TableRow>
-						</>
-					)}
+					<TableRow className="border-0" hidden={teamXg === undefined}>
+						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap ">xG למשחק</TableCell>
+						<TableCell className="text-end ltr p-3 font-bold">{teamXg && roundToDecimal(teamXg.xgDiff)}</TableCell>
+					</TableRow>
+					<TableRow className="border-0" hidden={teamXg === undefined}>
+						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">xG</TableCell>
+						<TableCell className="text-end ltr p-3 font-bold">{teamXg && roundToDecimal(teamXg.xg)}</TableCell>
+					</TableRow>
 					<TableRow className="border-0">
 						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">משחק הבא</TableCell>
-						<TableCell className="p-3 font-bold text-start">
+						<TableCell className="text-start p-3 font-bold">
 							{nextOpponent ? (
-								<div className="flex gap-2 items-center">
+								<div className="flex items-center gap-2">
 									<TeamAvatar
 										teamId={nextOpponentId}
 										teamName={nextOpponent?.name}
 										teamShortName={nextOpponent?.shortName}
 									/>
-									<div className="text-gray-400 text-xs text-balance">
+									<div className="text-balance text-xs text-gray-400">
 										({nextGame?.status?.utcTime && new Date(nextGame.status.utcTime).toLocaleString()})
 									</div>
 								</div>
