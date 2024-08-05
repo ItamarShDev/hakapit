@@ -1,7 +1,9 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { LinksFunction } from "@remix-run/node";
+import { unstable_defineLoader as defineLoader } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
-import { Await, Link, defer, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
+
+import { Await, Link, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
 import { Suspense } from "react";
 import { DeferError } from "~/components/defer-error";
 import { NextMatchOverview } from "~/components/next-match";
@@ -39,29 +41,19 @@ export const links: LinksFunction = () => [
 async function getTeams() {
 	const teamData = await getTeam();
 	const nextGame = teamData?.overview?.nextMatch;
-	const nextMatchOpponent = await getTeam(nextGame?.opponent?.id);
+	const nextMatchOpponent = getTeam(nextGame?.opponent?.id);
 	return { teamData, nextMatchOpponent };
 }
 
-export const loader = async () => {
+export const loader = defineLoader(async () => {
 	const leaguesIds = getLeagues(47);
-	console.log("after getLeagues");
-
 	const { teamData, nextMatchOpponent } = await getTeams();
-	console.log("after getTeams");
-	return defer(
-		{
-			teamData,
-			nextMatchOpponent,
-			leaguesIds,
-		},
-		{
-			headers: {
-				"Cache-Control": "no-store",
-			},
-		},
-	);
-};
+	return {
+		teamData,
+		nextMatchOpponent,
+		leaguesIds,
+	};
+});
 
 export function ErrorBoundary() {
 	const error = useRouteError();

@@ -7,8 +7,6 @@ export function StatTable({ leagueId }: { leagueId: string }) {
 	const league = fetcher.data;
 	if (!league) return null;
 	if (typeof league === "string") {
-		console.log(fetcher);
-
 		return null;
 	}
 

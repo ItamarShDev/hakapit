@@ -19,8 +19,11 @@ export function getLeagueStats(league: number, teamId = LiverpoolId) {
 export async function getLeagues(leagueId: string | number) {
 	const leagueID = Number.parseInt(`${leagueId}`);
 	const leagueStats = await getLeagueStats(leagueID);
-	const leaguesToFetch = (leagueStats?.tournamentSeasons || [])
-		.filter((t) => t.season?.includes(`${new Date().getFullYear()}`) && t.parentLeagueId)
-		.map((tournament) => tournament.parentLeagueId);
+	const leaguesToFetch = [];
+	for (const season of leagueStats?.tournamentSeasons || []) {
+		if (season.season?.includes(`${new Date().getFullYear()}`) && season.parentLeagueId) {
+			leaguesToFetch.push(season.parentLeagueId);
+		}
+	}
 	return leaguesToFetch;
 }

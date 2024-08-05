@@ -5,12 +5,16 @@
     "**/*.tsx",
   ],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",
-   "resolveJsonModule": true,
+    "resolveJsonModule": true,
     "module": "ESNext",
     "target": "ES2022",
     "strict": true,
@@ -18,8 +22,13 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": [
+        "./app/*"
+      ]
     },
+    "types": [
+      "@remix-run/react/future/single-fetch.d.ts"
+    ],
     "skipLibCheck": true,
     "noEmit": true
   }
