@@ -1,7 +1,6 @@
 "use client";
-import type { OpponentClass } from "fotmob/dist/esm/types/team";
+import type { OpponentClass, OverviewFixture, Team } from "fotmob/dist/esm/types/team";
 import { useCallback, useEffect, useState } from "react";
-import type { Jsonify } from "type-fest";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
 import { heebo } from "~/fonts";
@@ -12,7 +11,7 @@ function TeamStatus({
 	game,
 	isRunning = false,
 	iconPosition = "before",
-}: { game: Jsonify<OpponentClass>; isRunning?: boolean; iconPosition?: "before" | "after" }) {
+}: { game: OpponentClass; isRunning?: boolean; iconPosition?: "before" | "after" }) {
 	return (
 		<div>
 			<TeamAvatar teamId={game.id} teamName={game.name} iconPosition={iconPosition} />
@@ -43,21 +42,39 @@ function useGameStatus(rootData: Awaited<ReturnType<typeof getNextMatchData>>) {
 export function FullBleed({ children }: { children: React.ReactNode }) {
 	return <div className={`flex flex-col gap-2  pb-6 bg-primary py-3 full-bleed ${heebo.className}`}>{children}</div>;
 }
-
-export function NextMatchOverviewClient({ data }: { data: Awaited<ReturnType<typeof getNextMatchData>> }) {
+function useTeamForms(data: Awaited<ReturnType<typeof getNextMatchData>>) {
 	const gameData = useGameStatus(data);
 	const { teamData, nextMatchOpponent } = gameData;
 	const nextGame = teamData?.overview?.nextMatch;
-	if (!nextGame?.away || !nextGame?.home) return null;
+	if (!nextGame?.away || !nextGame?.home) {
+		return null;
+	}
 	const isHome = nextGame.home?.id === teamData.details?.id;
-	const homeTeam = isHome ? teamData : nextMatchOpponent;
-	const awayTeam = isHome ? nextMatchOpponent : teamData;
-	const awayGames = awayTeam?.fixtures?.allFixtures?.fixtures?.filter((game) => !game.notStarted);
-	const homeGames = homeTeam?.fixtures?.allFixtures?.fixtures?.filter((game) => !game.notStarted);
-	const awayForm = awayGames?.slice(awayGames.length - 5, awayGames.length);
-	const homeForm = homeGames?.slice(homeGames.length - 5, homeGames.length).reverse();
+	const [homeTeam, awayTeam] = isHome ? [teamData, nextMatchOpponent] : [nextMatchOpponent, teamData];
 
-	if (!awayForm || !homeForm) return;
+	const getRecentGames = (team: Team) =>
+		team?.fixtures?.allFixtures?.fixtures?.filter((game) => !game.notStarted) ?? [];
+
+	const awayGames = getRecentGames(awayTeam);
+	const homeGames = getRecentGames(homeTeam);
+
+	const getLastFiveGames = (games: OverviewFixture[]) => games.slice(-5);
+
+	const awayForm = getLastFiveGames(awayGames);
+	const homeForm = getLastFiveGames(homeGames).reverse();
+
+	return { awayForm, homeForm, nextGame };
+}
+
+export function NextMatchOverviewClient({ data }: { data: Awaited<ReturnType<typeof getNextMatchData>> }) {
+	const teamForms = useTeamForms(data);
+	if (!teamForms) {
+		return null;
+	}
+	const { awayForm, homeForm, nextGame } = teamForms;
+	if (!nextGame?.away || !nextGame?.home) {
+		return null;
+	}
 	return (
 		<FullBleed>
 			<div className="text-slate-200 text-sm">{nextGame.status?.started ? "כרגע" : "המשחק הבא"}</div>
