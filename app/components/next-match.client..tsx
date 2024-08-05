@@ -1,6 +1,6 @@
 "use client";
 import type { OpponentClass } from "fotmob/dist/esm/types/team";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Jsonify } from "type-fest";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
@@ -23,7 +23,6 @@ function TeamStatus({
 
 function useGameStatus(rootData: Awaited<ReturnType<typeof getNextMatchData>>) {
 	const [data, setData] = useState(rootData);
-	const intervalRef = useRef<NodeJS.Timeout>();
 	const updateData = useCallback(() => {
 		getNextMatchData().then((data) => setData(data));
 	}, []);
@@ -35,16 +34,10 @@ function useGameStatus(rootData: Awaited<ReturnType<typeof getNextMatchData>>) {
 		const nextGame = data.teamData?.overview?.nextMatch;
 
 		if (nextGame?.status?.started) {
-			if (!intervalRef.current) {
-				intervalRef.current = setInterval(updateData, 1000);
-			}
-		} else {
-			clearInterval(intervalRef.current);
+			const interval = setInterval(updateData, 1000);
+			return () => clearInterval(interval);
 		}
 	}, [data, updateData]);
-	useEffect(() => {
-		return () => clearInterval(intervalRef.current);
-	}, []);
 	return data;
 }
 export function FullBleed({ children }: { children: React.ReactNode }) {
