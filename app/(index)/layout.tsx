@@ -1,3 +1,4 @@
+import { PlayerProvider } from "~/components/player/provider";
 import { MainLayout } from "~/layouts/main";
 
 export default function RootLayout({
@@ -7,5 +8,9 @@ export default function RootLayout({
 	children: React.ReactNode;
 	params: { podcast: string };
 }) {
-	return <MainLayout params={{ podcast }}>{children}</MainLayout>;
+	return (
+		<MainLayout params={{ podcast }}>
+			<PlayerProvider>{children}</PlayerProvider>
+		</MainLayout>
+	);
 }

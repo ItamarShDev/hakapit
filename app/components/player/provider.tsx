@@ -3,13 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { Cross1Icon } from "@radix-ui/react-icons";
-import { createContext, forwardRef, useCallback, useContext, useRef, useState } from "react";
+import { createContext, forwardRef, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { Episode } from "~/db/types";
 
 type PlayerContextType = {
 	currentlyPlaying: Episode | undefined;
 	setCurrentlyPlaying: (episode?: Episode) => void;
+	isPlaying: boolean;
 };
 
 const PlayerContext = createContext<PlayerContextType | null>(null);
@@ -48,14 +49,37 @@ const Player = forwardRef(function Player(
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
 	const [currentlyPlaying, setCurrentlyPlaying] = useState<Episode | undefined>(undefined);
+	const [isPlaying, setIsPlaying] = useState(false);
 	const ref = useRef<HTMLAudioElement | null>(null);
-	const setCurrentEpisode = useCallback((episode?: Episode) => {
-		ref.current?.pause();
-		setCurrentlyPlaying(episode);
+	const setCurrentEpisode = useCallback(
+		(episode?: Episode) => {
+			if (episode?.audioUrl === currentlyPlaying?.audioUrl) {
+				if (isPlaying) {
+					ref.current?.pause();
+				} else {
+					ref.current?.play();
+				}
+				return;
+			}
+
+			ref.current?.pause();
+
+			setCurrentlyPlaying(episode);
+			if (!ref.current) return;
+			ref.current?.load();
+			ref.current.onloadeddata = () => {
+				ref.current?.play();
+			};
+		},
+		[currentlyPlaying, isPlaying],
+	);
+	useEffect(() => {
 		if (!ref.current) return;
-		ref.current?.load();
-		ref.current.onloadeddata = () => {
-			ref.current?.play();
+		ref.current.onplaying = () => {
+			setIsPlaying(true);
+		};
+		ref.current.onpause = () => {
+			setIsPlaying(false);
 		};
 	}, []);
 	const closePlayer = useCallback(() => {
@@ -63,7 +87,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 		setCurrentlyPlaying(undefined);
 	}, []);
 	return (
-		<PlayerContext.Provider value={{ currentlyPlaying, setCurrentlyPlaying: setCurrentEpisode }}>
+		<PlayerContext.Provider value={{ currentlyPlaying, setCurrentlyPlaying: setCurrentEpisode, isPlaying }}>
 			<div className={`${currentlyPlaying ? "mb-36" : ""}`}>{children}</div>
 			<Player episode={currentlyPlaying} ref={ref} closePlayer={closePlayer} />
 			<Toaster richColors closeButton dir="rtl" />

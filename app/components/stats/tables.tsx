@@ -107,9 +107,6 @@ export function TournamentInformation({
 										teamName={nextOpponent?.name}
 										teamShortName={nextOpponent?.shortName}
 									/>
-									<div className="text-balance text-xs text-gray-400">
-										({nextGame?.status?.utcTime && new Date(nextGame.status.utcTime).toLocaleString()})
-									</div>
 								</div>
 							) : (
 								"אין משחק הבא"

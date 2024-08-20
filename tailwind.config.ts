@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 module.exports = {
-	darkMode: ["class"],
+	darkMode: ["class", "[data-theme=dark]"],
+	mode: "jit",
 	content: ["./app/**/*.{js,jsx,ts,tsx}", "./@/**/*.{ts,tsx,js,jsx}"],
 	theme: {
 		container: {
@@ -82,5 +83,5 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [],
 } satisfies Config;

@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { PlayIcon } from "@radix-ui/react-icons";
+import { PauseIcon, PlayIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
 import { usePlayer } from "~/components/player/provider";
 import { heebo } from "~/fonts";
-import { toDateString, type EpisodeData } from "~/utils";
+import { type EpisodeData, toDateString } from "~/utils";
 
 export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
 	return (
@@ -39,6 +39,55 @@ const rgbDataURL = (r: number, g: number, b: number) =>
 	`data:image/gif;base64,R0lGODlhAQABAPAA${
 		triplet(0, r, g) + triplet(b, 255, 255)
 	}/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`;
+function PlayPauseButton({ episode }: { episode: EpisodeData }) {
+	const playerProps = usePlayer();
+	if (!playerProps) return null;
+	if (playerProps.isPlaying && playerProps.currentlyPlaying?.guid === episode?.guid)
+		return <PauseIcon className="z-10 " />;
+	return <PlayIcon className="z-10" />;
+}
+export function LastEpisodeCardPreview({
+	episode,
+}: {
+	episode: EpisodeData;
+}) {
+	const isoDate = toDateString(episode?.publishedAt);
+	const playerProps = usePlayer();
+
+	return (
+		<div>
+			<div className="flex gap-2 items-center">
+				{playerProps && (
+					<Button
+						className="rounded-2xl p-3 relative w-10 overflow-hidden"
+						onClick={() => playerProps.setCurrentlyPlaying(episode)}
+					>
+						{episode?.imageUrl && (
+							<Image
+								src={episode?.imageUrl}
+								alt="episode"
+								priority={true}
+								fill={true}
+								placeholder="blur"
+								blurDataURL={rgbDataURL(255, 0, 0)}
+								className=" brightness-40 filter absolute -z-0 object-cover object-top"
+							/>
+						)}
+						<PlayPauseButton episode={episode} />
+					</Button>
+				)}
+				<div className="text-accent flex flex-col items-start">
+					<Link className="text-lg" href={`/${episode?.podcast?.name}/episodes/${episode?.episodeNumber}`}>
+						{episode?.title}
+					</Link>
+					<div className="flex gap-3 items-start text-muted text-sm">
+						<div className="">{isoDate}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
 
 export function EpisodeCard({
 	episode,
