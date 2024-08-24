@@ -34,8 +34,8 @@ export default function Header({ data }: Props) {
 	const { imageUrl } = data;
 
 	return (
-		<header className="overflow-hidden header z-20">
-			<div className="flex flex-wrap items-start gap-4 p-4 lg:items-center ">
+		<header className="header overflow-hidden">
+			<div className="lg:items-center flex flex-wrap items-start gap-4 p-4">
 				<div className="header-image">
 					{imageUrl && (
 						<Image
@@ -54,12 +54,12 @@ export default function Header({ data }: Props) {
 					</Link>
 					<WhatIsKapit />
 				</div>
-				<div className="flex flex-col flex-wrap items-end gap-2 pt-2 lg:gap-4 lg:hidden">
+				<div className="lg:gap-4 lg:hidden flex flex-col flex-wrap items-end gap-2 pt-2">
 					<Button variant="link" className="menu-button">
 						<MenuIcon />
 					</Button>
 				</div>
-				<Links className="flex-row hidden lg:flex" />
+				<Links className="lg:flex flex-row hidden" />
 			</div>
 			<div className={cn("grid items-start grid-transition header-links hide-menu")}>
 				<Links className="flex flex-col items-center text-2xl" />

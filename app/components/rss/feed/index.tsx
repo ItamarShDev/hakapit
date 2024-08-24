@@ -1,10 +1,7 @@
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { MasonryFeed, Preview } from "~/components/rss/feed/feed";
 import { type PodcastName, fetchUpdatedFeed } from "~/server/rss/feed";
-function getLinkClass(isPending = false) {
-	return cn("text-xl lg:text-sm text-accent", isPending ? "animate-pulse" : "");
-}
+
 async function Feed({
 	limit = 1,
 	preview = false,
@@ -19,7 +16,7 @@ async function Feed({
 		return (
 			<>
 				<Preview data={data} />
-				<Link href={`${podcast}/episodes`} className={getLinkClass()}>
+				<Link href={`${podcast}/episodes`} className={"text-xl lg:text-sm text-accent"}>
 					לכל הפרקים
 				</Link>
 			</>
@@ -27,7 +24,7 @@ async function Feed({
 	return (
 		<>
 			<MasonryFeed data={data} limit={limit} />
-			<Link href={`?limit=${limit + 5}`} replace className={getLinkClass()} scroll={false}>
+			<Link href={`?limit=${limit + 5}`} replace className={"text-xl lg:text-sm text-accent"} scroll={false}>
 				הצג עוד
 			</Link>
 		</>
