@@ -137,7 +137,13 @@ function TeamRow({ teamStats, table }: { teamStats: Required<All>; table: TableE
 	// @ts-ignore
 	const teamXg = table.data?.table?.xg?.find((stat: Record<string, unknown>) => stat.id === teamStats.id);
 	return (
-		<TableRow className={cn("border-0", teamStats.id === LiverpoolId && "bg-primary-opaque text-accent")}>
+		<TableRow
+			className={cn(
+				"border-0",
+				teamStats.id === LiverpoolId && "bg-primary-opaque text-accent hover:bg-primary-opaque",
+				teamStats.id === LiverpoolId && teamStats.idx === 1 && "text-green-400",
+			)}
+		>
 			<TableCell className="text-start p-3 font-bold">
 				<TeamAvatar
 					hoverable

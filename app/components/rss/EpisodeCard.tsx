@@ -43,8 +43,8 @@ function PlayPauseButton({ episode }: { episode: EpisodeData }) {
 	const playerProps = usePlayer();
 	if (!playerProps) return null;
 	if (playerProps.isPlaying && playerProps.currentlyPlaying?.guid === episode?.guid)
-		return <PauseIcon className="z-10 " />;
-	return <PlayIcon className="z-10" />;
+		return <PauseIcon className="size-7 md:size-4 z-10" />;
+	return <PlayIcon className="size-7 md:size-4 z-10" />;
 }
 
 export function LastEpisodeCardPreview({
@@ -56,34 +56,32 @@ export function LastEpisodeCardPreview({
 	const playerProps = usePlayer();
 
 	return (
-		<div>
-			<div className="flex gap-2 items-center">
-				{playerProps && (
-					<Button
-						className="p-3 relative w-10 h-10 overflow-hidden"
-						onClick={() => playerProps.setCurrentlyPlaying(episode)}
-					>
-						{episode?.imageUrl && (
-							<Image
-								src={episode?.imageUrl}
-								alt="episode"
-								priority={true}
-								fill={true}
-								placeholder="blur"
-								blurDataURL={rgbDataURL(255, 0, 0)}
-								className=" brightness-40 filter absolute -z-0 object-cover object-top"
-							/>
-						)}
-						<PlayPauseButton episode={episode} />
-					</Button>
-				)}
-				<div className="text-accent flex flex-col items-start">
-					<Link className="text-lg" href={`/${episode?.podcast?.name}/episodes/${episode?.episodeNumber}`}>
-						{episode?.title}
-					</Link>
-					<div className="flex gap-3 items-start text-muted text-sm">
-						<div className="">{isoDate}</div>
-					</div>
+		<div className="flex items-center justify-center w-full gap-4 py-4">
+			{playerProps && (
+				<Button
+					className="md:size-14 size-20 md:rounded-full relative p-3 overflow-hidden"
+					onClick={() => playerProps.setCurrentlyPlaying(episode)}
+				>
+					{episode?.imageUrl && (
+						<Image
+							src={episode?.imageUrl}
+							alt="episode"
+							priority={true}
+							fill={true}
+							placeholder="blur"
+							blurDataURL={rgbDataURL(255, 0, 0)}
+							className=" brightness-40 filter -z-0 absolute object-cover object-top"
+						/>
+					)}
+					<PlayPauseButton episode={episode} />
+				</Button>
+			)}
+			<div className="text-accent flex flex-col items-start">
+				<Link className="md:text-lg text-xl" href={`/${episode?.podcast?.name}/episodes/${episode?.episodeNumber}`}>
+					{episode?.title}
+				</Link>
+				<div className="text-muted flex items-start gap-3 text-sm">
+					<div className="">{isoDate}</div>
 				</div>
 			</div>
 		</div>
