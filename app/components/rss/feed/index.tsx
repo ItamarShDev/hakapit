@@ -1,8 +1,7 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { SkeletonCard } from "~/components/rss/EpisodeCard";
 import { MasonryFeed, Preview } from "~/components/rss/feed/feed";
-import { fetchUpdatedFeed, type PodcastName } from "~/server/rss/feed";
+import { type PodcastName, fetchUpdatedFeed } from "~/server/rss/feed";
 function getLinkClass(isPending = false) {
 	return cn("text-xl lg:text-sm text-accent", isPending ? "animate-pulse" : "");
 }
@@ -35,18 +34,6 @@ async function Feed({
 	);
 }
 
-function FeedSkeletons({
-	limit = 1,
-	preview = false,
-}: {
-	limit?: number;
-	preview?: boolean;
-}) {
-	if (preview) {
-		return <SkeletonCard className="w-[576px] h-80 my-32 " />;
-	}
-	return <MasonryFeed limit={limit} />;
-}
 export default async function RSSFeed({
 	limit = 1,
 	preview = false,

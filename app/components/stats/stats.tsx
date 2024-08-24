@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
-import { TournamentInformation } from "~/components/stats/tables";
+import { TeamTournamentInformation } from "~/components/stats/tables";
 import { getLeague, getLeagues } from "~/server/fotmob-api";
 
 export async function StatTable({ leagueId }: { leagueId: string }) {
@@ -10,7 +10,7 @@ export async function StatTable({ leagueId }: { leagueId: string }) {
 	const leagueName = table ? table?.data?.leagueName : league.details?.name;
 	if (!leagueID || !leagueName) return null;
 	return (
-		<div className="flex flex-col" key={leagueID}>
+		<div className="flex flex-col max-w-md" key={leagueID}>
 			<div className="bg-accent text-slate-900 flex items-center justify-center gap-8 p-3">
 				<img
 					className="h-[50px]"
@@ -20,7 +20,7 @@ export async function StatTable({ leagueId }: { leagueId: string }) {
 				<div className="font-bold">{leagueName}</div>
 			</div>
 			<div className="py-3">
-				<TournamentInformation league={league} />
+				<TeamTournamentInformation league={league} />
 			</div>
 		</div>
 	);
@@ -59,7 +59,7 @@ function TableSkeleton() {
 }
 export function StatsTable() {
 	return (
-		<div className="grid-col-responsive  grid items-start w-full gap-3">
+		<div className="grid-col-responsive grid items-start w-full gap-3">
 			<Suspense fallback={<TableSkeleton />}>
 				<StatsList />
 			</Suspense>

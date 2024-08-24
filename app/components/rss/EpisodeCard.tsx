@@ -46,6 +46,7 @@ function PlayPauseButton({ episode }: { episode: EpisodeData }) {
 		return <PauseIcon className="z-10 " />;
 	return <PlayIcon className="z-10" />;
 }
+
 export function LastEpisodeCardPreview({
 	episode,
 }: {
@@ -59,7 +60,7 @@ export function LastEpisodeCardPreview({
 			<div className="flex gap-2 items-center">
 				{playerProps && (
 					<Button
-						className="rounded-2xl p-3 relative w-10 overflow-hidden"
+						className="p-3 relative w-10 h-10 overflow-hidden"
 						onClick={() => playerProps.setCurrentlyPlaying(episode)}
 					>
 						{episode?.imageUrl && (

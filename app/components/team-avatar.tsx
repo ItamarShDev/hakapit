@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { type ImageProps, getImageProps } from "next/image";
 
 type Props = Omit<ImageProps, "fill">;
@@ -25,12 +26,14 @@ export default function TeamAvatar({
 	teamId,
 	iconPosition = "before",
 	color,
+	hoverable = false,
 }: {
 	teamId?: string | number;
 	teamName?: string;
 	teamShortName?: string;
 	iconPosition?: "before" | "after";
 	color?: string;
+	hoverable?: boolean;
 }) {
 	if (!teamId) return null;
 	const teamNameComponent = (
@@ -38,17 +41,31 @@ export default function TeamAvatar({
 			{teamName}
 		</div>
 	);
+	const avatar = (
+		<NextAvatar
+			src={`https://images.fotmob.com/image_resources/logo/teamlogo/${teamId}_xsmall.png`}
+			width={25}
+			height={25}
+			priority
+			fetchPriority="high"
+			alt={teamShortName || "TL"}
+		/>
+	);
+	if (hoverable)
+		return (
+			<TooltipProvider>
+				<Tooltip>
+					<TooltipTrigger>{avatar}</TooltipTrigger>
+					<TooltipContent side="bottom" className="rounded-xl bg-primary border-accent text-accent">
+						<div>{teamName}</div>
+					</TooltipContent>
+				</Tooltip>
+			</TooltipProvider>
+		);
 	return (
 		<div className={`flex items-center gap-3 ${iconPosition === "after" ? "justify-end" : "justify-start"}`}>
 			{iconPosition === "after" && teamNameComponent}
-			<NextAvatar
-				src={`https://images.fotmob.com/image_resources/logo/teamlogo/${teamId}_xsmall.png`}
-				width={25}
-				height={25}
-				priority
-				fetchPriority="high"
-				alt={teamShortName || "TL"}
-			/>
+			{avatar}
 			{iconPosition === "before" && teamNameComponent}
 		</div>
 	);

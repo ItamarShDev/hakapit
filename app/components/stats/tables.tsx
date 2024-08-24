@@ -1,7 +1,8 @@
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import type { DataTable, League } from "fotmob/dist/esm/types/league";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+import type { All, DataTable, League, TableElement } from "fotmob/dist/esm/types/league";
 import type { NextOpponentClass } from "fotmob/dist/esm/types/team";
-import { GamesRadar } from "~/components/stats/radar";
+import { GamesStatsChart } from "~/components/stats/radar";
 import TeamAvatar from "~/components/team-avatar";
 import { LiverpoolId } from "~/server/fotmob-api/constants";
 
@@ -40,13 +41,20 @@ function getPlayoffPosition(league: League) {
 		}
 	}
 }
-function getPosition(league: League) {
-	const playoffPosition = getPlayoffPosition(league);
-	if (playoffPosition) return playoffPosition;
-	const standings = getStandings(league);
 
-	const teamStats = standings?.all?.find((stat) => stat.id === LiverpoolId);
-	return teamStats?.idx;
+function getTeams(league: League) {
+	const standings = getStandings(league);
+	if (!standings?.all) return null;
+	const teamStatsIndex = standings?.all?.findIndex((stat) => stat.id === LiverpoolId);
+	if (teamStatsIndex === -1 || teamStatsIndex === undefined) return null;
+
+	if (teamStatsIndex === 0) {
+		return [standings.all?.[0], standings.all?.[1], standings.all?.[2]];
+	}
+	if (teamStatsIndex === standings.all?.length - 1) {
+		return [standings.all?.[teamStatsIndex - 2], standings.all?.[teamStatsIndex - 1], standings.all?.[teamStatsIndex]];
+	}
+	return [standings.all?.[teamStatsIndex - 1], standings.all?.[teamStatsIndex], standings.all?.[teamStatsIndex + 1]];
 }
 
 export function TournamentInformation({
@@ -56,7 +64,7 @@ export function TournamentInformation({
 }) {
 	const table = league?.table?.[0];
 	const standings = getStandings(league);
-	const position = getPosition(league);
+	const position = getPlayoffPosition(league);
 	const round = position === "Winner" ? "Final" : league.matches?.firstUnplayedMatch?.firstRoundWithUnplayedMatch;
 	const nextMatch = table?.nextOpponent?.[LiverpoolId];
 
@@ -115,7 +123,83 @@ export function TournamentInformation({
 					</TableRow>
 				</TableBody>
 			</Table>
-			<GamesRadar fixtures={league.matches} />
+			<GamesStatsChart fixtures={league.matches} />
+		</>
+	);
+}
+function TeamRow({ teamStats, table }: { teamStats: Required<All>; table: TableElement }) {
+	const nextMatch = table?.nextOpponent?.[teamStats.id];
+
+	const nextOpponentId = nextMatch?.[0] as string;
+	const nextOpponent = nextMatch?.find((team) => typeof team === "object" && team.id === nextOpponentId) as
+		| NextOpponentClass
+		| undefined;
+	// @ts-ignore
+	const teamXg = table.data?.table?.xg?.find((stat: Record<string, unknown>) => stat.id === teamStats.id);
+	return (
+		<TableRow className={cn("border-0", teamStats.id === LiverpoolId && "bg-primary-opaque text-accent")}>
+			<TableCell className="text-start p-3 font-bold">
+				<TeamAvatar
+					hoverable
+					teamId={teamStats.id}
+					teamName={teamStats?.name}
+					teamShortName={nextOpponent?.shortName}
+				/>
+			</TableCell>
+			<TableCell className="text-start p-3 font-bold">{teamStats.idx}</TableCell>
+			<TableCell className="text-start p-3 font-bold">{teamStats?.pts}</TableCell>
+			<TableCell className="text-start p-3 font-bold">{teamStats?.scoresStr}</TableCell>
+
+			<TableCell className="text-end ltr p-3 font-bold">{teamXg && roundToDecimal(teamXg.xg)}</TableCell>
+			<TableCell className="text-start p-3 font-bold">
+				{nextOpponent ? (
+					<div className="flex items-center gap-2">
+						<TeamAvatar
+							hoverable
+							teamId={nextOpponentId}
+							teamName={nextOpponent?.name}
+							teamShortName={nextOpponent?.shortName}
+						/>
+					</div>
+				) : (
+					"אין משחק הבא"
+				)}
+			</TableCell>
+		</TableRow>
+	);
+}
+
+export function TeamTournamentInformation({
+	league,
+}: {
+	league: League;
+}) {
+	const table = league?.table?.[0];
+	if (!table) return null;
+	const playoffPosition = getPlayoffPosition(league);
+	if (playoffPosition) return <TournamentInformation league={league} />;
+	const teams = getTeams(league);
+	if (!teams) return null;
+	return (
+		<>
+			<Table className="text-xs">
+				<TableHeader>
+					<TableRow className="border-0">
+						<TableHead className="text-start">קבוצה</TableHead>
+						<TableHead className="text-start">מיקום</TableHead>
+						<TableHead className="text-start">נקודות</TableHead>
+						<TableHead className="text-start">יחס שערים</TableHead>
+						<TableHead className="text-start">xG</TableHead>
+						<TableHead className="text-start">משחק הבא</TableHead>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
+					{teams.map((team) => (
+						<TeamRow key={team.id} teamStats={team as Required<All>} table={table} />
+					))}
+				</TableBody>
+			</Table>
+			<GamesStatsChart fixtures={league.matches} />
 		</>
 	);
 }

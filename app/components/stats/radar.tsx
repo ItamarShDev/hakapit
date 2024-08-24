@@ -12,7 +12,7 @@ function getKeyByNumber(isHome: boolean, scoresStr: string) {
 	if (number < 0) return "Lose";
 }
 
-export function GamesRadar({
+export function GamesStatsChart({
 	fixtures,
 }: {
 	fixtures?: Matches;
@@ -44,7 +44,7 @@ export function GamesRadar({
 	}, [fixtures]);
 	if (!barData) return null;
 	return (
-		<div className="w-auto max-w-md h-36">
+		<div className="h-36 w-auto max-w-md">
 			<ResponsiveBar
 				groupMode="stacked"
 				layout="horizontal"

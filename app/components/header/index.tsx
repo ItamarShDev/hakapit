@@ -1,11 +1,31 @@
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { QuestionMarkIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
 import MenuIcon from "~/components/icons/menu";
 import { Links } from "~/components/links";
 import { karantina } from "~/fonts";
-
+function WhatIsKapit() {
+	return (
+		<TooltipProvider>
+			<Tooltip>
+				<TooltipTrigger className=" flex items-center font-sans">
+					<div className="text-accent text-sm">מה זה כפית</div>
+					<QuestionMarkIcon className="text-accent w-5 h-5 p-1" />
+				</TooltipTrigger>
+				<TooltipContent side="bottom" className="rounded-xl bg-primary border-accent">
+					<div className="what-is-kapit text-slate-300 py-2">
+						<p className="fade-in-bottom a-delay-100">כפית זה משחק של אופי.</p>
+						<p className="fade-in-bottom a-delay-400">כפית זה ניצחון ברגע האחרון.</p>
+						<p className="fade-in-bottom a-delay-700">כפית זה כל כך פשוט וכל כך קשה.</p>
+					</div>
+				</TooltipContent>
+			</Tooltip>
+		</TooltipProvider>
+	);
+}
 type Props = {
 	data: { imageUrl: string; title: string };
 	podcast: string | undefined;
@@ -28,10 +48,11 @@ export default function Header({ data }: Props) {
 						/>
 					)}
 				</div>
-				<div className={cn("flex-1 header-title", karantina.className)}>
+				<div className={cn("flex-1 header-title flex gap-3 items-baseline", karantina.className)}>
 					<Link href="/">
 						<h1>{data.title}</h1>
 					</Link>
+					<WhatIsKapit />
 				</div>
 				<div className="flex flex-col flex-wrap items-end gap-2 pt-2 lg:gap-4 lg:hidden">
 					<Button variant="link" className="menu-button">

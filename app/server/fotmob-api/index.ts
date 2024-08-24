@@ -20,7 +20,7 @@ export async function getLeagues(leagueId: string | number) {
 	const leagueID = Number.parseInt(`${leagueId}`);
 	const leagueStats = await getLeagueStats(leagueID);
 	const leaguesToFetch = (leagueStats?.tournamentSeasons || [])
-		.filter((t) => t.season?.includes(`${new Date().getFullYear()}`) && t.parentLeagueId)
+		.filter((t) => t.season?.startsWith(`${new Date().getFullYear()}`) && t.parentLeagueId)
 		.map((tournament) => tournament.parentLeagueId);
 	return leaguesToFetch;
 }
