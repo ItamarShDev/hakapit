@@ -29,7 +29,7 @@ const Player = forwardRef(function Player(
 		toast.error("הניגון נכשל", { description: "סביר להניח שנחסמת על ידי השירות" });
 	}, [closePlayer]);
 	return (
-		<div className={`bottom-0 left-0 flex flex-col w-full p-2 bg-primary ${episode ? "fixed" : "hidden"}`}>
+		<div className={`bottom-0 left-0 flex flex-col w-full p-2 bg-primary ${episode ? "fixed z-50" : "hidden"}`}>
 			<div className="flex flex-row items-start py-2">
 				{episode?.imageUrl && <img src={episode?.imageUrl} alt="episode" className="object-cover object-top w-16" />}
 				<div className="flex flex-col flex-1 px-4 leading-7">
@@ -96,9 +96,5 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function usePlayer() {
-	const context = useContext(PlayerContext);
-	// if (!context) {
-	// 	throw new Error("usePlayer must be used within a PlayerProvider");
-	// }
-	return context;
+	return useContext(PlayerContext);
 }
