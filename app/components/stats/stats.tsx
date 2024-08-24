@@ -10,7 +10,7 @@ export async function StatTable({ leagueId }: { leagueId: string }) {
 	const leagueName = table ? table?.data?.leagueName : league.details?.name;
 	if (!leagueID || !leagueName) return null;
 	return (
-		<div className="flex flex-col max-w-md" key={leagueID}>
+		<div className="animate-fade flex flex-col max-w-md" key={leagueID}>
 			<div className="bg-accent text-slate-900 flex items-center justify-center gap-8 p-3">
 				<img
 					className="h-[50px]"

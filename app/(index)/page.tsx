@@ -4,7 +4,7 @@ import { NextMatchOverview } from "~/components/next-match";
 import { LastEpisodeCardPreview } from "~/components/rss/EpisodeCard";
 import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
-import { fetchUpdatedFeed } from "~/server/rss/feed";
+import { fetchLatestEpisode } from "~/server/rss/feed";
 
 export const revalidate = 60;
 
@@ -28,11 +28,11 @@ export const metadata: Metadata = {
 	},
 };
 async function LatestEpisode() {
-	const data = await fetchUpdatedFeed("hakapit", 1);
-	if (!data) {
+	const episode = await fetchLatestEpisode("hakapit");
+	if (!episode) {
 		return null;
 	}
-	return <LastEpisodeCardPreview episode={data.episodes[0]} />;
+	return <LastEpisodeCardPreview episode={episode} />;
 }
 
 export default async function Index() {
