@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
-import { fetchFeed } from "~/server/rss/feed";
+import { type PodcastName, fetchFeed } from "~/server/rss/feed";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: { podcast: string } }): Promise<Metadata> {
@@ -40,6 +40,7 @@ function YouTubeChannel({ podcast }: { podcast: "hakapit" | "balcony-albums" | "
 					src="https://www.youtube.com/embed/videoseries?list=UULFbQOKsqsqd2QIAX8g9R0o4Q"
 					width="100%"
 					height="100%"
+					// @ts-ignore
 					gesture="media"
 					allow="encrypted-media"
 					allowfullscreen
