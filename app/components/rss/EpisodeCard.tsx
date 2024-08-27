@@ -110,7 +110,7 @@ export function EpisodeCard({
 					placeholder="blur"
 					blurDataURL={rgbDataURL(255, 0, 0)}
 					sizes="576px"
-					className="rounded-3xl brightness-40 filter absolute z-0 object-cover object-top"
+					className="rounded-3xl brightness-40 filter blur-sm absolute z-0 object-cover object-top"
 				/>
 			)}
 			<CardHeader className="z-10">
