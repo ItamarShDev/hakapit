@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
-import { fetchFeed, type PodcastName } from "~/server/rss/feed";
+import { fetchFeed } from "~/server/rss/feed";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: { podcast: string } }): Promise<Metadata> {
@@ -28,12 +28,35 @@ export async function generateMetadata({ params }: { params: { podcast: string }
 	};
 }
 
+function YouTubeChannel({ podcast }: { podcast: "hakapit" | "balcony-albums" | "nitk" }) {
+	if (podcast !== "hakapit") return null;
+
+	return (
+		<div className="flex flex-col gap-4">
+			<h2 className="text-2xl font-bold"> יוטיוב</h2>
+			<div className="aspect-video w-full">
+				<iframe
+					title="YouTube video player"
+					src="https://www.youtube.com/embed/videoseries?list=UULFbQOKsqsqd2QIAX8g9R0o4Q"
+					width="100%"
+					height="100%"
+					gesture="media"
+					allow="encrypted-media"
+					allowfullscreen
+				/>
+			</div>
+		</div>
+	);
+}
 export default function RouteComponent({
 	params: { podcast },
 }: { params: { podcast: "hakapit" | "balcony-albums" | "nitk" } }) {
 	return (
 		<section className="feed-page">
-			<RSSFeed preview podcast={podcast} />
+			<div>
+				<RSSFeed preview podcast={podcast} />
+				<YouTubeChannel podcast={podcast} />
+			</div>
 			<TwitterTimelineEmbed podcastName={podcast} />
 		</section>
 	);
