@@ -11,7 +11,7 @@ export const revalidate = 60;
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1.0,
-	themeColor: "currentColor",
+	themeColor: "var(--color-primary)",
 };
 
 export const metadata: Metadata = {
@@ -26,6 +26,7 @@ export const metadata: Metadata = {
 		description: "אתר הבית של משפחת הכפית",
 		images: [{ url: "https://hakapit.online/logo.webp" }],
 	},
+	colorScheme: "dark",
 };
 async function LatestEpisode() {
 	const episode = await fetchLatestEpisode("hakapit");

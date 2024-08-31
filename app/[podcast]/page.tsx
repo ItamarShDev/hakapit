@@ -1,8 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 import { type PodcastName, fetchFeed } from "~/server/rss/feed";
 export const dynamic = "force-dynamic";
+
+export const viewport: Viewport = {
+	width: "device-width",
+	initialScale: 1.0,
+	themeColor: "var(--color-primary)",
+};
 
 export async function generateMetadata({ params }: { params: { podcast: string } }): Promise<Metadata> {
 	const metadata = await fetchFeed(params.podcast as PodcastName, 1);
