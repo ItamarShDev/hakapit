@@ -10,16 +10,16 @@ export async function StatTable({ leagueId }: { leagueId: string }) {
 	const leagueName = table ? table?.data?.leagueName : league.details?.name;
 	if (!leagueID || !leagueName) return null;
 	return (
-		<div className="animate-fade flex flex-col max-w-md" key={leagueID}>
-			<div className="bg-accent text-slate-900 flex items-center justify-center gap-8 p-3">
+		<div className="animate-fade flex flex-col w-full" key={leagueID}>
+			<div className="bg-accent text-slate-900 flex items-center justify-center px-6 py-2 gap-4">
+				<div className="text-xl font-bold">{leagueName}</div>
 				<img
-					className="h-[50px]"
+					className="h-[30px]"
 					src={`https://images.fotmob.com/image_resources/logo/leaguelogo/${leagueID}.png`}
 					alt={`${leagueName} logo`}
 				/>
-				<div className="font-bold">{leagueName}</div>
 			</div>
-			<div className="py-3">
+			<div className="py-4 px-2">
 				<TeamTournamentInformation league={league} />
 			</div>
 		</div>

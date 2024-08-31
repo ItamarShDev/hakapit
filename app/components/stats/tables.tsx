@@ -154,6 +154,8 @@ function TeamRow({ teamStats, table }: { teamStats: Required<All>; table: TableE
 			</TableCell>
 			<TableCell className="text-start p-3 font-bold">{teamStats.idx}</TableCell>
 			<TableCell className="text-start p-3 font-bold">{teamStats?.pts}</TableCell>
+			<TableHead className="text-start hidden md:table-cell">{teamStats?.wins}</TableHead>
+			<TableHead className="text-start hidden md:table-cell">{teamStats?.losses}</TableHead>
 			<TableCell className="text-start p-3 font-bold">{teamStats?.scoresStr}</TableCell>
 
 			<TableCell className="text-end ltr p-3 font-bold">{teamXg && roundToDecimal(teamXg.xg)}</TableCell>
@@ -194,6 +196,8 @@ export function TeamTournamentInformation({
 						<TableHead className="text-start">קבוצה</TableHead>
 						<TableHead className="text-start">מיקום</TableHead>
 						<TableHead className="text-start">נקודות</TableHead>
+						<TableHead className="text-start hidden md:table-cell">נצחונות</TableHead>
+						<TableHead className="text-start hidden md:table-cell">הפסדים</TableHead>
 						<TableHead className="text-start">יחס שערים</TableHead>
 						<TableHead className="text-start">xG</TableHead>
 						<TableHead className="text-start">משחק הבא</TableHead>
@@ -205,7 +209,6 @@ export function TeamTournamentInformation({
 					))}
 				</TableBody>
 			</Table>
-			<GamesStatsChart fixtures={league.matches} />
 		</>
 	);
 }
