@@ -30,37 +30,13 @@ module.exports = {
 				40: ".4",
 			},
 			colors: {
-				paragraph: "hsl(var(--color-text))",
-				"primary-opaque": "hsl(var(--color-primary-opaque))",
 				accent: "hsl(var(--color-accent))",
-				border: "hsl(var(--border))",
-				input: "hsl(var(--input))",
-				ring: "hsl(var(--ring))",
+				primary: "hsl(var(--color-primary))",
+				"primary-opaque": "hsl(var(--color-primary-opaque))",
+				secondary: "hsl(var(--color-secondary))",
+				paragraph: "hsl(var(--color-text))",
 				background: "hsl(var(--color-background))",
-				foreground: "hsl(var(--foreground))",
-				primary: {
-					DEFAULT: "hsl(var(--color-primary))",
-					foreground: "hsl(var(--primary-foreground))",
-				},
-				secondary: {
-					DEFAULT: "hsl(var(--color-secondary))",
-					foreground: "hsl(var(--secondary-foreground))",
-				},
-				destructive: {
-					DEFAULT: "hsl(var(--destructive))",
-					foreground: "hsl(var(--destructive-foreground))",
-				},
-				muted: {
-					DEFAULT: "hsl(var(--color-muted))",
-				},
-				popover: {
-					DEFAULT: "hsl(var(--popover))",
-					foreground: "hsl(var(--popover-foreground))",
-				},
-				card: {
-					DEFAULT: "hsl(var(--card))",
-					foreground: "hsl(var(--card-foreground))",
-				},
+				popover: "hsl(var(--color-popover))",
 			},
 			borderRadius: {
 				lg: "var(--radius)",

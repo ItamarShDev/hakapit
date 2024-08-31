@@ -41,7 +41,7 @@ export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { ga
 	<TooltipProvider key={game.id}>
 		<Tooltip>
 			<TooltipTrigger>{children}</TooltipTrigger>
-			<TooltipContent side="top" className="rounded-xl bg-primary border-accent">
+			<TooltipContent side="top" className="rounded-xl bg-popover border-accent">
 				<TooltipScore game={game} />
 			</TooltipContent>
 		</Tooltip>

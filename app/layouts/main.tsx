@@ -26,7 +26,7 @@ export function MainLayout({
 	params: { podcast: PodcastName };
 }) {
 	return (
-		<div className={cn("body", podcast)}>
+		<div className={cn("body", podcast || "hakapit")}>
 			<Header data={podcasts[podcast || "hakapit"]} podcast={podcast} />
 			<div className="main-content">{children}</div>
 		</div>
