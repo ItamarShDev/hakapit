@@ -10,6 +10,7 @@ import { useState } from "react";
 import MenuIcon from "~/components/icons/menu";
 import { Links } from "~/components/links";
 import { karantina } from "~/fonts";
+
 function WhatIsKapit() {
 	return (
 		<TooltipProvider>
@@ -64,7 +65,7 @@ export default function Header({ data }: Props) {
 				</div>
 				<Links className="lg:flex flex-row hidden" />
 			</div>
-			<div className={cn("grid-transition header-links grid items-start", open ? "show-menu" : "hide-menu")}>
+			<div className={cn("grid-transition header-links grid items-start", open ? "show-menu mb-4" : "hide-menu")}>
 				<Links className="flex flex-col items-center text-2xl" onSelect={() => setOpen(false)} />
 			</div>
 		</header>
