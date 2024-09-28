@@ -1,9 +1,12 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { QuestionMarkIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import MenuIcon from "~/components/icons/menu";
 import { Links } from "~/components/links";
 import { karantina } from "~/fonts";
@@ -32,7 +35,7 @@ type Props = {
 } & React.HTMLAttributes<HTMLElement>;
 export default function Header({ data }: Props) {
 	const { imageUrl } = data;
-
+	const [open, setOpen] = useState(false);
 	return (
 		<header className="header overflow-hidden">
 			<div className="lg:items-center flex flex-wrap items-start gap-4 p-4">
@@ -55,14 +58,14 @@ export default function Header({ data }: Props) {
 					<WhatIsKapit />
 				</div>
 				<div className="lg:gap-4 lg:hidden flex flex-col flex-wrap items-end gap-2 pt-2">
-					<Button variant="link" className="menu-button">
+					<Button onClick={() => setOpen(!open)} variant="link" className="menu-button">
 						<MenuIcon />
 					</Button>
 				</div>
 				<Links className="lg:flex flex-row hidden" />
 			</div>
-			<div className={cn("grid items-start grid-transition header-links hide-menu")}>
-				<Links className="flex flex-col items-center text-2xl" />
+			<div className={cn("grid-transition header-links grid items-start", open ? "show-menu" : "hide-menu")}>
+				<Links className="flex flex-col items-center text-2xl" onSelect={() => setOpen(false)} />
 			</div>
 		</header>
 	);

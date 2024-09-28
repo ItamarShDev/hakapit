@@ -123,20 +123,13 @@ audio.audio::-webkit-media-controls-timeline-container {
   @apply border-accent bg-primary text-paragraph sticky top-0 z-20 w-screen border-b-2 border-solid;
 }
 
-.header:has(.menu-button:focus-within) .header-links {
-  @apply show-menu;
-}
-
-.header:has(.menu-button:not(:focus-within)) .grid-transition {
-  transition-delay: 1s;
-}
-
 .hide-menu {
   grid-template-rows: 0fr;
 }
 
 .show-menu {
   grid-template-rows: 1fr;
+  transition-delay: 1s;
 }
 
 .header-title {

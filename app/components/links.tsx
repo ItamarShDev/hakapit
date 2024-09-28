@@ -1,26 +1,31 @@
 "use client";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 function LinkItem({
 	href,
 	label,
 	withBorder,
+	onSelect,
 }: {
 	href: string;
 	label: string;
 	withBorder: boolean;
+	onSelect?: () => void;
 }) {
 	const pathname = usePathname();
 	return (
 		<>
-			<a href={href} className={cn(pathname === href && "underline")}>
+			<Link onClick={onSelect} href={href} className={cn(pathname === href && "underline")}>
 				{label}
-			</a>
-			{withBorder && <span className="hidden text-accent lg:inline-block">|</span>}
+			</Link>
+			{withBorder && <span className="text-accent lg:inline-block hidden">|</span>}
 		</>
 	);
 }
-export const Links: React.FC<React.HTMLAttributes<HTMLDivElement> & { visibilityClass?: string }> = (props) => {
+export const Links: React.FC<
+	React.HTMLAttributes<HTMLDivElement> & { visibilityClass?: string; onSelect?: () => void }
+> = (props) => {
 	const links = [
 		{
 			href: "/",
@@ -42,7 +47,13 @@ export const Links: React.FC<React.HTMLAttributes<HTMLDivElement> & { visibility
 	return (
 		<nav className={cn("gap-2 lg:gap-4 links text-1xl overflow-hidden", props.className)}>
 			{links.map((link, index) => (
-				<LinkItem href={link.href} label={link.label} withBorder={index !== links.length - 1} key={link.href} />
+				<LinkItem
+					onSelect={props.onSelect}
+					href={link.href}
+					label={link.label}
+					withBorder={index !== links.length - 1}
+					key={link.href}
+				/>
 			))}
 		</nav>
 	);
