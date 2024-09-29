@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
 import { heebo } from "~/fonts";
-import { GameTimer } from "~/game-timer";
 import { getNextMatchData } from "~/server/fotmob-api";
 
 function TeamStatus({
@@ -37,6 +36,8 @@ function useGameStatus(rootData: Awaited<ReturnType<typeof getNextMatchData>>) {
 			return () => clearInterval(interval);
 		}
 	}, [data, updateData]);
+	console.log(data);
+
 	return data;
 }
 export function FullBleed({ children }: { children: React.ReactNode }) {
@@ -44,7 +45,7 @@ export function FullBleed({ children }: { children: React.ReactNode }) {
 }
 function useTeamForms(data: Awaited<ReturnType<typeof getNextMatchData>>) {
 	const gameData = useGameStatus(data);
-	const { teamData, nextMatchOpponent } = gameData;
+	const { teamData, nextMatchOpponent, matchDetails } = gameData;
 	const nextGame = teamData?.overview?.nextMatch;
 	if (!nextGame?.away || !nextGame?.home) {
 		return null;
@@ -63,7 +64,7 @@ function useTeamForms(data: Awaited<ReturnType<typeof getNextMatchData>>) {
 	const awayForm = getLastFiveGames(awayGames);
 	const homeForm = getLastFiveGames(homeGames).reverse();
 
-	return { awayForm, homeForm, nextGame };
+	return { awayForm, homeForm, nextGame, matchDetails };
 }
 
 export function NextMatchOverviewClient({ data }: { data: Awaited<ReturnType<typeof getNextMatchData>> }) {
@@ -71,7 +72,7 @@ export function NextMatchOverviewClient({ data }: { data: Awaited<ReturnType<typ
 	if (!teamForms) {
 		return null;
 	}
-	const { awayForm, homeForm, nextGame } = teamForms;
+	const { awayForm, homeForm, nextGame, matchDetails } = teamForms;
 	if (!nextGame?.away || !nextGame?.home) {
 		return null;
 	}
@@ -96,13 +97,12 @@ export function NextMatchOverviewClient({ data }: { data: Awaited<ReturnType<typ
 
 				{nextGame?.status?.utcTime && (
 					<div className="max-w-24 text-wrap text-xs">
-						{nextGame.status?.started ? (
-							<GameTimer start={nextGame.status.utcTime} />
-						) : (
-							`${new Date(nextGame.status.utcTime).toLocaleDateString()} ${new Date(
-								nextGame.status.utcTime,
-							).toLocaleTimeString()}`
-						)}
+						{matchDetails?.header?.status?.started
+							? // @ts-ignore
+								matchDetails?.header?.status?.liveTime?.short
+							: `${new Date(nextGame.status.utcTime).toLocaleDateString()} ${new Date(
+									nextGame.status.utcTime,
+								).toLocaleTimeString()}`}
 					</div>
 				)}
 				<div className="flex flex-col items-start gap-1">

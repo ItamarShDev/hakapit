@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { FullBleed, NextMatchOverviewClient } from "~/components/next-match.client.";
+import { FullBleed, NextMatchOverviewClient } from "~/components/next-match.client";
 import { getNextMatchData } from "~/server/fotmob-api";
 
 function NextMatchSkeleton() {

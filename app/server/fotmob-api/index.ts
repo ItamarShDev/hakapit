@@ -24,9 +24,15 @@ export async function getLeagues(leagueId: string | number) {
 		.map((tournament) => tournament.parentLeagueId);
 	return leaguesToFetch;
 }
+export async function getMatchDetails(matchId?: number) {
+	if (!matchId) return null;
+	return await fotmob.getMatchDetails(matchId);
+}
+
 export async function getNextMatchData() {
 	const teamData = await getTeam();
 	const nextGame = teamData?.overview?.nextMatch;
+	const matchDetails = await getMatchDetails(nextGame?.id);
 	const nextMatchOpponent = await getTeam(nextGame?.opponent?.id);
-	return { teamData, nextMatchOpponent };
+	return { teamData, nextMatchOpponent, matchDetails };
 }
