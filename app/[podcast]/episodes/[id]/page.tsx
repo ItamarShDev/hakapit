@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Episode from "~/components/rss/episode";
 import { fetchEpisode } from "~/server/rss/feed";
-export const dynamic = "force-dynamic";
-
-export async function generateMetadata({ params }: { params: { id: string; podcast: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ id: string; podcast: string }> }): Promise<Metadata> {
+	const params = await props.params;
 	const metadata = await fetchEpisode(params.id);
 
 	if (!metadata) {
@@ -29,7 +28,8 @@ export async function generateMetadata({ params }: { params: { id: string; podca
 	};
 }
 
-export default async function RouteComponent({ params }: { params: { podcast: string; id: string } }) {
+export default async function RouteComponent(props: { params: Promise<{ podcast: string; id: string }> }) {
+	const params = await props.params;
 	if (!params.podcast && !params.id) return null;
 	const data = await fetchEpisode(params.id);
 	if (!data) {

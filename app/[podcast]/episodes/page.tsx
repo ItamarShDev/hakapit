@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import RSSFeed from "~/components/rss/feed";
 import { fetchFeed, type PodcastName } from "~/server/rss/feed";
-export async function generateMetadata({ params }: { params: { podcast: string } }): Promise<Metadata> {
-	const metadata = await fetchFeed(params.podcast as PodcastName, 1);
-	if (!metadata) {
+export async function generateMetadata(props: { params: Promise<{ podcast: string }> }): Promise<Metadata> {
+    const params = await props.params;
+    const metadata = await fetchFeed(params.podcast as PodcastName, 1);
+    if (!metadata) {
 		return {
 			title: "hakapit",
 			description: "hakapit podcast",
 			authors: [{ name: "hakapit" }],
 		};
 	}
-	return {
+    return {
 		title: metadata.title,
 		description: metadata.description,
 		authors: [{ name: metadata.authorName || "hakapit", url: metadata.feedUrl || "" }],
@@ -25,10 +26,21 @@ export async function generateMetadata({ params }: { params: { podcast: string }
 	};
 }
 
-export default async function RouteComponent({
-	params: { podcast },
-	searchParams: { limit },
-}: { params: { podcast: "hakapit" | "balcony-albums" | "nitk" }; searchParams: { limit?: string } }) {
-	const episodeLimit = Number.parseInt(limit || "5");
-	return <RSSFeed limit={episodeLimit} podcast={podcast} />;
+export default async function RouteComponent(
+    props: { params: Promise<{ podcast: "hakapit" | "balcony-albums" | "nitk" }>; searchParams: Promise<{ limit?: string }> }
+) {
+    const searchParams = await props.searchParams;
+
+    const {
+        limit
+    } = searchParams;
+
+    const params = await props.params;
+
+    const {
+        podcast
+    } = params;
+
+    const episodeLimit = Number.parseInt(limit || "5");
+    return <RSSFeed limit={episodeLimit} podcast={podcast} />;
 }

@@ -11,20 +11,18 @@ export function MasonryFeed({
 	limit: number;
 }) {
 	const skeletonCount = Math.max(limit - (data?.episodes?.length || 0), 0);
-	return (
-		<>
-			<span className={cn("max-w-xl p-4 font-light info crazy-font big-title", amaticSc.className)}>פרקים</span>
-			<div className="masonry">
-				{data?.episodes?.map((episode) => (
-					<EpisodeCard key={episode.guid} episode={episode} />
-				))}
-				{new Array(skeletonCount).fill(0)?.map((_, index) => (
-					// biome-ignore lint:noArrayIndexKey
-					<SkeletonCard key={index} className="h-[500px]" />
-				))}
-			</div>
-		</>
-	);
+	return (<>
+        <span className={cn("max-w-xl p-4 font-light info crazy-font big-title", amaticSc.className)}>פרקים</span>
+        <div className="masonry">
+            {data?.episodes?.map((episode) => (
+                <EpisodeCard key={episode.guid} episode={episode} />
+            ))}
+            {new Array(skeletonCount).fill(0)?.map((_, index) => (
+                // biome-ignore lint:noArrayIndexKey
+                (<SkeletonCard key={index} className="h-[500px]" />)
+            ))}
+        </div>
+    </>);
 }
 export function Preview({
 	data,

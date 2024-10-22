@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 import { type PodcastName, fetchFeed } from "~/server/rss/feed";
-export const dynamic = "force-dynamic";
 
 export const viewport: Viewport = {
 	width: "device-width",
@@ -10,7 +9,8 @@ export const viewport: Viewport = {
 	themeColor: "var(--color-primary)",
 };
 
-export async function generateMetadata({ params }: { params: { podcast: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ podcast: string }> }): Promise<Metadata> {
+	const params = await props.params;
 	const metadata = await fetchFeed(params.podcast as PodcastName, 1);
 	if (!metadata) {
 		return {
@@ -55,9 +55,13 @@ function YouTubeChannel({ podcast }: { podcast: "hakapit" | "balcony-albums" | "
 		</div>
 	);
 }
-export default function RouteComponent({
-	params: { podcast },
-}: { params: { podcast: "hakapit" | "balcony-albums" | "nitk" } }) {
+export default async function RouteComponent(props: {
+	params: Promise<{ podcast: "hakapit" | "balcony-albums" | "nitk" }>;
+}) {
+	const params = await props.params;
+
+	const { podcast } = params;
+
 	return (
 		<section className="feed-page">
 			<div>

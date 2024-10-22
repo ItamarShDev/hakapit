@@ -6,8 +6,6 @@ import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
 import { fetchLatestEpisode } from "~/server/rss/feed";
 
-export const revalidate = 60;
-
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1.0,
