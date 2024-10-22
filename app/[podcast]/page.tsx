@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 import { type PodcastName, fetchFeed } from "~/server/rss/feed";
+export const dynamic = "force-dynamic";
 
 export const viewport: Viewport = {
 	width: "device-width",
