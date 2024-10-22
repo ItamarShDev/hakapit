@@ -49,7 +49,7 @@ function YouTubeChannel({ podcast }: { podcast: "hakapit" | "balcony-albums" | "
 					// @ts-ignore
 					gesture="media"
 					allow="encrypted-media"
-					allowfullscreen
+					allowFullScreen
 				/>
 			</div>
 		</div>
