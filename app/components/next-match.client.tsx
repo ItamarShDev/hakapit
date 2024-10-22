@@ -36,8 +36,6 @@ function useGameStatus(rootData: Awaited<ReturnType<typeof getNextMatchData>>) {
 			return () => clearInterval(interval);
 		}
 	}, [data, updateData]);
-	console.log(data);
-
 	return data;
 }
 export function FullBleed({ children }: { children: React.ReactNode }) {
