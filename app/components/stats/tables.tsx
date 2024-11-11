@@ -1,9 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import TeamAvatar from "~/components/team-avatar";
-import { getNextGames } from "~/server/soccer-api";
 import { LiverpoolId } from "~/server/soccer-api/constants";
-import type { League, Season, Table as TableType } from "~/server/soccer-api/types/league";
+import type { League, Table as TableType } from "~/server/soccer-api/types/league";
 
 function roundToDecimal(number: number) {
 	return Math.round(number * 10) / 10;
@@ -30,10 +29,7 @@ export async function TournamentInformation({
 }: {
 	league: League;
 }) {
-	const nextMatches = await getNextGames();
 	const teamStats = league.standings[0].table.find((t) => t.team.id === LiverpoolId);
-	const nextGame = nextMatches?.matches.find((match) => match.season.id === league.season.id);
-	const nextOpponent = nextGame?.awayTeam.id === LiverpoolId ? nextGame?.homeTeam : nextGame?.awayTeam;
 	return (
 		<>
 			<Table>
@@ -54,27 +50,12 @@ export async function TournamentInformation({
 						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">יחס שערים</TableCell>
 						<TableCell className="text-start p-3 font-bold">{teamStats?.goalDifference}</TableCell>
 					</TableRow>
-					<TableRow className="border-0">
-						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">משחק הבא</TableCell>
-						<TableCell className="text-start p-3 font-bold">
-							{nextOpponent ? (
-								<div className="flex items-center gap-2">
-									<TeamAvatar team={nextOpponent} />
-								</div>
-							) : (
-								"אין משחק הבא"
-							)}
-						</TableCell>
-					</TableRow>
 				</TableBody>
 			</Table>
 		</>
 	);
 }
-async function TeamRow({ teamStats, season }: { teamStats: TableType; season: Season }) {
-	const nextMatches = await getNextGames();
-	const nextGame = nextMatches?.matches.find((match) => match.season.id === season.id);
-	const nextOpponent = nextGame?.awayTeam.id === LiverpoolId ? nextGame?.homeTeam : nextGame?.awayTeam;
+async function TeamRow({ teamStats }: { teamStats: TableType }) {
 	return (
 		<TableRow
 			className={cn(
@@ -91,16 +72,6 @@ async function TeamRow({ teamStats, season }: { teamStats: TableType; season: Se
 			<TableHead className="text-start hidden md:table-cell">{teamStats?.won}</TableHead>
 			<TableHead className="text-start hidden md:table-cell">{teamStats?.lost}</TableHead>
 			<TableCell className="text-start p-3 font-bold">{teamStats?.goalDifference}</TableCell>
-
-			<TableCell className="text-start p-3 font-bold">
-				{nextOpponent ? (
-					<div className="flex items-center gap-2">
-						<TeamAvatar team={nextOpponent} />
-					</div>
-				) : (
-					"אין משחק הבא"
-				)}
-			</TableCell>
 		</TableRow>
 	);
 }
@@ -125,13 +96,11 @@ export function TeamTournamentInformation({
 						<TableHead className="text-start hidden md:table-cell">נצחונות</TableHead>
 						<TableHead className="text-start hidden md:table-cell">הפסדים</TableHead>
 						<TableHead className="text-start">יחס שערים</TableHead>
-						<TableHead className="text-start">xG</TableHead>
-						<TableHead className="text-start">משחק הבא</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
 					{teams.map((standing) => (
-						<TeamRow key={standing.team.id} teamStats={standing} season={league.season} />
+						<TeamRow key={standing.team.id} teamStats={standing} />
 					))}
 				</TableBody>
 			</Table>
