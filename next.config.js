@@ -8,9 +8,14 @@ module.exports = {
       },
       {
         protocol: 'https',
-        hostname: 'images.fotmob.com',
+        hostname: 'crests.football-data.org',
         port: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.fotmob.com',
+        port: ''
+      }
     ],
   },
 }

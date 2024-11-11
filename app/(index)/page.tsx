@@ -6,12 +6,13 @@ import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
 import { fetchLatestEpisode } from "~/server/rss/feed";
 
-export const revalidate = 60;
+export const revalidate = 600;
 
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1.0,
 	themeColor: "var(--color-primary)",
+	colorScheme: "dark light",
 };
 
 export const metadata: Metadata = {
@@ -26,7 +27,6 @@ export const metadata: Metadata = {
 		description: "אתר הבית של משפחת הכפית",
 		images: [{ url: "https://hakapit.online/logo.webp" }],
 	},
-	colorScheme: "dark",
 };
 async function LatestEpisode() {
 	const episode = await fetchLatestEpisode("hakapit");

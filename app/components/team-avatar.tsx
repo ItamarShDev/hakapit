@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { type ImageProps, getImageProps } from "next/image";
+import type { Team } from "~/server/soccer-api/types/league";
 
 type Props = Omit<ImageProps, "fill">;
 
@@ -21,20 +22,17 @@ export function NextAvatar(props: Props) {
 	);
 }
 export default function TeamAvatar({
-	teamName,
-	teamShortName = teamName,
-	teamId,
+	team,
 	iconPosition = "before",
 	color,
 	hoverable = false,
 }: {
-	teamId?: string | number;
-	teamName?: string;
-	teamShortName?: string;
+	team: Team;
 	iconPosition?: "before" | "after";
 	color?: string;
 	hoverable?: boolean;
 }) {
+	const { id: teamId, name: teamName, shortName: teamShortName, crest } = team;
 	if (!teamId) return null;
 	const teamNameComponent = (
 		<div className="text-amber-100" style={{ color }}>
@@ -42,14 +40,7 @@ export default function TeamAvatar({
 		</div>
 	);
 	const avatar = (
-		<NextAvatar
-			src={`https://images.fotmob.com/image_resources/logo/teamlogo/${teamId}_xsmall.png`}
-			width={25}
-			height={25}
-			priority
-			fetchPriority="high"
-			alt={teamShortName || "TL"}
-		/>
+		<NextAvatar src={crest} width={25} height={25} priority fetchPriority="high" alt={teamShortName || "TL"} />
 	);
 	if (hoverable)
 		return (

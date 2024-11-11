@@ -1,110 +1,79 @@
-"use client";
-import type { OpponentClass, OverviewFixture, Team } from "fotmob/dist/esm/types/team";
-import { useCallback, useEffect, useState } from "react";
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
 import { heebo } from "~/fonts";
-import { getNextMatchData } from "~/server/fotmob-api";
+import { type getNextMatchData, getTeamPastMatches } from "~/server/soccer-api";
+import type { Team } from "~/server/soccer-api/types/team-matches";
 
 function TeamStatus({
-	game,
+	team,
+	score,
 	isRunning = false,
 	iconPosition = "before",
-}: { game: OpponentClass; isRunning?: boolean; iconPosition?: "before" | "after" }) {
+}: { team: Team; score?: number; isRunning?: boolean; iconPosition?: "before" | "after" }) {
 	return (
 		<div>
-			<TeamAvatar teamId={game.id} teamName={game.name} iconPosition={iconPosition} />
-			{isRunning && <div className="text-xs">{game.score}</div>}
+			<TeamAvatar team={team} iconPosition={iconPosition} />
+			{isRunning && <div className="text-xs">{score}</div>}
 		</div>
 	);
 }
 
-function useGameStatus(rootData: Awaited<ReturnType<typeof getNextMatchData>>) {
-	const [data, setData] = useState(rootData);
-	const updateData = useCallback(() => {
-		getNextMatchData().then((data) => setData(data));
-	}, []);
-
-	useEffect(() => {
-		if (!data) {
-			return updateData();
-		}
-		const nextGame = data.teamData?.overview?.nextMatch;
-
-		if (nextGame?.status?.started) {
-			const interval = setInterval(updateData, 1000);
-			return () => clearInterval(interval);
-		}
-	}, [data, updateData]);
-	return data;
-}
 export function FullBleed({ children }: { children: React.ReactNode }) {
 	return <div className={`flex flex-col gap-2  pb-6 bg-primary py-3 full-bleed ${heebo.className}`}>{children}</div>;
 }
-function useTeamForms(data: Awaited<ReturnType<typeof getNextMatchData>>) {
-	const gameData = useGameStatus(data);
-	const { teamData, nextMatchOpponent, matchDetails } = gameData;
-	const nextGame = teamData?.overview?.nextMatch;
-	if (!nextGame?.away || !nextGame?.home) {
+async function getTeamForms(data: Awaited<ReturnType<typeof getNextMatchData>>) {
+	const { matchDetails } = data;
+
+	if (!matchDetails?.awayTeam || !matchDetails?.homeTeam) {
 		return null;
 	}
-	const isHome = nextGame.home?.id === teamData.details?.id;
-	const [homeTeam, awayTeam] = isHome ? [teamData, nextMatchOpponent] : [nextMatchOpponent, teamData];
+	const awayForm = await getTeamPastMatches(matchDetails.awayTeam.id);
+	const homeForm = await getTeamPastMatches(matchDetails.homeTeam.id);
 
-	const getRecentGames = (team: Team) =>
-		team?.fixtures?.allFixtures?.fixtures?.filter((game) => !game.notStarted) ?? [];
-
-	const awayGames = getRecentGames(awayTeam);
-	const homeGames = getRecentGames(homeTeam);
-
-	const getLastFiveGames = (games: OverviewFixture[]) => games.slice(-5);
-
-	const awayForm = getLastFiveGames(awayGames);
-	const homeForm = getLastFiveGames(homeGames).reverse();
-
-	return { awayForm, homeForm, nextGame, matchDetails };
+	return { awayForm: awayForm?.matches, homeForm: homeForm?.matches, nextGame: matchDetails };
 }
 
-export function NextMatchOverviewClient({ data }: { data: Awaited<ReturnType<typeof getNextMatchData>> }) {
-	const teamForms = useTeamForms(data);
+export async function NextMatchOverviewClient({ data }: { data: Awaited<ReturnType<typeof getNextMatchData>> }) {
+	const teamForms = await getTeamForms(data);
 	if (!teamForms) {
 		return null;
 	}
-	const { awayForm, homeForm, nextGame, matchDetails } = teamForms;
-	if (!nextGame?.away || !nextGame?.home) {
+	const { awayForm, homeForm, nextGame } = teamForms;
+	if (!nextGame?.awayTeam.id || !nextGame?.homeTeam.id) {
 		return null;
 	}
+
 	return (
 		<FullBleed>
-			<div className="text-slate-200 text-sm">{nextGame.status?.started ? "כרגע" : "המשחק הבא"}</div>
+			<div className="text-slate-200 text-sm">{nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}</div>
 			<div className="flex flex-row-reverse items-center justify-center gap-2">
-				<img
-					className="h-[20px]"
-					src={`https://images.fotmob.com/image_resources/logo/leaguelogo/dark/${nextGame.tournament?.leagueId}.png`}
-					alt={`${nextGame.tournament?.name} logo`}
-				/>
-				<div className="font-bold">{nextGame.tournament?.name}</div>
+				<img className="h-[20px]" src={nextGame.competition.emblem} alt={`${nextGame.competition.name} logo`} />
+				<div className="font-bold">{nextGame.competition.name}</div>
 			</div>
 			<div className={`game-title ${heebo.className}`}>
 				<div className="flex flex-col items-end gap-1">
-					<TeamStatus game={nextGame.away} isRunning={nextGame.status?.started} iconPosition="after" />
+					<TeamStatus
+						team={nextGame.awayTeam}
+						isRunning={nextGame.status === "LIVE"}
+						iconPosition="after"
+						score={nextGame.score.fullTime.away ?? nextGame.score.halfTime.away}
+					/>
 					<div>
 						<Form form={awayForm} />
 					</div>
 				</div>
 
-				{nextGame?.status?.utcTime && (
+				{nextGame?.utcDate && (
 					<div className="max-w-24 text-wrap text-xs">
-						{matchDetails?.header?.status?.started
-							? // @ts-ignore
-								matchDetails?.header?.status?.liveTime?.short
-							: `${new Date(nextGame.status.utcTime).toLocaleDateString()} ${new Date(
-									nextGame.status.utcTime,
-								).toLocaleTimeString()}`}
+						{new Date(nextGame.utcDate).toLocaleDateString()} {new Date(nextGame.utcDate).toLocaleTimeString()}
 					</div>
 				)}
 				<div className="flex flex-col items-start gap-1">
-					<TeamStatus game={nextGame.home} isRunning={nextGame.status?.started} />
+					<TeamStatus
+						team={nextGame.homeTeam}
+						isRunning={nextGame.status === "LIVE"}
+						score={nextGame.score.fullTime.home ?? nextGame.score.halfTime.home}
+					/>
 					<div>
 						<Form form={homeForm} />
 					</div>

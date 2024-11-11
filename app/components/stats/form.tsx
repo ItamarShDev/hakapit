@@ -1,43 +1,56 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import type { OverviewFixture } from "fotmob/dist/esm/types/team";
-export function resultToString(result?: number) {
-	if (result === 1) return "W";
-	if (result === 0) return "D";
-	if (result === -1) return "L";
+import { LiverpoolId } from "~/server/soccer-api/constants";
+import type { Match } from "~/server/soccer-api/types/team-matches";
+export function resultToString(match: Match) {
+	const isHome = match.homeTeam.id === LiverpoolId;
+	const isWon = isHome ? match.score.winner === "HOME_TEAM" : match.score.winner === "AWAY_TEAM";
+	if (match.score.winner === "DRAW") {
+		return "D";
+	}
+	if (isWon) return "W";
+	return "L";
 }
-export function getFormColor(form: number | undefined) {
-	if (form === 1) return "bg-green-400";
-	if (form === -1) return "bg-red-400";
-	return "bg-slate-400";
+export function getFormColor(match: Match) {
+	const isHome = match.homeTeam.id === LiverpoolId;
+	const isWon = isHome ? match.score.winner === "HOME_TEAM" : match.score.winner === "AWAY_TEAM";
+	if (match.score.winner === "DRAW") {
+		return "bg-slate-400";
+	}
+	if (isWon) return "bg-green-400";
+	return "bg-red-400";
 }
 
-function getFormTextColor(form: number | undefined) {
-	if (form === 1) return "text-green-400";
-	if (form === -1) return "text-red-400";
-	return "text-slate-200";
+function getFormTextColor(match: Match) {
+	const isHome = match.homeTeam.id === LiverpoolId;
+	const isWon = isHome ? match.score.winner === "HOME_TEAM" : match.score.winner === "AWAY_TEAM";
+	if (match.score.winner === "DRAW") {
+		return "text-slate-200";
+	}
+	if (isWon) return "text-green-400";
+	return "text-red-400";
+}
+function scoreString(score: Match["score"]) {
+	return `${score.fullTime.home} - ${score.fullTime.away}`;
 }
 
-const TooltipScore: React.FC<{ game: OverviewFixture }> = ({ game }) => {
+const TooltipScore: React.FC<{ game: Match }> = ({ game }) => {
 	return (
 		<div className="flex flex-row gap-5">
 			<Avatar className="h-[25px] w-[25px]">
-				<AvatarImage src={`https://images.fotmob.com/image_resources/logo/teamlogo/${game?.home?.id}_xsmall.png`} />
-				<AvatarFallback>{game?.home?.name}</AvatarFallback>
+				<AvatarImage src={game.homeTeam.crest} />
+				<AvatarFallback>{game.homeTeam.name}</AvatarFallback>
 			</Avatar>
-			<div className={`text-xl direction-alternate ${getFormTextColor(game?.result)}`}>{game.status?.scoreStr}</div>
+			<div className={`text-xl direction-alternate ${getFormTextColor(game)}`}>{scoreString(game.score)}</div>
 			<Avatar className="h-[25px] w-[25px]">
-				<AvatarImage src={`https://images.fotmob.com/image_resources/logo/teamlogo/${game?.away?.id}_xsmall.png`} />
-				<AvatarFallback>{game?.away?.name}</AvatarFallback>
+				<AvatarImage src={game.awayTeam.crest} />
+				<AvatarFallback>{game.awayTeam.name}</AvatarFallback>
 			</Avatar>
 		</div>
 	);
 };
 
-export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { game: OverviewFixture }> = ({
-	game,
-	children,
-}) => (
+export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { game: Match }> = ({ game, children }) => (
 	<TooltipProvider key={game.id}>
 		<Tooltip>
 			<TooltipTrigger>{children}</TooltipTrigger>
@@ -48,13 +61,11 @@ export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { ga
 	</TooltipProvider>
 );
 
-const Form: React.FC<{ form: OverviewFixture[] }> = ({ form }) => {
-	return form.map((game) => (
+const Form: React.FC<{ form?: Match[] }> = ({ form }) => {
+	return form?.map((game) => (
 		<ResultTooltip game={game} key={game.id}>
 			<Avatar className="h-[25px] w-[25px]">
-				<AvatarFallback className={`scale-75 ${getFormColor(game?.result)}`}>
-					{resultToString(game.result)}
-				</AvatarFallback>
+				<AvatarFallback className={`scale-75 ${getFormColor(game)}`}>{resultToString(game)}</AvatarFallback>
 			</Avatar>
 		</ResultTooltip>
 	));
