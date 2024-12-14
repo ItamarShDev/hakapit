@@ -87,7 +87,7 @@ export async function fetchEpisode(episodeID: string) {
 
 export async function fetchFeed(podcast: PodcastName, number = 5) {
 	const limit = number > 0 ? { limit: number } : {};
-	return db.query.podcasts.findFirst({
+	return await db.query.podcasts.findFirst({
 		where: eq(podcasts.name, podcast),
 		with: { episodes: { ...limit, orderBy: [desc(episodes.episodeNumber)], with: { podcast: true } } },
 	});

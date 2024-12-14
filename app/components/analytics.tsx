@@ -4,8 +4,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 export function AnalyticsWrapper() {
 	return (
 		<>
-			<Analytics />
-			<SpeedInsights debug />
+			<Analytics framework="next" />
+			<SpeedInsights />
 		</>
 	);
 }

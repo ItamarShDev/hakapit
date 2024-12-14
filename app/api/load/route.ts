@@ -1,6 +1,6 @@
 import { updateFeedsInDb } from "~/server/rss/feed";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 6000;
 export async function GET() {
 	const insertResult = await updateFeedsInDb();
 	if (insertResult) {

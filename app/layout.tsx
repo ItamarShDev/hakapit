@@ -8,8 +8,10 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="he">
-			<body>{children}</body>
-			<AnalyticsWrapper />
+			<body>
+				{children}
+				<AnalyticsWrapper />
+			</body>
 		</html>
 	);
 }

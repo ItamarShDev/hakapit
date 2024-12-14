@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import RSSFeed from "~/components/rss/feed";
 import { type PodcastName, fetchFeed } from "~/server/rss/feed";
-export const dynamic = "force-dynamic";
+export const revalidate = 6000;
 export async function generateMetadata(props: { params: Promise<{ podcast: string }> }): Promise<Metadata> {
 	const params = await props.params;
 	const metadata = await fetchFeed(params.podcast as PodcastName, 1);
