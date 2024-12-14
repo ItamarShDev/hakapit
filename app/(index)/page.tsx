@@ -6,7 +6,7 @@ import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
 import { fetchLatestEpisode } from "~/server/rss/feed";
 
-export const revalidate = 600;
+export const dynamic = "force-dynamic";
 
 export const viewport: Viewport = {
 	width: "device-width",

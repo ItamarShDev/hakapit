@@ -69,9 +69,13 @@ async function TeamRow({ teamStats }: { teamStats: TableType }) {
 			</TableCell>
 			<TableCell className="text-start p-3 font-bold">{teamStats.position}</TableCell>
 			<TableCell className="text-start p-3 font-bold">{teamStats?.points}</TableCell>
-			<TableHead className="text-start hidden md:table-cell">{teamStats?.won}</TableHead>
-			<TableHead className="text-start hidden md:table-cell">{teamStats?.lost}</TableHead>
-			<TableCell className="text-start p-3 font-bold">{teamStats?.goalDifference}</TableCell>
+			<TableCell className="text-start p-3 font-bold">{teamStats.playedGames}</TableCell>
+			<TableHead className="text-start hidden md:table-cell">
+				{teamStats?.won}-{teamStats?.lost}
+			</TableHead>
+			<TableCell className="text-start p-3 font-bold">
+				{teamStats?.goalsFor}-{teamStats?.goalsAgainst}
+			</TableCell>
 		</TableRow>
 	);
 }
@@ -93,8 +97,8 @@ export function TeamTournamentInformation({
 						<TableHead className="text-start">קבוצה</TableHead>
 						<TableHead className="text-start">מיקום</TableHead>
 						<TableHead className="text-start">נקודות</TableHead>
-						<TableHead className="text-start hidden md:table-cell">נצחונות</TableHead>
-						<TableHead className="text-start hidden md:table-cell">הפסדים</TableHead>
+						<TableHead className="text-start">משחקים</TableHead>
+						<TableHead className="text-start hidden md:table-cell">יחס נצחונות</TableHead>
 						<TableHead className="text-start">יחס שערים</TableHead>
 					</TableRow>
 				</TableHeader>
