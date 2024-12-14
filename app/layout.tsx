@@ -1,6 +1,8 @@
 import { AnalyticsWrapper } from "~/components/analytics";
 import "./globals.css";
+import { NavigationProgress } from "./components/navigation-progress";
 import "./styles.css";
+
 export default function RootLayout({
 	children,
 }: {
@@ -9,6 +11,7 @@ export default function RootLayout({
 	return (
 		<html lang="he">
 			<body>
+				<NavigationProgress />
 				{children}
 				<AnalyticsWrapper />
 			</body>
