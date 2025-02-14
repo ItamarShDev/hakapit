@@ -15,7 +15,7 @@ function WhatIsKapit() {
 	return (
 		<TooltipProvider>
 			<Tooltip>
-				<TooltipTrigger className=" flex items-center font-sans">
+				<TooltipTrigger className="flex items-center font-sans">
 					<div className="text-accent text-sm">מה זה כפית</div>
 					<QuestionMarkIcon className="text-accent w-5 h-5 p-1" />
 				</TooltipTrigger>
