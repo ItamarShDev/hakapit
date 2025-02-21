@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Viewport } from "next";
 import Link from "next/link";
 import { NextMatchOverview } from "~/components/next-match";
 import { LastEpisodeCardPreview } from "~/components/rss/EpisodeCard";
@@ -15,19 +15,6 @@ export const viewport: Viewport = {
 	colorScheme: "dark light",
 };
 
-export const metadata: Metadata = {
-	title: "הכפית",
-	icons: "/logo.webp",
-	description: "אתר הבית של משפחת הכפית",
-	authors: { name: "משפחת הכפית", url: "https://hakapit.online" },
-	openGraph: {
-		type: "website",
-		url: "https://hakapit.online",
-		title: "הכפית",
-		description: "אתר הבית של משפחת הכפית",
-		images: [{ url: "https://hakapit.online/logo.webp" }],
-	},
-};
 async function LatestEpisode() {
 	const episode = await fetchLatestEpisode("hakapit");
 	if (!episode) {
