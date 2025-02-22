@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { useEffect } from "react";
 import { AnalyticsWrapper } from "~/components/analytics";
 import { NavigationProgress } from "./components/navigation-progress";
 import "./globals.css";
@@ -32,6 +33,21 @@ export default function RootLayout({
 }: {
 	children: React.ReactNode;
 }) {
+	useEffect(() => {
+		if ("serviceWorker" in navigator) {
+			window.addEventListener("load", () => {
+				navigator.serviceWorker
+					.register("/sw.js")
+					.then((registration) => {
+						console.log("Service Worker registered with scope:", registration.scope);
+					})
+					.catch((error) => {
+						console.error("Service Worker registration failed:", error);
+					});
+			});
+		}
+	}, []);
+
 	return (
 		<html lang="he">
 			<head>
