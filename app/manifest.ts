@@ -21,14 +21,5 @@ export default function manifest(): MetadataRoute.Manifest {
 			},
 		],
 		description: "אתר הבית של משפחת הכפית",
-		offline_enabled: true,
-		offline_resources: [
-			"/",
-			"/index.html",
-			"/styles.css",
-			"/script.js",
-			"/icons/icon-192x192.png",
-			"/icons/icon-512x512.png",
-		],
 	};
 }
