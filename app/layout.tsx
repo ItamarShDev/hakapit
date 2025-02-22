@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { useEffect } from "react";
 import { AnalyticsWrapper } from "~/components/analytics";
 import { NavigationProgress } from "./components/navigation-progress";
+import { RootLayoutProvider } from './RootLayoutProvider';
 import "./globals.css";
 import "./styles.css";
 
@@ -56,7 +57,11 @@ export default function RootLayout({
 			</head>
 			<body>
 				<NavigationProgress />
-				{children}
+				<RootLayoutProvider>
+					<RootLayoutProvider>
+						{children}
+					</RootLayoutProvider>
+				</RootLayoutProvider>
 				<AnalyticsWrapper />
 			</body>
 		</html>
