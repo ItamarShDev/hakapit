@@ -1,3 +1,4 @@
+"use client";
 import type { Metadata } from "next";
 import { useEffect } from "react";
 import { AnalyticsWrapper } from "~/components/analytics";
