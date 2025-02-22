@@ -21,5 +21,8 @@ export default function manifest(): MetadataRoute.Manifest {
 			},
 		],
 		description: "אתר הבית של משפחת הכפית",
+		lang: "he",
+		orientation: "portrait",
+		categories: ["entertainment", "news"],
 	};
 }
