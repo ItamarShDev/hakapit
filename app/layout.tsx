@@ -39,11 +39,11 @@ export default function RootLayout({
 				<meta name="apple-mobile-web-app-title" content="הכפית" />
 			</head>
 			<body>
-				<NavigationProgress />
 				<RootLayoutProvider>
+					<NavigationProgress />
 					<RootLayoutProvider>{children}</RootLayoutProvider>
+					<AnalyticsWrapper />
 				</RootLayoutProvider>
-				<AnalyticsWrapper />
 			</body>
 		</html>
 	);
