@@ -320,19 +320,62 @@ audio.audio::-webkit-media-controls-timeline-container {
   }
 }
 
-:root::view-transition-old(page),
-:root::view-transition-new(page) {
-  height: auto;
-  width: auto;
-  top: auto;
-  bottom: 0;
-  transform-origin: bottom center;
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
 }
 
-:root::view-transition-old(page) {
-  animation: 0.15s linear both shrink-y;
+@keyframes shrink-x {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
 }
 
-:root::view-transition-new(page) {
-  animation: 0.15s 0.15s linear both grow-y;
+
+@media screen and (orientation: portrait) {
+
+  ::view-transition-old(page),
+  ::view-transition-new(page) {
+    height: auto;
+    right: 0;
+    left: auto;
+    transform-origin: right center;
+  }
+
+  ::view-transition-old(page) {
+    animation: 0.25s linear both shrink-x;
+  }
+
+  ::view-transition-new(page) {
+    animation: 0.25s 0.25s linear both grow-x;
+  }
+}
+
+@media screen and (orientation: landscape) {
+
+  :root::view-transition-old(page),
+  :root::view-transition-new(page) {
+    height: auto;
+    width: auto;
+    top: auto;
+    bottom: 0;
+    transform-origin: bottom center;
+  }
+
+  :root::view-transition-old(page) {
+    animation: 0.25s linear both shrink-y;
+  }
+
+  :root::view-transition-new(page) {
+    animation: 0.25s 0.25s linear both grow-y;
+  }
 }
