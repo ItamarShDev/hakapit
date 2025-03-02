@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import { unstable_ViewTransition as ViewTransition } from "react";
 import { AnalyticsWrapper } from "~/components/analytics";
 import { NavigationProgress } from "./components/navigation-progress";
 import "./globals.css";
 import "./styles.css";
-
 export const metadata: Metadata = {
 	manifest: "/manifest.ts",
 	themeColor: "#000000",
@@ -39,7 +39,7 @@ export default function RootLayout({
 			</head>
 			<body>
 				<NavigationProgress />
-				{children}
+				<ViewTransition name="page">{children}</ViewTransition>
 				<AnalyticsWrapper />
 			</body>
 		</html>

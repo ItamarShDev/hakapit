@@ -1,5 +1,6 @@
 import type { Viewport } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { NextMatchOverview } from "~/components/next-match";
 import { LastEpisodeCardPreview } from "~/components/rss/EpisodeCard";
 import { StatsTable } from "~/components/stats/stats";
@@ -29,7 +30,13 @@ export default async function Index() {
 			<div className="flex flex-col w-full gap-10">
 				<Trophies />
 				<div className="flex flex-wrap justify-center">
-					<LatestEpisode />
+					<Suspense
+						fallback={
+							<div className="size-[88px] text-center  vertical-align-middle  text-slate-700 italic ">טוען פרק</div>
+						}
+					>
+						<LatestEpisode />
+					</Suspense>
 				</div>
 				<NextMatchOverview />
 				<StatsTable />

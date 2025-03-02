@@ -280,3 +280,59 @@ audio.audio::-webkit-media-controls-timeline-container {
     filter: grayscale(80%) sepia(80%);
   }
 }
+
+
+@keyframes get-in {
+  0% {
+    opacity: 0;
+    /* filter: sepia(0%) grayscale(0%); */
+    transform: translateY(100vh);
+  }
+
+  50% {
+    /* filter: sepia(50%) grayscale(50%); */
+  }
+
+  100% {
+    opacity: 1;
+    /* filter: grayscale(80%) sepia(80%); */
+    transform: translateY(0);
+  }
+}
+
+@keyframes grow-y {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes shrink-y {
+  from {
+    transform: scaleY(1);
+  }
+
+  to {
+    transform: scaleY(0);
+  }
+}
+
+:root::view-transition-old(page),
+:root::view-transition-new(page) {
+  height: auto;
+  width: auto;
+  top: auto;
+  bottom: 0;
+  transform-origin: bottom center;
+}
+
+:root::view-transition-old(page) {
+  animation: 0.15s linear both shrink-y;
+}
+
+:root::view-transition-new(page) {
+  animation: 0.15s 0.15s linear both grow-y;
+}
