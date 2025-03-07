@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
 import { type PodcastName, fetchFeed } from "~/server/rss/feed";
@@ -39,21 +40,23 @@ function YouTubeChannel({ podcast }: { podcast: "hakapit" | "balcony-albums" | "
 	if (podcast !== "hakapit") return null;
 
 	return (
-		<div className="flex flex-col gap-4">
-			<h2 className="text-2xl font-bold"> יוטיוב</h2>
-			<div className="aspect-video w-full">
-				<iframe
-					title="YouTube video player"
-					src="https://www.youtube.com/embed/videoseries?list=UULFbQOKsqsqd2QIAX8g9R0o4Q"
-					width="100%"
-					height="100%"
-					// @ts-ignore
-					gesture="media"
-					allow="encrypted-media"
-					allowFullScreen
-				/>
+		<Suspense fallback={null}>
+			<div className="flex flex-col gap-4">
+				<h2 className="text-2xl font-bold"> יוטיוב</h2>
+				<div className="aspect-video w-full">
+					<iframe
+						title="YouTube video player"
+						src="https://www.youtube.com/embed/videoseries?list=UULFbQOKsqsqd2QIAX8g9R0o4Q"
+						width="100%"
+						height="100%"
+						// @ts-ignore
+						gesture="media"
+						allow="encrypted-media"
+						allowFullScreen
+					/>
+				</div>
 			</div>
-		</div>
+		</Suspense>
 	);
 }
 export default async function RouteComponent(props: {
@@ -69,6 +72,7 @@ export default async function RouteComponent(props: {
 				<RSSFeed preview podcast={podcast} />
 				<YouTubeChannel podcast={podcast} />
 			</div>
+
 			<TwitterTimelineEmbed podcastName={podcast} />
 		</section>
 	);

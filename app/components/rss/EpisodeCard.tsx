@@ -27,18 +27,6 @@ export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>
 	);
 }
 
-const keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-
-const triplet = (e1: number, e2: number, e3: number) =>
-	keyStr.charAt(e1 >> 2) +
-	keyStr.charAt(((e1 & 3) << 4) | (e2 >> 4)) +
-	keyStr.charAt(((e2 & 15) << 2) | (e3 >> 6)) +
-	keyStr.charAt(e3 & 63);
-
-const rgbDataURL = (r: number, g: number, b: number) =>
-	`data:image/gif;base64,R0lGODlhAQABAPAA${
-		triplet(0, r, g) + triplet(b, 255, 255)
-	}/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`;
 function PlayPauseButton({ episode }: { episode: EpisodeData }) {
 	const playerProps = usePlayer();
 	if (!playerProps) return null;
@@ -54,7 +42,6 @@ export function LastEpisodeCardPreview({
 }) {
 	const isoDate = toDateString(episode?.publishedAt);
 	const playerProps = usePlayer();
-
 	return (
 		<div className="flex items-center justify-center w-full gap-4 py-4">
 			{playerProps && (
@@ -68,8 +55,6 @@ export function LastEpisodeCardPreview({
 							alt="episode"
 							priority={true}
 							fill={true}
-							placeholder="blur"
-							blurDataURL={rgbDataURL(255, 0, 0)}
 							className=" brightness-40 filter -z-0 absolute object-cover object-top"
 						/>
 					)}
@@ -98,7 +83,6 @@ export function EpisodeCard({
 } & React.HTMLAttributes<HTMLDivElement>) {
 	const isoDate = toDateString(episode?.publishedAt);
 	const playerProps = usePlayer();
-
 	return (
 		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className, heebo.className)}>
 			{episode?.imageUrl && (
@@ -106,9 +90,8 @@ export function EpisodeCard({
 					src={episode?.imageUrl}
 					alt="episode"
 					fill={true}
+					loading="eager"
 					priority={true}
-					placeholder="blur"
-					blurDataURL={rgbDataURL(255, 0, 0)}
 					sizes="576px"
 					className="rounded-3xl brightness-40 filter blur-sm absolute z-0 object-cover object-top"
 				/>

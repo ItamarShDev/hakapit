@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { MasonryFeed, Preview } from "~/components/rss/feed/feed";
-import { type PodcastName, fetchUpdatedFeed } from "~/server/rss/feed";
+import { FeedPage, PreviewPage } from "~/components/rss/feed/feed";
+import type { PodcastName } from "~/server/rss/feed";
 
 async function Feed({
 	limit = 1,
@@ -11,24 +10,8 @@ async function Feed({
 	preview?: boolean;
 	podcast: PodcastName;
 }) {
-	const data = await fetchUpdatedFeed(podcast, limit);
-	if (preview)
-		return (
-			<>
-				<Preview data={data} />
-				<Link href={`${podcast}/episodes`} className={"text-xl lg:text-sm text-accent"}>
-					לכל הפרקים
-				</Link>
-			</>
-		);
-	return (
-		<>
-			<MasonryFeed data={data} limit={limit} />
-			<Link href={`?limit=${limit + 5}`} replace className={"text-xl lg:text-sm text-accent"} scroll={false}>
-				הצג עוד
-			</Link>
-		</>
-	);
+	if (preview) return <PreviewPage limit={limit} podcast={podcast} />;
+	return <FeedPage limit={limit} podcast={podcast} />;
 }
 
 export default async function RSSFeed({

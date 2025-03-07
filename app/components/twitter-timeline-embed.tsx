@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { Suspense } from "react";
 
 function getHandle(podcastName: "hakapit" | "balcony-albums" | "nitk") {
 	switch (podcastName) {
@@ -18,18 +19,20 @@ export function TwitterTimelineEmbed({
 }) {
 	const handle = getHandle(podcastName);
 	return (
-		<div className="timeline" key={podcastName}>
-			<a
-				className="twitter-timeline"
-				data-lang="he"
-				data-theme="dark"
-				data-tweet-limit="3"
-				data-height="640"
-				data-chrome="noborders transparent"
-				href={`https://twitter.com/${handle}?ref_src=twsrc%5Etfw`}
-			>
-				<Skeleton className="w-full h-[640px] rounded-2xl bg-slate-500 bg-opacity-30" />
-			</a>
-		</div>
+		<Suspense fallback={null}>
+			<div className="timeline" key={podcastName}>
+				<a
+					className="twitter-timeline"
+					data-lang="he"
+					data-theme="dark"
+					data-tweet-limit="3"
+					data-height="640"
+					data-chrome="noborders transparent"
+					href={`https://twitter.com/${handle}?ref_src=twsrc%5Etfw`}
+				>
+					<Skeleton className="w-full h-[640px] rounded-2xl bg-slate-500 bg-opacity-30" />
+				</a>
+			</div>
+		</Suspense>
 	);
 }

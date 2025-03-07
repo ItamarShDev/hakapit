@@ -1,42 +1,80 @@
 import { cn } from "@/lib/utils";
-import { EpisodeCard, SkeletonCard } from "~/components/rss/EpisodeCard";
+import Link from "next/link";
+import { Suspense } from "react";
+import { EpisodeCard } from "~/components/rss/EpisodeCard";
+import ShowMore from "~/components/rss/feed/ShowMore.client";
 import { amaticSc } from "~/fonts";
-import type { FeedData } from "~/utils";
+import { type PodcastName, fetchUpdatedFeed } from "~/server/rss/feed";
 
-export function MasonryFeed({
-	data,
-	limit,
+async function MasonryFeed({
+	limit = 1,
+	podcast,
 }: {
-	data?: FeedData;
-	limit: number;
+	limit?: number;
+	podcast: PodcastName;
 }) {
-	const skeletonCount = Math.max(limit - (data?.episodes?.length || 0), 0);
-	return (<>
-        <span className={cn("max-w-xl p-4 font-light info crazy-font big-title", amaticSc.className)}>פרקים</span>
-        <div className="masonry">
-            {data?.episodes?.map((episode) => (
-                <EpisodeCard key={episode.guid} episode={episode} />
-            ))}
-            {new Array(skeletonCount).fill(0)?.map((_, index) => (
-                // biome-ignore lint:noArrayIndexKey
-                (<SkeletonCard key={index} className="h-[500px]" />)
-            ))}
-        </div>
-    </>);
-}
-export function Preview({
-	data,
-}: {
-	data?: FeedData;
-}) {
+	const data = await fetchUpdatedFeed(podcast, limit);
+
 	return (
-		<>
+		<Suspense fallback={null}>
+			<div className="masonry">
+				{data?.episodes?.map((episode) => (
+					<EpisodeCard key={episode.guid} episode={episode} />
+				))}
+			</div>
+			<ShowMore limit={limit} currentLimit={data?.episodes.length || 0} />
+		</Suspense>
+	);
+}
+async function Preview({
+	limit = 1,
+	podcast,
+}: {
+	limit?: number;
+	podcast: PodcastName;
+}) {
+	const data = await fetchUpdatedFeed(podcast, limit);
+
+	return (
+		<Suspense fallback={null}>
 			<span className={cn("w-full max-w-xl p-4 font-light info crazy-font", amaticSc.className)}>
 				{data?.description}
 			</span>
 			<div className="masonry">
 				<EpisodeCard episode={data?.episodes[0]} />
 			</div>
+		</Suspense>
+	);
+}
+
+export async function FeedPage({
+	limit = 1,
+	podcast,
+}: {
+	limit?: number;
+	podcast: PodcastName;
+}) {
+	return (
+		<>
+			<span className={cn("max-w-xl p-4 font-light info crazy-font big-title", amaticSc.className)}>פרקים</span>
+			<MasonryFeed limit={limit} podcast={podcast} />
+		</>
+	);
+}
+
+export async function PreviewPage({
+	limit = 1,
+	podcast,
+}: {
+	limit?: number;
+	podcast: PodcastName;
+}) {
+	return (
+		<>
+			<Preview limit={limit} podcast={podcast} />
+			<Link href={`${podcast}/episodes`} className={"text-xl lg:text-sm text-accent"}>
+				לכל הפרקים
+			</Link>
 		</>
 	);
 }

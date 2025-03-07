@@ -39,6 +39,6 @@ export default async function RouteComponent(props: {
 
 	const { podcast } = params;
 
-	const episodeLimit = Number.parseInt(limit || "5");
+	const episodeLimit = Number.parseInt(limit || "10");
 	return <RSSFeed limit={episodeLimit} podcast={podcast} />;
 }

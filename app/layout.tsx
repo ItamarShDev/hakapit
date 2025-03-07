@@ -1,12 +1,18 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { unstable_ViewTransition as ViewTransition } from "react";
 import { AnalyticsWrapper } from "~/components/analytics";
 import { NavigationProgress } from "./components/navigation-progress";
 import "./globals.css";
 import "./styles.css";
+export const viewport: Viewport = {
+	width: "device-width",
+	initialScale: 1.0,
+	themeColor: "var(--color-primary)",
+	colorScheme: "dark light",
+};
+
 export const metadata: Metadata = {
 	manifest: "/manifest.ts",
-	themeColor: "#000000",
 	icons: {
 		icon: [
 			"/favicon.ico",
