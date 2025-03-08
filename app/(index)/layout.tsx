@@ -2,23 +2,17 @@ import { PlayerProvider } from "~/components/player/provider";
 import { MainLayout } from "~/layouts/main";
 import type { PodcastName } from "~/server/rss/feed";
 
-export default async function RootLayout(
-    props: {
-        children: React.ReactNode;
-        params: Promise<{ podcast: PodcastName }>;
-    }
-) {
-    const params = await props.params;
+export default async function RootLayout(props: {
+	children: React.ReactNode;
+	params: Promise<{ podcast: PodcastName }>;
+}) {
+	const params = await props.params;
 
-    const {
-        podcast
-    } = params;
+	const { podcast } = params;
 
-    const {
-        children
-    } = props;
+	const { children } = props;
 
-    return (
+	return (
 		<MainLayout params={{ podcast }}>
 			<PlayerProvider>{children}</PlayerProvider>
 		</MainLayout>

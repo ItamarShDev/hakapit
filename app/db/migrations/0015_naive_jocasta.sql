@@ -1,0 +1,1 @@
+ALTER TABLE "subscription" ALTER COLUMN "subscription" DROP NOT NULL;
