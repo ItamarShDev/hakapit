@@ -1,5 +1,5 @@
 "use server";
-import { desc, eq, ilike, like, max } from "drizzle-orm";
+import { desc, eq, ilike, like } from "drizzle-orm";
 import { db } from "~/db/config";
 import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema";
 import { fetch_rss } from "~/server/rss/fetch-rss";
@@ -58,24 +58,25 @@ async function updateFeedInDb(feedName: PodcastName) {
 		.execute();
 
 	console.info(`${feedName}: Added ${insertResult.rowCount} new episodes`);
-	return insertResult;
+	const latestEpisode = await getLastEpisode(feedName);
+	return { podcast: feedName, insertResult, latestEpisode };
 }
 
 export async function updateFeedsInDb() {
+	console.log("updateFeedsInDb");
 	return await Promise.all(PODCAST_NAMES.map((key) => updateFeedInDb(key as PodcastName)));
 }
+function getLastEpisode(podcast: PodcastName) {
+	return db.query.episodes.findFirst({
+		where: eq(episodes.podcast, podcast),
+		orderBy: [desc(episodes.episodeNumber)],
+		with: { podcast: true },
+	});
+}
+
 export async function fetchLatestEpisode(podcast: PodcastName) {
 	await updateFeedInDb(podcast);
-	const episodesId = await db
-		.select({ value: max(episodes.episodeNumber) })
-		.from(episodes)
-		.leftJoin(podcasts, eq(episodes.podcast, podcasts.name))
-		.where(eq(podcasts.name, podcast));
-	if (episodesId[0].value)
-		return await db.query.episodes.findFirst({
-			where: eq(episodes.episodeNumber, episodesId[0].value),
-			with: { podcast: true },
-		});
+	return await getLastEpisode(podcast);
 }
 
 export async function fetchEpisode(episodeID: string) {
@@ -93,6 +94,7 @@ export async function fetchFeed(podcast: PodcastName, number = 5) {
 	});
 }
 export async function fetchUpdatedFeed(podcast: PodcastName, number = 5) {
+	console.log(`fetchUpdatedFeed Fetching updated feed for ${podcast}`);
 	await updateFeedInDb(podcast);
 	return await fetchFeed(podcast, number);
 }

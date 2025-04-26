@@ -17,17 +17,17 @@ function urlBase64ToUint8Array(base64String: string) {
 	return outputArray;
 }
 
-function PushNotificationManager() {
+function usePushNotifications() {
 	const [isSupported, setIsSupported] = useState(false);
 	const [subscription, setSubscription] = useState<PushSubscription | null>(null);
 	const [message, setMessage] = useState("");
 
 	useEffect(() => {
-		console.log("serviceWorker", "serviceWorker" in navigator);
 		if ("serviceWorker" in navigator && "PushManager" in window) {
 			setIsSupported(true);
 			registerServiceWorker();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	async function registerServiceWorker() {
@@ -36,6 +36,17 @@ function PushNotificationManager() {
 			updateViaCache: "none",
 		});
 		const sub = await registration.pushManager.getSubscription();
+		const serviceWorkerRegistration = await navigator.serviceWorker.ready;
+		if ("periodicSync" in serviceWorkerRegistration) {
+			try {
+				// @ts-ignore
+				await serviceWorkerRegistration.periodicSync.register("fetch-latest-episode", {
+					minInterval: 60 * 60 * 1000, // 1 hour in ms
+				});
+			} catch (e) {
+				// handle error or fallback
+			}
+		}
 		setSubscription(sub);
 	}
 
@@ -48,7 +59,6 @@ function PushNotificationManager() {
 			userVisibleOnly: true,
 			applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY),
 		});
-
 		setSubscription(sub);
 		const serializedSub = JSON.parse(JSON.stringify(sub));
 		await subscribeUser(serializedSub);
@@ -68,6 +78,26 @@ function PushNotificationManager() {
 			setMessage("");
 		}
 	}
+
+	return {
+		isSupported,
+		subscription,
+		message,
+		setMessage,
+		subscribeToPush,
+		unsubscribeFromPush,
+		sendTestNotification,
+	};
+}
+
+function PushNotificationManager() {
+	const { isSupported, subscription, message, setMessage, subscribeToPush, unsubscribeFromPush, sendTestNotification } =
+		usePushNotifications();
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies:  subscribeToPush
+	useEffect(() => {
+		subscribeToPush();
+	}, []);
 
 	if (!isSupported) {
 		return null;
@@ -100,16 +130,21 @@ function PushNotificationManager() {
 		</div>
 	);
 }
-function InstallPrompt() {
+function useInstallPrompt() {
 	const [isIOS, setIsIOS] = useState(false);
 	const [isStandalone, setIsStandalone] = useState(false);
 
 	useEffect(() => {
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream);
-
 		setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
 	}, []);
+
+	return { isIOS, isStandalone };
+}
+
+function InstallPrompt() {
+	const { isIOS, isStandalone } = useInstallPrompt();
 
 	if (isStandalone) {
 		return null; // Don't show install button if already installed

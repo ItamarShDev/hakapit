@@ -14,7 +14,18 @@ if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
 }
 
 export async function subscribeUser(sub: PushSubscription) {
-	await db.insert(subscriptions).values(toSubscriptionSchema(sub)).execute();
+	const existing = await db.query.subscriptions.findFirst({
+		where: eq(subscriptions.userId, sub.endpoint),
+	});
+	if (existing) {
+		await db
+			.update(subscriptions)
+			.set(toSubscriptionSchema(sub))
+			.where(eq(subscriptions.userId, sub.endpoint))
+			.execute();
+	} else {
+		await db.insert(subscriptions).values(toSubscriptionSchema(sub)).execute();
+	}
 	return { success: true };
 }
 
@@ -32,7 +43,6 @@ export async function sendNotification(endpoint: string, message: string) {
 	}
 
 	try {
-		console.log(subscription.subscription);
 		const result = await webpush.sendNotification(
 			// @ts-ignore
 			subscription.subscription,
