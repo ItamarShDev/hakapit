@@ -10,7 +10,7 @@ export async function GET() {
 	});
 }
 
-export async function notifyTransferData() {
+async function notifyTransferData() {
 	const transfers = await getLatestTransfers();
 	for (const transfer in transfers) {
 		const message = `${transfers[transfer].playerName} ${transfers[transfer].type}`;
@@ -18,7 +18,7 @@ export async function notifyTransferData() {
 	}
 }
 
-export async function notifyEpisodeData() {
+async function notifyEpisodeData() {
 	const episode = await getLatestEpisode();
 	if (!episode) {
 		return;
