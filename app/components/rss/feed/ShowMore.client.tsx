@@ -4,15 +4,9 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function ShowMore({
-	limit = 1,
-	currentLimit = 1,
-}: {
-	limit?: number;
-	currentLimit?: number;
-}) {
+export default function ShowMore({ limit = 1, currentLimit = 1 }: { limit?: number; currentLimit?: number }) {
 	const [isLoading, setIsLoading] = useState(false);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	// biome-ignore lint/correctness/useExhaustiveDependencies: false positive
 	useEffect(() => {
 		setIsLoading(false);
 	}, [limit]);

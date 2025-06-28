@@ -30,7 +30,7 @@ export interface Season {
 	startDate: string;
 	endDate: string;
 	currentMatchday: number;
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	// biome-ignore lint/suspicious/noExplicitAny: false positive
 	winner: any;
 	stages: string[];
 }
@@ -38,7 +38,7 @@ export interface Season {
 export interface Standing {
 	stage: string;
 	type: string;
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	// biome-ignore lint/suspicious/noExplicitAny: false positive
 	group: any;
 	table: Table[];
 }

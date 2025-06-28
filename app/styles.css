@@ -35,7 +35,9 @@
 }
 
 body {
-	transition: all 0.2s ease-in-out, background 0.2s ease-in-out;
+	transition:
+		all 0.2s ease-in-out,
+		background 0.2s ease-in-out;
 }
 
 .ltr {
@@ -155,8 +157,8 @@ audio.audio::-webkit-media-controls-timeline-container {
 	font-size: clamp(1em, 12vw, 3em);
 }
 
+/* biome-ignore lint/style/noDescendingSpecificity: false positive */
 .timeline {
-	width: auto;
 	padding: 1rem;
 	width: 30rem;
 	align-self: flex-start;

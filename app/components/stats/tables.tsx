@@ -4,9 +4,6 @@ import TeamAvatar from "~/components/team-avatar";
 import { LiverpoolId } from "~/providers/soccer-api/constants";
 import type { League, Table as TableType } from "~/providers/soccer-api/types/league";
 
-function roundToDecimal(number: number) {
-	return Math.round(number * 10) / 10;
-}
 function getStandings(league: League) {
 	return league.standings[0].table;
 }
@@ -24,11 +21,7 @@ function getTeams(league: League) {
 	return [standings?.[teamStatsIndex - 1], standings?.[teamStatsIndex], standings?.[teamStatsIndex + 1]];
 }
 
-export async function TournamentInformation({
-	league,
-}: {
-	league: League;
-}) {
+export async function TournamentInformation({ league }: { league: League }) {
 	const teamStats = league.standings[0].table.find((t) => t.team.id === LiverpoolId);
 	return (
 		<>
@@ -81,11 +74,7 @@ function TeamRow({ teamStats }: { teamStats: TableType }) {
 	);
 }
 
-export function TeamTournamentInformation({
-	league,
-}: {
-	league: League;
-}) {
+export function TeamTournamentInformation({ league }: { league: League }) {
 	const playoffPosition = league.standings?.[0].type === "PLAYOFF";
 	if (playoffPosition) return <TournamentInformation league={league} />;
 	const teams = getTeams(league);

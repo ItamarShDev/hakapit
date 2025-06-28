@@ -11,7 +11,7 @@
     "studio": "drizzle-kit studio",
     "format": "biome format app --write",
     "lint": "biome lint app",
-    "lint:fix": "biome lint --apply app"
+    "lint:fix": "biome lint app --write"
   },
   "dependencies": {
     "@nivo/bar": "^0.85.1",

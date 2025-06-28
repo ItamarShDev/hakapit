@@ -1,6 +1,7 @@
 export interface PlayerStatsResponse {
 	get: string;
 	parameters: Parameters;
+	// biome-ignore lint/suspicious/noExplicitAny: false positive
 	errors: any[];
 	results: number;
 	paging: Paging;

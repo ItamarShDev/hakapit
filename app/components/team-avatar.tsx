@@ -1,12 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { type ImageProps, getImageProps } from "next/image";
+import { getImageProps, type ImageProps } from "next/image";
 import type { Team } from "~/providers/soccer-api/types/league";
 
 type Props = Omit<ImageProps, "fill">;
 
 export function NextAvatar(props: Props) {
 	const imageProps = getImageProps({ width: 40, height: 40, ...props }).props;
+	// biome-ignore lint/correctness/noUnusedVariables: false positive
 	const { blurDataURL, style, ...imagePropsSanitized } = imageProps;
 	return (
 		<Avatar

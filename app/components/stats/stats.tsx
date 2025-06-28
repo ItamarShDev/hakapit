@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 import { Suspense } from "react";
 import { TeamTournamentInformation } from "~/components/stats/tables";
 import { getLeague, getTeam } from "~/providers/soccer-api";
@@ -15,7 +16,7 @@ export async function StatTable({ leagueId, initialData }: { leagueId: string; i
 		<div className="animate-fade flex flex-col w-full" key={leagueID}>
 			<div className="bg-accent text-slate-900 flex items-center justify-center px-6 py-2 gap-4">
 				<div className="text-xl font-bold">{leagueName}</div>
-				<img className="h-[30px]" src={emblem} alt={`${leagueName} logo`} />
+				<Image className="h-[30px]" src={emblem} alt={`${leagueName} logo`} />
 			</div>
 			<div className="py-4 px-2">
 				<TeamTournamentInformation league={league} />
@@ -28,7 +29,7 @@ function StatsSkeleton({ leagueId }: { leagueId: string }) {
 	return (
 		<div className="flex flex-col" key={leagueId}>
 			<div className="bg-accent text-slate-900 flex items-center justify-center gap-8 p-3">
-				<img className="h-[50px]" src={`https://crests.football-data.org/${leagueId}.png`} alt="league logo" />
+				<Image className="h-[50px]" src={`https://crests.football-data.org/${leagueId}.png`} alt="league logo" />
 				<div className="font-bold">טוען טורניר</div>
 			</div>
 		</div>

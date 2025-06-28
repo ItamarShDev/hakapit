@@ -35,11 +35,7 @@ function PlayPauseButton({ episode }: { episode: EpisodeData }) {
 	return <PlayIcon className="size-7 md:size-4 z-10" />;
 }
 
-export function LastEpisodeCardPreview({
-	episode,
-}: {
-	episode: EpisodeData;
-}) {
+export function LastEpisodeCardPreview({ episode }: { episode: EpisodeData }) {
 	const isoDate = toDateString(episode?.publishedAt);
 	const playerProps = usePlayer();
 	return (
@@ -121,7 +117,7 @@ export function EpisodeCard({
 						onClick={() => playerProps.setCurrentlyPlaying(episode)}
 					>
 						{playerProps.currentlyPlaying?.guid === episode?.guid ? (
-							<>מנגן כרגע</>
+							"מנגן כרגע"
 						) : (
 							<>
 								נגן פרק <PlayIcon className="ms-4" />

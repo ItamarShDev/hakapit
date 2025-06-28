@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { Cross1Icon } from "@radix-ui/react-icons";
+import Image from "next/image";
 import { createContext, forwardRef, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { Episode } from "~/db/types";
@@ -31,7 +32,7 @@ const Player = forwardRef(function Player(
 	return (
 		<div className={`bottom-0 left-0 flex flex-col w-full p-2 bg-primary ${episode ? "fixed z-50" : "hidden"}`}>
 			<div className="flex flex-row items-start py-2">
-				{episode?.imageUrl && <img src={episode?.imageUrl} alt="episode" className="object-cover object-top w-16" />}
+				{episode?.imageUrl && <Image src={episode?.imageUrl} alt="episode" className="object-cover object-top w-16" />}
 				<div className="flex flex-col flex-1 px-4 leading-7">
 					<p className="text-lg text-white">{episode?.title}</p>
 					<p className="text-slate-300">{episode?.podcast?.title}</p>
@@ -40,7 +41,7 @@ const Player = forwardRef(function Player(
 					<Cross1Icon />
 				</Button>
 			</div>
-			<audio ref={ref} className="audio" controls src={episode?.audioUrl} onError={(e) => showError()}>
+			<audio ref={ref} className="audio" controls src={episode?.audioUrl} onError={() => showError()}>
 				<track kind="captions" />
 			</audio>
 		</div>
