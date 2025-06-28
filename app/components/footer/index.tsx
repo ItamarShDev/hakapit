@@ -13,7 +13,6 @@ export default function Footer() {
 			<Link href="https://www.instagram.com/kapitpod/">Instagram</Link>
 			<span className="text-accent">|</span>
 			<Link href="https://pod.link/1546442506">Pod.link</Link>
-			<span className="text-accent">|</span>
 			<InstallPrompt />
 			<span className="text-accent">|</span>
 			<PushNotificationManager />

@@ -114,6 +114,7 @@ export function PushNotificationManager() {
 function useInstallPrompt() {
 	const [isIOS, setIsIOS] = useState(false);
 	const [isStandalone, setIsStandalone] = useState(false);
+	const [installPrompt, setInstallPrompt] = useState<any>(null);
 
 	useEffect(() => {
 		// biome-ignore lint/suspicious/noExplicitAny: no need to pass window to useEffect
@@ -121,19 +122,29 @@ function useInstallPrompt() {
 		setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
 	}, []);
 
-	return { isIOS, isStandalone };
+	useEffect(() => {
+		window.addEventListener("beforeinstallprompt", (e) => {
+			setInstallPrompt(e);
+		});
+		window.addEventListener("appinstalled", () => {
+			setInstallPrompt(null);
+		});
+	}, []);
+
+	return { isIOS, isStandalone, installPrompt };
 }
 
 export function InstallPrompt() {
-	const { isIOS, isStandalone } = useInstallPrompt();
+	const { isIOS, isStandalone, installPrompt } = useInstallPrompt();
 
-	if (isStandalone || isIOS) {
+	if (isStandalone || isIOS || !installPrompt) {
 		return null; // Don't show install button if already installed
 	}
 
 	return (
 		<div>
-			<Button type="button" variant="link" className="text-accent h-0">
+			<span className="text-accent">|</span>
+			<Button type="button" variant="link" className="text-accent h-0" onClick={() => installPrompt?.prompt()}>
 				הוספה למסך הבית
 			</Button>
 		</div>
