@@ -1,5 +1,5 @@
 import { FeedPage, PreviewPage } from "~/components/rss/feed/feed";
-import type { PodcastName } from "~/server/rss/feed";
+import type { PodcastName } from "~/providers/rss/feed";
 
 async function Feed({
 	limit = 1,

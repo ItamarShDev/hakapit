@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
-import { type PodcastName, fetchFeed } from "~/server/rss/feed";
+import { type PodcastName, fetchFeed } from "~/providers/rss/feed";
 export const revalidate = 7200;
 
 export const viewport: Viewport = {

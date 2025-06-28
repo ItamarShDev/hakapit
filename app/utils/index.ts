@@ -1,4 +1,4 @@
-import type { fetchFeed, fetchLatestEpisode } from "~/server/rss/feed";
+import type { fetchFeed, fetchLatestEpisode } from "~/providers/rss/feed";
 
 export function toDateString(value?: Date | null) {
 	return value && new Date(value).toLocaleDateString();
@@ -16,9 +16,9 @@ export type Metadata<T> = T extends Latest
 			limit?: number;
 			metadata: EpisodeData;
 			podcast: "hakapit" | "balcony-albums" | "nitk";
-	  }
+		}
 	: {
 			limit?: number;
 			metadata: FeedData;
 			podcast: "hakapit" | "balcony-albums" | "nitk";
-	  };
+		};

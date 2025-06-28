@@ -9,7 +9,6 @@ import Link from "next/link";
 import { useState } from "react";
 import MenuIcon from "~/components/icons/menu";
 import { Links } from "~/components/links";
-import { PushNotifications } from "~/components/push-notification";
 import { karantina } from "~/fonts";
 
 function WhatIsKapit() {
@@ -59,7 +58,6 @@ export default function Header({ data }: Props) {
 					</Link>
 					<WhatIsKapit />
 				</div>
-				<PushNotifications />
 				<div className="lg:gap-4 lg:hidden flex flex-col flex-wrap items-end gap-2 pt-2">
 					<Button onClick={() => setOpen(!open)} variant="link" className="menu-button">
 						<MenuIcon />

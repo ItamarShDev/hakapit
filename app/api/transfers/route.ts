@@ -1,10 +1,11 @@
-import { getLatestEpisode } from "~/providers/rss/get-latest-episode";
+import { getLatestTransfers } from "~/providers/football-api";
 
 export const revalidate = 6000;
+
 export async function GET() {
-	const episodePerPodcast = await getLatestEpisode();
-	if (episodePerPodcast) {
-		return new Response(JSON.stringify(episodePerPodcast), {
+	const transfersPerPlayer = await getLatestTransfers();
+	if (Object.keys(transfersPerPlayer).length > 0) {
+		return new Response(JSON.stringify(transfersPerPlayer), {
 			status: 200,
 			headers: {
 				"Content-Type": "application/json",

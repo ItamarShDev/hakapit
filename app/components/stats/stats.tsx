@@ -1,8 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
 import { TeamTournamentInformation } from "~/components/stats/tables";
-import { getLeague, getTeam } from "~/server/soccer-api";
-import type { League } from "~/server/soccer-api/types/league";
+import { getLeague, getTeam } from "~/providers/soccer-api";
+import type { League } from "~/providers/soccer-api/types/league";
 
 export async function StatTable({ leagueId, initialData }: { leagueId: string; initialData?: League }) {
 	const league = initialData ?? (await getLeague(leagueId));
@@ -41,7 +41,6 @@ async function StatsList() {
 
 	// Get unique league IDs
 	const leagueIds = Array.from(new Set(team.runningCompetitions.map((c) => c.code).filter(Boolean)));
-
 	// Fetch all league data in parallel
 	const leaguesData = await Promise.all(leagueIds.map((leagueId) => getLeague(leagueId)));
 

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { sendNotification, subscribeUser, unsubscribeUser } from "~/actions/push";
+import { subscribeUser, unsubscribeUser } from "~/actions/push";
 
 function urlBase64ToUint8Array(base64String: string) {
 	const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -20,14 +20,24 @@ function urlBase64ToUint8Array(base64String: string) {
 function usePushNotifications() {
 	const [isSupported, setIsSupported] = useState(false);
 	const [subscription, setSubscription] = useState<PushSubscription | null>(null);
-	const [message, setMessage] = useState("");
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: no need to pass registerServiceWorker to useEffect
 	useEffect(() => {
-		if ("serviceWorker" in navigator && "PushManager" in window) {
-			setIsSupported(true);
-			registerServiceWorker();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		const checkPermissions = async () => {
+			if ("serviceWorker" in navigator && "PushManager" in window) {
+				const status = await navigator.permissions.query({
+					// @ts-ignore
+					name: "periodic-background-sync",
+				});
+				if (status.state === "granted") {
+					setIsSupported(true);
+					registerServiceWorker();
+				} else {
+					setIsSupported(false);
+				}
+			}
+		};
+		checkPermissions();
 	}, []);
 
 	async function registerServiceWorker() {
@@ -37,17 +47,22 @@ function usePushNotifications() {
 		});
 		const sub = await registration.pushManager.getSubscription();
 		const serviceWorkerRegistration = await navigator.serviceWorker.ready;
+
 		if ("periodicSync" in serviceWorkerRegistration) {
 			try {
 				// @ts-ignore
 				await serviceWorkerRegistration.periodicSync.register("fetch-latest-episode", {
-					minInterval: 60 * 60 * 1000, // 1 hour in ms
+					minInterval: 6 * 60 * 60 * 1000, // 1 hour in ms
 				});
+				// @ts-ignore
+				await serviceWorkerRegistration.periodicSync.register("new-transfers", {
+					minInterval: 60 * 60 * 1000, // 3 hours in ms
+				});
+				setSubscription(sub);
 			} catch (e) {
-				// handle error or fallback
+				console.error(e);
 			}
 		}
-		setSubscription(sub);
 	}
 
 	async function subscribeToPush() {
@@ -72,27 +87,16 @@ function usePushNotifications() {
 		}
 	}
 
-	async function sendTestNotification() {
-		if (subscription) {
-			await sendNotification(subscription.endpoint, message);
-			setMessage("");
-		}
-	}
-
 	return {
 		isSupported,
 		subscription,
-		message,
-		setMessage,
 		subscribeToPush,
 		unsubscribeFromPush,
-		sendTestNotification,
 	};
 }
 
-function PushNotificationManager() {
-	const { isSupported, subscription, message, setMessage, subscribeToPush, unsubscribeFromPush, sendTestNotification } =
-		usePushNotifications();
+export function PushNotificationManager() {
+	const { isSupported, subscription, subscribeToPush, unsubscribeFromPush } = usePushNotifications();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies:  subscribeToPush
 	useEffect(() => {
@@ -106,26 +110,13 @@ function PushNotificationManager() {
 	return (
 		<div>
 			{subscription ? (
-				<>
-					<Button type="button" onClick={unsubscribeFromPush}>
-						Unsubscribe
-					</Button>
-					<input
-						type="text"
-						placeholder="Enter notification message"
-						value={message}
-						onChange={(e) => setMessage(e.target.value)}
-					/>
-					<Button type="button" onClick={sendTestNotification}>
-						Send Test
-					</Button>
-				</>
+				<Button type="button" variant="link" className="text-accent h-0" onClick={unsubscribeFromPush}>
+					ביטול הרשמה
+				</Button>
 			) : (
-				<>
-					<Button type="button" onClick={subscribeToPush}>
-						הרשמה
-					</Button>
-				</>
+				<Button type="button" variant="link" className="text-accent h-0" onClick={subscribeToPush}>
+					הרשמה להתראות
+				</Button>
 			)}
 		</div>
 	);
@@ -135,7 +126,7 @@ function useInstallPrompt() {
 	const [isStandalone, setIsStandalone] = useState(false);
 
 	useEffect(() => {
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		// biome-ignore lint/suspicious/noExplicitAny: no need to pass window to useEffect
 		setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream);
 		setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
 	}, []);
@@ -143,40 +134,18 @@ function useInstallPrompt() {
 	return { isIOS, isStandalone };
 }
 
-function InstallPrompt() {
+export function InstallPrompt() {
 	const { isIOS, isStandalone } = useInstallPrompt();
 
-	if (isStandalone) {
+	if (isStandalone || isIOS) {
 		return null; // Don't show install button if already installed
 	}
 
 	return (
 		<div>
-			<Button type="button">Add to Home Screen</Button>
-			{isIOS && (
-				<p>
-					To install this app on your iOS device, tap the share button
-					<span role="img" aria-label="share icon">
-						{" "}
-						⎋{" "}
-					</span>
-					and then "Add to Home Screen"
-					<span role="img" aria-label="plus icon">
-						{" "}
-						➕{" "}
-					</span>
-					.
-				</p>
-			)}
-		</div>
-	);
-}
-
-export function PushNotifications() {
-	return (
-		<div>
-			<PushNotificationManager />
-			<InstallPrompt />
+			<Button type="button" variant="link" className="text-accent h-0">
+				הוספה למסך הבית
+			</Button>
 		</div>
 	);
 }

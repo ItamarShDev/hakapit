@@ -1,6 +1,6 @@
 import { PlayerProvider } from "~/components/player/provider";
 import { MainLayout } from "~/layouts/main";
-import type { PodcastName } from "~/server/rss/feed";
+import type { PodcastName } from "~/providers/rss/feed";
 
 export default async function RootLayout(props: {
 	children: React.ReactNode;

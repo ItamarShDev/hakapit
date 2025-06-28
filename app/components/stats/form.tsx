@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { LiverpoolId } from "~/server/soccer-api/constants";
-import type { Match } from "~/server/soccer-api/types/team-matches";
+import { LiverpoolId } from "~/providers/soccer-api/constants";
+import type { Match } from "~/providers/soccer-api/types/team-matches";
 export function resultToString(match: Match) {
 	const isHome = match.homeTeam.id === LiverpoolId;
 	const isWon = isHome ? match.score.winner === "HOME_TEAM" : match.score.winner === "AWAY_TEAM";

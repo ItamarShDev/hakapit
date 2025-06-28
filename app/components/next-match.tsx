@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { FullBleed, NextMatchOverviewClient } from "~/components/next-match.client";
-import { getNextMatchData } from "~/server/soccer-api";
+import { getNextMatchData } from "~/providers/soccer-api";
 
 function NextMatchSkeleton() {
 	return (

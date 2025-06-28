@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Episode from "~/components/rss/episode";
-import { type PodcastName, fetchLatestEpisode } from "~/server/rss/feed";
+import { type PodcastName, fetchLatestEpisode } from "~/providers/rss/feed";
 export const revalidate = 6000;
 
 export async function generateMetadata(props: { params: Promise<{ podcast: string }> }): Promise<Metadata> {

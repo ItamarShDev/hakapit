@@ -1,8 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import TeamAvatar from "~/components/team-avatar";
-import { LiverpoolId } from "~/server/soccer-api/constants";
-import type { League, Table as TableType } from "~/server/soccer-api/types/league";
+import { LiverpoolId } from "~/providers/soccer-api/constants";
+import type { League, Table as TableType } from "~/providers/soccer-api/types/league";
 
 function roundToDecimal(number: number) {
 	return Math.round(number * 10) / 10;

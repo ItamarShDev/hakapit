@@ -1,8 +1,8 @@
 import Form from "~/components/stats/form";
 import TeamAvatar from "~/components/team-avatar";
 import { heebo } from "~/fonts";
-import { type getNextMatchData, getTeamPastMatches } from "~/server/soccer-api";
-import type { Team } from "~/server/soccer-api/types/team-matches";
+import { type getNextMatchData, getTeamPastMatches } from "~/providers/soccer-api";
+import type { Team } from "~/providers/soccer-api/types/team-matches";
 
 function TeamStatus({
 	team,

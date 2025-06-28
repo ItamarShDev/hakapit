@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { EpisodeCard } from "~/components/rss/EpisodeCard";
 import ShowMore from "~/components/rss/feed/ShowMore.client";
 import { amaticSc } from "~/fonts";
-import { type PodcastName, fetchUpdatedFeed } from "~/server/rss/feed";
+import { type PodcastName, fetchUpdatedFeed } from "~/providers/rss/feed";
 
 async function MasonryFeed({
 	limit = 1,

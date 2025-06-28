@@ -2,8 +2,9 @@
 import { desc, eq, ilike, like } from "drizzle-orm";
 import { db } from "~/db/config";
 import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema";
-import { fetch_rss } from "~/server/rss/fetch-rss";
-import type { Feed } from "~/server/rss/types";
+import { fetch_rss } from "~/providers/rss/fetch-rss";
+import type { Feed } from "~/providers/rss/types";
+
 const PODCAST_URLS = {
 	hakapit: process.env.HAKAPIT_RSS,
 	nitk: process.env.NITK_RSS,
@@ -57,13 +58,11 @@ async function updateFeedInDb(feedName: PodcastName) {
 		.onConflictDoNothing()
 		.execute();
 
-	console.info(`${feedName}: Added ${insertResult.rowCount} new episodes`);
 	const latestEpisode = await getLastEpisode(feedName);
 	return { podcast: feedName, insertResult, latestEpisode };
 }
 
 export async function updateFeedsInDb() {
-	console.log("updateFeedsInDb");
 	return await Promise.all(PODCAST_NAMES.map((key) => updateFeedInDb(key as PodcastName)));
 }
 function getLastEpisode(podcast: PodcastName) {
@@ -94,7 +93,6 @@ export async function fetchFeed(podcast: PodcastName, number = 5) {
 	});
 }
 export async function fetchUpdatedFeed(podcast: PodcastName, number = 5) {
-	console.log(`fetchUpdatedFeed Fetching updated feed for ${podcast}`);
 	await updateFeedInDb(podcast);
 	return await fetchFeed(podcast, number);
 }

@@ -1,11 +1,11 @@
 import type { Viewport } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import { NextMatchOverview } from "~/components/next-match";
 import { LastEpisodeCardPreview } from "~/components/rss/EpisodeCard";
 import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
-import { fetchLatestEpisode } from "~/server/rss/feed";
+import { fetchLatestEpisode } from "~/providers/rss/feed";
+import { RecentTransfers } from "./RecentTransfers";
 
 export const revalidate = 300; // 5 minutes
 
@@ -38,20 +38,9 @@ export default async function Index() {
 						<LatestEpisode />
 					</Suspense>
 				</div>
+				<RecentTransfers />
 				<NextMatchOverview />
 				<StatsTable />
-			</div>
-
-			<div className="flex flex-wrap justify-center gap-2 py-4">
-				<Link href="https://twitter.com/KapitPod">Twitter</Link>
-				<span className="text-accent">|</span>
-				<Link href="https://www.threads.net/@kapitpod">Threads</Link>
-				<span className="text-accent">|</span>
-				<Link href="https://www.facebook.com/KapitPod">Facebook</Link>
-				<span className="text-accent">|</span>
-				<Link href="https://www.instagram.com/kapitpod/">Instagram</Link>
-				<span className="text-accent">|</span>
-				<Link href="https://pod.link/1546442506">Pod.link</Link>
 			</div>
 		</section>
 	);

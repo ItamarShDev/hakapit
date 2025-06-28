@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { type ImageProps, getImageProps } from "next/image";
-import type { Team } from "~/server/soccer-api/types/league";
+import type { Team } from "~/providers/soccer-api/types/league";
 
 type Props = Omit<ImageProps, "fill">;
 
