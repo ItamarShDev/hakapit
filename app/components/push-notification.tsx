@@ -23,21 +23,11 @@ function usePushNotifications() {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: no need to pass registerServiceWorker to useEffect
 	useEffect(() => {
-		const checkPermissions = async () => {
-			if ("serviceWorker" in navigator && "PushManager" in window) {
-				const status = await navigator.permissions.query({
-					// @ts-ignore
-					name: "periodic-background-sync",
-				});
-				if (status.state === "granted") {
-					setIsSupported(true);
-					registerServiceWorker();
-				} else {
-					setIsSupported(false);
-				}
-			}
-		};
-		checkPermissions();
+		if ("serviceWorker" in navigator && "PushManager" in window) {
+			setIsSupported(true);
+			registerServiceWorker();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	async function registerServiceWorker() {
