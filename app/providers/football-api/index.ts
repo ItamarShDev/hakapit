@@ -1,8 +1,7 @@
 "use server";
-import { desc } from "drizzle-orm";
 
 import { db } from "~/db/config";
-import { transfers } from "~/db/schema";
+import { fetchTime, transfers } from "~/db/schema";
 import { baseUrl, LiverpoolId } from "~/providers/football-api/constants";
 import type { PlayerStatsResponse } from "~/providers/football-api/types/player-stats";
 import type { TransferResponse } from "~/providers/football-api/types/transfer";
@@ -29,9 +28,9 @@ export async function getLatestTransfers() {
 
 export async function getTransferData() {
 	// get last update from transfers db
-	const lastUpdate = await db.select().from(transfers).orderBy(desc(transfers.updatedAt)).limit(1);
+	const lastUpdate = await db.query.fetchTime.findFirst();
 	// if last update is today, return db data
-	if (lastUpdate[0]?.updatedAt.toDateString() === new Date().toDateString()) {
+	if (lastUpdate?.updatedAt.toDateString() === new Date().toDateString()) {
 		return await db.select().from(transfers);
 	}
 	const data = await fetchData<TransferResponse>("transfers", { team: String(LiverpoolId) });
@@ -65,9 +64,12 @@ export async function getTransferData() {
 			onlyTransfersFromLastYear.push(transferDTO);
 		}
 	}
-
+	if (onlyTransfersFromLastYear.length === 0) {
+		return [];
+	}
 	// upsert transfers by player_id
 	db.insert(transfers).values(onlyTransfersFromLastYear).onConflictDoNothing({ target: transfers.playerId }).execute();
+	db.update(fetchTime).set({ updatedAt: new Date() }).execute();
 	return onlyTransfersFromLastYear;
 }
 

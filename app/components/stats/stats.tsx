@@ -16,7 +16,7 @@ export async function StatTable({ leagueId, initialData }: { leagueId: string; i
 		<div className="animate-fade flex flex-col w-full" key={leagueID}>
 			<div className="bg-accent text-slate-900 flex items-center justify-center px-6 py-2 gap-4">
 				<div className="text-xl font-bold">{leagueName}</div>
-				<Image className="h-[30px]" src={emblem} alt={`${leagueName} logo`} />
+				<Image className="h-[30px]" width={30} height={30} src={emblem} alt={`${leagueName} logo`} />
 			</div>
 			<div className="py-4 px-2">
 				<TeamTournamentInformation league={league} />

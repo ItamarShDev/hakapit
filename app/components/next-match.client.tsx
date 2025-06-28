@@ -53,7 +53,13 @@ export async function NextMatchOverviewClient({ data }: { data: Awaited<ReturnTy
 		<FullBleed>
 			<div className="text-slate-200 text-sm">{nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}</div>
 			<div className="flex flex-row-reverse items-center justify-center gap-2">
-				<Image className="h-[20px]" src={nextGame.competition.emblem} alt={`${nextGame.competition.name} logo`} />
+				<Image
+					className="h-[20px]"
+					width={20}
+					height={20}
+					src={nextGame.competition.emblem}
+					alt={`${nextGame.competition.name} logo`}
+				/>
 				<div className="font-bold">{nextGame.competition.name}</div>
 			</div>
 			<div className={`game-title ${heebo.className}`}>

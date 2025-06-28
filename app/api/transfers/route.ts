@@ -1,10 +1,8 @@
 import { getLatestTransfers } from "~/providers/football-api";
 
-export const revalidate = 6000;
-
 export async function GET() {
 	const transfersPerPlayer = await getLatestTransfers();
-	if (Object.keys(transfersPerPlayer).length > 0) {
+	if (transfersPerPlayer && Object.keys(transfersPerPlayer).length > 0) {
 		return new Response(JSON.stringify(transfersPerPlayer), {
 			status: 200,
 			headers: {

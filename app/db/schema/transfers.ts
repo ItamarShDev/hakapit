@@ -15,6 +15,11 @@ export const transfers = pgTable("transfer", {
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const fetchTime = pgTable("fetch_time", {
+	id: serial("id").primaryKey(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const toTransferSchema = (transfer: TransferResponse, player?: Player): typeof transfers.$inferInsert => {
 	return {
 		playerId: transfer.response[0].player.id,
