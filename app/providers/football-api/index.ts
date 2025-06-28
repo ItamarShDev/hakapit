@@ -22,8 +22,8 @@ async function fetchData<T>(path: string, query?: URLSearchParams | Record<strin
 
 export async function getLatestTransfers() {
 	const results = await getTransferData();
-	// const newTransfers = results.filter((result) => result.updatedAt.getTime() === Date.now());
-	const transfersPerPlayer = Object.fromEntries(results.map((result) => [result.playerName, result]));
+	const newTransfers = results.filter((result) => result.updatedAt.getTime() === Date.now());
+	const transfersPerPlayer = Object.fromEntries(newTransfers.map((result) => [result.playerName, result]));
 	return transfersPerPlayer;
 }
 
