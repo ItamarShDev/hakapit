@@ -13,7 +13,7 @@ export async function StatTable({ leagueId, initialData }: { leagueId: string; i
 	if (!leagueID || !leagueName) return null;
 
 	return (
-		<div className="animate-fade flex flex-col w-full" key={leagueID}>
+		<div className="animate-fade flex flex-col w-full max-w-[700px]" key={leagueID}>
 			<div className="bg-accent text-slate-900 flex items-center justify-center px-6 py-2 gap-4">
 				<div className="text-xl font-bold">{leagueName}</div>
 				<Image className="h-[30px]" width={30} height={30} src={emblem} alt={`${leagueName} logo`} />
@@ -67,7 +67,7 @@ function TableSkeleton() {
 
 export function StatsTable() {
 	return (
-		<div className="grid-col-responsive grid items-start w-full gap-3">
+		<div className="grid-col-responsive grid items-start justify-items-center w-full gap-3">
 			<Suspense fallback={<TableSkeleton />}>
 				<StatsList />
 			</Suspense>

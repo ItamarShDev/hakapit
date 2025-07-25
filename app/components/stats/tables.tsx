@@ -81,7 +81,7 @@ export function TeamTournamentInformation({ league }: { league: League }) {
 	if (!teams) return null;
 	return (
 		<>
-			<Table className="text-xs">
+			<Table className="text-xs ">
 				<TableHeader>
 					<TableRow className="border-0">
 						<TableHead className="text-start">קבוצה</TableHead>

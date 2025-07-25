@@ -48,8 +48,10 @@ export async function getLeague(league: string, revalidate = 300) {
 	return await getData<League>(`competitions/${league}/standings`, revalidate);
 }
 
+import { getFirstMatch } from "./utils";
+
 export async function getNextMatchData(revalidate = 60) {
 	const nextGames = await getNextGames(revalidate);
-	const matchDetails = nextGames?.matches[0];
+	const matchDetails = getFirstMatch(nextGames);
 	return { matchDetails };
 }

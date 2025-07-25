@@ -39,6 +39,8 @@ async function getTeamForms(data: Awaited<ReturnType<typeof getNextMatchData>>) 
 	return { awayForm: awayForm?.matches, homeForm: homeForm?.matches, nextGame: matchDetails };
 }
 
+import { getDisplayScore } from "./utils";
+
 export async function NextMatchOverviewClient({ data }: { data: Awaited<ReturnType<typeof getNextMatchData>> }) {
 	const teamForms = await getTeamForms(data);
 	if (!teamForms) {
@@ -68,7 +70,7 @@ export async function NextMatchOverviewClient({ data }: { data: Awaited<ReturnTy
 						team={nextGame.awayTeam}
 						isRunning={nextGame.status === "LIVE"}
 						iconPosition="after"
-						score={nextGame.score.fullTime.away ?? nextGame.score.halfTime.away}
+						score={getDisplayScore(nextGame.score, "away")}
 					/>
 					<div>
 						<Form form={awayForm} />
@@ -84,7 +86,7 @@ export async function NextMatchOverviewClient({ data }: { data: Awaited<ReturnTy
 					<TeamStatus
 						team={nextGame.homeTeam}
 						isRunning={nextGame.status === "LIVE"}
-						score={nextGame.score.fullTime.home ?? nextGame.score.halfTime.home}
+						score={getDisplayScore(nextGame.score, "home")}
 					/>
 					<div>
 						<Form form={homeForm} />

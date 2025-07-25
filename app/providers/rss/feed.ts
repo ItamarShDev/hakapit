@@ -4,6 +4,7 @@ import { db } from "~/db/config";
 import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema";
 import { fetch_rss } from "~/providers/rss/fetch-rss";
 import type { Feed } from "~/providers/rss/types";
+import { sliceFeedItems } from "./feed.utils";
 
 const PODCAST_URLS = {
 	hakapit: process.env.HAKAPIT_RSS,
@@ -21,11 +22,7 @@ function _fetch(podcast: PodcastName) {
 
 async function fetchRSSFeed(podcast: PodcastName, number = 5): Promise<Feed> {
 	const rss = await _fetch(podcast);
-	if (number > 0) {
-		const episodes = rss.items.slice(0, number);
-		rss.items = episodes;
-	}
-	return rss as Feed;
+	return sliceFeedItems(rss as Feed, number);
 }
 async function updateFeedInDb(feedName: PodcastName) {
 	const feed = await fetchRSSFeed(feedName, 0);

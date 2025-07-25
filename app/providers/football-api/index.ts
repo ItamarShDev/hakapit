@@ -5,6 +5,7 @@ import { fetchTime, transfers } from "~/db/schema";
 import { baseUrl, LiverpoolId } from "~/providers/football-api/constants";
 import type { PlayerStatsResponse } from "~/providers/football-api/types/player-stats";
 import type { TransferResponse } from "~/providers/football-api/types/transfer";
+import { isTransferBuy } from "./utils";
 
 async function fetchData<T>(path: string, query?: URLSearchParams | Record<string, string>) {
 	const params = new URLSearchParams(query);
@@ -42,11 +43,7 @@ export async function getTransferData() {
 			(transfer) => new Date(transfer.date).getFullYear() === new Date().getFullYear(),
 		);
 		const isBuy = transferItem.transfers.every(
-			(transfer) =>
-				transfer.teams.in.id === LiverpoolId &&
-				transfer.type !== "Loan" &&
-				transfer.type !== null &&
-				transfer.type !== "N/A",
+			(transfer) => transfer.teams.in.id === LiverpoolId && isTransferBuy(transfer.type),
 		);
 		if (isCurrentYear && isBuy) {
 			const player = await getPlayerData(transferItem.player.id);
