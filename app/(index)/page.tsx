@@ -1,5 +1,6 @@
 import type { Viewport } from "next";
 import { Suspense } from "react";
+import { FloatingChat } from "~/components/chat/FloatingChat";
 import { NextMatchOverview } from "~/components/next-match";
 import { LastEpisodeCardPreview } from "~/components/rss/EpisodeCard";
 import { StatsTable } from "~/components/stats/stats";
@@ -42,6 +43,7 @@ export default async function Index() {
 				<NextMatchOverview />
 				<StatsTable />
 			</div>
+			<FloatingChat />
 		</section>
 	);
 }

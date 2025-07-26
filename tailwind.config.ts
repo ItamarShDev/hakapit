@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+
 module.exports = {
 	darkMode: ["class", "[data-theme=dark]"],
 	mode: "jit",

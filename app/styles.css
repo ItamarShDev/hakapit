@@ -31,7 +31,6 @@
 .page {
 	width: auto;
 	direction: rtl;
-	background-color: var(--color-background);
 }
 
 body {
@@ -243,6 +242,10 @@ audio.audio::-webkit-media-controls-timeline-container {
 .full-bleed {
 	box-shadow: 0 0 0 100vw hsl(var(--color-primary));
 	clip-path: inset(0 -100vmax);
+}
+
+.direction {
+	direction: rtl;
 }
 
 @keyframes fadeIn {

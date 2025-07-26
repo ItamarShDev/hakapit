@@ -43,7 +43,7 @@ export default function RootLayout({
 			<head>
 				<meta name="apple-mobile-web-app-title" content="הכפית" />
 			</head>
-			<body>
+						<body className="hakapit">
 				<NavigationProgress />
 				<ViewTransition name="page">{children}</ViewTransition>
 				<AnalyticsWrapper />

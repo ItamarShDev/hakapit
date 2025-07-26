@@ -2,8 +2,8 @@
   "files.autoSave": "off",
   "editor.defaultFormatter": "biomejs.biome",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "explicit"
+    "source.fixAll.biome": "always",
+    "source.organizeImports.biome": "always"
   },
   "editor.wordWrap": "wordWrapColumn",
   "explorer.excludeGitIgnore": true,
@@ -23,7 +23,6 @@
     "public/build": true
   },
   "workbench.editor.wrapTabs": false,
-  "biome.rename": true,
   "[css]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
