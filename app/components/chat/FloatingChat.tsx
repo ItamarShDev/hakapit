@@ -1,17 +1,23 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useChat } from "@ai-sdk/react";
 import { CornerDownLeft } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { getDirectionFromText } from "~/utils/text-direction";
 
 export function FloatingChat() {
 	const [isOpen, setIsOpen] = useState(false);
 	const { messages, input, setInput, status, append } = useChat();
 	const contentRef = useRef<HTMLDivElement>(null);
+
+	// The most recent user message id (used to show the loader next to it while waiting for an answer)
+	const lastUserMessageId = [...messages].reverse().find((m) => m.role === "user")?.id;
 
 	const handleSendMessage = () => {
 		append({
@@ -33,7 +39,6 @@ export function FloatingChat() {
 			contentRef.current.scrollTop = contentRef.current.scrollHeight;
 		}
 	}, [messages]);
-
 	return (
 		<div className="fixed bottom-4 right-4 z-50">
 			<Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -56,22 +61,32 @@ export function FloatingChat() {
           data-[state=closed]:slide-out-to-top-2"
 				>
 					<div ref={contentRef} className="flex-grow px-4 overflow-y-auto text-paragraph">
-						{messages.map((message, index) => {
+						{messages.map((message) => {
 							if (message.role === "assistant") {
+								const dir = getDirectionFromText(message.content);
 								return (
-									<p
-										className={`py-2 text-sm ${status === "streaming" && index === messages.length - 1 ? "text-gray-200" : "text-paragraph"}`}
-										key={message.id}
-									>
-										{message.content}
-									</p>
+									<div key={message.id} dir={dir} className="py-2 text-sm whitespace-pre-wrap">
+										<ReactMarkdown
+											remarkPlugins={[remarkGfm]}
+											components={{
+												a: (props) => (
+													<a {...props} className="underline text-accent" target="_blank" rel="noreferrer" />
+												),
+												code: (props) => <code {...props} className="bg-black/30 rounded px-1" />,
+												pre: (props) => <pre {...props} className="bg-black/30 rounded p-2 overflow-x-auto" />,
+											}}
+										>
+											{message.content}
+										</ReactMarkdown>
+									</div>
 								);
 							}
 							if (message.role === "user") {
+								const dir = getDirectionFromText(message.content);
 								return (
-									<p className="text-accent py-4 sticky top-0 bg-popover" key={message.id}>
+									<p className="flex text-accent py-4 sticky top-0 bg-popover" key={message.id} dir={dir}>
 										{message.content}
-										{status === "submitted" && (
+										{message.id === lastUserMessageId && status === "submitted" && (
 											<div className="h-8 w-8">
 												<Image src="/liverpool-animation.gif" alt="liverbird" width={30} height={30} priority={true} />
 											</div>

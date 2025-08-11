@@ -26,5 +26,9 @@
   "[css]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "editor.wordWrapColumn": 120
+  "editor.wordWrapColumn": 120,
+  "cSpell.words": [
+    "appinstalled",
+    "beforeinstallprompt"
+  ]
 }

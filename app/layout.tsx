@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import { SafeViewTransition } from "./components/safe-view-transition";
 import { AnalyticsWrapper } from "~/components/analytics";
 import { NavigationProgress } from "./components/navigation-progress";
 import "./globals.css";
@@ -39,13 +39,13 @@ export default function RootLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<html lang="he">
+		<html lang="he" suppressHydrationWarning>
 			<head>
 				<meta name="apple-mobile-web-app-title" content="הכפית" />
 			</head>
-						<body className="hakapit">
+						<body className="hakapit" suppressHydrationWarning>
 				<NavigationProgress />
-				<ViewTransition name="page">{children}</ViewTransition>
+				<SafeViewTransition name="page">{children}</SafeViewTransition>
 				<AnalyticsWrapper />
 			</body>
 		</html>
