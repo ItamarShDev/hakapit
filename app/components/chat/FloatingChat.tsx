@@ -1,20 +1,28 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { CornerDownLeft } from "lucide-react";
+import { CornerDownLeft, X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+	Drawer,
+	DrawerClose,
+	DrawerContent,
+	DrawerDescription,
+	DrawerHeader,
+	DrawerTitle,
+	DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Textarea } from "@/components/ui/textarea";
 import { getDirectionFromText } from "~/utils/text-direction";
 
 export function FloatingChat() {
-	const [isOpen, setIsOpen] = useState(false);
 	const { messages, input, setInput, status, append } = useChat();
 	const contentRef = useRef<HTMLDivElement>(null);
+	const inputDir = getDirectionFromText(input);
 
 	// The most recent user message id (used to show the loader next to it while waiting for an answer)
 	const lastUserMessageId = [...messages].reverse().find((m) => m.role === "user")?.id;
@@ -26,7 +34,7 @@ export function FloatingChat() {
 		});
 	};
 
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (event.key === "Enter") {
 			setInput("");
 			handleSendMessage();
@@ -40,26 +48,28 @@ export function FloatingChat() {
 		}
 	}, [messages]);
 	return (
-		<div className="fixed bottom-4 right-4 z-50">
-			<Popover open={isOpen} onOpenChange={setIsOpen}>
-				<PopoverTrigger asChild>
+		<div className="fixed bottom-4 left-4 z-50">
+			<Drawer direction="right">
+				<DrawerTrigger asChild>
 					<Button size="lg" className="text-accent hover:bg-accent hover:text-primary rounded">
 						שאל אותי על ליברפול
 					</Button>
-				</PopoverTrigger>
-				<PopoverContent
-					sideOffset={10}
-					className="w-80 h-[500px] p-0 flex flex-col direction rounded-xl    
-					data-[state=open]:animate-in 
-          data-[state=open]:fade-in-0 
-          data-[state=open]:zoom-in-95 
-          data-[state=open]:slide-in-from-top-2 
-          
-          data-[state=closed]:animate-out 
-          data-[state=closed]:fade-out-0 
-          data-[state=closed]:zoom-out-95 
-          data-[state=closed]:slide-out-to-top-2"
-				>
+				</DrawerTrigger>
+				<DrawerContent>
+					<DrawerHeader dir="rtl" className="flex flex-col border-b border-slate-600">
+						<DrawerTitle className="flex items-center justify-between">
+							Liver-Chat
+							<DrawerClose asChild>
+								<Button variant="ghost" size="icon" aria-label="סגור" className="hover:grow">
+									<X className="h-5 w-5" />
+								</Button>
+							</DrawerClose>
+						</DrawerTitle>
+
+						<DrawerDescription dir="rtl" className="self-start">
+							ניתן לשאול כל שאלה לגבי הקבוצה, בכל שפה
+						</DrawerDescription>
+					</DrawerHeader>
 					<div ref={contentRef} className="flex-grow px-4 overflow-y-auto text-paragraph">
 						{messages.map((message) => {
 							if (message.role === "assistant") {
@@ -84,11 +94,22 @@ export function FloatingChat() {
 							if (message.role === "user") {
 								const dir = getDirectionFromText(message.content);
 								return (
-									<p className="flex text-accent py-4 sticky top-0 bg-popover" key={message.id} dir={dir}>
+									<p
+										className="flex items-center gap-2 text-accent py-4 sticky top-0 bg-popover"
+										key={message.id}
+										dir={dir}
+									>
 										{message.content}
 										{message.id === lastUserMessageId && status === "submitted" && (
 											<div className="h-8 w-8">
-												<Image src="/liverpool-animation.gif" alt="liverbird" width={30} height={30} priority={true} />
+												<Image
+													className="grayscale"
+													src="/liverpool-animation.gif"
+													alt="liverbird"
+													width={30}
+													height={30}
+													priority={true}
+												/>
 											</div>
 										)}
 									</p>
@@ -98,14 +119,14 @@ export function FloatingChat() {
 						})}
 					</div>
 					<div className="p-2 flex flex-row border-t">
-						<Input
+						<Textarea
 							value={input}
 							onChange={(e) => {
 								setInput(e.target.value);
 							}}
 							onKeyDown={handleKeyDown}
 							placeholder="הקלד שאלה..."
-							className="pr-10 border-0 text-accent bg-transparent"
+							className={`pr-10 border-0 text-accent bg-transparent text-right ${inputDir === "rtl" ? "text-left" : "text-right"}`}
 							disabled={status === "streaming" || status === "submitted"}
 						/>
 						<Button
@@ -117,8 +138,8 @@ export function FloatingChat() {
 							<CornerDownLeft className="h-4 w-4" color="yellow" />
 						</Button>
 					</div>
-				</PopoverContent>
-			</Popover>
+				</DrawerContent>
+			</Drawer>
 		</div>
 	);
 }
