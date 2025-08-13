@@ -3,7 +3,7 @@ import { streamText } from "ai";
 
 // IMPORTANT! Set the runtime to edge for best performance
 export const runtime = "edge";
-export function errorHandler(error: unknown) {
+function errorHandler(error: unknown) {
 	if (error == null) {
 		return "unknown error";
 	}
@@ -18,6 +18,7 @@ export function errorHandler(error: unknown) {
 
 	return JSON.stringify(error);
 }
+
 export async function POST(req: Request) {
 	const { messages } = await req.json();
 	const result = streamText({

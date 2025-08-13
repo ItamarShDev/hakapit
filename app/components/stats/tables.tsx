@@ -24,28 +24,26 @@ function getTeams(league: League) {
 export async function TournamentInformation({ league }: { league: League }) {
 	const teamStats = league.standings[0].table.find((t) => t.team.id === LiverpoolId);
 	return (
-		<>
-			<Table>
-				<TableBody>
-					<TableRow className="border-0">
-						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מחזור / סבב</TableCell>
-						<TableCell className="text-start p-3 font-bold capitalize">{league.standings[0].stage}</TableCell>
-					</TableRow>
-					<TableRow className="border-0">
-						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מיקום</TableCell>
-						<TableCell className="text-start p-3 font-bold">{teamStats?.position}</TableCell>
-					</TableRow>
-					<TableRow className="border-0" hidden={teamStats?.points === undefined}>
-						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">נקודות</TableCell>
-						<TableCell className="text-start p-3 font-bold">{teamStats?.points}</TableCell>
-					</TableRow>
-					<TableRow className="border-0" hidden={teamStats?.goalDifference === undefined}>
-						<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">יחס שערים</TableCell>
-						<TableCell className="text-start p-3 font-bold">{teamStats?.goalDifference}</TableCell>
-					</TableRow>
-				</TableBody>
-			</Table>
-		</>
+		<Table>
+			<TableBody>
+				<TableRow className="border-0">
+					<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מחזור / סבב</TableCell>
+					<TableCell className="text-start p-3 font-bold capitalize">{league.standings[0].stage}</TableCell>
+				</TableRow>
+				<TableRow className="border-0">
+					<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מיקום</TableCell>
+					<TableCell className="text-start p-3 font-bold">{teamStats?.position}</TableCell>
+				</TableRow>
+				<TableRow className="border-0" hidden={teamStats?.points === undefined}>
+					<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">נקודות</TableCell>
+					<TableCell className="text-start p-3 font-bold">{teamStats?.points}</TableCell>
+				</TableRow>
+				<TableRow className="border-0" hidden={teamStats?.goalDifference === undefined}>
+					<TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">יחס שערים</TableCell>
+					<TableCell className="text-start p-3 font-bold">{teamStats?.goalDifference}</TableCell>
+				</TableRow>
+			</TableBody>
+		</Table>
 	);
 }
 // Remove async since this component doesn't need it
@@ -80,24 +78,22 @@ export function TeamTournamentInformation({ league }: { league: League }) {
 	const teams = getTeams(league);
 	if (!teams) return null;
 	return (
-		<>
-			<Table className="text-xs ">
-				<TableHeader>
-					<TableRow className="border-0">
-						<TableHead className="text-start">קבוצה</TableHead>
-						<TableHead className="text-start">מיקום</TableHead>
-						<TableHead className="text-start">נקודות</TableHead>
-						<TableHead className="text-start">משחקים</TableHead>
-						<TableHead className="text-start hidden md:table-cell">יחס נצחונות</TableHead>
-						<TableHead className="text-start">יחס שערים</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{teams.map((standing) => (
-						<TeamRow key={standing.team.id} teamStats={standing} />
-					))}
-				</TableBody>
-			</Table>
-		</>
+		<Table className="text-xs ">
+			<TableHeader>
+				<TableRow className="border-0">
+					<TableHead className="text-start">קבוצה</TableHead>
+					<TableHead className="text-start">מיקום</TableHead>
+					<TableHead className="text-start">נקודות</TableHead>
+					<TableHead className="text-start">משחקים</TableHead>
+					<TableHead className="text-start hidden md:table-cell">יחס נצחונות</TableHead>
+					<TableHead className="text-start">יחס שערים</TableHead>
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+				{teams.map((standing) => (
+					<TeamRow key={standing.team.id} teamStats={standing} />
+				))}
+			</TableBody>
+		</Table>
 	);
 }

@@ -114,6 +114,7 @@ export function PushNotificationManager() {
 function useInstallPrompt() {
 	const [isIOS, setIsIOS] = useState(false);
 	const [isStandalone, setIsStandalone] = useState(false);
+	// biome-ignore lint/suspicious/noExplicitAny: no need to pass window to useEffect
 	const [installPrompt, setInstallPrompt] = useState<any>(null);
 
 	useEffect(() => {

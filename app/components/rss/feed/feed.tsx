@@ -6,13 +6,7 @@ import ShowMore from "~/components/rss/feed/ShowMore.client";
 import { amaticSc } from "~/fonts";
 import { type PodcastName, fetchUpdatedFeed } from "~/providers/rss/feed";
 
-async function MasonryFeed({
-	limit = 1,
-	podcast,
-}: {
-	limit?: number;
-	podcast: PodcastName;
-}) {
+async function MasonryFeed({ limit = 1, podcast }: { limit?: number; podcast: PodcastName }) {
 	const data = await fetchUpdatedFeed(podcast, limit);
 
 	return (
@@ -26,13 +20,7 @@ async function MasonryFeed({
 		</Suspense>
 	);
 }
-async function Preview({
-	limit = 1,
-	podcast,
-}: {
-	limit?: number;
-	podcast: PodcastName;
-}) {
+async function Preview({ limit = 1, podcast }: { limit?: number; podcast: PodcastName }) {
 	const data = await fetchUpdatedFeed(podcast, limit);
 
 	return (
@@ -47,13 +35,7 @@ async function Preview({
 	);
 }
 
-export async function FeedPage({
-	limit = 1,
-	podcast,
-}: {
-	limit?: number;
-	podcast: PodcastName;
-}) {
+export async function FeedPage({ limit = 1, podcast }: { limit?: number; podcast: PodcastName }) {
 	return (
 		<>
 			<span className={cn("max-w-xl p-4 font-light info crazy-font big-title", amaticSc.className)}>פרקים</span>
@@ -62,13 +44,7 @@ export async function FeedPage({
 	);
 }
 
-export async function PreviewPage({
-	limit = 1,
-	podcast,
-}: {
-	limit?: number;
-	podcast: PodcastName;
-}) {
+export async function PreviewPage({ limit = 1, podcast }: { limit?: number; podcast: PodcastName }) {
 	return (
 		<>
 			<Preview limit={limit} podcast={podcast} />
