@@ -12,11 +12,7 @@ function getHandle(podcastName: "hakapit" | "balcony-albums" | "nitk") {
 	}
 }
 
-export function TwitterTimelineEmbed({
-	podcastName,
-}: {
-	podcastName: "hakapit" | "balcony-albums" | "nitk";
-}) {
+export function TwitterTimelineEmbed({ podcastName }: { podcastName: "hakapit" | "balcony-albums" | "nitk" }) {
 	const handle = getHandle(podcastName);
 	return (
 		<Suspense fallback={null}>

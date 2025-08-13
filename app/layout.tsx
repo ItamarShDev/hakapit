@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { SafeViewTransition } from "./components/safe-view-transition";
 import { AnalyticsWrapper } from "~/components/analytics";
 import { NavigationProgress } from "./components/navigation-progress";
+import { SafeViewTransition } from "./components/safe-view-transition";
 import "./globals.css";
 import "./styles.css";
 export const viewport: Viewport = {
@@ -33,17 +33,13 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="he" suppressHydrationWarning>
 			<head>
 				<meta name="apple-mobile-web-app-title" content="הכפית" />
 			</head>
-						<body className="hakapit" suppressHydrationWarning>
+			<body className="hakapit" suppressHydrationWarning>
 				<NavigationProgress />
 				<SafeViewTransition name="page">{children}</SafeViewTransition>
 				<AnalyticsWrapper />
