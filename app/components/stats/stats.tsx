@@ -29,7 +29,13 @@ function StatsSkeleton({ leagueId }: { leagueId: string }) {
 	return (
 		<div className="flex flex-col" key={leagueId}>
 			<div className="bg-accent text-slate-900 flex items-center justify-center gap-8 p-3">
-				<Image className="h-[50px]" src={`https://crests.football-data.org/${leagueId}.png`} alt="league logo" />
+				<Image
+					className="h-[50px] w-[50px]"
+					width={50}
+					height={50}
+					src={`https://crests.football-data.org/${leagueId}.png`}
+					alt="league logo"
+				/>
 				<div className="font-bold">טוען טורניר</div>
 			</div>
 		</div>

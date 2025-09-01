@@ -31,9 +31,21 @@ export const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-y-0 left-0 sm:right-0 sm:left-auto z-50 flex h-full w-screen sm:w-96 flex-col border-r sm:border-l sm:border-r-0 bg-popover text-popover-foreground",
-        "transition data-[state=open]:animate-in data-[state=closed]:animate-out",
-        "data-[state=closed]:slide-out-to-left-2 data-[state=open]:slide-in-from-left-2 sm:data-[state=closed]:slide-out-to-right-2 sm:data-[state=open]:slide-in-from-right-2",
+        // base
+        "fixed z-50 flex bg-popover text-popover-foreground transition",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out",
+        // right side drawer
+        "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0",
+        "data-[vaul-drawer-direction=right]:h-full data-[vaul-drawer-direction=right]:w-96",
+        "data-[vaul-drawer-direction=right]:flex-col",
+        "data-[vaul-drawer-direction=right]:border-l",
+        "data-[vaul-drawer-direction=right]:data-[state=open]:slide-in-from-right-2 data-[vaul-drawer-direction=right]:data-[state=closed]:slide-out-to-right-2",
+        // bottom drawer
+        "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0",
+        "data-[vaul-drawer-direction=bottom]:w-full data-[vaul-drawer-direction=bottom]:h-5/6",
+        "data-[vaul-drawer-direction=bottom]:flex-col",
+        "data-[vaul-drawer-direction=bottom]:border-t",
+        "data-[vaul-drawer-direction=bottom]:data-[state=open]:slide-in-from-bottom-2 data-[vaul-drawer-direction=bottom]:data-[state=closed]:slide-out-to-bottom-2",
         className
       )}
       {...props}
@@ -52,10 +64,18 @@ export function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLD
   return <div className={cn("mt-auto flex items-center gap-2 p-4", className)} {...props} />
 }
 
-export function DrawerTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h2 className={cn("text-lg font-semibold leading-none tracking-tight", className)} {...props} />
-}
+export const DrawerTitle = React.forwardRef<
+  React.ElementRef<typeof DrawerPrimitive.Title>,
+  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>
+>(({ className, ...props }, ref) => (
+  <DrawerPrimitive.Title ref={ref} className={cn("text-lg font-semibold leading-none tracking-tight", className)} {...props} />
+))
+DrawerTitle.displayName = DrawerPrimitive.Title.displayName
 
-export function DrawerDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("text-sm text-muted-foreground", className)} {...props} />
-}
+export const DrawerDescription = React.forwardRef<
+  React.ElementRef<typeof DrawerPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>
+>(({ className, ...props }, ref) => (
+  <DrawerPrimitive.Description ref={ref} className={cn("text-sm text-muted-foreground", className)} {...props} />
+))
+DrawerDescription.displayName = DrawerPrimitive.Description.displayName

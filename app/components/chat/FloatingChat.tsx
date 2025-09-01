@@ -1,11 +1,5 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
-import { CornerDownLeft, X } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useRef } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -17,12 +11,20 @@ import {
 	DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Textarea } from "@/components/ui/textarea";
+import { useChat } from "@ai-sdk/react";
+import { CornerDownLeft, X } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { getDirectionFromText } from "~/utils/text-direction";
+import { useIsDesktop } from "@/lib/use-is-desktop";
 
 export function FloatingChat() {
 	const { messages, input, setInput, status, append } = useChat();
 	const contentRef = useRef<HTMLDivElement>(null);
 	const inputDir = getDirectionFromText(input);
+	const isDesktop = useIsDesktop();
 
 	// The most recent user message id (used to show the loader next to it while waiting for an answer)
 	const lastUserMessageId = [...messages].reverse().find((m) => m.role === "user")?.id;
@@ -48,19 +50,27 @@ export function FloatingChat() {
 		}
 	}, [messages]);
 	return (
-		<div className="fixed bottom-4 left-4 z-50">
-			<Drawer direction="right">
+		<div className={`fixed ${isDesktop ? 'bottom-4 left-4' : 'bottom-0 left-0 right-0 px-4 pb-4'} z-50`}>
+			<Drawer direction={isDesktop ? "right" : "bottom"}>
 				<DrawerTrigger asChild>
-					<Button size="lg" className="text-accent hover:bg-accent hover:text-primary rounded">
+					<Button 
+						size="lg" 
+						className={`text-accent hover:bg-accent hover:text-primary rounded-full ${!isDesktop ? 'w-full py-6' : ''}`}
+					>
 						שאל אותי על ליברפול
 					</Button>
 				</DrawerTrigger>
 				<DrawerContent>
 					<DrawerHeader dir="rtl" className="flex flex-col border-b border-slate-600">
-						<DrawerTitle className="flex items-center justify-between">
-							Liver-Chat
+						<DrawerTitle className="relative flex items-center justify-center sm:justify-between text-accent">
+							<span className="mx-auto">Liver-Chat</span>
 							<DrawerClose asChild>
-								<Button variant="ghost" size="icon" aria-label="סגור" className="hover:grow">
+								<Button
+									variant="ghost"
+									size="icon"
+									aria-label="סגור"
+									className="text-accent hover:bg-accent/10 absolute right-0 sm:static"
+								>
 									<X className="h-5 w-5" />
 								</Button>
 							</DrawerClose>
@@ -94,7 +104,7 @@ export function FloatingChat() {
 							if (message.role === "user") {
 								const dir = getDirectionFromText(message.content);
 								return (
-									<p
+									<div
 										className="flex items-center gap-2 text-accent py-4 sticky top-0 bg-popover"
 										key={message.id}
 										dir={dir}
@@ -112,7 +122,7 @@ export function FloatingChat() {
 												/>
 											</div>
 										)}
-									</p>
+									</div>
 								);
 							}
 							return null;
@@ -126,7 +136,8 @@ export function FloatingChat() {
 							}}
 							onKeyDown={handleKeyDown}
 							placeholder="הקלד שאלה..."
-							className={`pr-10 border-0 text-accent bg-transparent text-right ${inputDir === "rtl" ? "text-left" : "text-right"}`}
+							dir={inputDir}
+							className={`pr-10 border-0 text-accent bg-transparent ${inputDir === "ltr" ? "text-left" : "text-right"}`}
 							disabled={status === "streaming" || status === "submitted"}
 						/>
 						<Button

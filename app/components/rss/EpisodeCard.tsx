@@ -50,6 +50,7 @@ export function LastEpisodeCardPreview({ episode }: { episode: EpisodeData }) {
 							src={episode?.imageUrl}
 							alt="episode"
 							priority={true}
+							sizes="(min-width: 768px) 56px, 80px"
 							fill={true}
 							className=" brightness-40 filter -z-0 absolute object-cover object-top"
 						/>

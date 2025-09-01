@@ -9,6 +9,8 @@ export default function Episode({ data }: { data: DBEpisode }) {
 					src={data.imageUrl}
 					className="top-0 right-0 z-0 faded-image-vertical lg:no-mask max-h-96 max-w-full rounded-2xl"
 					alt="episode"
+					width={384}
+					height={384}
 				/>
 			)}
 			<div className="flex flex-col max-w-full gap-3 p-2 -translate-y-32 lg:p-8 lg:translate-y-0">

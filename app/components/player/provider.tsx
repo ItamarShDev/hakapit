@@ -32,7 +32,15 @@ const Player = forwardRef(function Player(
 	return (
 		<div className={`bottom-0 left-0 flex flex-col w-full p-2 bg-primary ${episode ? "fixed z-50" : "hidden"}`}>
 			<div className="flex flex-row items-start py-2">
-				{episode?.imageUrl && <Image src={episode?.imageUrl} alt="episode" className="object-cover object-top w-16" />}
+				{episode?.imageUrl && (
+					<Image
+						src={episode?.imageUrl}
+						alt="episode"
+						className="object-cover object-top w-16 h-16"
+						width={64}
+						height={64}
+					/>
+				)}
 				<div className="flex flex-col flex-1 px-4 leading-7">
 					<p className="text-lg text-white">{episode?.title}</p>
 					<p className="text-slate-300">{episode?.podcast?.title}</p>

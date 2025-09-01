@@ -1,4 +1,5 @@
 export function getDirectionFromText(text: string): "rtl" | "ltr" {
+	if (!text) return "rtl";
 	// Detect any RTL script characters (Hebrew, Arabic, etc.)
 	// Hebrew: \u0590-\u05FF, Arabic: \u0600-\u06FF, extended Arabic: \u0750-\u077F
 	// Arabic Presentation Forms: \uFB50-\uFDFF and \uFE70-\uFEFF

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { subscribeUser, unsubscribeUser } from "~/actions/push";
 
 function urlBase64ToUint8Array(base64String: string) {
@@ -17,45 +18,67 @@ function urlBase64ToUint8Array(base64String: string) {
 	return outputArray;
 }
 
+function showErrorToast() {
+	toast("הפעלת התראות נכשלה", {
+		description: "אירעה שגיאה בהפעלת התראות",
+	});
+}
+
 function usePushNotifications() {
 	const [isSupported, setIsSupported] = useState(false);
 	const [subscription, setSubscription] = useState<PushSubscription | null>(null);
+	const [permission, setPermission] = useState<NotificationPermission | "unsupported">("default");
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: no need to pass registerServiceWorker to useEffect
 	useEffect(() => {
-		if ("serviceWorker" in navigator && "PushManager" in window) {
-			setIsSupported(true);
+		const swSupported = "serviceWorker" in navigator && "PushManager" in window;
+		setIsSupported(swSupported);
+		if (typeof window !== "undefined" && "Notification" in window) {
+			setPermission(Notification.permission);
+		} else {
+			setPermission("unsupported");
+		}
+		if (swSupported) {
 			registerServiceWorker();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	async function registerServiceWorker() {
-		const registration = await navigator.serviceWorker.register("/sw.js", {
-			scope: "/",
-			updateViaCache: "none",
-		});
-		const sub = await registration.pushManager.getSubscription();
-		const serviceWorkerRegistration = await navigator.serviceWorker.ready;
+		try {
+			const registration = await navigator.serviceWorker.register("/sw.js", {
+				scope: "/",
+				updateViaCache: "none",
+			});
+			const sub = await registration.pushManager.getSubscription();
+			const serviceWorkerRegistration = await navigator.serviceWorker.ready;
 
-		if ("periodicSync" in serviceWorkerRegistration) {
-			try {
-				// @ts-ignore
-				await serviceWorkerRegistration.periodicSync.register("fetch-latest-episode", {
-					minInterval: 6 * 60 * 60 * 1000, // 1 hour in ms
-				});
-				// @ts-ignore
-				await serviceWorkerRegistration.periodicSync.register("new-transfers", {
-					minInterval: 60 * 60 * 1000, // 3 hours in ms
-				});
-				setSubscription(sub);
-			} catch (e) {
-				console.error(e);
+			if ("periodicSync" in serviceWorkerRegistration) {
+				try {
+					// @ts-ignore
+					await serviceWorkerRegistration.periodicSync.register("fetch-latest-episode", {
+						minInterval: 6 * 60 * 60 * 1000, // 1 hour in ms
+					});
+					// @ts-ignore
+					await serviceWorkerRegistration.periodicSync.register("new-transfers", {
+						minInterval: 60 * 60 * 1000, // 3 hours in ms
+					});
+					setSubscription(sub);
+				} catch (e) {
+					console.error(e);
+					showErrorToast();
+				}
 			}
+		} catch (e) {
+			console.error("Failed to register service worker:", e);
+			showErrorToast();
 		}
 	}
 
 	async function subscribeToPush() {
+		if (permission !== "granted") {
+			return; // guard against NotAllowedError
+		}
 		if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) {
 			throw new Error("VAPID public key not found");
 		}
@@ -69,6 +92,20 @@ function usePushNotifications() {
 		await subscribeUser(serializedSub);
 	}
 
+	async function requestPermission() {
+		if (typeof window === "undefined" || !("Notification" in window)) return;
+		try {
+			const result = await Notification.requestPermission();
+			setPermission(result);
+			if (result === "granted") {
+				await subscribeToPush();
+			}
+		} catch (e) {
+			console.error("Permission request failed:", e);
+			showErrorToast();
+		}
+	}
+
 	async function unsubscribeFromPush() {
 		if (subscription) {
 			await subscription.unsubscribe();
@@ -80,26 +117,32 @@ function usePushNotifications() {
 	return {
 		isSupported,
 		subscription,
+		permission,
 		subscribeToPush,
 		unsubscribeFromPush,
+		requestPermission,
 	};
 }
 
 export function PushNotificationManager() {
-	const { isSupported, subscription, subscribeToPush, unsubscribeFromPush } = usePushNotifications();
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies:  subscribeToPush
-	useEffect(() => {
-		subscribeToPush();
-	}, []);
+	const { isSupported, subscription, permission, subscribeToPush, unsubscribeFromPush, requestPermission } =
+		usePushNotifications();
 
 	if (!isSupported) {
 		return null;
 	}
 
+	if (permission === "denied") {
+		return null;
+	}
+
 	return (
 		<div>
-			{subscription ? (
+			{permission !== "granted" ? (
+				<Button type="button" variant="link" className="text-accent h-0" onClick={requestPermission}>
+					הפעל התראות
+				</Button>
+			) : subscription ? (
 				<Button type="button" variant="link" className="text-accent h-0" onClick={unsubscribeFromPush}>
 					ביטול הרשמה
 				</Button>
