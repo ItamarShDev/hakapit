@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
+import type { Match, TeamMatches } from "./types/team-matches";
 import { getFirstMatch } from "./utils";
-import type { TeamMatches, Match } from "./types/team-matches";
 
 const mockMatch: Match = {
 	id: 1,
@@ -13,10 +13,10 @@ const mockMatch: Match = {
 	homeTeam: { id: 64, name: "Liverpool FC", shortName: "Liverpool", tla: "LIV", crest: "" },
 	awayTeam: { id: 58, name: "Aston Villa FC", shortName: "Aston Villa", tla: "AVL", crest: "" },
 	score: {
-		winner: null,
+		winner: undefined,
 		duration: "REGULAR",
-		fullTime: { home: null, away: null },
-		halfTime: { home: null, away: null },
+		fullTime: { home: undefined, away: undefined },
+		halfTime: { home: undefined, away: undefined },
 	},
 	odds: { msg: "Activate Odds-Package in User-Panel to retrieve odds." },
 	referees: [],

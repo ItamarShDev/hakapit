@@ -70,7 +70,7 @@ export async function NextMatchOverviewClient({ data }: { data: Awaited<ReturnTy
 						team={nextGame.awayTeam}
 						isRunning={nextGame.status === "LIVE"}
 						iconPosition="after"
-						score={getDisplayScore(nextGame.score, "away")}
+						score={getDisplayScore(nextGame.score, "away") ?? undefined}
 					/>
 					<div>
 						<Form form={awayForm} />
@@ -86,7 +86,7 @@ export async function NextMatchOverviewClient({ data }: { data: Awaited<ReturnTy
 					<TeamStatus
 						team={nextGame.homeTeam}
 						isRunning={nextGame.status === "LIVE"}
-						score={getDisplayScore(nextGame.score, "home")}
+						score={getDisplayScore(nextGame.score, "home") ?? undefined}
 					/>
 					<div>
 						<Form form={homeForm} />

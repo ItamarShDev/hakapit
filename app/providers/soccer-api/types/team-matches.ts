@@ -81,20 +81,20 @@ export interface Team {
 }
 
 export interface Score {
-	winner?: string;
+	winner?: string | null;
 	duration: string;
 	fullTime: FullTime;
 	halfTime: HalfTime;
 }
 
 export interface FullTime {
-	home?: number;
-	away?: number;
+	home?: number | null;
+	away?: number | null;
 }
 
 export interface HalfTime {
-	home?: number;
-	away?: number;
+	home?: number | null;
+	away?: number | null;
 }
 
 export interface Odds {
