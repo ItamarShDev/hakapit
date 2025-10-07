@@ -1,10 +1,10 @@
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
+import { cn } from "@/lib/utils";
 import { EpisodeCard } from "~/components/rss/EpisodeCard";
 import ShowMore from "~/components/rss/feed/ShowMore.client";
 import { amaticSc } from "~/fonts";
-import { type PodcastName, fetchUpdatedFeed } from "~/providers/rss/feed";
+import { fetchUpdatedFeed, type PodcastName } from "~/providers/rss/feed";
 
 async function MasonryFeed({ limit = 1, podcast }: { limit?: number; podcast: PodcastName }) {
 	const data = await fetchUpdatedFeed(podcast, limit);
@@ -48,7 +48,7 @@ export async function PreviewPage({ limit = 1, podcast }: { limit?: number; podc
 	return (
 		<>
 			<Preview limit={limit} podcast={podcast} />
-			<Link href={`${podcast}/episodes`} className={"text-xl lg:text-sm text-accent"}>
+			<Link prefetch={true} href={`${podcast}/episodes`} className={"text-xl lg:text-sm text-accent"}>
 				לכל הפרקים
 			</Link>
 		</>

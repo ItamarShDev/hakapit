@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function ShowMore({ limit = 1, currentLimit = 1 }: { limit?: number; currentLimit?: number }) {
 	const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +15,7 @@ export default function ShowMore({ limit = 1, currentLimit = 1 }: { limit?: numb
 	}
 	return (
 		<Link
+			prefetch={true}
 			href={`?limit=${limit + 10}`}
 			replace
 			className={cn("text-xl lg:text-sm text-accent", isLoading && "animate animate-pulse")}

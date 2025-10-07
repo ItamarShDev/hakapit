@@ -1,12 +1,12 @@
 "use client";
 
+import { PauseIcon, PlayIcon } from "@radix-ui/react-icons";
+import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { PauseIcon, PlayIcon } from "@radix-ui/react-icons";
-import Image from "next/image";
-import Link from "next/link";
 import { usePlayer } from "~/components/player/provider";
 import { heebo } from "~/fonts";
 import { type EpisodeData, toDateString } from "~/utils";
@@ -59,7 +59,11 @@ export function LastEpisodeCardPreview({ episode }: { episode: EpisodeData }) {
 				</Button>
 			)}
 			<div className="text-accent flex flex-col items-start">
-				<Link className="md:text-lg text-xl" href={`/${episode?.podcast?.name}/episodes/${episode?.episodeNumber}`}>
+				<Link
+					prefetch={true}
+					className="md:text-lg text-xl"
+					href={`/${episode?.podcast?.name}/episodes/${episode?.episodeNumber}`}
+				>
 					{episode?.title}
 				</Link>
 				<div className="text-muted flex items-start gap-3 text-sm">

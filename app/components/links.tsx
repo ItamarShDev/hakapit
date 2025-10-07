@@ -1,7 +1,8 @@
 "use client";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+
 function LinkItem({
 	href,
 	label,
@@ -16,7 +17,7 @@ function LinkItem({
 	const pathname = usePathname();
 	return (
 		<>
-			<Link onClick={onSelect} href={href} className={cn(pathname === href && "underline")}>
+			<Link prefetch={true} onClick={onSelect} href={href} className={cn(pathname === href && "underline")}>
 				{label}
 			</Link>
 			{withBorder && <span className="text-accent lg:inline-block hidden">|</span>}
