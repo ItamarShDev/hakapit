@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { cache, Suspense } from "react";
 import { cn } from "@/lib/utils";
 import { EpisodeCard } from "~/components/rss/EpisodeCard";
-import ShowMore from "~/components/rss/feed/ShowMore.client";
+import StatefulLink from "~/components/StatefulLink.client";
 import { amaticSc } from "~/fonts";
 import { fetchUpdatedFeed, type PodcastName } from "~/providers/rss/feed";
 
@@ -18,7 +17,7 @@ async function MasonryFeed({ limit = 1, podcast }: { limit?: number; podcast: Po
 					<EpisodeCard key={episode.guid} episode={episode} />
 				))}
 			</div>
-			<ShowMore limit={limit} currentLimit={data?.episodes.length || 0} />
+			<StatefulLink href={`/${podcast}/episodes?limit=${limit + 5}`}>הצג עוד</StatefulLink>
 		</Suspense>
 	);
 }
@@ -50,9 +49,9 @@ export async function PreviewPage({ limit = 1, podcast }: { limit?: number; podc
 	return (
 		<>
 			<Preview limit={limit} podcast={podcast} />
-			<Link prefetch={true} href={`${podcast}/episodes`} className={"text-xl lg:text-sm text-accent"}>
+			<StatefulLink href={`/${podcast}/episodes`} className={"text-xl lg:text-sm text-accent"}>
 				לכל הפרקים
-			</Link>
+			</StatefulLink>
 		</>
 	);
 }
