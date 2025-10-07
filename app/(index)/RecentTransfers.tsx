@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { getTransferData } from "~/providers/football-api";
@@ -27,8 +28,10 @@ function TransferView({ transfer }: { transfer: Awaited<ReturnType<typeof getTra
 	);
 }
 
+const getLatestTransfers = cache(getTransferData);
+
 export async function RecentTransfers() {
-	const transfers = await getTransferData();
+	const transfers = await getLatestTransfers();
 	if (!transfers) return null;
 
 	// sort by date descending (most recent first)

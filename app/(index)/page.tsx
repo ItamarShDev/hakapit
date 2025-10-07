@@ -1,5 +1,5 @@
 import type { Viewport } from "next";
-import { Suspense } from "react";
+import { cache, Suspense } from "react";
 import { FloatingChat } from "~/components/chat/FloatingChat";
 import { NextMatchOverview } from "~/components/next-match";
 import { LastEpisodeCardPreview } from "~/components/rss/EpisodeCard";
@@ -17,8 +17,10 @@ export const viewport: Viewport = {
 	colorScheme: "dark light",
 };
 
+const getLatestEpisode = cache(fetchLatestEpisode);
+
 async function LatestEpisode() {
-	const episode = await fetchLatestEpisode("hakapit");
+	const episode = await getLatestEpisode("hakapit");
 	if (!episode) {
 		return null;
 	}

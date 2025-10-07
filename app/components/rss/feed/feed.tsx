@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { Suspense } from "react";
+import { cache, Suspense } from "react";
 import { cn } from "@/lib/utils";
 import { EpisodeCard } from "~/components/rss/EpisodeCard";
 import ShowMore from "~/components/rss/feed/ShowMore.client";
 import { amaticSc } from "~/fonts";
 import { fetchUpdatedFeed, type PodcastName } from "~/providers/rss/feed";
 
+const getFeed = cache(fetchUpdatedFeed);
+
 async function MasonryFeed({ limit = 1, podcast }: { limit?: number; podcast: PodcastName }) {
-	const data = await fetchUpdatedFeed(podcast, limit);
+	const data = await getFeed(podcast, limit);
 
 	return (
 		<Suspense fallback={null}>
@@ -21,7 +23,7 @@ async function MasonryFeed({ limit = 1, podcast }: { limit?: number; podcast: Po
 	);
 }
 async function Preview({ limit = 1, podcast }: { limit?: number; podcast: PodcastName }) {
-	const data = await fetchUpdatedFeed(podcast, limit);
+	const data = await getFeed(podcast, limit);
 
 	return (
 		<Suspense fallback={null}>
