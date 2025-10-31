@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useChat } from "@ai-sdk/react";
 import { CornerDownLeft, X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getDirectionFromText } from "~/utils/text-direction";
@@ -25,20 +25,40 @@ export function FloatingChat() {
 	const contentRef = useRef<HTMLDivElement>(null);
 	const inputDir = getDirectionFromText(input);
 	const isDesktop = useIsDesktop();
+	const [sendError, setSendError] = useState<string | null>(null);
 
 	// The most recent user message id (used to show the loader next to it while waiting for an answer)
 	const lastUserMessageId = [...messages].reverse().find((m) => m.role === "user")?.id;
 
-	const handleSendMessage = () => {
-		append({
-			role: "user",
-			content: input,
-		});
+	const handleSendMessage = async () => {
+		if (!input.trim()) return;
+		if (status === "streaming" || status === "submitted") return;
+		
+		// Clear any previous error
+		setSendError(null);
+		
+		try {
+			const result = append({
+				role: "user",
+				content: input,
+			});
+			
+			// append() might be sync or async, handle both cases
+			if (result && typeof result.then === 'function') {
+				await result;
+			}
+			
+			setInput("");
+		} catch (error) {
+			console.error("Failed to send message:", error);
+			setSendError("אירעה שגיאה בשליחת ההודעה. אנא נסה שוב.");
+			// Input remains intact if sending fails, allowing user to retry
+		}
 	};
 
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-		if (event.key === "Enter") {
-			setInput("");
+		if (event.key === "Enter" && !event.shiftKey) {
+			event.preventDefault();
 			handleSendMessage();
 		}
 	};
@@ -128,6 +148,11 @@ export function FloatingChat() {
 							return null;
 						})}
 					</div>
+					{sendError && (
+						<div className="px-4 py-2 text-red-500 text-sm text-center" dir="rtl">
+							{sendError}
+						</div>
+					)}
 					<div className="p-2 flex flex-row border-t">
 						<Textarea
 							value={input}
