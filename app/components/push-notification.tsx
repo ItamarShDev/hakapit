@@ -55,11 +55,11 @@ function usePushNotifications() {
 
 			if ("periodicSync" in serviceWorkerRegistration) {
 				try {
-					// @ts-ignore
+					// @ts-expect-error
 					await serviceWorkerRegistration.periodicSync.register("fetch-latest-episode", {
 						minInterval: 6 * 60 * 60 * 1000, // 1 hour in ms
 					});
-					// @ts-ignore
+					// @ts-expect-error
 					await serviceWorkerRegistration.periodicSync.register("new-transfers", {
 						minInterval: 60 * 60 * 1000, // 3 hours in ms
 					});

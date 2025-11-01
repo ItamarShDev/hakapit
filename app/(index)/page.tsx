@@ -51,7 +51,9 @@ export default async function Index() {
 				<NextMatchOverview />
 				<StatsTable />
 			</div>
-			<FloatingChat />
+			<Suspense fallback={null}>
+				<FloatingChat />
+			</Suspense>
 		</section>
 	);
 }

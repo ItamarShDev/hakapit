@@ -39,7 +39,6 @@ export function useChat() {
 
 			while (true) {
 				const { done, value } = await reader.read();
-				console.log(value);
 				if (done) break;
 
 				const chunk = decoder.decode(value);

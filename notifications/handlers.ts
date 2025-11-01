@@ -13,7 +13,7 @@ export async function sendNotification(userId: string, title: string, message: s
 
 	try {
 		await webpush.sendNotification(
-			// @ts-ignore
+			// @ts-expect-error
 			subscription.subscription,
 			JSON.stringify({
 				title,

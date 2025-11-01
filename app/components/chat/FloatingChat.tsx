@@ -1,5 +1,11 @@
 "use client";
 
+import { useChat } from "@ai-sdk/react";
+import { CornerDownLeft, X } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -11,14 +17,8 @@ import {
 	DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Textarea } from "@/components/ui/textarea";
-import { useChat } from "@ai-sdk/react";
-import { CornerDownLeft, X } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { getDirectionFromText } from "~/utils/text-direction";
 import { useIsDesktop } from "@/lib/use-is-desktop";
+import { getDirectionFromText } from "~/utils/text-direction";
 
 export function FloatingChat() {
 	const { messages, input, setInput, status, append } = useChat();
@@ -33,21 +33,21 @@ export function FloatingChat() {
 	const handleSendMessage = async () => {
 		if (!input.trim()) return;
 		if (status === "streaming" || status === "submitted") return;
-		
+
 		// Clear any previous error
 		setSendError(null);
-		
+
 		try {
 			const result = append({
 				role: "user",
 				content: input,
 			});
-			
+
 			// append() might be sync or async, handle both cases
-			if (result && typeof result.then === 'function') {
+			if (result && typeof result.then === "function") {
 				await result;
 			}
-			
+
 			setInput("");
 		} catch (error) {
 			console.error("Failed to send message:", error);
@@ -70,12 +70,12 @@ export function FloatingChat() {
 		}
 	}, [messages]);
 	return (
-		<div className={`fixed ${isDesktop ? 'bottom-4 left-4' : 'bottom-0 left-0 right-0 px-4 pb-4'} z-50`}>
+		<div className={`fixed ${isDesktop ? "bottom-4 left-4" : "bottom-0 left-0 right-0 px-4 pb-4"} z-50`}>
 			<Drawer direction={isDesktop ? "right" : "bottom"}>
 				<DrawerTrigger asChild>
-					<Button 
-						size="lg" 
-						className={`text-accent hover:bg-accent hover:text-primary rounded-full ${!isDesktop ? 'w-full py-6' : ''}`}
+					<Button
+						size="lg"
+						className={`text-accent hover:bg-accent hover:text-primary rounded-full ${!isDesktop ? "w-full py-6" : ""}`}
 					>
 						שאל אותי על ליברפול
 					</Button>

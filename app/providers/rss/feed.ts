@@ -106,7 +106,6 @@ export async function fetchFeed(podcast: PodcastName, number = 5) {
 }
 export async function fetchUpdatedFeed(podcast: PodcastName, number = 5) {
 	const isDev = process.env.NODE_ENV === "development";
-	if (isDev) console.time(`rss-update-${podcast}`);
 	// Check if podcast data was updated recently to avoid excessive RSS fetches
 	const podcastData = await db.query.podcasts.findFirst({
 		where: eq(podcasts.name, podcast),
@@ -114,15 +113,10 @@ export async function fetchUpdatedFeed(podcast: PodcastName, number = 5) {
 	const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
 	if (podcastData?.updatedAt && podcastData.updatedAt > oneHourAgo) {
-		if (isDev) {
-			console.log(`RSS cache hit for ${podcast} - data is fresh`);
-			console.timeEnd(`rss-update-${podcast}`);
-		}
 		// Data is fresh, return directly
 		return await fetchFeed(podcast, number);
 	}
 
-	if (isDev) console.log(`RSS cache miss for ${podcast} - updating feed`);
 	// For serverless environments, we need to update synchronously but efficiently
 	// Consider implementing a cron job for better performance
 	await getCachedUpdateFeedInDb(podcast);
