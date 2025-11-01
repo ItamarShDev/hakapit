@@ -53,7 +53,9 @@ export async function NextMatchOverviewClient({ data }: { data: Awaited<ReturnTy
 
 	return (
 		<FullBleed>
-			<div className="text-slate-200 text-sm">{nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}</div>
+			<div className="flex items-center justify-between">
+				<div className="text-slate-200 text-sm">{nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}</div>
+			</div>
 			<div className="flex flex-row-reverse items-center justify-center gap-2">
 				<Image
 					className="h-[20px]"

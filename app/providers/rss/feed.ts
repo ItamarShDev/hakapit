@@ -1,5 +1,6 @@
 "use server";
 import { desc, eq, ilike, like } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 import { db } from "~/db/config";
 import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema";
 import { fetch_rss } from "~/providers/rss/fetch-rss";
@@ -24,6 +25,24 @@ async function fetchRSSFeed(podcast: PodcastName, number = 5): Promise<Feed> {
 	const rss = await _fetch(podcast);
 	return sliceFeedItems(rss as Feed, number);
 }
+async function getCachedUpdateFeedInDb(feedName: PodcastName) {
+	"use cache";
+	cacheLife({ revalidate: 3600 }); // 1 hour for RSS updates
+	cacheTag(`rss-${feedName}`);
+	return await updateFeedInDb(feedName);
+}
+
+async function getCachedFetchFeed(podcast: PodcastName, number = 5) {
+	"use cache";
+	cacheLife({ revalidate: 6000 }); // 100 minutes to match original revalidate
+	cacheTag(`rss-${podcast}`);
+	const limit = number > 0 ? { limit: number } : {};
+	return await db.query.podcasts.findFirst({
+		where: eq(podcasts.name, podcast),
+		with: { episodes: { ...limit, orderBy: [desc(episodes.episodeNumber)], with: { podcast: true } } },
+	});
+}
+
 async function updateFeedInDb(feedName: PodcastName) {
 	const feed = await fetchRSSFeed(feedName, 0);
 
@@ -83,13 +102,31 @@ export async function fetchEpisode(episodeID: string) {
 }
 
 export async function fetchFeed(podcast: PodcastName, number = 5) {
-	const limit = number > 0 ? { limit: number } : {};
-	return await db.query.podcasts.findFirst({
-		where: eq(podcasts.name, podcast),
-		with: { episodes: { ...limit, orderBy: [desc(episodes.episodeNumber)], with: { podcast: true } } },
-	});
+	return await getCachedFetchFeed(podcast, number);
 }
 export async function fetchUpdatedFeed(podcast: PodcastName, number = 5) {
-	await updateFeedInDb(podcast);
-	return await fetchFeed(podcast, number);
+	const isDev = process.env.NODE_ENV === "development";
+	if (isDev) console.time(`rss-update-${podcast}`);
+	// Check if podcast data was updated recently to avoid excessive RSS fetches
+	const podcastData = await db.query.podcasts.findFirst({
+		where: eq(podcasts.name, podcast),
+	});
+	const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+	if (podcastData?.updatedAt && podcastData.updatedAt > oneHourAgo) {
+		if (isDev) {
+			console.log(`RSS cache hit for ${podcast} - data is fresh`);
+			console.timeEnd(`rss-update-${podcast}`);
+		}
+		// Data is fresh, return directly
+		return await fetchFeed(podcast, number);
+	}
+
+	if (isDev) console.log(`RSS cache miss for ${podcast} - updating feed`);
+	// For serverless environments, we need to update synchronously but efficiently
+	// Consider implementing a cron job for better performance
+	await getCachedUpdateFeedInDb(podcast);
+	const result = await fetchFeed(podcast, number);
+	if (isDev) console.timeEnd(`rss-update-${podcast}`);
+	return result;
 }

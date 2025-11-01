@@ -1,11 +1,12 @@
 "use server";
 
+import { cacheLife, cacheTag } from "next/cache";
 import { LiverpoolId } from "~/providers/soccer-api/constants";
 import type { League } from "~/providers/soccer-api/types/league";
 import type { Team } from "~/providers/soccer-api/types/team";
 import type { TeamMatches } from "~/providers/soccer-api/types/team-matches";
 
-async function getData<T>(path: string, revalidate = 300) {
+async function getData<T>(path: string) {
 	if (!process.env.FOOTBALL_DATA_API_KEY) {
 		throw new Error("FOOTBALL_DATA_API_KEY not found");
 	}
@@ -15,7 +16,6 @@ async function getData<T>(path: string, revalidate = 300) {
 			headers: {
 				"X-Auth-Token": process.env.FOOTBALL_DATA_API_KEY,
 			},
-			next: { revalidate }, // Use Next.js 13+ revalidation
 		});
 
 		if (!response.ok) {
@@ -30,28 +30,38 @@ async function getData<T>(path: string, revalidate = 300) {
 	}
 }
 
-export async function getNextGames(revalidate = 60) {
-	// More frequent updates for next games
-	return await getData<TeamMatches>(`teams/${LiverpoolId}/matches?status=SCHEDULED`, revalidate);
+export async function getNextGames() {
+	"use cache";
+	cacheLife("minutes");
+	cacheTag("games-liverpool");
+	return await getData<TeamMatches>(`teams/${LiverpoolId}/matches?status=SCHEDULED`);
 }
 
-export async function getTeamPastMatches(id = LiverpoolId, revalidate = 300) {
-	return await getData<TeamMatches>(`teams/${id}/matches?status=FINISHED&limit=5`, revalidate);
+export async function getTeamPastMatches(id = LiverpoolId) {
+	"use cache";
+	cacheLife("days");
+	cacheTag(`games-${id}-past`);
+	return await getData<TeamMatches>(`teams/${id}/matches?status=FINISHED&limit=5`);
 }
 
-export async function getTeam(id = LiverpoolId, revalidate = 3600) {
-	// Cache team data for longer
-	return await getData<Team>(`teams/${id}`, revalidate);
+export async function getTeam(id = LiverpoolId) {
+	"use cache";
+	cacheLife("days");
+	cacheTag(`team-${id}`);
+	return await getData<Team>(`teams/${id}`);
 }
 
-export async function getLeague(league: string, revalidate = 300) {
-	return await getData<League>(`competitions/${league}/standings`, revalidate);
+export async function getLeague(league: string) {
+	"use cache";
+	cacheLife("hours");
+	cacheTag(`league-${league}`);
+	return await getData<League>(`competitions/${league}/standings`);
 }
 
 import { getFirstMatch } from "./utils";
 
-export async function getNextMatchData(revalidate = 60) {
-	const nextGames = await getNextGames(revalidate);
+export async function getNextMatchData() {
+	const nextGames = await getNextGames();
 	const matchDetails = getFirstMatch(nextGames);
 	return { matchDetails };
 }

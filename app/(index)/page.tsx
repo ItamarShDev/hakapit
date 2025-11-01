@@ -8,8 +8,6 @@ import { Trophies } from "~/components/stats/trophies";
 import { fetchLatestEpisode } from "~/providers/rss/feed";
 import { RecentTransfers } from "./RecentTransfers";
 
-export const revalidate = 300; // 5 minutes
-
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1.0,
@@ -41,7 +39,15 @@ export default async function Index() {
 						<LatestEpisode />
 					</Suspense>
 				</div>
-				<RecentTransfers />
+				<div className="flex flex-wrap justify-center">
+					<Suspense
+						fallback={
+							<div className="size-[88px] text-center  vertical-align-middle  text-slate-700 italic ">טוען העברות</div>
+						}
+					>
+						<RecentTransfers />
+					</Suspense>
+				</div>
 				<NextMatchOverview />
 				<StatsTable />
 			</div>

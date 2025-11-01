@@ -1,6 +1,6 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TeamTournamentInformation } from "~/components/stats/tables";
 import { getLeague, getTeam } from "~/providers/soccer-api";
 import type { League } from "~/providers/soccer-api/types/league";

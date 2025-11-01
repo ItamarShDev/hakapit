@@ -2,8 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
-import { type PodcastName, fetchFeed } from "~/providers/rss/feed";
-export const revalidate = 7200;
+import { fetchFeed, type PodcastName } from "~/providers/rss/feed";
 
 export const viewport: Viewport = {
 	width: "device-width",
@@ -49,7 +48,7 @@ function YouTubeChannel({ podcast }: { podcast: "hakapit" | "balcony-albums" | "
 						src="https://www.youtube.com/embed/videoseries?list=UULFbQOKsqsqd2QIAX8g9R0o4Q"
 						width="100%"
 						height="100%"
-						// @ts-ignore
+						// @ts-expect-error
 						gesture="media"
 						allow="encrypted-media"
 						allowFullScreen

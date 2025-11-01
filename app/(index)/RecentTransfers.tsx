@@ -1,10 +1,8 @@
-import { cache } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { getTransferData } from "~/providers/football-api";
-import { isTransferBuy } from "~/providers/football-api/utils";
+import { getCachedTransferData } from "~/providers/football-api";
 
-function TransferView({ transfer }: { transfer: Awaited<ReturnType<typeof getTransferData>>[number] }) {
+function TransferView({ transfer }: { transfer: Awaited<ReturnType<typeof getCachedTransferData>>[number] }) {
 	return (
 		<TooltipProvider>
 			<Tooltip>
@@ -28,22 +26,19 @@ function TransferView({ transfer }: { transfer: Awaited<ReturnType<typeof getTra
 	);
 }
 
-const getLatestTransfers = cache(getTransferData);
-
 export async function RecentTransfers() {
-	const transfers = await getLatestTransfers();
+	const transfers = await getCachedTransferData();
 	if (!transfers) return null;
 
 	// sort by date descending (most recent first)
 	const sortedTransfers = transfers
-		.filter((transfer) => isTransferBuy(transfer.type))
+		// .filter((transfer) => isTransferBuy(transfer.type)) // Temporarily disabled for debugging
 		.slice()
 		.sort((a, b) => {
 			const dateA = a.date ? new Date(a.date).getTime() : 0;
 			const dateB = b.date ? new Date(b.date).getTime() : 0;
 			return dateB - dateA;
 		});
-
 	const transferViews = sortedTransfers.map((transfer) => (
 		<li key={transfer.playerId}>
 			<TransferView transfer={transfer} />
@@ -51,7 +46,9 @@ export async function RecentTransfers() {
 	));
 	return (
 		<div className="flex flex-col gap-2 items-center">
-			<h2>העברות אחרונות</h2>
+			<div className="flex items-center gap-4">
+				<h2>העברות אחרונות</h2>
+			</div>
 			<ul className="flex flex-row gap-2 list-none">{transferViews}</ul>
 		</div>
 	);
