@@ -1,6 +1,5 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import Image from "next/image";
 
 export function Trophies() {
 	const trophies = [
@@ -26,10 +25,7 @@ export function Trophies() {
 							<Tooltip>
 								<TooltipTrigger>
 									<Avatar className="h-[50px] w-[50px]">
-										<Image
-											priority={true}
-											height={50}
-											width={50}
+										<AvatarImage
 											alt={leagueName}
 											src={`https://images.fotmob.com/image_resources/logo/leaguelogo/dark/${tournamentId}.png`}
 										/>

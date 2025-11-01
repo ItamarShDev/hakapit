@@ -1,4 +1,5 @@
 module.exports = {
+  cacheComponents: true,
   images: {
     remotePatterns: [
       {

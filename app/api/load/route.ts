@@ -1,6 +1,5 @@
 import { getLatestEpisode } from "~/providers/rss/get-latest-episode";
 
-export const revalidate = 6000;
 export async function GET() {
 	const episodePerPodcast = await getLatestEpisode();
 	if (episodePerPodcast) {
