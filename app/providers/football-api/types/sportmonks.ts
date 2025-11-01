@@ -68,7 +68,6 @@ export interface Type {
 	code: string;
 	developer_name: string;
 	model_type: string;
-	stat_group: any;
 }
 
 export interface Position {
@@ -77,7 +76,6 @@ export interface Position {
 	code: string;
 	developer_name: string;
 	model_type: string;
-	stat_group: any;
 }
 
 export interface DetailedPosition {
@@ -86,22 +84,19 @@ export interface DetailedPosition {
 	code: string;
 	developer_name: string;
 	model_type: string;
-	stat_group: any;
 }
 
 export interface Pagination {
 	count: number;
 	per_page: number;
 	current_page: number;
-	next_page: any;
+	next_page: unknown;
 	has_more: boolean;
 }
 
 export interface Subscription {
-	meta: any[];
+	meta: unknown[];
 	plans: Plan[];
-	add_ons: any[];
-	widgets: any[];
 }
 
 export interface Plan {
