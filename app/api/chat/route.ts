@@ -1,8 +1,6 @@
 import { google } from "@ai-sdk/google";
 import { streamText } from "ai";
 
-// IMPORTANT! Set the runtime to edge for best performance
-export const runtime = "edge";
 function errorHandler(error: unknown) {
 	if (error == null) {
 		return "unknown error";

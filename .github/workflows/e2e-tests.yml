@@ -1,0 +1,273 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+env:
+  POSTGRES_URL: ${{ vars.POSTGRES_URL }}
+  POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+  POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+  POSTGRES_HOST: ${{ vars.POSTGRES_HOST }}
+  POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+  POSTGRES_DATABASE: ${{ vars.POSTGRES_DATABASE }}
+  HAKAPIT_RSS: ${{ vars.HAKAPIT_RSS }}
+  NITK_RSS: ${{ vars.NITK_RSS }}
+  BALCONY_RSS: ${{ vars.BALCONY_RSS }}
+  FOOTBALL_DATA_API_KEY: ${{ vars.FOOTBALL_DATA_API_KEY }}
+  NEXT_PUBLIC_VAPID_PUBLIC_KEY: ${{ vars.NEXT_PUBLIC_VAPID_PUBLIC_KEY }}
+  VAPID_PRIVATE_KEY: ${{ vars.VAPID_PRIVATE_KEY }}
+  API_FOOTBALL_KEY: ${{ vars.API_FOOTBALL_KEY }}
+  GOOGLE_GENERATIVE_AI_API_KEY: ${{ vars.GOOGLE_GENERATIVE_AI_API_KEY }}
+  SPORTMONKS_API_KEY: ${{ vars.SPORTMONKS_API_KEY }}
+
+jobs:
+  e2e-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        # Test on multiple browsers
+        browser: [chromium, firefox, webkit]
+        # Test on different viewport sizes
+        viewport: [desktop, mobile]
+        exclude:
+          # Skip mobile tests on webkit (Safari) to save time
+          - browser: webkit
+            viewport: mobile
+    
+    steps:
+    - name: Debug environment variables
+      run: |
+        echo "URL: $POSTGRES_URL"
+        echo "Port: $POSTGRES_PORT"
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+        
+    - name: Get Bun cache directory
+      id: bun-cache-dir
+      run: |
+        echo "dir=$(bun pm cache dir)" >> $GITHUB_OUTPUT
+        
+    - name: Cache Bun dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{  steps.bun-cache-dir .outputs.dir }}
+        key: ${{  runner.os  }}-bun-${{  hashFiles('**/ bun.lockb') }}
+        restore-keys: |
+          ${{  runner.os  }}-bun-
+          
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+      
+    - name: Cache Playwright browsers
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{  runner.os  }}-playwright-${{  hashFiles('**/ playwright.config.ts') }}
+        restore-keys: |
+          ${{  runner.os  }}-playwright-
+          
+    - name: Install Playwright browsers
+      run: bunx playwright install --with-deps ${{  matrix.browser  }}
+      
+    - name: Build application
+      run: bun run build
+      
+    - name: Set viewport size
+      run: |
+        if [ "${{  matrix.viewport  }}" = "mobile" ]; then
+          echo "PLAYWRIGHT_VIEWPORT_WIDTH=375" >> $GITHUB_ENV
+          echo "PLAYWRIGHT_VIEWPORT_HEIGHT=667" >> $GITHUB_ENV
+        else
+          echo "PLAYWRIGHT_VIEWPORT_WIDTH=1280" >> $GITHUB_ENV
+          echo "PLAYWRIGHT_VIEWPORT_HEIGHT=720" >> $GITHUB_ENV
+        fi
+        
+    - name: Run E2E tests
+      run: bunx playwright test --project=${{  matrix.browser  }} --reporter=html
+      env:
+        CI: true
+        
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-${{  matrix.browser  }}-${{  matrix.viewport  }}
+        path: playwright-report/
+        retention-days: 7
+        
+    - name: Upload test screenshots
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: screenshots-${{  matrix.browser  }}-${{  matrix.viewport  }}
+        path: test-results/
+        retention-days: 7
+        
+    - name: Upload test videos
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: videos-${{  matrix.browser  }}-${{  matrix.viewport  }}
+        path: test-results/
+        retention-days: 7
+
+  # Smoke tests - run a subset of critical tests on every push
+  smoke-tests:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+        
+    - name: Get Bun cache directory
+      id: bun-cache-dir
+      run: |
+        echo "dir=$(bun pm cache dir)" >> $GITHUB_OUTPUT
+        
+    - name: Cache Bun dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{  steps.bun-cache-dir .outputs.dir }}
+        key: ${{  runner.os  }}-bun-${{  hashFiles('**/ bun.lockb') }}
+        restore-keys: |
+          ${{  runner.os  }}-bun-
+          
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+      
+    - name: Cache Playwright browsers
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{  runner.os  }}-playwright-${{  hashFiles('**/ playwright.config.ts') }}
+        restore-keys: |
+          ${{  runner.os  }}-playwright-
+          
+    - name: Install Playwright browsers
+      run: bunx playwright install --with-deps chromium
+      
+    - name: Build application
+      run: bun run build
+      
+    - name: Run smoke tests
+      run: bunx playwright test --grep="smoke" --project=chromium
+      env:
+        CI: true
+        
+    - name: Upload smoke test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: smoke-test-results
+        path: playwright-report/
+        retention-days: 3
+
+  # Performance tests
+  performance-tests:
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+        
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+      
+    - name: Install Playwright browsers
+      run: bunx playwright install --with-deps chromium
+      
+    - name: Build application
+      run: bun run build
+      
+    - name: Run performance tests
+      run: bunx playwright test --grep="performance" --project=chromium
+      env:
+        CI: true
+        
+    - name: Upload performance results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: performance-test-results
+        path: playwright-report/
+        retention-days: 7
+
+  # Accessibility tests
+  accessibility-tests:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+        
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+      
+    - name: Install Playwright browsers
+      run: bunx playwright install --with-deps chromium
+      
+    - name: Install accessibility dependencies
+      run: bun add -D @axe-core/playwright
+      
+    - name: Build application
+      run: bun run build
+      
+    - name: Run accessibility tests
+      run: bunx playwright test --grep="accessibility" --project=chromium
+      env:
+        CI: true
+        
+    - name: Upload accessibility results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: accessibility-test-results
+        path: playwright-report/
+        retention-days: 7
+
+  # Notify on failure
+  notify-on-failure:
+    runs-on: ubuntu-latest
+    needs: [e2e-tests, smoke-tests]
+    if: failure()
+    
+    steps:
+    - name: Notify on failure
+      run: |
+        echo "E2E tests failed on ${{  github.repository  }}"
+        echo "Check the GitHub Actions tab for detailed results"
+        # You could add Slack/Discord notifications here

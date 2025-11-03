@@ -95,6 +95,9 @@ export async function fetchLatestEpisode(podcast: PodcastName) {
 }
 
 export async function fetchEpisode(episodeID: string) {
+	"use cache";
+	cacheTag(`episode-${episodeID}`);
+	cacheLife("days"); // 1 hour cache
 	return db.query.episodes.findFirst({
 		where: eq(episodes.episodeNumber, Number.parseInt(episodeID)),
 		with: { podcast: true },

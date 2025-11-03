@@ -47,11 +47,11 @@ export async function FeedPage({ limit = 1, podcast }: { limit?: number; podcast
 
 export async function PreviewPage({ limit = 1, podcast }: { limit?: number; podcast: PodcastName }) {
 	return (
-		<>
+		<Suspense>
 			<Preview limit={limit} podcast={podcast} />
 			<StatefulLink href={`/${podcast}/episodes`} className={"text-xl lg:text-sm text-accent"}>
 				לכל הפרקים
 			</StatefulLink>
-		</>
+		</Suspense>
 	);
 }

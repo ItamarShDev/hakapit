@@ -70,10 +70,11 @@ export function FloatingChat() {
 		}
 	}, [messages]);
 	return (
-		<div className={`fixed ${isDesktop ? "bottom-4 left-4" : "bottom-0 left-0 right-0 px-4 pb-4"} z-50`}>
+		<div data-testid="floating-chat" className={`fixed ${isDesktop ? "bottom-4 left-4" : "bottom-0 left-0 right-0 px-4 pb-4"} z-50`}>
 			<Drawer direction={isDesktop ? "right" : "bottom"}>
 				<DrawerTrigger asChild>
 					<Button
+						data-testid="chat-trigger-button"
 						size="lg"
 						className={`text-accent hover:bg-accent hover:text-primary rounded-full ${!isDesktop ? "w-full py-6" : ""}`}
 					>
@@ -83,7 +84,7 @@ export function FloatingChat() {
 				<DrawerContent>
 					<DrawerHeader dir="rtl" className="flex flex-col border-b border-slate-600">
 						<DrawerTitle className="relative flex items-center justify-center sm:justify-between text-accent">
-							<span className="mx-auto">Liver-Chat</span>
+							<span data-testid="chat-title" className="mx-auto">Liver-Chat</span>
 							<DrawerClose asChild>
 								<Button
 									variant="ghost"
@@ -96,11 +97,11 @@ export function FloatingChat() {
 							</DrawerClose>
 						</DrawerTitle>
 
-						<DrawerDescription dir="rtl" className="self-start">
+						<DrawerDescription data-testid="chat-description" dir="rtl" className="self-start">
 							ניתן לשאול כל שאלה לגבי הקבוצה, בכל שפה
 						</DrawerDescription>
 					</DrawerHeader>
-					<div ref={contentRef} className="flex-grow px-4 overflow-y-auto text-paragraph">
+					<div ref={contentRef} data-testid="chat-messages" className="flex-grow px-4 overflow-y-auto text-paragraph">
 						{messages.map((message) => {
 							if (message.role === "assistant") {
 								const dir = getDirectionFromText(message.content);
@@ -155,6 +156,7 @@ export function FloatingChat() {
 					)}
 					<div className="p-2 flex flex-row border-t">
 						<Textarea
+							data-testid="chat-input"
 							value={input}
 							onChange={(e) => {
 								setInput(e.target.value);
@@ -166,6 +168,7 @@ export function FloatingChat() {
 							disabled={status === "streaming" || status === "submitted"}
 						/>
 						<Button
+							data-testid="chat-send-button"
 							size="icon"
 							onClick={handleSendMessage}
 							disabled={status === "streaming" || status === "submitted"}

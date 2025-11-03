@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import RSSFeed from "~/components/rss/feed";
 import { fetchFeed, type PodcastName } from "~/providers/rss/feed";
 
@@ -27,10 +28,7 @@ export async function generateMetadata(props: { params: Promise<{ podcast: strin
 	};
 }
 
-export default async function RouteComponent(props: {
-	params: Promise<{ podcast: "hakapit" | "balcony-albums" | "nitk" }>;
-	searchParams: Promise<{ limit?: string }>;
-}) {
+async function Page(props: PageProps<"/[podcast]/episodes">) {
 	const searchParams = await props.searchParams;
 
 	const { limit } = searchParams;
@@ -39,6 +37,14 @@ export default async function RouteComponent(props: {
 
 	const { podcast } = params;
 
-	const episodeLimit = Number.parseInt(limit || "10");
-	return <RSSFeed limit={episodeLimit} podcast={podcast} />;
+	const episodeLimit = Number.parseInt(limit ? (Array.isArray(limit) ? limit[0] : limit) : "10", 10);
+	return <RSSFeed limit={episodeLimit} podcast={podcast as PodcastName} />;
+}
+
+export default async function RouteComponent(props: PageProps<"/[podcast]/episodes">) {
+	return (
+		<Suspense>
+			<Page {...props} />
+		</Suspense>
+	);
 }

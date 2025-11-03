@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 import { cn } from "@/lib/utils";
 
 function LinkItem({
@@ -46,16 +47,18 @@ export const Links: React.FC<
 		},
 	];
 	return (
-		<nav className={cn("gap-2 lg:gap-4 links text-1xl overflow-hidden", props.className)}>
-			{links.map((link, index) => (
-				<LinkItem
-					onSelect={props.onSelect}
-					href={link.href}
-					label={link.label}
-					withBorder={index !== links.length - 1}
-					key={link.href}
-				/>
-			))}
-		</nav>
+		<Suspense>
+			<nav className={cn("gap-2 lg:gap-4 links text-1xl overflow-hidden", props.className)}>
+				{links.map((link, index) => (
+					<LinkItem
+						onSelect={props.onSelect}
+						href={link.href}
+						label={link.label}
+						withBorder={index !== links.length - 1}
+						key={link.href}
+					/>
+				))}
+			</nav>
+		</Suspense>
 	);
 };
