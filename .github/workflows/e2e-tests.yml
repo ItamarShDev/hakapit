@@ -10,6 +10,7 @@ on:
     - cron: '0 2 * * *'
 
 env:
+  DATABASE_URL: ${{ secrets.POSTGRES_URL }}
   POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
   POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
@@ -71,6 +72,16 @@ jobs:
     - name: Install dependencies
       run: bun install --frozen-lockfile
       
+    - name: Cache Next.js
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.bun/install/cache
+          ${{ github.workspace }}/.next/cache
+        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+        restore-keys: |
+          ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-
+          
     - name: Cache Playwright browsers
       uses: actions/cache@v3
       with:
@@ -155,6 +166,16 @@ jobs:
     - name: Install dependencies
       run: bun install --frozen-lockfile
       
+    - name: Cache Next.js
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.bun/install/cache
+          ${{ github.workspace }}/.next/cache
+        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+        restore-keys: |
+          ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-
+          
     - name: Cache Playwright browsers
       uses: actions/cache@v3
       with:
@@ -200,6 +221,16 @@ jobs:
     - name: Install dependencies
       run: bun install --frozen-lockfile
       
+    - name: Cache Next.js
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.bun/install/cache
+          ${{ github.workspace }}/.next/cache
+        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+        restore-keys: |
+          ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-
+      
     - name: Install Playwright browsers
       run: bunx playwright install --with-deps chromium
       
@@ -236,6 +267,16 @@ jobs:
         
     - name: Install dependencies
       run: bun install --frozen-lockfile
+      
+    - name: Cache Next.js
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.bun/install/cache
+          ${{ github.workspace }}/.next/cache
+        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+        restore-keys: |
+          ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-
       
     - name: Install Playwright browsers
       run: bunx playwright install --with-deps chromium
