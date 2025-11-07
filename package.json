@@ -13,7 +13,6 @@
     "lint": "biome lint app",
     "lint:fix": "biome lint app --write",
     "test:e2e": "playwright test --reporter=html",
-    "test:e2e:smoke": "playwright test --grep=\"smoke\" --project=chromium",
     "test:e2e:accessibility": "playwright test --grep=\"accessibility\" --project=chromium"
   },
   "dependencies": {
