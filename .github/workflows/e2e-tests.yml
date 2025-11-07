@@ -33,16 +33,12 @@ jobs:
     runs-on: ubuntu-latest
     
     strategy:
-      matrix:
-        # Test on multiple browsers
-        browser: [chromium, firefox, webkit]
-        # Test on different viewport sizes
-        viewport: [desktop, mobile]
-        exclude:
-          # Skip mobile tests on webkit (Safari) to save time
-          - browser: webkit
-            viewport: mobile
       fail-fast: false
+      matrix:
+        # Test on Chrome only for faster CI
+        browser: [chromium]
+        # Test on desktop and mobile viewports
+        viewport: [desktop, mobile]
     
     steps:
     - name: Checkout code

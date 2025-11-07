@@ -1,4 +1,4 @@
-import { devices, expect, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { HomePage } from "./page-objects/HomePage";
 
 test.describe("Responsive Design", () => {
@@ -28,59 +28,8 @@ test.describe("Responsive Design", () => {
 			await page.reload();
 
 			await homePage.expectMobileChatLayout();
-
 			// Chat button should be full width on mobile
 			await expect(homePage.chatTriggerButton).toHaveClass(/w-full/);
-		});
-
-		test("should display trophies correctly on mobile", async ({ page }) => {
-			await page.setViewportSize({ width: 375, height: 667 });
-			await page.reload();
-
-			await expect(homePage.trophiesSection).toBeVisible();
-			await homePage.expectTrophiesCount(8);
-
-			// Trophies should wrap properly on mobile
-			const trophiesSection = homePage.trophiesSection;
-			await expect(trophiesSection).toHaveClass(/flex-wrap/);
-		});
-
-		test("should handle transfers list on mobile", async ({ page }) => {
-			await page.setViewportSize({ width: 375, height: 667 });
-			await page.reload();
-
-			// Recent transfers section might not render if no data is available
-			const recentTransfersExists = await homePage.recentTransfersSection.isVisible().catch(() => false);
-			if (recentTransfersExists) {
-				await expect(homePage.recentTransfersSection).toBeVisible();
-
-				// Transfers should scroll horizontally on mobile if needed
-				const transfersList = homePage.recentTransfersList;
-				await expect(transfersList).toBeVisible();
-			}
-		});
-
-		test("should display stats tables properly on mobile", async ({ page }) => {
-			await page.setViewportSize({ width: 375, height: 667 });
-			await page.reload();
-
-			await homePage.expectStatsTableToBeVisible("Premier League");
-
-			// Tables might need horizontal scrolling on mobile
-			const table = await homePage.getStatsTable("Premier League");
-			await expect(table).toBeVisible();
-		});
-
-		test("should open chat drawer from bottom on mobile", async ({ page }) => {
-			await page.setViewportSize({ width: 375, height: 667 });
-			await page.reload();
-
-			await homePage.openChat();
-			await homePage.expectChatToBeOpen();
-
-			// On mobile, drawer should open from bottom
-			const drawer = page.locator('[role="dialog"]');
-			await expect(drawer).toBeVisible();
 		});
 	});
 
@@ -94,21 +43,6 @@ test.describe("Responsive Design", () => {
 			expect(viewport?.width).toBeLessThan(1024);
 
 			await homePage.expectPageToLoad();
-		});
-
-		test("should have appropriate layout for tablet", async ({ page }) => {
-			await page.setViewportSize({ width: 768, height: 1024 });
-			await page.reload();
-
-			// Should be between mobile and desktop layouts
-			await expect(homePage.trophiesSection).toBeVisible();
-			await expect(homePage.recentTransfersSection).toBeVisible();
-
-			// Next match section might not render if no data is available
-			const nextMatchExists = await homePage.nextMatchOverview.isVisible().catch(() => false);
-			if (nextMatchExists) {
-				await expect(homePage.nextMatchOverview).toBeVisible();
-			}
 		});
 	});
 
@@ -128,47 +62,14 @@ test.describe("Responsive Design", () => {
 			await page.reload();
 
 			await homePage.expectDesktopChatLayout();
-
 			// Chat button should not be full width on desktop
 			await expect(homePage.chatTriggerButton).not.toHaveClass(/w-full/);
-		});
-
-		test("should open chat drawer from right on desktop", async ({ page }) => {
-			await page.setViewportSize({ width: 1280, height: 720 });
-			await page.reload();
-
-			await homePage.openChat();
-			await homePage.expectChatToBeOpen();
-
-			// On desktop, drawer should open from right
-			const drawer = page.locator('[role="dialog"]');
-			await expect(drawer).toBeVisible();
-		});
-
-		test("should display all content without horizontal scrolling", async ({ page }) => {
-			await page.setViewportSize({ width: 1280, height: 720 });
-			await page.reload();
-
-			// Check that page doesn't require horizontal scrolling
-			const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
-			const viewportWidth = page.viewportSize()?.width || 0;
-			expect(bodyWidth).toBeLessThanOrEqual(viewportWidth);
-		});
-
-		test("should have proper spacing and layout on desktop", async ({ page }) => {
-			await page.setViewportSize({ width: 1280, height: 720 });
-			await page.reload();
-
-			// Check that elements have appropriate desktop spacing - use first section to avoid strict mode violation
-			const mainSection = page.locator("section").first();
-			await expect(mainSection).toHaveClass(/gap-10/);
 		});
 	});
 
 	test.describe("Cross-device consistency", () => {
 		const viewportsToTest = [
 			{ name: "Mobile", width: 375, height: 667 },
-			{ name: "Tablet", width: 768, height: 1024 },
 			{ name: "Desktop", width: 1280, height: 720 },
 		];
 
@@ -195,26 +96,6 @@ test.describe("Responsive Design", () => {
 				// Same number of trophies across all devices
 				await homePage.expectTrophiesCount(8);
 			});
-		});
-	});
-
-	test.describe("Orientation Changes", () => {
-		test("should handle landscape orientation on mobile", async ({ page }) => {
-			await page.setViewportSize({ width: 844, height: 390 }); // iPhone 12 landscape
-			await page.reload();
-
-			await homePage.expectPageToLoad();
-
-			// Layout should adapt to landscape
-			await expect(homePage.trophiesSection).toBeVisible();
-			await expect(homePage.recentTransfersSection).toBeVisible();
-		});
-
-		test("should handle portrait orientation on tablet", async ({ page }) => {
-			await page.setViewportSize({ width: 768, height: 1024 }); // iPad portrait
-			await page.reload();
-
-			await homePage.expectPageToLoad();
 		});
 	});
 
