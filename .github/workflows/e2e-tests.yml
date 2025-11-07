@@ -63,10 +63,10 @@ jobs:
     - name: Cache Bun dependencies
       uses: actions/cache@v3
       with:
-        path: ${{  steps.bun-cache-dir .outputs.dir }}
-        key: ${{  runner.os  }}-bun-${{  hashFiles('**/ bun.lockb') }}
+        path: ${{ steps.bun-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
         restore-keys: |
-          ${{  runner.os  }}-bun-
+          ${{ runner.os }}-bun-
           
     - name: Install dependencies
       run: bun install --frozen-lockfile
@@ -75,19 +75,19 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/ms-playwright
-        key: ${{  runner.os  }}-playwright-${{  hashFiles('**/ playwright.config.ts') }}
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/playwright.config.ts') }}
         restore-keys: |
-          ${{  runner.os  }}-playwright-
+          ${{ runner.os }}-playwright-
           
     - name: Install Playwright browsers
-      run: bunx playwright install --with-deps ${{  matrix.browser  }}
+      run: bunx playwright install --with-deps ${{ matrix.browser }}
       
     - name: Build application
       run: bun run build
       
     - name: Set viewport size
       run: |
-        if [ "${{  matrix.viewport  }}" = "mobile" ]; then
+        if [ "${{ matrix.viewport }}" = "mobile" ]; then
           echo "PLAYWRIGHT_VIEWPORT_WIDTH=375" >> $GITHUB_ENV
           echo "PLAYWRIGHT_VIEWPORT_HEIGHT=667" >> $GITHUB_ENV
         else
@@ -96,7 +96,7 @@ jobs:
         fi
         
     - name: Run E2E tests
-      run: bunx playwright test --project=${{  matrix.browser  }} --reporter=html
+      run: bunx playwright test --project=${{ matrix.browser }} --reporter=html
       env:
         CI: true
         
@@ -104,7 +104,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: playwright-report-${{  matrix.browser  }}-${{  matrix.viewport  }}
+        name: playwright-report-${{ matrix.browser }}-${{ matrix.viewport }}
         path: playwright-report/
         retention-days: 7
         
@@ -112,7 +112,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: failure()
       with:
-        name: screenshots-${{  matrix.browser  }}-${{  matrix.viewport  }}
+        name: screenshots-${{ matrix.browser }}-${{ matrix.viewport }}
         path: test-results/
         retention-days: 7
         
@@ -120,7 +120,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: failure()
       with:
-        name: videos-${{  matrix.browser  }}-${{  matrix.viewport  }}
+        name: videos-${{ matrix.browser }}-${{ matrix.viewport }}
         path: test-results/
         retention-days: 7
 
@@ -147,10 +147,10 @@ jobs:
     - name: Cache Bun dependencies
       uses: actions/cache@v3
       with:
-        path: ${{  steps.bun-cache-dir .outputs.dir }}
-        key: ${{  runner.os  }}-bun-${{  hashFiles('**/ bun.lockb') }}
+        path: ${{ steps.bun-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
         restore-keys: |
-          ${{  runner.os  }}-bun-
+          ${{ runner.os }}-bun-
           
     - name: Install dependencies
       run: bun install --frozen-lockfile
@@ -159,9 +159,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/ms-playwright
-        key: ${{  runner.os  }}-playwright-${{  hashFiles('**/ playwright.config.ts') }}
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/playwright.config.ts') }}
         restore-keys: |
-          ${{  runner.os  }}-playwright-
+          ${{ runner.os }}-playwright-
           
     - name: Install Playwright browsers
       run: bunx playwright install --with-deps chromium
@@ -268,6 +268,6 @@ jobs:
     steps:
     - name: Notify on failure
       run: |
-        echo "E2E tests failed on ${{  github.repository  }}"
+        echo "E2E tests failed on ${{ github.repository }}"
         echo "Check the GitHub Actions tab for detailed results"
         # You could add Slack/Discord notifications here
