@@ -5,14 +5,6 @@ export async function fetch_rss(url: string | undefined) {
 		return { items: [] };
 	}
 
-	// Skip RSS fetching during build time to avoid prerender errors
-	if (
-		process.env.NEXT_PHASE === "phase-production-build" ||
-		(process.env.NODE_ENV === "production" && !process.env.HAKAPIT_RSS)
-	) {
-		return { items: [] };
-	}
-
 	const parser: Parser = new Parser();
 	try {
 		const rss = await parser.parseURL(url as string);
