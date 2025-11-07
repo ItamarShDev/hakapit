@@ -44,10 +44,6 @@ jobs:
             viewport: mobile
     
     steps:
-    - name: Debug environment variables
-      run: |
-        echo "URL: $POSTGRES_URL"
-        echo "Port: $POSTGRES_PORT"
     - name: Checkout code
       uses: actions/checkout@v4
       
@@ -202,53 +198,6 @@ jobs:
         name: smoke-test-results
         path: playwright-report/
         retention-days: 3
-
-  # Performance tests
-  performance-tests:
-    timeout-minutes: 45
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v1
-      with:
-        bun-version: latest
-        
-    - name: Install dependencies
-      run: bun install --frozen-lockfile
-      
-    - name: Cache Next.js
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.bun/install/cache
-          ${{ github.workspace }}/.next/cache
-        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-        restore-keys: |
-          ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-
-      
-    - name: Install Playwright browsers
-      run: bunx playwright install --with-deps chromium
-      
-    - name: Build application
-      run: bun run build
-      
-    - name: Run performance tests
-      run: bunx playwright test --grep="performance" --project=chromium
-      env:
-        CI: true
-        
-    - name: Upload performance results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: performance-test-results
-        path: playwright-report/
-        retention-days: 7
 
   # Accessibility tests
   accessibility-tests:

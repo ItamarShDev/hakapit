@@ -47,7 +47,7 @@ export async function RecentTransfers() {
 	return (
 		<div className="flex flex-col gap-2 items-center">
 			<div className="flex items-center gap-4">
-				<h2>העברות אחרונות</h2>
+				<h2 data-testid="recent-transfers-title">העברות אחרונות</h2>
 			</div>
 			<ul className="flex flex-row gap-2 list-none">{transferViews}</ul>
 		</div>
