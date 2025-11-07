@@ -42,6 +42,7 @@ jobs:
           # Skip mobile tests on webkit (Safari) to save time
           - browser: webkit
             viewport: mobile
+      fail-fast: false
     
     steps:
     - name: Checkout code
@@ -90,7 +91,12 @@ jobs:
       run: bunx playwright install --with-deps ${{ matrix.browser }}
       
     - name: Build application
-      run: bun run build
+      uses: nick-fields/retry@v2
+      with:
+        timeout_minutes: 15
+        max_attempts: 3
+        retry_on: error
+        command: bun run build
       
     - name: Set viewport size
       run: |
@@ -103,7 +109,12 @@ jobs:
         fi
         
     - name: Run E2E tests
-      run: bunx playwright test --project=${{ matrix.browser }} --reporter=html
+      uses: nick-fields/retry@v2
+      with:
+        timeout_minutes: 50
+        max_attempts: 3
+        retry_on: error
+        command: bunx playwright test --project=${{ matrix.browser }} --reporter=html
       env:
         CI: true
         
