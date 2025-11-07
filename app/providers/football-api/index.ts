@@ -93,14 +93,18 @@ export async function getCachedTransferData() {
 			updatedAt: new Date(),
 			playerId: transferItem.player.id,
 			date: new Date(transferItem.update),
-			teamId: transferItem.transfers[0].teams.out.id,
+			teamId: transferItem.transfers[0].teams.out?.id,
 			type: transferItem.transfers[0].type ?? undefined,
 			playerName: transferItem.player.name,
 			playerPhoto: player.response[0].player.photo ?? undefined,
-			teamName: transferItem.transfers[0].teams.out.name,
-			teamLogo: transferItem.transfers[0].teams.out.logo ?? undefined,
+			teamName: transferItem.transfers[0].teams.out?.name ?? "Unknown Team",
+			teamLogo: transferItem.transfers[0].teams.out?.logo ?? undefined,
 		};
-		onlyTransfersFromLastYear.push(transferDTO);
+
+		// Only include transfers with valid teamId (not null/undefined)
+		if (transferDTO.teamId != null && transferDTO.teamId !== 0) {
+			onlyTransfersFromLastYear.push(transferDTO);
+		}
 	}
 	if (onlyTransfersFromLastYear.length === 0) {
 		return [];
