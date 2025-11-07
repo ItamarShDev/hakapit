@@ -17,5 +17,5 @@ function NextMatchSkeleton() {
 export async function NextMatchOverview() {
 	const data = await getNextMatchData();
 	if (!data) return <NextMatchSkeleton />;
-	return <NextMatchOverviewClient data={data} />;
+	return <NextMatchOverviewClient data={data} data-testid="next-match-overview" />;
 }

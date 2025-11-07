@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { subscribeUser, unsubscribeUser } from "~/actions/push";
 
 function urlBase64ToUint8Array(base64String: string) {
@@ -65,13 +65,13 @@ function usePushNotifications() {
 					});
 					setSubscription(sub);
 				} catch (e) {
-					console.error(e);
-					showErrorToast();
+					console.error("Periodic sync registration failed:", e);
+					// Don't show error toast for periodic sync failures - it's not critical
 				}
 			}
 		} catch (e) {
 			console.error("Failed to register service worker:", e);
-			showErrorToast();
+			// Don't show error toast for service worker failures - it's not critical for basic functionality
 		}
 	}
 

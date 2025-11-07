@@ -11,17 +11,19 @@
     "studio": "drizzle-kit studio",
     "format": "biome format app --write",
     "lint": "biome lint app",
-    "lint:fix": "biome lint app --write"
+    "lint:fix": "biome lint app --write",
+    "test:e2e": "playwright test --reporter=html",
+    "test:e2e:accessibility": "playwright test --grep=\"accessibility\" --project=chromium"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
     "@nivo/bar": "^0.85.1",
     "@nivo/core": "^0.85.1",
     "@radix-ui/react-accordion": "^1.2.12",
-    "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-icons": "^1.3.2",
     "@radix-ui/react-popover": "^1.1.15",
-    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tanstack/react-table": "^8.21.3",
     "@types/web-push": "^3.6.4",
@@ -29,7 +31,7 @@
     "@vercel/postgres": "^0.9.0",
     "@vercel/speed-insights": "^1.2.0",
     "ai": "^4.3.19",
-    "caniuse-lite": "^1.0.30001752",
+    "caniuse-lite": "^1.0.30001754",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.19",
@@ -37,7 +39,7 @@
     "drizzle-orm": "^0.44.7",
     "eslint-config-next": "16.0.1",
     "exa-js": "^1.10.2",
-    "isbot": "^5.1.31",
+    "isbot": "^5.1.32",
     "lucide-react": "^0.525.0",
     "next": "16.0.1",
     "next-nprogress-bar": "^2.4.7",
@@ -55,7 +57,8 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.2",
+    "@biomejs/biome": "^2.3.4",
+    "@playwright/test": "^1.56.1",
     "@types/bun": "latest",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
@@ -63,15 +66,18 @@
     "drizzle-kit": "^0.31.6",
     "postcss": "^8.5.6",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss": "3",
+    "tailwindcss": "^3.4.18",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "overrides": {
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2"
-  }
+  },
+  "trustedDependencies": [
+    "@vercel/speed-insights"
+  ]
 }

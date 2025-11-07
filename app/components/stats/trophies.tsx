@@ -13,7 +13,7 @@ export function Trophies() {
 		{ tournamentId: 48, name: "Championship", won: 4 },
 	];
 	return (
-		<div className="flex gap-2 flex-wrap justify-center">
+		<div data-testid="trophies-section" className="flex gap-2 flex-wrap justify-center">
 			{trophies.map((trophy) => {
 				const tournamentId = trophy.tournamentId;
 				const leagueName = trophy.name;
@@ -24,7 +24,7 @@ export function Trophies() {
 						<TooltipProvider>
 							<Tooltip>
 								<TooltipTrigger>
-									<Avatar className="h-[50px] w-[50px]">
+									<Avatar className="h-[50px] w-[50px]" data-testid={`trophy-${tournamentId}`}>
 										<AvatarImage
 											alt={leagueName}
 											src={`https://images.fotmob.com/image_resources/logo/leaguelogo/dark/${tournamentId}.png`}

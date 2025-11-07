@@ -24,8 +24,8 @@ function TeamStatus({
 	);
 }
 
-export function FullBleed({ children }: { children: React.ReactNode }) {
-	return <div className={`flex flex-col gap-2  pb-6 bg-primary py-3 full-bleed ${heebo.className}`}>{children}</div>;
+export function FullBleed({ children, ...props }: { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
+	return <div className={`flex flex-col gap-2  pb-6 bg-primary py-3 full-bleed ${heebo.className}`} {...props}>{children}</div>;
 }
 async function getTeamForms(data: Awaited<ReturnType<typeof getNextMatchData>>) {
 	const { matchDetails } = data;
@@ -52,7 +52,7 @@ export async function NextMatchOverviewClient({ data }: { data: Awaited<ReturnTy
 	}
 
 	return (
-		<FullBleed>
+		<FullBleed data-testid="next-match-overview">
 			<div className="flex items-center justify-between">
 				<div className="text-slate-200 text-sm">{nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}</div>
 			</div>
