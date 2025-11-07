@@ -114,11 +114,29 @@ jobs:
       env:
         CI: true
         
+    - name: Install accessibility dependencies
+      if: matrix.viewport == 'desktop' && github.event_name == 'pull_request'
+      run: bun add -D @axe-core/playwright
+      
+    - name: Run accessibility tests
+      if: matrix.viewport == 'desktop' && github.event_name == 'pull_request'
+      run: bunx playwright test --grep="accessibility" --project=chromium
+      env:
+        CI: true
+        
     - name: Upload test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: playwright-report-${{ matrix.browser }}-${{ matrix.viewport }}
+        path: playwright-report/
+        retention-days: 7
+        
+    - name: Upload accessibility results
+      uses: actions/upload-artifact@v4
+      if: matrix.viewport == 'desktop' && github.event_name == 'pull_request' && always()
+      with:
+        name: accessibility-test-results
         path: playwright-report/
         retention-days: 7
         
@@ -138,56 +156,7 @@ jobs:
         path: test-results/
         retention-days: 7
 
-  # Accessibility tests
-  accessibility-tests:
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v1
-      with:
-        bun-version: latest
-        
-    - name: Install dependencies
-      run: bun install --frozen-lockfile
-      
-    - name: Cache Next.js
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.bun/install/cache
-          ${{ github.workspace }}/.next/cache
-        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-        restore-keys: |
-          ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}-
-      
-    - name: Install Playwright browsers
-      run: bunx playwright install --with-deps chromium
-      
-    - name: Install accessibility dependencies
-      run: bun add -D @axe-core/playwright
-      
-    - name: Build application
-      run: bun run build
-      
-    - name: Run accessibility tests
-      run: bunx playwright test --grep="accessibility" --project=chromium
-      env:
-        CI: true
-        
-    - name: Upload accessibility results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: accessibility-test-results
-        path: playwright-report/
-        retention-days: 7
-
+  
   # Notify on failure
   notify-on-failure:
     runs-on: ubuntu-latest
