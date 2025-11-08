@@ -114,7 +114,7 @@ jobs:
       env:
         CI: true
         
-    - name: Parse test results
+    - name: Generate coverage report
       if: always()
       run: |
         node -e "
@@ -125,19 +125,21 @@ jobs:
         const total = passed + failed;
         const percentage = total > 0 ? Math.round((passed / total) * 100) : 0;
         
-        fs.writeFileSync('test-results-${{ matrix.viewport }}/test-summary.json', JSON.stringify({
-          passed,
-          failed,
-          total,
-          percentage,
-          viewport: '${{ matrix.viewport }}'
-        }, null, 2));
+        // Create lcov format for coverage summary
+        const coverageReport = {
+          total: {
+            lines: { total: total, covered: passed, percent: percentage },
+            functions: { total: total, covered: passed, percent: percentage },
+            branches: { total: total, covered: passed, percent: percentage },
+            statements: { total: total, covered: passed, percent: percentage }
+          }
+        };
         
-        console.log('Test Summary:');
+        fs.writeFileSync('coverage-${{ matrix.viewport }}.json', JSON.stringify(coverageReport, null, 2));
+        console.log('Coverage Report Generated:');
+        console.log('Tests:', total);
         console.log('Passed:', passed);
-        console.log('Failed:', failed);
-        console.log('Total:', total);
-        console.log('Success Rate:', percentage + '%');
+        console.log('Coverage:', percentage + '%');
         "
         
     - name: Install accessibility dependencies
@@ -181,121 +183,77 @@ jobs:
         name: videos-${{ matrix.browser }}-${{ matrix.viewport }}
         path: test-results/
         retention-days: 7
+        
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: coverage-report-${{ matrix.viewport }}
+        path: coverage-${{ matrix.viewport }}.json
+        retention-days: 30
 
-  # Generate and update test badges
-  update-badges:
+  # Coverage Summary for PRs
+  coverage-summary:
     needs: [e2e-tests]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && always()
+    if: github.event_name == 'pull_request'
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Download all artifacts
+      
+    - name: Download coverage reports
       uses: actions/download-artifact@v4
       with:
-        path: artifacts/
+        path: coverage-artifacts/
         
-    - name: Generate test badges
+    - name: Merge coverage reports
       run: |
-        # Collect all test results
-        total_passed=0
-        total_failed=0
-        total_tests=0
+        node -e "
+        const fs = require('fs');
+        let totalTests = 0;
+        let totalPassed = 0;
         
-        for viewport in desktop mobile; do
-          if [ -f "artifacts/test-results-${viewport}/test-summary.json" ]; then
-            passed=$(cat "artifacts/test-results-${viewport}/test-summary.json" | jq -r '.passed')
-            failed=$(cat "artifacts/test-results-${viewport}/test-summary.json" | jq -r '.failed')
-            total=$((passed + failed))
-            
-            total_passed=$((total_passed + passed))
-            total_failed=$((total_failed + failed))
-            total_tests=$((total_tests + total))
-          fi
-        done
+        // Read all coverage reports
+        const files = fs.readdirSync('coverage-artifacts').filter(f => f.startsWith('coverage-report-'));
+        for (const file of files) {
+          const reportPath = \`coverage-artifacts/\${file}/coverage.json\`;
+          if (fs.existsSync(reportPath)) {
+            const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+            totalTests += report.total.lines.total;
+            totalPassed += report.total.lines.covered;
+          }
+        }
         
-        # Calculate success rate
-        if [ $total_tests -gt 0 ]; then
-          success_rate=$(( (total_passed * 100) / total_tests ))
-        else
-          success_rate=0
-        fi
+        const percentage = totalTests > 0 ? Math.round((totalPassed / totalTests) * 100) : 0;
         
-        echo "Total Tests: $total_tests"
-        echo "Passed: $total_passed"
-        echo "Failed: $total_failed"
-        echo "Success Rate: ${success_rate}%"
+        // Create final coverage report
+        const finalReport = {
+          total: {
+            lines: { total: totalTests, covered: totalPassed, percent: percentage },
+            functions: { total: totalTests, covered: totalPassed, percent: percentage },
+            branches: { total: totalTests, covered: totalPassed, percent: percentage },
+            statements: { total: totalTests, covered: totalPassed, percent: percentage }
+          }
+        };
         
-        # Generate badge colors based on success rate
-        if [ $success_rate -ge 90 ]; then
-          color="brightgreen"
-        elif [ $success_rate -ge 75 ]; then
-          color="green"
-        elif [ $success_rate -ge 60 ]; then
-          color="yellow"
-        else
-          color="red"
-        fi
+        fs.writeFileSync('coverage-final.json', JSON.stringify(finalReport, null, 2));
+        console.log('Final Coverage:', percentage + '%');
+        "
         
-        # Create badge SVG
-        cat > badges/e2e-tests.svg << EOF
-        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="20">
-          <linearGradient id="b" x2="0" y2="100%">
-            <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
-            <stop offset="1" stop-opacity=".1"/>
-          </linearGradient>
-          <mask id="a">
-            <rect width="120" height="20" rx="3" fill="#fff"/>
-          </mask>
-          <g mask="url(#a)">
-            <path fill="#555" d="M0 0h55v20H0z"/>
-            <path fill="$color" d="M55 0h65v20H55z"/>
-            <path fill="url(#b)" d="M0 0h120v20H0z"/>
-          </g>
-          <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-            <text x="27.5" y="15" fill="#010101" fill-opacity=".3">E2E Tests</text>
-            <text x="27.5" y="14">E2E Tests</text>
-            <text x="87.5" y="15" fill="#010101" fill-opacity=".3">${total_passed}/${total_tests}</text>
-            <text x="87.5" y="14">${total_passed}/${total_tests}</text>
-          </g>
-        </svg>
-        EOF
+    - name: Code Coverage Summary
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      with:
+        filename: coverage-final.json
+        format: 'markdown'
+        output: 'coverage-summary.md'
         
-        # Create coverage badge (using success rate as proxy)
-        cat > badges/coverage.svg << EOF
-        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="20">
-          <linearGradient id="b" x2="0" y2="100%">
-            <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
-            <stop offset="1" stop-opacity=".1"/>
-          </linearGradient>
-          <mask id="a">
-            <rect width="100" height="20" rx="3" fill="#fff"/>
-          </mask>
-          <g mask="url(#a)">
-            <path fill="#555" d="M0 0h60v20H0z"/>
-            <path fill="$color" d="M60 0h40v20H60z"/>
-            <path fill="url(#b)" d="M0 0h100v20H0z"/>
-          </g>
-          <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-            <text x="30" y="15" fill="#010101" fill-opacity=".3">Coverage</text>
-            <text x="30" y="14">Coverage</text>
-            <text x="80" y="15" fill="#010101" fill-opacity=".3">${success_rate}%</text>
-            <text x="80" y="14">${success_rate}%</text>
-          </g>
-        </svg>
-        EOF
-        
-    - name: Commit and push badges
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add badges/
-        git commit -m "Update test badges - $(date)" || exit 0
-        git push
+    - name: Add Coverage PR Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.event_name == 'pull_request'
+      with:
+        recreate: true
+        path: coverage-summary.md
 
   
   # Notify on failure

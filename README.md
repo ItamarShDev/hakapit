@@ -1,9 +1,9 @@
 # הכפית (Hakapit)
 
-![E2E Tests](./badges/e2e-tests.svg)
-![Coverage](./badges/coverage.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-16.0.1-black)
+![E2E Tests](https://img.shields.io/badge/E2E_Tests-Playwright-blue)
+![PR Coverage](https://img.shields.io/badge/PR_Coverage-Auto_Updated-green)
 
 אתר הבית של משפחת הכפית - פלטפורמת פודקאסטים בעברית עם מעקב העברות כדורגל
 
