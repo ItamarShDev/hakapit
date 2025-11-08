@@ -13,7 +13,9 @@
     "lint": "biome lint app",
     "lint:fix": "biome lint app --write",
     "test:e2e": "playwright test --reporter=html",
-    "test:e2e:accessibility": "playwright test --grep=\"accessibility\" --project=chromium"
+    "test:e2e:accessibility": "playwright test --grep=\"accessibility\" --project=chromium",
+    "test:e2e:coverage": "playwright test --reporter=line",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
