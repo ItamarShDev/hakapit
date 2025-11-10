@@ -1,5 +1,7 @@
 # hakapit.online
 
+[![E2E Tests](https://github.com/ItamarShDev/hakapit/actions/workflows/e2e-tests.yml/badge.svg?branch=main)](https://github.com/ItamarShDev/hakapit/actions/workflows/e2e-tests.yml)
+
 To install dependencies:
 
 ```bash
