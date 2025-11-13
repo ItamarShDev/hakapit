@@ -2,7 +2,7 @@ import type { Viewport } from "next";
 import { Suspense } from "react";
 import { FloatingChat } from "~/components/chat/FloatingChat";
 import { LatestEpisode } from "~/components/convex/LatestEpisode";
-import { RecentTransfers } from "~/components/convex/RecentTransfers";
+import { RecentTransfersServer } from "~/components/convex/RecetTransfers.server";
 import { NextMatchOverview } from "~/components/next-match";
 import { StatsTable } from "~/components/stats/stats";
 import { Trophies } from "~/components/stats/trophies";
@@ -23,7 +23,7 @@ export default function Index() {
 					<LatestEpisode />
 				</div>
 				<div className="flex flex-wrap justify-center">
-					<RecentTransfers />
+					<RecentTransfersServer />
 				</div>
 				<NextMatchOverview />
 				<StatsTable />

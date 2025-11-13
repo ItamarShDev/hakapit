@@ -1,11 +1,19 @@
 "use client";
-import { usePreloadedQuery } from "convex/react";
-import React, { Suspense } from "react";
+import { type Preloaded, usePreloadedQuery } from "convex/react";
+import { useState } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+import type { api } from "~/convex/_generated/api";
 import type { Doc } from "~/convex/_generated/dataModel";
-import { useAllTransfers } from "~/hooks/useFootball";
+
+type Props = {
+	transfers: Preloaded<typeof api.football.getAllTransfers>;
+};
 
 function TransferView({
 	transfer,
@@ -58,19 +66,31 @@ function TransferView({
 					<CardContent className="space-y-3">
 						{transfer.price && (
 							<div className="flex flex-row-reverse items-center justify-between">
-								<span className="text-sm font-semibold text-yellow-600 text-left">💰 {transfer.price}</span>
-								<span className="text-sm text-muted-foreground text-right">דמי העברה</span>
+								<span className="text-sm font-semibold text-yellow-600 text-left">
+									💰 {transfer.price}
+								</span>
+								<span className="text-sm text-muted-foreground text-right">
+									דמי העברה
+								</span>
 							</div>
 						)}
 						<div className="flex flex-row-reverse items-center justify-between">
 							<span className="text-sm font-medium text-left">
-								{transfer.date ? new Date(transfer.date).toLocaleDateString() : "לא ידוע"}
+								{transfer.date
+									? new Date(transfer.date).toLocaleDateString()
+									: "לא ידוע"}
 							</span>
-							<span className="text-sm text-muted-foreground text-right">תאריך</span>
+							<span className="text-sm text-muted-foreground text-right">
+								תאריך
+							</span>
 						</div>
 						<div className="flex flex-row-reverse items-center justify-between">
-							<span className="text-sm font-medium text-left">{transfer.teamName}</span>
-							<span className="text-sm text-muted-foreground text-right">קבוצה</span>
+							<span className="text-sm font-medium text-left">
+								{transfer.teamName}
+							</span>
+							<span className="text-sm text-muted-foreground text-right">
+								קבוצה
+							</span>
 						</div>
 						{transfer.type?.includes("-") && (
 							<div className="pt-2 border-t">
@@ -86,12 +106,16 @@ function TransferView({
 	);
 }
 
-function RecentTransfersContent() {
-	const transfers = useAllTransfers();
-	const [openTransferId, setOpenTransferId] = React.useState<string | null>(null);
+export function RecentTransfers(props: Props) {
+	const transfers = usePreloadedQuery(props.transfers);
+	const [openTransferId, setOpenTransferId] = useState<string | null>(null);
 
 	if (transfers === undefined) {
-		return <div className="size-[88px] text-center vertical-align-middle text-slate-700 italic">טוען העברות</div>;
+		return (
+			<div className="size-[88px] text-center vertical-align-middle text-slate-700 italic">
+				טוען העברות
+			</div>
+		);
 	}
 
 	if (!transfers || transfers.length === 0) {
@@ -110,7 +134,12 @@ function RecentTransfersContent() {
 	const outTransfers = sortedTransfers.filter((t) => t.direction === "OUT");
 
 	const inTransferViews = inTransfers.map((transfer) => (
-		<li key={transfer._id} className={openTransferId && openTransferId !== transfer._id ? "opacity-30" : ""}>
+		<li
+			key={transfer._id}
+			className={
+				openTransferId && openTransferId !== transfer._id ? "opacity-30" : ""
+			}
+		>
 			<TransferView
 				transfer={transfer}
 				isOpen={openTransferId === transfer._id}
@@ -120,7 +149,12 @@ function RecentTransfersContent() {
 	));
 
 	const outTransferViews = outTransfers.map((transfer) => (
-		<li key={transfer._id} className={openTransferId && openTransferId !== transfer._id ? "opacity-30" : ""}>
+		<li
+			key={transfer._id}
+			className={
+				openTransferId && openTransferId !== transfer._id ? "opacity-30" : ""
+			}
+		>
 			<TransferView
 				transfer={transfer}
 				isOpen={openTransferId === transfer._id}
@@ -138,7 +172,9 @@ function RecentTransfersContent() {
 			{/* IN Transfers Row */}
 			{inTransferViews.length > 0 && (
 				<div className="flex flex-col gap-2 items-center">
-					<div className="text-sm font-semibold text-green-600 mb-1">העברות פנימה (IN)</div>
+					<div className="text-sm font-semibold text-green-600 mb-1">
+						העברות פנימה (IN)
+					</div>
 					<ul className="flex flex-row gap-2 list-none">{inTransferViews}</ul>
 				</div>
 			)}
@@ -146,20 +182,12 @@ function RecentTransfersContent() {
 			{/* OUT Transfers Row */}
 			{outTransferViews.length > 0 && (
 				<div className="flex flex-col gap-2 items-center">
-					<div className="text-sm font-semibold text-red-600 mb-1">העברות חוצה (OUT)</div>
+					<div className="text-sm font-semibold text-red-600 mb-1">
+						העברות חוצה (OUT)
+					</div>
 					<ul className="flex flex-row gap-2 list-none">{outTransferViews}</ul>
 				</div>
 			)}
 		</div>
-	);
-}
-
-export function RecentTransfers() {
-	return (
-		<Suspense
-			fallback={<div className="size-[88px] text-center vertical-align-middle text-slate-700 italic">טוען העברות</div>}
-		>
-			<RecentTransfersContent />
-		</Suspense>
 	);
 }

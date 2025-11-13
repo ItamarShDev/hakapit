@@ -146,8 +146,9 @@ body {
 
 .episode-card {
 	background-color: hsl(var(--color-primary-opaque));
-	filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate)
-		var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+	filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast)
+		var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate)
+		var(--tw-sepia) var(--tw-drop-shadow);
 	display: flex;
 	flex-direction: column;
 	border: none;
@@ -296,15 +297,31 @@ audio.audio::-webkit-media-controls-timeline-container {
 .faded-image {
 	--percentage: 0.1%;
 	--direction: right;
-	-webkit-mask-image: linear-gradient(to var(--direction), transparent var(--percentage), black);
-	mask-image: linear-gradient(to var(--direction), transparent var(--percentage), black);
+	-webkit-mask-image: linear-gradient(
+		to var(--direction),
+		transparent var(--percentage),
+		black
+	);
+	mask-image: linear-gradient(
+		to var(--direction),
+		transparent var(--percentage),
+		black
+	);
 }
 
 .faded-image-vertical {
 	--percentage: 30%;
 	--direction: top;
-	-webkit-mask-image: linear-gradient(to var(--direction), transparent var(--percentage), black);
-	mask-image: linear-gradient(to var(--direction), transparent var(--percentage), black);
+	-webkit-mask-image: linear-gradient(
+		to var(--direction),
+		transparent var(--percentage),
+		black
+	);
+	mask-image: linear-gradient(
+		to var(--direction),
+		transparent var(--percentage),
+		black
+	);
 }
 
 .no-mask {
