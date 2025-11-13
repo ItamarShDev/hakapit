@@ -1,5 +1,14 @@
 import Parser from "rss-parser";
 import type { EpisodeData } from "~/providers/rss/types";
+
+// Remove iframes from HTML content
+function removeIframes(content: string): string {
+	if (!content) return content;
+
+	// Remove iframe tags and their content
+	return content.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "");
+}
+
 export async function fetch_rss(url: string | undefined) {
 	if (!url) {
 		return { items: [] };
@@ -14,7 +23,12 @@ export async function fetch_rss(url: string | undefined) {
 			.map((item) => ({
 				...item,
 				episodeGUID: item.guid?.split("/").pop(),
-				number: Number(item.title?.match(/פרק (\d+)/)?.[1]) || Number(item.title?.match(/פרק - (\d+)/)?.[1]),
+				number:
+					Number(item.title?.match(/פרק (\d+)/)?.[1]) ||
+					Number(item.title?.match(/פרק - (\d+)/)?.[1]),
+				// Clean content by removing iframes
+				content: removeIframes(item.content || ""),
+				contentSnippet: removeIframes(item.contentSnippet || ""),
 			})) as EpisodeData[];
 		return { ...rss, items };
 	} catch (error) {

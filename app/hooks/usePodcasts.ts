@@ -1,6 +1,6 @@
 "use client";
 import { useMutation, useQuery } from "convex/react";
-import type { PodcastName } from "~/providers/convex/feed";
+import type { PodcastName } from "~/providers/rss/feed";
 import { api } from "../../convex/_generated/api";
 
 // Hook to get podcast with episodes (real-time streaming)
@@ -15,7 +15,10 @@ export function useLatestEpisode(podcastName: PodcastName) {
 
 // Hook to get episode by number (real-time streaming)
 export function useEpisode(podcastName: PodcastName, episodeNumber: number) {
-	return useQuery(api.podcasts.getEpisodeByNumber, { podcastName, episodeNumber });
+	return useQuery(api.podcasts.getEpisodeByNumber, {
+		podcastName,
+		episodeNumber,
+	});
 }
 
 // Hook to get all podcasts (real-time streaming)

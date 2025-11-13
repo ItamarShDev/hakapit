@@ -1,4 +1,4 @@
-import type { fetchFeed, fetchLatestEpisode } from "~/providers/convex/feed";
+import type { fetchFeed, fetchLatestEpisode } from "~/providers/rss/feed";
 
 export function toDateString(value?: Date | null) {
 	return value && new Date(value).toLocaleDateString();

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import RSSFeed from "~/components/rss/feed";
-import { fetchFeed, type PodcastName } from "~/providers/convex/feed";
+import { fetchFeed, type PodcastName } from "~/providers/rss/feed";
 
-export async function generateMetadata(props: { params: Promise<{ podcast: string }> }): Promise<Metadata> {
+export async function generateMetadata(props: {
+	params: Promise<{ podcast: string }>;
+}): Promise<Metadata> {
 	const params = await props.params;
 	const metadata = await fetchFeed(params.podcast as PodcastName, 1);
 	if (!metadata) {
@@ -16,7 +18,9 @@ export async function generateMetadata(props: { params: Promise<{ podcast: strin
 	return {
 		title: metadata.title,
 		description: metadata.description,
-		authors: [{ name: metadata.authorName || "hakapit", url: metadata.feedUrl || "" }],
+		authors: [
+			{ name: metadata.authorName || "hakapit", url: metadata.feedUrl || "" },
+		],
 		icons: metadata.imageUrl || "",
 		openGraph: {
 			type: "website",
@@ -37,11 +41,16 @@ async function Page(props: PageProps<"/[podcast]/episodes">) {
 
 	const { podcast } = params;
 
-	const episodeLimit = Number.parseInt(limit ? (Array.isArray(limit) ? limit[0] : limit) : "10", 10);
+	const episodeLimit = Number.parseInt(
+		limit ? (Array.isArray(limit) ? limit[0] : limit) : "10",
+		10,
+	);
 	return <RSSFeed limit={episodeLimit} podcast={podcast as PodcastName} />;
 }
 
-export default async function RouteComponent(props: PageProps<"/[podcast]/episodes">) {
+export default async function RouteComponent(
+	props: PageProps<"/[podcast]/episodes">,
+) {
 	return (
 		<Suspense>
 			<Page {...props} />

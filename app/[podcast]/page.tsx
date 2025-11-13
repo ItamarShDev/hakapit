@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
-import { fetchFeed, type PodcastName } from "~/providers/convex/feed";
+import { fetchFeed, type PodcastName } from "~/providers/rss/feed";
 
 export const viewport: Viewport = {
 	width: "device-width",
@@ -10,7 +10,9 @@ export const viewport: Viewport = {
 	themeColor: "var(--color-primary)",
 };
 
-export async function generateMetadata(props: { params: Promise<{ podcast: string }> }): Promise<Metadata> {
+export async function generateMetadata(props: {
+	params: Promise<{ podcast: string }>;
+}): Promise<Metadata> {
 	const params = await props.params;
 	const metadata = await fetchFeed(params.podcast as PodcastName, 1);
 	if (!metadata) {
@@ -23,7 +25,9 @@ export async function generateMetadata(props: { params: Promise<{ podcast: strin
 	return {
 		title: metadata.title,
 		description: metadata.description,
-		authors: [{ name: metadata.authorName || "hakapit", url: metadata.feedUrl || "" }],
+		authors: [
+			{ name: metadata.authorName || "hakapit", url: metadata.feedUrl || "" },
+		],
 		icons: metadata.imageUrl || "",
 		openGraph: {
 			type: "website",
@@ -35,7 +39,11 @@ export async function generateMetadata(props: { params: Promise<{ podcast: strin
 	};
 }
 
-function YouTubeChannel({ podcast }: { podcast: "hakapit" | "balcony-albums" | "nitk" }) {
+function YouTubeChannel({
+	podcast,
+}: {
+	podcast: "hakapit" | "balcony-albums" | "nitk";
+}) {
 	if (podcast !== "hakapit") return null;
 
 	return (

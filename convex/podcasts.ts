@@ -28,11 +28,15 @@ export const getPodcastWithEpisodes = query({
 
 		const episodesQuery = ctx.db
 			.query("episodes")
-			.withIndex("by_podcastId", (q) => q.eq("podcastId", podcast._id))
+			.withIndex("by_podcastId_and_number", (q) =>
+				q.eq("podcastId", podcast._id),
+			)
 			.order("desc");
 
 		const episodes =
-			args.limit && args.limit > 0 ? await episodesQuery.take(args.limit) : await episodesQuery.collect();
+			args.limit && args.limit > 0
+				? await episodesQuery.take(args.limit)
+				: await episodesQuery.collect();
 
 		return {
 			...podcast,

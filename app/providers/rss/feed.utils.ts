@@ -1,4 +1,4 @@
-import type { Feed } from "./types";
+import type { Feed } from "~/providers/rss/types";
 
 export function sliceFeedItems(feed: Feed, number: number): Feed {
 	if (number <= 0) {

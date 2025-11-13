@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import Footer from "~/components/footer";
 import Header from "~/components/header";
-import type { PodcastName } from "~/providers/convex/feed";
+import type { PodcastName } from "~/providers/rss/feed";
 
 const podcasts: Record<PodcastName, { title: string; imageUrl: string }> = {
 	hakapit: {

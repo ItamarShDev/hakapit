@@ -4,16 +4,38 @@ import { PauseIcon, PlayIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { usePlayer } from "~/components/player/provider";
 import { heebo } from "~/fonts";
 import { type EpisodeData, toDateString } from "~/utils";
 
-export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>) {
+// Remove iframes from HTML content (defensive approach for UI)
+function removeIframes(content: string): string {
+	if (!content) return content;
+
+	// Remove iframe tags and their content
+	return content.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "");
+}
+
+export function SkeletonCard({
+	className,
+}: React.HTMLAttributes<HTMLDivElement>) {
 	return (
-		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden bg-primary-opaque", className)}>
+		<Card
+			className={cn(
+				"episode-card relative max-w-xl rounded-3xl overflow-hidden bg-primary-opaque",
+				className,
+			)}
+		>
 			<CardHeader>
 				<CardTitle>
 					<Skeleton className="bg-primary-opaque w-64 h-6 rounded-full" />
@@ -30,13 +52,18 @@ export function SkeletonCard({ className }: React.HTMLAttributes<HTMLDivElement>
 function PlayPauseButton({ episode }: { episode: EpisodeData }) {
 	const playerProps = usePlayer();
 	if (!playerProps) return null;
-	if (playerProps.isPlaying && playerProps.currentlyPlaying?.guid === episode?.guid)
+	if (
+		playerProps.isPlaying &&
+		playerProps.currentlyPlaying?.guid === episode?.guid
+	)
 		return <PauseIcon className="size-7 md:size-4 z-10" />;
 	return <PlayIcon className="size-7 md:size-4 z-10" />;
 }
 
 export function LastEpisodeCardPreview({ episode }: { episode: EpisodeData }) {
-	const isoDate = toDateString(episode?.publishedAt ? new Date(episode.publishedAt) : null);
+	const isoDate = toDateString(
+		episode?.publishedAt ? new Date(episode.publishedAt) : null,
+	);
 	const playerProps = usePlayer();
 	return (
 		<div className="flex items-center justify-center w-full gap-4 py-4">
@@ -82,10 +109,18 @@ export function EpisodeCard({
 	episode?: EpisodeData;
 	contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
 } & React.HTMLAttributes<HTMLDivElement>) {
-	const isoDate = toDateString(episode?.publishedAt ? new Date(episode.publishedAt) : null);
+	const isoDate = toDateString(
+		episode?.publishedAt ? new Date(episode.publishedAt) : null,
+	);
 	const playerProps = usePlayer();
 	return (
-		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className, heebo.className)}>
+		<Card
+			className={cn(
+				"episode-card relative max-w-xl rounded-3xl overflow-hidden",
+				className,
+				heebo.className,
+			)}
+		>
 			{episode?.imageUrl && (
 				<Image
 					src={episode?.imageUrl}
@@ -99,19 +134,23 @@ export function EpisodeCard({
 			)}
 			<CardHeader className="z-10">
 				<CardTitle className="text-accent">
-					<Link href={`/${(episode as any)?.podcast?.name || "hakapit"}/episodes/${episode?.episodeNumber}`}>
+					<Link
+						href={`/${(episode as any)?.podcast?.name || "hakapit"}/episodes/${episode?.episodeNumber}`}
+					>
 						{episode?.title}
 					</Link>
 				</CardTitle>
 				<CardDescription className="text-muted">{isoDate}</CardDescription>
 			</CardHeader>
-			<CardContent className={cn("flex-1 text-paragraph z-10", contentClassName)}>
+			<CardContent
+				className={cn("flex-1 text-paragraph z-10", contentClassName)}
+			>
 				{episode?.htmlDescription && (
 					<div
 						className="card-content"
 						// biome-ignore lint: noDangerouslySetInnerHtml
 						dangerouslySetInnerHTML={{
-							__html: episode?.htmlDescription,
+							__html: removeIframes(episode?.htmlDescription),
 						}}
 					/>
 				)}
