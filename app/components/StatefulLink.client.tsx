@@ -5,24 +5,13 @@ import { usePathname } from "next/navigation";
 import { type ComponentProps, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
-export default function StatefulLink({ children, href, ...props }: ComponentProps<typeof Link>) {
-	const [isLoading, setIsLoading] = useState(false);
-	const path = usePathname();
-
-	useEffect(() => {
-		if (isLoading && path === href) {
-			setIsLoading(false);
-		}
-	}, [isLoading, href, path]);
-
+export default function StatefulLink({
+	children,
+	href,
+	...props
+}: ComponentProps<typeof Link>) {
 	return (
-		<Link
-			href={href}
-			replace
-			className={cn(props.className, isLoading && "animate animate-pulse")}
-			scroll={false}
-			onClick={() => setIsLoading(true)}
-		>
+		<Link href={href} replace className={props.className} scroll={false}>
 			{children}
 		</Link>
 	);
