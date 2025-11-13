@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { TwitterLoader } from "~/[podcast]/TwitterLoader";
 import { PlayerProvider } from "~/components/player/provider";
 import { MainLayout } from "~/layouts/main";
-import type { PodcastName } from "~/providers/rss/feed";
+import type { PodcastName } from "~/providers/convex/feed";
 
 export async function generateStaticParams() {
 	// Return a placeholder for build-time validation

@@ -1,7 +1,7 @@
 import Image from "next/image";
-import type { Episode as DBEpisode } from "~/db/types";
+import type { Doc } from "~/convex/_generated/dataModel";
 
-export default function Episode({ data }: { data: DBEpisode }) {
+export default function Episode({ data }: { data: Doc<"episodes"> }) {
 	return (
 		<section className="flex flex-col items-center justify-start max-w-full h-auto m-auto lg:items-start lg:flex-row lg:gap-8 lg:py-32">
 			{data.imageUrl && (

@@ -1,9 +1,15 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { ConvexHttpClient } from "convex/browser";
 import webpush from "web-push";
-import { db } from "~/db/config";
-import { subscriptions, toSubscriptionSchema } from "~/db/schema";
+import { api } from "~/convex/_generated/api";
+
+// Initialize Convex client
+const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+if (!convexUrl) {
+	throw new Error("NEXT_PUBLIC_CONVEX_URL environment variable is required");
+}
+const convex = new ConvexHttpClient(convexUrl);
 
 if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
 	webpush.setVapidDetails(
@@ -14,22 +20,19 @@ if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
 }
 
 export async function subscribeUser(sub: PushSubscription) {
-	const existing = await db.query.subscriptions.findFirst({
-		where: eq(subscriptions.userId, sub.endpoint),
+	// Create or update subscription
+	await convex.mutation(api.subscriptions.upsertSubscription, {
+		podcast: "hakapit", // Default podcast for push notifications
+		userId: sub.endpoint,
+		subscription: sub,
 	});
-	if (existing) {
-		await db
-			.update(subscriptions)
-			.set(toSubscriptionSchema(sub))
-			.where(eq(subscriptions.userId, sub.endpoint))
-			.execute();
-	} else {
-		await db.insert(subscriptions).values(toSubscriptionSchema(sub)).execute();
-	}
+
 	return { success: true };
 }
 
 export async function unsubscribeUser(endpoint: string) {
-	await db.delete(subscriptions).where(eq(subscriptions.userId, endpoint)).execute();
+	await convex.mutation(api.subscriptions.deleteSubscription, {
+		userId: endpoint,
+	});
 	return { success: true };
 }

@@ -31,14 +31,11 @@ export async function RecentTransfers() {
 	if (!transfers) return null;
 
 	// sort by date descending (most recent first)
-	const sortedTransfers = transfers
-		// .filter((transfer) => isTransferBuy(transfer.type)) // Temporarily disabled for debugging
-		.slice()
-		.sort((a, b) => {
-			const dateA = a.date ? new Date(a.date).getTime() : 0;
-			const dateB = b.date ? new Date(b.date).getTime() : 0;
-			return dateB - dateA;
-		});
+	const sortedTransfers = transfers.slice().sort((a, b) => {
+		const dateA = a.date ? new Date(a.date).getTime() : 0;
+		const dateB = b.date ? new Date(b.date).getTime() : 0;
+		return dateB - dateA;
+	});
 	const transferViews = sortedTransfers.map((transfer) => (
 		<li key={transfer.playerId}>
 			<TransferView transfer={transfer} />

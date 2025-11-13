@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Episode from "~/components/rss/episode";
-import { fetchEpisode } from "~/providers/rss/feed";
+import { fetchEpisode } from "~/providers/convex/feed";
 
 export async function generateStaticParams() {
 	// Return a placeholder for build-time validation
@@ -11,7 +11,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: { params: Promise<{ id: string; podcast: string }> }): Promise<Metadata> {
 	const params = await props.params;
-	const metadata = await fetchEpisode(params.id);
+	const metadata = await fetchEpisode(`${params.podcast}-${params.id}`);
 
 	if (!metadata) {
 		return {
@@ -38,11 +38,11 @@ export async function generateMetadata(props: { params: Promise<{ id: string; po
 async function Page({ params }: { params: PageProps<"/[podcast]/episodes/[id]">["params"] }) {
 	const resolvedParams = await params;
 	if (!resolvedParams.podcast && !resolvedParams.id) return null;
-	const data = await fetchEpisode(resolvedParams.id);
+	const data = await fetchEpisode(`${resolvedParams.podcast}-${resolvedParams.id}`);
 	if (!data) {
 		return null;
 	}
-	return <Episode data={data} />;
+	return <Episode data={data as any} />;
 }
 
 export default async function RouteComponent(props: PageProps<"/[podcast]/episodes/[id]">) {

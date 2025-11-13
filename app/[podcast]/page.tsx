@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import RSSFeed from "~/components/rss/feed";
 import { TwitterTimelineEmbed } from "~/components/twitter-timeline-embed";
-import { fetchFeed, type PodcastName } from "~/providers/rss/feed";
+import { fetchFeed, type PodcastName } from "~/providers/convex/feed";
 
 export const viewport: Viewport = {
 	width: "device-width",

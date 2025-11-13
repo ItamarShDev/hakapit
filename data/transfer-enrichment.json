@@ -1,0 +1,100 @@
+{
+    "transfers": [
+        {
+            "playerId": 342467,
+            "playerName": "Á. Pécsi",
+            "price": "Free Transfer",
+            "additionalInfo": "Academy signing from Puskas Academy"
+        },
+        {
+            "playerId": 283,
+            "playerName": "T. Alexander-Arnold",
+            "price": "€40M",
+            "additionalInfo": "Future transfer to Real Madrid (2025)"
+        },
+        {
+            "playerId": 158698,
+            "playerName": "J. Quansah",
+            "price": "€15M",
+            "additionalInfo": "Transfer to Bayer Leverkusen"
+        },
+        {
+            "playerId": 2489,
+            "playerName": "L. Díaz",
+            "price": "€60M",
+            "additionalInfo": "Transfer to Bayern München"
+        },
+        {
+            "playerId": 162590,
+            "playerName": "T. Morton",
+            "price": "€8M",
+            "additionalInfo": "Transfer to Lyon"
+        },
+        {
+            "playerId": 127472,
+            "playerName": "N. Phillips",
+            "price": "€2M",
+            "additionalInfo": "Transfer to West Brom"
+        },
+        {
+            "playerId": 2864,
+            "playerName": "A. Isak",
+            "price": "€75M",
+            "additionalInfo": "Transfer from Newcastle"
+        },
+        {
+            "playerId": 343576,
+            "playerName": "B. Doak",
+            "price": "€5M",
+            "additionalInfo": "Transfer to Bournemouth"
+        },
+        {
+            "playerId": 152654,
+            "playerName": "J. Frimpong",
+            "price": "€45M",
+            "additionalInfo": "Transfer from Bayer Leverkusen"
+        },
+        {
+            "playerId": 409047,
+            "playerName": "G. Leoni",
+            "price": "€3M",
+            "additionalInfo": "Transfer from Parma"
+        },
+        {
+            "playerId": 203224,
+            "playerName": "F. Wirtz",
+            "price": "€85M",
+            "additionalInfo": "Transfer from Bayer Leverkusen"
+        },
+        {
+            "playerId": 174565,
+            "playerName": "H. Ekitike",
+            "price": "€25M",
+            "additionalInfo": "Transfer from Eintracht Frankfurt"
+        },
+        {
+            "playerId": 206254,
+            "playerName": "M. Kerkez",
+            "price": "€12M",
+            "additionalInfo": "Transfer from Bournemouth"
+        },
+        {
+            "playerId": 152976,
+            "playerName": "Thomas Daniel Hill",
+            "price": "€500K",
+            "additionalInfo": "Transfer to Harrogate Town"
+        },
+        {
+            "playerId": 281,
+            "playerName": "C. Kelleher",
+            "price": "€6M",
+            "additionalInfo": "Transfer to Brentford"
+        },
+        {
+            "playerId": 498377,
+            "playerName": "W. Wright",
+            "price": "€1M",
+            "additionalInfo": "Transfer from Salford City"
+        }
+    ]
+}

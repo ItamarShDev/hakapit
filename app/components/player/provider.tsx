@@ -1,16 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Toaster } from "@/components/ui/sonner";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import { createContext, forwardRef, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import type { Episode } from "~/db/types";
+import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
+import type { Doc } from "~/convex/_generated/dataModel";
 
 type PlayerContextType = {
-	currentlyPlaying: Episode | undefined;
-	setCurrentlyPlaying: (episode?: Episode) => void;
+	currentlyPlaying: Doc<"episodes"> | undefined;
+	setCurrentlyPlaying: (episode?: Doc<"episodes">) => void;
 	isPlaying: boolean;
 };
 
@@ -20,7 +20,7 @@ const Player = forwardRef(function Player(
 		episode,
 		closePlayer,
 	}: {
-		episode: Episode | undefined;
+		episode: Doc<"episodes"> | undefined;
 		closePlayer: () => void;
 	},
 	ref: React.ForwardedRef<HTMLAudioElement>,
@@ -43,7 +43,6 @@ const Player = forwardRef(function Player(
 				)}
 				<div className="flex flex-col flex-1 px-4 leading-7">
 					<p className="text-lg text-white">{episode?.title}</p>
-					<p className="text-slate-300">{episode?.podcast?.title}</p>
 				</div>
 				<Button variant="link" className="text-white" onClick={() => closePlayer()}>
 					<Cross1Icon />
@@ -57,11 +56,11 @@ const Player = forwardRef(function Player(
 });
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
-	const [currentlyPlaying, setCurrentlyPlaying] = useState<Episode | undefined>(undefined);
+	const [currentlyPlaying, setCurrentlyPlaying] = useState<Doc<"episodes"> | undefined>(undefined);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const ref = useRef<HTMLAudioElement | null>(null);
 	const setCurrentEpisode = useCallback(
-		(episode?: Episode) => {
+		(episode?: Doc<"episodes">) => {
 			if (episode?.audioUrl === currentlyPlaying?.audioUrl) {
 				if (isPlaying) {
 					ref.current?.pause();

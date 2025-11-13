@@ -1,4 +1,4 @@
-import type { Episode } from "~/db/schema";
+import type { Doc } from "~/convex/_generated/dataModel";
 import { type PodcastName, updateFeedsInDb } from "~/providers/rss/feed";
 
 export async function getLatestEpisode() {
@@ -7,12 +7,12 @@ export async function getLatestEpisode() {
 	if (newEpisodes.length === 0) {
 		return null;
 	}
-	const episodePerPodcast: { [key in PodcastName]?: Episode } = {};
+	const episodePerPodcast: { [key in PodcastName]?: Doc<"episodes"> } = {};
 	for (const result of newEpisodes) {
 		if (!result || !result.latestEpisode || !result.podcast) {
 			continue;
 		}
-		episodePerPodcast[result.podcast] = result.latestEpisode;
+		episodePerPodcast[result.podcast] = result.latestEpisode as any;
 	}
 	return episodePerPodcast;
 }

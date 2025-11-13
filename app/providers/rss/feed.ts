@@ -1,11 +1,17 @@
 "use server";
-import { desc, eq, ilike, like } from "drizzle-orm";
-import { cacheLife, cacheTag } from "next/cache";
-import { db } from "~/db/config";
-import { episodes, podcasts, toSchemaEpisode, toSchemaPodcast } from "~/db/schema";
+import { ConvexHttpClient } from "convex/browser";
+import { cacheTag } from "next/cache";
+import { api } from "~/convex/_generated/api";
 import { fetch_rss } from "~/providers/rss/fetch-rss";
 import type { Feed } from "~/providers/rss/types";
 import { sliceFeedItems } from "./feed.utils";
+
+// Initialize Convex client
+const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+if (!convexUrl) {
+	throw new Error("NEXT_PUBLIC_CONVEX_URL environment variable is required");
+}
+const convex = new ConvexHttpClient(convexUrl);
 
 const PODCAST_URLS = {
 	hakapit: process.env.HAKAPIT_RSS,
@@ -18,112 +24,117 @@ export type PodcastName = keyof typeof PODCAST_URLS;
 
 function _fetch(podcast: PodcastName) {
 	const url = PODCAST_URLS[podcast];
+	if (!url) {
+		throw new Error(`No RSS URL found for podcast: ${podcast}`);
+	}
 	return fetch_rss(url);
 }
 
-async function fetchRSSFeed(podcast: PodcastName, number = 5): Promise<Feed> {
+async function fetchRSSFeed(podcast: PodcastName, number = 10): Promise<Feed> {
 	const rss = await _fetch(podcast);
 	return sliceFeedItems(rss as Feed, number);
-}
-async function getCachedUpdateFeedInDb(feedName: PodcastName) {
-	"use cache";
-	cacheLife({ revalidate: 3600 }); // 1 hour for RSS updates
-	cacheTag(`rss-${feedName}`);
-	return await updateFeedInDb(feedName);
-}
-
-async function getCachedFetchFeed(podcast: PodcastName, number = 5) {
-	"use cache";
-	cacheLife({ revalidate: 6000 }); // 100 minutes to match original revalidate
-	cacheTag(`rss-${podcast}`);
-	const limit = number > 0 ? { limit: number } : {};
-	return await db.query.podcasts.findFirst({
-		where: eq(podcasts.name, podcast),
-		with: { episodes: { ...limit, orderBy: [desc(episodes.episodeNumber)], with: { podcast: true } } },
-	});
 }
 
 async function updateFeedInDb(feedName: PodcastName) {
 	const feed = await fetchRSSFeed(feedName, 0);
 
-	const podcastsDB = await db.query.podcasts.findFirst({
-		where: ilike(podcasts.name, feedName),
-		with: {
-			episodes: true,
-		},
+	const podcastsDB = await convex.query(api.podcasts.getPodcastWithEpisodes, {
+		name: feedName,
+	});
+
+	// Create or update podcast
+	await convex.mutation(api.podcasts.upsertPodcast, {
+		name: feedName,
+		title: feed.title,
+		link: feed.link,
+		description: feed.description,
+		imageUrl: feed.itunes?.image,
+		feedUrl: feed.feedUrl,
+		authorName: feed.itunes?.owner?.name,
+		authorEmail: feed.itunes?.owner?.email,
+		authorSummary: feed.itunes?.summary,
+		authorImageUrl: feed.itunes?.image,
 	});
 
 	let newEpisodes = feed.items;
-	if (!podcastsDB) {
-		await db.insert(podcasts).values(toSchemaPodcast(feed, feedName)).execute();
-	} else {
-		await db
-			.update(podcasts)
-			.set(toSchemaPodcast(feed, feedName))
-			.where(like(podcasts.name, feedName as string))
-			.execute();
-		newEpisodes = feed.items.filter((episode) => episode.number > podcastsDB.episodes[0].episodeNumber);
+	if (podcastsDB?.episodes && podcastsDB.episodes.length > 0) {
+		const latestEpisodeNumber = Math.max(...podcastsDB.episodes.map((ep) => ep.episodeNumber));
+		newEpisodes = feed.items.filter((episode) => (episode.number || 0) > latestEpisodeNumber);
 	}
+
 	if (newEpisodes.length === 0) {
 		return;
 	}
 
-	const insertResult = await db
-		.insert(episodes)
-		.values(newEpisodes.map((ep) => toSchemaEpisode(ep, feedName)))
-		.onConflictDoNothing()
-		.execute();
+	// Insert new episodes
+	for (const episode of newEpisodes) {
+		await convex.mutation(api.podcasts.createEpisode, {
+			podcastName: feedName,
+			episodeNumber: episode.number || 0,
+			guid: episode.episodeGUID,
+			title: episode.title,
+			link: episode.link,
+			description: episode.contentSnippet,
+			htmlDescription: episode.content,
+			imageUrl: episode.itunes?.image,
+			audioUrl: episode.enclosure?.url || "",
+			publishedAt: episode.isoDate ? new Date(episode.isoDate).getTime() : undefined,
+			duration: episode.itunes?.duration,
+		});
+	}
 
 	const latestEpisode = await getLastEpisode(feedName);
-	return { podcast: feedName, insertResult, latestEpisode };
+	return { podcast: feedName, insertResult: { count: newEpisodes.length }, latestEpisode };
 }
 
 export async function updateFeedsInDb() {
 	return await Promise.all(PODCAST_NAMES.map((key) => updateFeedInDb(key as PodcastName)));
 }
+
 function getLastEpisode(podcast: PodcastName) {
-	return db.query.episodes.findFirst({
-		where: eq(episodes.podcast, podcast),
-		orderBy: [desc(episodes.episodeNumber)],
-		with: { podcast: true },
+	return convex.query(api.podcasts.getLatestEpisode, { podcastName: podcast });
+}
+
+export async function getEpisode(podcast: PodcastName, episodeID: string) {
+	cacheTag(`episode-${podcast}-${episodeID}`);
+	const episodeNumber = Number.parseInt(episodeID);
+	return await convex.query(api.podcasts.getEpisodeByNumber, {
+		podcastName: podcast,
+		episodeNumber,
 	});
 }
 
-export async function fetchLatestEpisode(podcast: PodcastName) {
-	await updateFeedInDb(podcast);
-	return await getLastEpisode(podcast);
+export async function getFeed(podcast: PodcastName) {
+	cacheTag(`feed-${podcast}`);
+	const feed = await fetchRSSFeed(podcast);
+	const podcastData = await convex.query(api.podcasts.getPodcastByName, { name: podcast });
+
+	return { feed, podcastData };
 }
 
-export async function fetchEpisode(episodeID: string) {
-	"use cache";
-	cacheTag(`episode-${episodeID}`);
-	cacheLife("days"); // 1 hour cache
-	return db.query.episodes.findFirst({
-		where: eq(episodes.episodeNumber, Number.parseInt(episodeID)),
-		with: { podcast: true },
-	});
+export async function getAllFeeds() {
+	cacheTag("all-feeds");
+	const allPodcasts = await convex.query(api.podcasts.getAllPodcasts);
+	return allPodcasts;
 }
 
-export async function fetchFeed(podcast: PodcastName, number = 5) {
-	return await getCachedFetchFeed(podcast, number);
-}
 export async function fetchUpdatedFeed(podcast: PodcastName, number = 5) {
 	const isDev = process.env.NODE_ENV === "development";
 	// Check if podcast data was updated recently to avoid excessive RSS fetches
-	const podcastData = await db.query.podcasts.findFirst({
-		where: eq(podcasts.name, podcast),
+	const podcastData = await convex.query(api.podcasts.getPodcastWithEpisodes, {
+		name: podcast,
 	});
-	const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+	const oneHourAgo = Date.now() - 60 * 60 * 1000;
 
 	if (podcastData?.updatedAt && podcastData.updatedAt > oneHourAgo) {
 		// Data is fresh, return directly
-		return await fetchFeed(podcast, number);
+		return await fetchRSSFeed(podcast, number);
 	}
 
 	// For serverless environments, we need to update synchronously but efficiently
 	// Consider implementing a cron job for better performance
-	await getCachedUpdateFeedInDb(podcast);
-	const result = await fetchFeed(podcast, number);
+	await updateFeedInDb(podcast);
+	const result = await fetchRSSFeed(podcast, number);
 	if (isDev) console.timeEnd(`rss-update-${podcast}`);
 	return result;
 }

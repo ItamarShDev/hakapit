@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { AnalyticsWrapper } from "~/components/analytics";
 import { NavigationProgress } from "./components/navigation-progress";
+import { ConvexClientProvider } from "./providers/convex/client-provider";
 import "./globals.css";
 import "./styles.css";
 export const viewport: Viewport = {
@@ -39,9 +40,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				<meta name="apple-mobile-web-app-title" content="הכפית" />
 			</head>
 			<body className="hakapit" suppressHydrationWarning>
-				<NavigationProgress />
-				{children}
-				<AnalyticsWrapper />
+				<ConvexClientProvider>
+					<NavigationProgress />
+					{children}
+					<AnalyticsWrapper />
+				</ConvexClientProvider>
 			</body>
 		</html>
 	);

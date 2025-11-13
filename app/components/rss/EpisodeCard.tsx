@@ -36,14 +36,14 @@ function PlayPauseButton({ episode }: { episode: EpisodeData }) {
 }
 
 export function LastEpisodeCardPreview({ episode }: { episode: EpisodeData }) {
-	const isoDate = toDateString(episode?.publishedAt);
+	const isoDate = toDateString(episode?.publishedAt ? new Date(episode.publishedAt) : null);
 	const playerProps = usePlayer();
 	return (
 		<div className="flex items-center justify-center w-full gap-4 py-4">
 			{playerProps && (
 				<Button
 					className="md:size-14 size-20 md:rounded-full relative p-3 overflow-hidden"
-					onClick={() => playerProps.setCurrentlyPlaying(episode)}
+					onClick={() => playerProps.setCurrentlyPlaying(episode as any)}
 				>
 					{episode?.imageUrl && (
 						<Image
@@ -62,7 +62,7 @@ export function LastEpisodeCardPreview({ episode }: { episode: EpisodeData }) {
 				<Link
 					prefetch={true}
 					className="md:text-lg text-xl"
-					href={`/${episode?.podcast?.name}/episodes/${episode?.episodeNumber}`}
+					href={`/${(episode as any)?.podcast?.name || "hakapit"}/episodes/${episode?.episodeNumber}`}
 				>
 					{episode?.title}
 				</Link>
@@ -82,7 +82,7 @@ export function EpisodeCard({
 	episode?: EpisodeData;
 	contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
 } & React.HTMLAttributes<HTMLDivElement>) {
-	const isoDate = toDateString(episode?.publishedAt);
+	const isoDate = toDateString(episode?.publishedAt ? new Date(episode.publishedAt) : null);
 	const playerProps = usePlayer();
 	return (
 		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className, heebo.className)}>
@@ -99,7 +99,9 @@ export function EpisodeCard({
 			)}
 			<CardHeader className="z-10">
 				<CardTitle className="text-accent">
-					<Link href={`/${episode?.podcast?.name}/episodes/${episode?.episodeNumber}`}>{episode?.title}</Link>
+					<Link href={`/${(episode as any)?.podcast?.name || "hakapit"}/episodes/${episode?.episodeNumber}`}>
+						{episode?.title}
+					</Link>
 				</CardTitle>
 				<CardDescription className="text-muted">{isoDate}</CardDescription>
 			</CardHeader>
@@ -119,7 +121,7 @@ export function EpisodeCard({
 					<Button
 						disabled={playerProps.currentlyPlaying?.guid === episode?.guid}
 						className="z-10 w-full"
-						onClick={() => playerProps.setCurrentlyPlaying(episode)}
+						onClick={() => playerProps.setCurrentlyPlaying(episode as any)}
 					>
 						{playerProps.currentlyPlaying?.guid === episode?.guid ? (
 							"מנגן כרגע"

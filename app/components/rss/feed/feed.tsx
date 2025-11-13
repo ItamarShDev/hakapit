@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { EpisodeCard } from "~/components/rss/EpisodeCard";
 import StatefulLink from "~/components/StatefulLink.client";
 import { amaticSc } from "~/fonts";
-import { fetchUpdatedFeed, type PodcastName } from "~/providers/rss/feed";
+import { fetchUpdatedFeed, type PodcastName } from "~/providers/convex/feed";
 
 const getFeed = cache(fetchUpdatedFeed);
 

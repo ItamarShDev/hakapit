@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Episode from "~/components/rss/episode";
-import { fetchLatestEpisode, type PodcastName } from "~/providers/rss/feed";
+import { fetchLatestEpisode, type PodcastName } from "~/providers/convex/feed";
 
 export async function generateMetadata(props: { params: Promise<{ podcast: string }> }): Promise<Metadata> {
 	const params = await props.params;
@@ -33,7 +33,7 @@ async function Page({ params }: { params: PageProps<"/[podcast]/episodes/latest"
 	if (!episode) {
 		return <div>Not found</div>;
 	}
-	return <Episode data={episode} />;
+	return <Episode data={episode as any} />;
 }
 
 export default async function RouteComponent(props: PageProps<"/[podcast]/episodes/latest">) {
