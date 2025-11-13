@@ -1,12 +1,27 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"files": {
-		"includes": ["**", "!**/build/**/*.js", "!**/app/api/fotmob-api/**/*.ts"]
+		"includes": [
+			"**",
+			"!**/build/**/*.js",
+			"!**/app/api/fotmob-api/**/*.ts"
+		]
 	},
-	"assist": { "actions": { "source": { "organizeImports": "on" } } },
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
 	"formatter": {
 		"formatWithErrors": true,
 		"lineWidth": 120
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
 	},
 	"linter": {
 		"enabled": true,

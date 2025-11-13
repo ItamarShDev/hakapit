@@ -12,7 +12,7 @@ export async function getLatestEpisode() {
 		if (!result || !result.latestEpisode || !result.podcast) {
 			continue;
 		}
-		episodePerPodcast[result.podcast] = result.latestEpisode as any;
+		episodePerPodcast[result.podcast] = result.latestEpisode;
 	}
 	return episodePerPodcast;
 }
