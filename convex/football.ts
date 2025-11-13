@@ -66,6 +66,7 @@ export const upsertTransfer = mutation({
 		direction: v.string(), // "IN" or "OUT"
 		action: v.string(), // "BUY" or "SELL"
 		price: v.optional(v.string()), // Transfer fee amount
+		updatedAt: v.optional(v.number()),
 	},
 	handler: async (ctx, args) => {
 		const existing = await ctx.db

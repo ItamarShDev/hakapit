@@ -11,7 +11,10 @@ export const migratePodcasts = mutation({
 		const existingPodcasts = await ctx.db.query("podcasts").collect();
 
 		if (existingPodcasts.length > 0) {
-			return { message: "Podcasts already migrated", count: existingPodcasts.length };
+			return {
+				message: "Podcasts already migrated",
+				count: existingPodcasts.length,
+			};
 		}
 
 		// Sample migration data - replace with actual PostgreSQL data
@@ -53,7 +56,10 @@ export const migratePodcasts = mutation({
 			migratedPodcasts.push(id);
 		}
 
-		return { message: "Podcasts migrated successfully", count: migratedPodcasts.length };
+		return {
+			message: "Podcasts migrated successfully",
+			count: migratedPodcasts.length,
+		};
 	},
 });
 
@@ -100,7 +106,10 @@ export const migrateEpisodes = mutation({
 			migratedEpisodes.push(id);
 		}
 
-		return { message: "Episodes migrated successfully", count: migratedEpisodes.length };
+		return {
+			message: "Episodes migrated successfully",
+			count: migratedEpisodes.length,
+		};
 	},
 });
 
@@ -130,7 +139,10 @@ export const migrateSubscriptions = mutation({
 			migratedSubscriptions.push(id);
 		}
 
-		return { message: "Subscriptions migrated successfully", count: migratedSubscriptions.length };
+		return {
+			message: "Subscriptions migrated successfully",
+			count: migratedSubscriptions.length,
+		};
 	},
 });
 
@@ -150,6 +162,7 @@ export const migrateTransfers = mutation({
 				direction: v.string(),
 				action: v.string(),
 				price: v.optional(v.string()),
+				updatedAt: v.optional(v.number()),
 			}),
 		),
 	},
@@ -166,7 +179,10 @@ export const migrateTransfers = mutation({
 			migratedTransfers.push(id);
 		}
 
-		return { message: "Transfers migrated successfully", count: migratedTransfers.length };
+		return {
+			message: "Transfers migrated successfully",
+			count: migratedTransfers.length,
+		};
 	},
 });
 

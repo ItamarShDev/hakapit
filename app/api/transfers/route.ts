@@ -1,8 +1,8 @@
-import { unstable_noStore as noStore } from "next/cache";
+import { connection } from "next/server";
 import { getLatestTransfers } from "~/providers/football-api";
 
 export async function GET() {
-	noStore();
+	await connection();
 	try {
 		const transfersPerPlayer = await getLatestTransfers();
 		if (transfersPerPlayer && Object.keys(transfersPerPlayer).length > 0) {

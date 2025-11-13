@@ -16,7 +16,10 @@ if (!convexUrl) {
 }
 const convex = new ConvexHttpClient(convexUrl);
 
-async function fetchData<T>(path: string, query?: URLSearchParams | Record<string, string>) {
+async function fetchData<T>(
+	path: string,
+	query?: URLSearchParams | Record<string, string>,
+) {
 	const params = new URLSearchParams(query);
 	const url = new URL(path, baseUrl);
 	url.search = params.toString();
@@ -31,8 +34,12 @@ async function fetchData<T>(path: string, query?: URLSearchParams | Record<strin
 
 export async function getLatestTransfers() {
 	const results = await getCachedTransferData();
-	const newTransfers = results.filter((result) => result.updatedAt === Date.now());
-	const transfersPerPlayer = Object.fromEntries(newTransfers.map((result) => [result.playerName, result]));
+	const newTransfers = results.filter(
+		(result) => result.updatedAt === Date.now(),
+	);
+	const transfersPerPlayer = Object.fromEntries(
+		newTransfers.map((result) => [result.playerName, result]),
+	);
 	return transfersPerPlayer;
 }
 
@@ -43,7 +50,10 @@ export async function getCachedTransferData(): Promise<Doc<"transfers">[]> {
 		const lastUpdateTime = lastUpdate;
 
 		// If last update is today, return Convex data
-		if (lastUpdateTime && new Date(lastUpdateTime).toDateString() === new Date().toDateString()) {
+		if (
+			lastUpdateTime &&
+			new Date(lastUpdateTime).toDateString() === new Date().toDateString()
+		) {
 			return await convex.query(api.football.getAllTransfers);
 		}
 	} catch (error) {
@@ -51,7 +61,9 @@ export async function getCachedTransferData(): Promise<Doc<"transfers">[]> {
 		// Continue with API fetch as fallback
 	}
 
-	const data = await fetchData<TransferResponse>("transfers", { team: String(LiverpoolId) });
+	const data = await fetchData<TransferResponse>("transfers", {
+		team: String(LiverpoolId),
+	});
 	type TransferItem = TransferResponse["response"][number];
 	type InnerTransfer = TransferItem["transfers"][number];
 	const onlyTransfersFromLastYear: Array<{
@@ -71,27 +83,34 @@ export async function getCachedTransferData(): Promise<Doc<"transfers">[]> {
 
 	// Sort and filter transfers first
 	const validTransferItems: TransferItem[] = data.response
-		.sort((a: TransferItem, b: TransferItem) => new Date(b.update).getTime() - new Date(a.update).getTime())
+		.sort(
+			(a: TransferItem, b: TransferItem) =>
+				new Date(b.update).getTime() - new Date(a.update).getTime(),
+		)
 		.filter((transferItem: TransferItem) => {
 			const isCurrentYear = transferItem.transfers.some(
-				(transfer: InnerTransfer) => new Date(transfer.date).getFullYear() === new Date().getFullYear(),
+				(transfer: InnerTransfer) =>
+					new Date(transfer.date).getFullYear() === new Date().getFullYear(),
 			);
 			const isBuy = transferItem.transfers.every(
-				(transfer: InnerTransfer) => transfer.teams.in.id === LiverpoolId && isTransferBuy(transfer.type),
+				(transfer: InnerTransfer) =>
+					transfer.teams.in.id === LiverpoolId && isTransferBuy(transfer.type),
 			);
 			return isCurrentYear && isBuy;
 		});
 
-	console.time("player-data-fetch");
 	// Batch fetch all player data in parallel with error handling
-	const playerDataPromises = validTransferItems.map((transferItem: TransferItem) =>
-		getCachedPlayerData(transferItem.player.id).catch((error) => {
-			console.error(`Failed to fetch player data for ${transferItem.player.name}:`, error);
-			return null;
-		}),
+	const playerDataPromises = validTransferItems.map(
+		(transferItem: TransferItem) =>
+			getCachedPlayerData(transferItem.player.id).catch((error) => {
+				console.error(
+					`Failed to fetch player data for ${transferItem.player.name}:`,
+					error,
+				);
+				return null;
+			}),
 	);
 	const playerDataResults = await Promise.all(playerDataPromises);
-	console.timeEnd("player-data-fetch");
 
 	for (let i = 0; i < validTransferItems.length; i++) {
 		const transferItem = validTransferItems[i];
@@ -130,13 +149,13 @@ export async function getCachedTransferData(): Promise<Doc<"transfers">[]> {
 		}
 	}
 	await convex.mutation(api.football.updateFetchTime);
-	console.log("Returning data from API fetch:", onlyTransfersFromLastYear);
-	console.timeEnd("transfer-fetch");
 	return await convex.query(api.football.getAllTransfers);
 }
 
 async function getCachedPlayerData(playerId: number) {
-	return await fetchData<PlayerStatsResponse>("players/profiles", { player: String(playerId) });
+	return await fetchData<PlayerStatsResponse>("players/profiles", {
+		player: String(playerId),
+	});
 }
 
 // Rate-limited refresh action for transfers with Convex persistence
@@ -148,11 +167,12 @@ export async function refreshTransferData(): Promise<{
 	data?: Awaited<ReturnType<typeof getCachedTransferData>>;
 }> {
 	"use server";
-	console.log("Manual transfer data refresh triggered");
 
 	// Check Convex for last refresh time using cache tracking
 	try {
-		const cacheRecords = await convex.query(api.migrate.getCacheByDataType, { dataType: "transfers" });
+		const cacheRecords = await convex.query(api.migrate.getCacheByDataType, {
+			dataType: "transfers",
+		});
 		const lastRefreshRecord = cacheRecords[0];
 		const now = Date.now();
 
@@ -160,8 +180,12 @@ export async function refreshTransferData(): Promise<{
 		if (lastRefreshRecord?.lastUpdated) {
 			const timeSinceLastRefresh = now - lastRefreshRecord.lastUpdated;
 			if (timeSinceLastRefresh < REFRESH_COOLDOWN) {
-				const waitTime = Math.ceil((REFRESH_COOLDOWN - timeSinceLastRefresh) / 60000);
-				throw new Error(`Please wait ${waitTime} minutes before refreshing again`);
+				const waitTime = Math.ceil(
+					(REFRESH_COOLDOWN - timeSinceLastRefresh) / 60000,
+				);
+				throw new Error(
+					`Please wait ${waitTime} minutes before refreshing again`,
+				);
 			}
 		}
 
@@ -178,7 +202,11 @@ export async function refreshTransferData(): Promise<{
 		// Fetch fresh data after cache invalidation for read-your-writes
 		const freshData = await getCachedTransferData();
 
-		return { success: true, message: "Transfer data refreshed immediately", data: freshData };
+		return {
+			success: true,
+			message: "Transfer data refreshed immediately",
+			data: freshData,
+		};
 	} catch (error) {
 		console.error("Failed to refresh transfer data:", error);
 		throw error;

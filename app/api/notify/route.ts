@@ -1,10 +1,10 @@
-import { unstable_noStore as noStore } from "next/cache";
+import { connection } from "next/server";
 import { notifyAllUsers } from "notifications/handlers";
 import { getLatestTransfers } from "~/providers/football-api";
 import { getLatestEpisode } from "~/providers/rss/get-latest-episode";
 
 export async function GET() {
-	noStore();
+	await connection();
 	try {
 		await notifyTransferData();
 	} catch (error) {
