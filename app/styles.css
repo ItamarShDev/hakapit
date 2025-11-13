@@ -1,31 +1,80 @@
-.hakapit {
-	--color-primary: 350, 85%, 25%;
-	--color-primary-opaque: 350 85% 42% / 0.2;
-	--color-secondary: 177, 100%, 34.9%;
-	--color-accent: 55.6, 89.2%, 67.3%;
-	--color-background: 350 85% 10%;
-	--color-text: 0 0% 100%;
-	--color-popover: 350 85% 5%;
+@import "tailwindcss";
+
+@layer base {
+	.hakapit {
+		--color-primary: 350, 85%, 25%;
+		--color-primary-opaque: 350 85% 42% / 0.2;
+		--color-secondary: 177, 100%, 34.9%;
+		--color-accent: 55.6, 89.2%, 67.3%;
+		--color-background: 350 85% 10%;
+		--color-text: 0 0% 100%;
+		--color-popover: 350 85% 5%;
+	}
+
+	.nitk {
+		--color-primary: 296, 100%, 11.8%;
+		--color-primary-opaque: 296 100% 20% / 0.3;
+		--color-secondary: 338.9, 100%, 45.7%;
+		--color-text: 182.4, 100%, 50.8%;
+		--color-background: 296, 100%, 20%;
+		--color-accent: 151.3, 100%, 50%;
+		--color-popover: 296, 100%, 20%;
+	}
+
+	.balcony-albums {
+		--color-primary: 359.5, 44%, 49%;
+		--color-primary-opaque: 270 31% 39% / 0.3;
+		--color-secondary: 0, 0%, 0%;
+		--color-accent: 205, 51.1%, 55.9%;
+		--color-background: 270, 31%, 20%;
+		--color-text: 44.3, 46.9%, 90.4%;
+		--color-popover: 270, 31%, 20%;
+	}
 }
 
-.nitk {
-	--color-primary: 296, 100%, 11.8%;
-	--color-primary-opaque: 296 100% 20% / 0.3;
-	--color-secondary: 338.9, 100%, 45.7%;
-	--color-text: 182.4, 100%, 50.8%;
-	--color-background: 296, 100%, 20%;
-	--color-accent: 151.3, 100%, 50%;
-	--color-popover: 296, 100%, 20%;
-}
-
-.balcony-albums {
-	--color-primary: 359.5, 44%, 49%;
-	--color-primary-opaque: 270 31% 39% / 0.3;
-	--color-secondary: 0, 0%, 0%;
-	--color-accent: 205, 51.1%, 55.9%;
-	--color-background: 270, 31%, 20%;
-	--color-text: 44.3, 46.9%, 90.4%;
-	--color-popover: 270, 31%, 20%;
+@layer utilities {
+	.bg-background {
+		background-color: hsl(var(--color-background));
+	}
+	.text-paragraph {
+		color: hsl(var(--color-text));
+	}
+	.text-primary {
+		color: hsl(var(--color-primary));
+	}
+	.text-secondary {
+		color: hsl(var(--color-secondary));
+	}
+	.text-accent {
+		color: hsl(var(--color-accent));
+	}
+	.bg-primary {
+		background-color: hsl(var(--color-primary));
+	}
+	.bg-primary-opaque {
+		background-color: hsl(var(--color-primary-opaque));
+	}
+	.bg-secondary {
+		background-color: hsl(var(--color-secondary));
+	}
+	.bg-accent {
+		background-color: hsl(var(--color-accent));
+	}
+	.bg-popover {
+		background-color: hsl(var(--color-popover));
+	}
+	.border-accent {
+		border-color: hsl(var(--color-accent));
+	}
+	.border-primary {
+		border-color: hsl(var(--color-primary));
+	}
+	.border-secondary {
+		border-color: hsl(var(--color-secondary));
+	}
+	.border-popover {
+		border-color: hsl(var(--color-popover));
+	}
 }
 
 .page {
@@ -44,7 +93,11 @@ body {
 }
 
 .body {
-	@apply bg-background text-paragraph grid min-h-screen gap-5;
+	background-color: hsl(var(--color-background));
+	color: hsl(var(--color-text));
+	display: grid;
+	min-height: 100vh;
+	gap: 1.25rem;
 	direction: rtl;
 	grid-template-rows: auto 1fr;
 }
@@ -58,7 +111,11 @@ body {
 }
 
 .footer {
-	@apply bg-primary-opaque flex flex-wrap items-center justify-center;
+	background-color: hsl(var(--color-primary-opaque));
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
 }
 
 .feed-page {
@@ -88,7 +145,15 @@ body {
 }
 
 .episode-card {
-	@apply bg-primary-opaque filter flex flex-col border-none shadow-md;
+	background-color: hsl(var(--color-primary-opaque));
+	filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate)
+		var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+	display: flex;
+	flex-direction: column;
+	border: none;
+	box-shadow:
+		0 4px 6px -1px rgb(0 0 0 / 0.1),
+		0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 .game-title {
@@ -119,7 +184,15 @@ audio.audio::-webkit-media-controls-timeline-container {
 }
 
 .header {
-	@apply border-accent bg-primary text-paragraph sticky top-0 z-20 w-screen border-b-2 border-solid;
+	border-color: hsl(var(--color-accent));
+	background-color: hsl(var(--color-primary));
+	color: hsl(var(--color-text));
+	position: sticky;
+	top: 0;
+	z-index: 20;
+	width: 100vw;
+	border-bottom-width: 2px;
+	border-style: solid;
 }
 
 .hide-menu {

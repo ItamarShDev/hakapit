@@ -101,7 +101,7 @@ export function FloatingChat() {
 							ניתן לשאול כל שאלה לגבי הקבוצה, בכל שפה
 						</DrawerDescription>
 					</DrawerHeader>
-					<div ref={contentRef} data-testid="chat-messages" className="flex-grow px-4 overflow-y-auto text-paragraph">
+					<div ref={contentRef} data-testid="chat-messages" className="grow px-4 overflow-y-auto text-paragraph">
 						{messages.map((message) => {
 							if (message.role === "assistant") {
 								const dir = getDirectionFromText(message.content);

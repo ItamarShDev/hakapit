@@ -17,7 +17,7 @@ export default function Episode({ data }: { data: Doc<"episodes"> }) {
 				<div className="text-3xl text-accent">{data?.title}</div>
 				<div className="flex flex-col max-w-full w-xl gap-3 text-lg rounded-xl lg:gap-14">
 					<div
-						className="max-w-[80vw] whitespace-pre-wrap break-words"
+						className="max-w-[80vw] whitespace-pre-wrap wrap-break-word"
 						/* biome-ignore lint: noDangerouslySetInnerHtml */
 						dangerouslySetInnerHTML={{
 							__html: data.description || "",

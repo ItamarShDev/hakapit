@@ -1,4 +1,5 @@
 "use client";
+import { usePreloadedQuery } from "convex/react";
 import React, { Suspense } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -52,7 +52,7 @@ export function LastEpisodeCardPreview({ episode }: { episode: EpisodeData }) {
 							priority={true}
 							sizes="(min-width: 768px) 56px, 80px"
 							fill={true}
-							className=" brightness-40 filter -z-0 absolute object-cover object-top"
+							className=" brightness-40 filter z-0 absolute object-cover object-top"
 						/>
 					)}
 					<PlayPauseButton episode={episode} />
@@ -94,7 +94,7 @@ export function EpisodeCard({
 					loading="eager"
 					priority={true}
 					sizes="576px"
-					className="rounded-3xl brightness-40 filter blur-sm absolute z-0 object-cover object-top"
+					className="rounded-3xl brightness-40 filter blur-xs absolute z-0 object-cover object-top"
 				/>
 			)}
 			<CardHeader className="z-10">

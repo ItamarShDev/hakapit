@@ -1,6 +1,54 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@layer base {
+	.hakapit {
+		--color-primary: 350, 85%, 25%;
+		--color-primary-opaque: 350 85% 42% / 0.2;
+		--color-secondary: 177, 100%, 34.9%;
+		--color-accent: 55.6, 89.2%, 67.3%;
+		--color-background: 350 85% 10%;
+		--color-text: 0 0% 100%;
+		--color-popover: 350 85% 5%;
+	}
+
+	.nitk {
+		--color-primary: 296, 100%, 11.8%;
+		--color-primary-opaque: 296 100% 20% / 0.3;
+		--color-secondary: 338.9, 100%, 45.7%;
+		--color-text: 182.4, 100%, 50.8%;
+		--color-background: 296, 100%, 20%;
+		--color-accent: 151.3, 100%, 50%;
+		--color-popover: 296, 100%, 20%;
+	}
+
+	.balcony-albums {
+		--color-primary: 359.5, 44%, 49%;
+		--color-primary-opaque: 270 31% 39% / 0.3;
+		--color-secondary: 0, 0%, 0%;
+		--color-accent: 205, 51.1%, 55.9%;
+		--color-background: 270, 31%, 20%;
+		--color-text: 44.3, 46.9%, 90.4%;
+		--color-popover: 270, 31%, 20%;
+	}
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentcolor);
+	}
+}
 
 @keyframes scaleIn {
 	0% {
