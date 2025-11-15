@@ -10,6 +10,8 @@ on:
     - cron: '0 2 * * *'
 
 env:
+  NEXT_PUBLIC_CONVEX_URL: ${{ secrets.NEXT_PUBLIC_CONVEX_URL }}
+  CONVEX_DEPLOYMENT: ${{ secrets.CONVEX_DEPLOYMENT }}
   DATABASE_URL: ${{ secrets.POSTGRES_URL }}
   POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
   POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
