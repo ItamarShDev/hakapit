@@ -1,0 +1,273 @@
+{
+	"version": "7",
+	"dialect": "postgresql",
+	"tables": {
+		"public.episode": {
+			"name": "episode",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"episode_number": {
+					"name": "episode_number",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"guid": {
+					"name": "guid",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"title": {
+					"name": "title",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"link": {
+					"name": "link",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"html_description": {
+					"name": "html_description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"image_url": {
+					"name": "image_url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"audio_url": {
+					"name": "audio_url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"published_at": {
+					"name": "published_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"duration": {
+					"name": "duration",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"podcast_name": {
+					"name": "podcast_name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"episode_guid_unique": {
+					"name": "episode_guid_unique",
+					"columns": ["guid"],
+					"nullsNotDistinct": false
+				}
+			},
+			"policies": {},
+			"isRLSEnabled": false,
+			"checkConstraints": {}
+		},
+		"public.podcast": {
+			"name": "podcast",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"title": {
+					"name": "title",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"link": {
+					"name": "link",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"image_url": {
+					"name": "image_url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"feed_url": {
+					"name": "feed_url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"author_name": {
+					"name": "author_name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"author_email": {
+					"name": "author_email",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"author_summary": {
+					"name": "author_summary",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"author_image_url": {
+					"name": "author_image_url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"podcast_name_unique": {
+					"name": "podcast_name_unique",
+					"columns": ["name"],
+					"nullsNotDistinct": false
+				},
+				"podcast_title_unique": {
+					"name": "podcast_title_unique",
+					"columns": ["title"],
+					"nullsNotDistinct": false
+				}
+			},
+			"policies": {},
+			"isRLSEnabled": false,
+			"checkConstraints": {}
+		},
+		"public.subscription": {
+			"name": "subscription",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"podcast": {
+					"name": "podcast",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"subscription": {
+					"name": "subscription",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"isRLSEnabled": false,
+			"checkConstraints": {}
+		}
+	},
+	"enums": {},
+	"schemas": {},
+	"_meta": {
+		"schemas": {},
+		"tables": {},
+		"columns": {}
+	},
+	"id": "fb924cae-814a-4b5a-ba09-61fed86805dd",
+	"prevId": "aeee8d9e-27ca-46ed-b2ab-17371065dbd6",
+	"sequences": {},
+	"policies": {},
+	"views": {},
+	"roles": {}
+}

@@ -1,0 +1,193 @@
+{
+	"version": "7",
+	"dialect": "postgresql",
+	"tables": {
+		"public.episode": {
+			"name": "episode",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"title": {
+					"name": "title",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"link": {
+					"name": "link",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"image_url": {
+					"name": "image_url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"audio_url": {
+					"name": "audio_url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"published_at": {
+					"name": "published_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"duration": {
+					"name": "duration",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"isRLSEnabled": false,
+			"checkConstraints": {}
+		},
+		"public.podcast": {
+			"name": "podcast",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"title": {
+					"name": "title",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"link": {
+					"name": "link",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"image_url": {
+					"name": "image_url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"feed_url": {
+					"name": "feed_url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"author_name": {
+					"name": "author_name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"author_email": {
+					"name": "author_email",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"author_summary": {
+					"name": "author_summary",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"author_image_url": {
+					"name": "author_image_url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"episodes": {
+					"name": "episodes",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"podcast_episodes_episode_id_fk": {
+					"name": "podcast_episodes_episode_id_fk",
+					"tableFrom": "podcast",
+					"columnsFrom": ["episodes"],
+					"tableTo": "episode",
+					"columnsTo": ["id"],
+					"onUpdate": "no action",
+					"onDelete": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"isRLSEnabled": false,
+			"checkConstraints": {}
+		}
+	},
+	"enums": {},
+	"schemas": {},
+	"_meta": {
+		"schemas": {},
+		"tables": {},
+		"columns": {}
+	},
+	"id": "83110a8a-2af8-4759-b8ae-bed363378986",
+	"prevId": "00000000-0000-0000-0000-000000000000",
+	"sequences": {},
+	"policies": {},
+	"views": {},
+	"roles": {}
+}

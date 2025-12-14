@@ -26,21 +26,27 @@ export const getPodcastWithEpisodes = query({
 
 		if (!podcast) return null;
 
+		const totalEpisodes = await ctx.db
+			.query("episodes")
+			.withIndex("by_podcastId_and_number", (q) => q.eq("podcastId", podcast._id))
+			.collect()
+			.then((all) => all.length);
+
 		const episodesQuery = ctx.db
 			.query("episodes")
-			.withIndex("by_podcastId_and_number", (q) =>
-				q.eq("podcastId", podcast._id),
-			)
+			.withIndex("by_podcastId_and_number", (q) => q.eq("podcastId", podcast._id))
 			.order("desc");
 
 		const episodes =
-			args.limit && args.limit > 0
-				? await episodesQuery.take(args.limit)
-				: await episodesQuery.collect();
+			args.limit && args.limit > 0 ? await episodesQuery.take(args.limit) : await episodesQuery.collect();
 
 		return {
 			...podcast,
-			episodes,
+			episodes: episodes.map((episode) => ({
+				...episode,
+				podcast,
+			})),
+			totalEpisodes,
 		};
 	},
 });
@@ -53,14 +59,38 @@ export const getLatestEpisode = query({
 			.query("podcasts")
 			.withIndex("by_name", (q) => q.eq("name", args.podcastName))
 			.first();
-
 		if (!podcast) return null;
 
-		return await ctx.db
+		const latestByNumber = await ctx.db
 			.query("episodes")
-			.withIndex("by_podcastId", (q) => q.eq("podcastId", podcast._id))
+			.withIndex("by_podcastId_and_number", (q) => q.eq("podcastId", podcast._id).gt("episodeNumber", 0))
 			.order("desc")
 			.first();
+
+		if (latestByNumber) {
+			return {
+				...latestByNumber,
+				podcast,
+			};
+		}
+
+		const allEpisodes = await ctx.db
+			.query("episodes")
+			.withIndex("by_podcastId", (q) => q.eq("podcastId", podcast._id))
+			.collect();
+
+		if (allEpisodes.length === 0) return null;
+
+		const latestByPublishedAt = allEpisodes.reduce((best, current) => {
+			const bestPublishedAt = best.publishedAt ?? 0;
+			const currentPublishedAt = current.publishedAt ?? 0;
+			return currentPublishedAt > bestPublishedAt ? current : best;
+		}, allEpisodes[0]);
+
+		return {
+			...latestByPublishedAt,
+			podcast,
+		};
 	},
 });
 
@@ -78,12 +108,20 @@ export const getEpisodeByNumber = query({
 
 		if (!podcast) return null;
 
-		return await ctx.db
+		const episode = await ctx.db
 			.query("episodes")
 			.withIndex("by_podcastId_and_number", (q) =>
 				q.eq("podcastId", podcast._id).eq("episodeNumber", args.episodeNumber),
 			)
 			.first();
+
+		if (!episode) return null;
+		return {
+			...episode,
+			podcast: {
+				name: podcast.name,
+			},
+		};
 	},
 });
 
@@ -102,6 +140,13 @@ export const upsertPodcast = mutation({
 		authorImageUrl: v.optional(v.string()),
 	},
 	handler: async (ctx, args) => {
+		if (!args.title?.trim()) {
+			throw new Error(`upsertPodcast: 'title' is required (name='${args.name}')`);
+		}
+		if (args.name.startsWith(".")) {
+			throw new Error(`upsertPodcast: invalid podcast name '${args.name}'`);
+		}
+
 		const existing = await ctx.db
 			.query("podcasts")
 			.withIndex("by_name", (q) => q.eq("name", args.name))
@@ -150,7 +195,15 @@ export const createEpisode = mutation({
 		}
 
 		const now = Date.now();
-		return await ctx.db.insert("episodes", {
+
+		const existing = await ctx.db
+			.query("episodes")
+			.withIndex("by_podcastId_and_number", (q) =>
+				q.eq("podcastId", podcast._id).eq("episodeNumber", args.episodeNumber),
+			)
+			.first();
+
+		const episodeData = {
 			episodeNumber: args.episodeNumber,
 			guid: args.guid,
 			title: args.title,
@@ -162,8 +215,17 @@ export const createEpisode = mutation({
 			publishedAt: args.publishedAt,
 			duration: args.duration,
 			podcastId: podcast._id,
-			createdAt: now,
 			updatedAt: now,
+		};
+
+		if (existing) {
+			await ctx.db.patch(existing._id, episodeData);
+			return existing._id;
+		}
+
+		return await ctx.db.insert("episodes", {
+			...episodeData,
+			createdAt: now,
 		});
 	},
 });

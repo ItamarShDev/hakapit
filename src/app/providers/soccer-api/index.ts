@@ -1,0 +1,111 @@
+import { createServerFn } from "@tanstack/react-start";
+import { LiverpoolId } from "~/app/providers/soccer-api/constants";
+import type { League } from "~/app/providers/soccer-api/types/league";
+import type { Team } from "~/app/providers/soccer-api/types/team";
+import type { TeamMatches } from "~/app/providers/soccer-api/types/team-matches";
+import { getFirstMatch } from "./utils";
+
+type CacheEntry<T> = {
+	value: T;
+	expiresAt: number;
+};
+
+const memoryCache = new Map<string, CacheEntry<unknown>>();
+
+function getFromCache<T>(key: string): T | null {
+	const entry = memoryCache.get(key) as CacheEntry<T> | undefined;
+	if (!entry) return null;
+	if (Date.now() > entry.expiresAt) {
+		memoryCache.delete(key);
+		return null;
+	}
+	return entry.value;
+}
+
+function setCache<T>(key: string, value: T, ttlMs: number) {
+	memoryCache.set(key, { value, expiresAt: Date.now() + ttlMs });
+}
+
+async function getDataCached<T>(key: string, ttlMs: number, fetcher: () => Promise<T>) {
+	const cached = getFromCache<T>(key);
+	if (cached != null) return cached;
+	const value = await fetcher();
+	setCache(key, value, ttlMs);
+	return value;
+}
+
+async function getData<T>(path: string) {
+	const key = process.env.FOOTBALL_DATA_API_KEY || import.meta.env.VITE_FOOTBALL_DATA_API_KEY;
+	if (!key) {
+		throw new Error("FOOTBALL_DATA_API_KEY not found");
+	}
+	try {
+		const url = `https://api.football-data.org/v4/${path}`;
+		const response = await fetch(url, {
+			headers: {
+				"X-Auth-Token": key,
+			},
+		});
+
+		if (!response.ok) {
+			return null;
+		}
+
+		const data = await response.json();
+		return data as T;
+	} catch (error) {
+		console.error(`Error fetching ${path}:`, error);
+		return null;
+	}
+}
+
+function getNextGames() {
+	return getDataCached("games-liverpool-next", 10 * 60 * 1000, () =>
+		getData<TeamMatches>(`teams/${LiverpoolId}/matches?status=SCHEDULED`),
+	);
+}
+
+function getTeamPastMatches(id?: number) {
+	return getDataCached(`games-${id}-past-5`, 24 * 60 * 60 * 1000, () =>
+		getData<TeamMatches>(`teams/${id}/matches?status=FINISHED&limit=5`),
+	);
+}
+
+async function getTeamForms(data: ReturnType<typeof getFirstMatch> | null) {
+	if (!data) {
+		return null;
+	}
+	const { awayTeam, homeTeam } = data;
+
+	if (!awayTeam || !homeTeam) {
+		return null;
+	}
+	const awayForm = await getTeamPastMatches(awayTeam.id);
+	const homeForm = await getTeamPastMatches(homeTeam.id);
+
+	return { awayForm: awayForm?.matches, homeForm: homeForm?.matches, nextGame: data };
+}
+
+export const getTeam = createServerFn({ method: "GET" })
+	.inputValidator((id?: number) => id ?? LiverpoolId)
+	.handler(async ({ data: id }) => {
+		return await getDataCached(`team-${id}`, 24 * 60 * 60 * 1000, () => getData<Team>(`teams/${id}`));
+	});
+
+export const getLeague = createServerFn({ method: "GET" })
+	.inputValidator((league: string) => league)
+	.handler(async ({ data: league }) => {
+		return await getDataCached(`league-${league}`, 60 * 60 * 1000, () =>
+			getData<League>(`competitions/${league}/standings`),
+		);
+	});
+
+export const getNextMatchData = createServerFn({ method: "GET" }).handler(async () => {
+	const nextGames = await getNextGames();
+	const matchDetails = getFirstMatch(nextGames);
+	const teamForms = await getTeamForms(matchDetails);
+
+	return { matchDetails, ...teamForms };
+});
+
+export type NextMatchData = Awaited<ReturnType<typeof getNextMatchData>>;
