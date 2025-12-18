@@ -1,9 +1,5 @@
 {
-    "installCommand": "bun ci",
-    "buildCommand": "bun run build",
-    "devCommand": "bun dev",
     "framework": "tanstack-start",
-    "outputDirectory": "dist",
     "crons": [
         {
             "path": "/api/load",
