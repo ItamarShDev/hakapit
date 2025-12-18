@@ -13,6 +13,7 @@ export const getRouter = () => {
 		routeTree,
 		context: { ...rqContext },
 		defaultPreload: "intent",
+		defaultViewTransition: true,
 	});
 
 	setupRouterSsrQueryIntegration({ router, queryClient: rqContext.queryClient });
