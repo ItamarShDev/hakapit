@@ -33,10 +33,21 @@ export const Route = createFileRoute("/$podcast/")({
 				{ name: "description", content: metadata.description },
 				{ name: "author", content: metadata.authorName || "hakapit" },
 				{ property: "og:type", content: "website" },
-				{ property: "og:url", content: `https://hakapit.online/${params.podcast}` },
+				{
+					property: "og:url",
+					content: `https://hakapit.online/${params.podcast}`,
+				},
 				{ property: "og:title", content: metadata.title },
 				{ property: "og:description", content: metadata.description || "" },
 				{ property: "og:image", content: metadata.imageUrl || "" },
+				{ name: "twitter:card", content: "summary_large_image" },
+				{ name: "twitter:title", content: metadata.title },
+				{ name: "twitter:description", content: metadata.description || "" },
+				{ name: "twitter:image", content: metadata.imageUrl || "" },
+				{
+					name: "twitter:url",
+					content: `https://hakapit.online/${params.podcast}`,
+				},
 			],
 		};
 	},
@@ -45,12 +56,9 @@ export const Route = createFileRoute("/$podcast/")({
 function PodcastEpisodes() {
 	const { metadata } = Route.useLoaderData();
 	const { podcast } = Route.useRouteContext();
+
 	if (!metadata || !metadata.episodes || metadata.episodes.length === 0) {
 		return null;
 	}
-	return (
-		<div className="feed">
-			<FeedPage data={metadata} podcast={podcast} />
-		</div>
-	);
+	return <FeedPage data={metadata} podcast={podcast} />;
 }

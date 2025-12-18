@@ -36,22 +36,25 @@ export function FloatingChat() {
 		// Clear any previous error
 		setSendError(null);
 
+		// Store the current input and clear it immediately
+		const currentInput = input;
+		setInput("");
+
 		try {
 			const result = append({
 				role: "user",
-				content: input,
+				content: currentInput,
 			});
 
 			// append() might be sync or async, handle both cases
 			if (result && typeof result.then === "function") {
 				await result;
 			}
-
-			setInput("");
 		} catch (error) {
 			console.error("Failed to send message:", error);
 			setSendError("אירעה שגיאה בשליחת ההודעה. אנא נסה שוב.");
-			// Input remains intact if sending fails, allowing user to retry
+			// Restore input if sending fails, allowing user to retry
+			setInput(currentInput);
 		}
 	};
 
@@ -79,6 +82,16 @@ export function FloatingChat() {
 		}, 0);
 		return () => window.clearTimeout(id);
 	}, [open]);
+
+	// Refocus input after chat finishes loading
+	useEffect(() => {
+		if (status === "ready" && messages.length > 0) {
+			const id = window.setTimeout(() => {
+				inputRef.current?.focus();
+			}, 100);
+			return () => window.clearTimeout(id);
+		}
+	}, [status, messages.length]);
 
 	return (
 		<div

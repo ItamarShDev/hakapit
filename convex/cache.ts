@@ -19,6 +19,7 @@ export const updateCacheTracking = mutation({
 		source: v.string(),
 		metadata: v.optional(v.string()),
 		expiresAt: v.optional(v.number()),
+		payload: v.optional(v.string()),
 	},
 	handler: async (ctx, args) => {
 		const existing = await ctx.db

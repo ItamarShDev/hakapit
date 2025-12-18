@@ -60,6 +60,26 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				property: "og:image",
 				content: "https://hakapit.online/logo.webp",
 			},
+			{
+				name: "twitter:card",
+				content: "summary_large_image",
+			},
+			{
+				name: "twitter:title",
+				content: "הכפית",
+			},
+			{
+				name: "twitter:description",
+				content: "אתר הבית של משפחת הכפית",
+			},
+			{
+				name: "twitter:image",
+				content: "https://hakapit.online/logo.webp",
+			},
+			{
+				name: "twitter:url",
+				content: "https://hakapit.online",
+			},
 		],
 		links: [
 			{

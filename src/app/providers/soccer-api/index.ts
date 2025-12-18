@@ -1,36 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getCachedValue, setCachedValue } from "~/app/providers/soccer-api/cacheStore";
 import { LiverpoolId } from "~/app/providers/soccer-api/constants";
 import type { League } from "~/app/providers/soccer-api/types/league";
 import type { Team } from "~/app/providers/soccer-api/types/team";
 import type { TeamMatches } from "~/app/providers/soccer-api/types/team-matches";
 import { getFirstMatch } from "./utils";
 
-type CacheEntry<T> = {
-	value: T;
-	expiresAt: number;
-};
-
-const memoryCache = new Map<string, CacheEntry<unknown>>();
-
-function getFromCache<T>(key: string): T | null {
-	const entry = memoryCache.get(key) as CacheEntry<T> | undefined;
-	if (!entry) return null;
-	if (Date.now() > entry.expiresAt) {
-		memoryCache.delete(key);
-		return null;
-	}
-	return entry.value;
-}
-
-function setCache<T>(key: string, value: T, ttlMs: number) {
-	memoryCache.set(key, { value, expiresAt: Date.now() + ttlMs });
-}
-
 async function getDataCached<T>(key: string, ttlMs: number, fetcher: () => Promise<T>) {
-	const cached = getFromCache<T>(key);
-	if (cached != null) return cached;
+	const cached = await getCachedValue<T>(key);
+	console.info(`Getting data for key: ${key}`);
+	if (cached != null) {
+		console.info(`Cache hit for key: ${key}=${JSON.stringify(cached)}`);
+		return cached;
+	}
+	console.info(`Cache miss for key: ${key}`);
 	const value = await fetcher();
-	setCache(key, value, ttlMs);
+	if (value != null) {
+		await setCachedValue(key, value, ttlMs);
+	}
 	return value;
 }
 

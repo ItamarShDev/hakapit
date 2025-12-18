@@ -1,7 +1,13 @@
-import { Avatar, AvatarFallback, AvatarImage } from "~/@/components/ui/avatar";
+import { useState } from "react";
+import { Avatar, AvatarImage } from "~/@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/@/components/ui/tooltip";
 
 export function Trophies() {
+	const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+
+	const handleImageLoad = (tournamentId: number) => {
+		setLoadedImages((prev) => new Set(prev).add(tournamentId));
+	};
 	const trophies = [
 		{ tournamentId: 42, name: "Champions League", won: 6 },
 		{ tournamentId: 47, name: "Premier League", won: 19 },
@@ -28,8 +34,8 @@ export function Trophies() {
 										<AvatarImage
 											alt={leagueName}
 											src={`https://images.fotmob.com/image_resources/logo/leaguelogo/dark/${tournamentId}.png`}
+											onLoad={() => handleImageLoad(tournamentId)}
 										/>
-										<AvatarFallback className="scale-75">{leagueName}</AvatarFallback>
 									</Avatar>
 								</TooltipTrigger>
 								<TooltipContent side="bottom" className="rounded-xl bg-primary border-primary text-accent">
@@ -37,7 +43,7 @@ export function Trophies() {
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>
-						<div className="text-sm text-gray-100">{won}</div>
+						{loadedImages.has(tournamentId) && <div className="text-sm text-gray-100">{won}</div>}
 					</div>
 				);
 			})}

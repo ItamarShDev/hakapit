@@ -28,7 +28,7 @@ function TransferView({
 				</div>
 			</PopoverTrigger>
 			<PopoverContent side="bottom" className="w-80 p-0" align="center">
-				<Card className="shadow-lg" dir="rtl">
+				<Card className="shadow-lg text-paragraph" dir="rtl">
 					<CardHeader className="pb-3">
 						<div className="flex items-center gap-4">
 							<Avatar className="w-16 h-16">
@@ -53,7 +53,7 @@ function TransferView({
 							</div>
 						</div>
 					</CardHeader>
-					<CardContent className="space-y-3">
+					<CardContent className="space-y-3 text-paragraph">
 						{transfer.price && (
 							<div className="flex flex-row-reverse items-center justify-between">
 								<span className="text-sm font-semibold text-yellow-600 text-left">💰 {transfer.price}</span>

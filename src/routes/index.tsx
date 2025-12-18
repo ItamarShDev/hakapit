@@ -5,8 +5,8 @@ import { FloatingChat } from "~/app/components/chat/FloatingChat";
 import { LatestEpisode } from "~/app/components/convex/LatestEpisode";
 import { RecentTransfers } from "~/app/components/convex/RecentTransfers";
 import { NextMatchOverview } from "~/app/components/next-match";
-import { StatsTable } from "~/app/components/stats/Stats";
-import { Trophies } from "~/app/components/stats/Trophies";
+import { StatsTable } from "~/app/components/stats/stats";
+import { Trophies } from "~/app/components/stats/trophies";
 import { getLeague, getNextMatchData, getTeam } from "~/app/providers/soccer-api";
 import type { League } from "~/app/providers/soccer-api/types/league";
 
@@ -54,6 +54,16 @@ export const Route = createFileRoute("/")({
 				property: "color-scheme",
 				content: "dark light",
 			},
+			{ property: "og:type", content: "website" },
+			{ property: "og:url", content: "https://hakapit.online/" },
+			{ property: "og:title", content: "הכפית" },
+			{ property: "og:description", content: "דף הבית של משפחת הכפית" },
+			{ property: "og:image", content: "https://hakapit.online/icon-512x512.png" },
+			{ name: "twitter:card", content: "summary_large_image" },
+			{ name: "twitter:title", content: "הכפית" },
+			{ name: "twitter:description", content: "דף הבית של משפחת הכפית" },
+			{ name: "twitter:image", content: "https://hakapit.online/icon-512x512.png" },
+			{ name: "twitter:url", content: "https://hakapit.online/" },
 		],
 	}),
 });

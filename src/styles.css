@@ -113,11 +113,7 @@ body {
 }
 
 .main-content {
-	@apply lg:px-8 w-screen p-4 overflow-auto;
-}
-
-.content {
-	@apply lg:max-w-7xl flex flex-col gap-5 m-auto;
+	@apply lg:px-8 w-full p-4 overflow-y-auto;
 }
 
 .footer {
@@ -126,10 +122,6 @@ body {
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-}
-
-.feed-page {
-	@apply place-content-center lg:flex-row flex flex-col flex-wrap w-full gap-6;
 }
 
 .card-content > * {
@@ -144,14 +136,6 @@ body {
 
 .grid-col-responsive {
 	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
-.feed-page .timeline {
-	@apply lg:block hidden;
-}
-
-.full-page-episode {
-	@apply w-full px-8 py-10 overflow-auto;
 }
 
 .episode-card {
@@ -200,7 +184,6 @@ audio.audio::-webkit-media-controls-timeline-container {
 	position: sticky;
 	top: 0;
 	z-index: 20;
-	width: 100vw;
 	border-bottom-width: 2px;
 	border-style: solid;
 }
@@ -235,91 +218,8 @@ audio.audio::-webkit-media-controls-timeline-container {
 	font-size: clamp(1em, 7vw, 2em);
 }
 
-.big-title {
-	font-size: clamp(1em, 12vw, 3em);
-}
-
-/* biome-ignore lint/style/noDescendingSpecificity: false positive */
-.timeline {
-	padding: 1rem;
-	width: 30rem;
-	align-self: flex-start;
-}
-
-.twitter-timeline {
-	background-color: rgba(0, 0, 0, 0.2);
-	border-radius: 1rem;
-	overflow: hidden;
-}
-
-.clamp-text {
-	font-size: clamp(0.5em, 2.5vw, 1em);
-}
-
-.what-is-kapit > p {
-	font-size: clamp(0.5em, 2.5vw, 1em);
-	line-height: 2rem;
-	@apply text-xl;
-}
-
-.fade-in-bottom {
-	opacity: 0;
-	animation: fadeIn 1s ease-in-out both;
-}
-
-.fade-in-bottom.a-delay-100 {
-	animation-delay: 0.1s;
-}
-
-.fade-in-bottom.a-delay-200 {
-	animation-delay: 0.2s;
-}
-
-.fade-in-bottom.a-delay-300 {
-	animation-delay: 0.3s;
-}
-
-.fade-in-bottom.a-delay-400 {
-	animation-delay: 0.4s;
-}
-
-.fade-in-bottom.a-delay-500 {
-	animation-delay: 0.5s;
-}
-
-.fade-in-bottom.a-delay-600 {
-	animation-delay: 0.6s;
-}
-
-.fade-in-bottom.a-delay-700 {
-	animation-delay: 0.7s;
-}
-
 .about {
 	min-height: calc(100dvh - 188px);
-}
-
-.go-crazy-animation {
-	animation: changeColors 2s ease-in-out infinite;
-}
-
-.faded-image {
-	--percentage: 0.1%;
-	--direction: right;
-	-webkit-mask-image: linear-gradient(to var(--direction), transparent var(--percentage), black);
-	mask-image: linear-gradient(to var(--direction), transparent var(--percentage), black);
-}
-
-.faded-image-vertical {
-	--percentage: 30%;
-	--direction: top;
-	-webkit-mask-image: linear-gradient(to var(--direction), transparent var(--percentage), black);
-	mask-image: linear-gradient(to var(--direction), transparent var(--percentage), black);
-}
-
-.no-mask {
-	-webkit-mask-image: none;
-	mask-image: none;
 }
 
 .full-bleed {

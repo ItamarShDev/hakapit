@@ -45,6 +45,7 @@ export const cacheTracking = defineTable({
 	expiresAt: v.optional(v.number()),
 	source: v.string(), // e.g., 'rss', 'football-api'
 	metadata: v.optional(v.string()), // optional metadata as JSON string
+	payload: v.optional(v.string()), // cached payload serialized as JSON
 	createdAt: v.number(),
 	updatedAt: v.number(),
 }).index("by_dataType", ["dataType"]);

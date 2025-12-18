@@ -60,7 +60,7 @@ export const Links: React.FC<
 	return (
 		<nav className={cn("gap-2 lg:gap-4 links text-1xl overflow-hidden", props.className)}>
 			{links.map((link, index) => (
-				<LinkItem onSelect={props.onSelect} withBorder={index !== links.length - 1} key={link.to} {...link} />
+				<LinkItem onSelect={props.onSelect} withBorder={index !== links.length - 1} key={link.href} {...link} />
 			))}
 		</nav>
 	);
