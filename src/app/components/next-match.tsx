@@ -1,7 +1,7 @@
 import { Image } from "@unpic/react";
 import type React from "react";
 import Form from "~/app/components/stats/Form";
-import TeamAvatar from "~/app/components/team-avatar";
+import TeamNameAndAvatar from "~/app/components/team-avatar";
 import { heebo } from "~/app/fonts";
 import type { Team } from "~/app/providers/soccer-api/types/team-matches";
 
@@ -18,7 +18,7 @@ function TeamStatus({
 }) {
 	return (
 		<div>
-			<TeamAvatar team={team} iconPosition={iconPosition} />
+			<TeamNameAndAvatar team={team} iconPosition={iconPosition} />
 			{isRunning && <div className="text-xs">{score}</div>}
 		</div>
 	);
@@ -49,10 +49,11 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
 
 	return (
 		<FullBleed data-testid="next-match-overview">
-			<div className="flex items-center justify-between">
+			<div className="flex justify-center">
 				<div className="text-slate-200 text-sm">{nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}</div>
 			</div>
-			<div className="flex flex-row-reverse items-center justify-center gap-2">
+			<div className="flex flex-row items-center justify-center gap-2">
+				<div className="font-bold">{nextGame.competition.name}</div>
 				<Image
 					className="h-[20px]"
 					width={20}
@@ -60,7 +61,6 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
 					src={nextGame.competition.emblem}
 					alt={`${nextGame.competition.name} logo`}
 				/>
-				<div className="font-bold">{nextGame.competition.name}</div>
 			</div>
 			<div className={`game-title ${heebo.className}`}>
 				<div className="flex flex-col items-end gap-1">

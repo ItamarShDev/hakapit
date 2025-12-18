@@ -11,6 +11,7 @@ export function MasonryFeed({ data, podcast }: { data: FeedData; podcast: Podcas
 	const liveData = usePodcastWithEpisodes(podcast, currentLimit);
 	const effectiveData = liveData ?? data;
 	const [stickyData, setStickyData] = useState<FeedData>(data);
+
 	useEffect(() => {
 		if (effectiveData) setStickyData(effectiveData);
 	}, [effectiveData]);
@@ -20,6 +21,7 @@ export function MasonryFeed({ data, podcast }: { data: FeedData; podcast: Podcas
 	const totalCount = stableData?.totalEpisodes ?? 0;
 	const hasMore = totalCount > 0 ? loadedCount < totalCount : true;
 	const nextLimit = useMemo(() => currentLimit + 5, [currentLimit]);
+
 	return (
 		<>
 			<div className="masonry">

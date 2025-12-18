@@ -84,12 +84,9 @@ export function EpisodeCard({
 	const viewTransitionKey = episode?.guid ? String(episode.guid) : episodeNumber != null ? String(episodeNumber) : "";
 
 	return (
-		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className, heebo.className)}>
+		<Card className={cn("episode-card relative max-w- rounded-3xl overflow-hidden", className, heebo.className)}>
 			{episode?.imageUrl && (
-				<div
-					className="absolute inset-0 overflow-hidden rounded-3xl z-0"
-					style={viewTransitionKey ? { viewTransitionName: `episode-image-${viewTransitionKey}` } : undefined}
-				>
+				<div className="absolute inset-0 overflow-hidden rounded-3xl z-0">
 					<Image
 						src={episode?.imageUrl}
 						alt="episode"
@@ -112,7 +109,10 @@ export function EpisodeCard({
 				</CardTitle>
 				<CardDescription className="text-muted">{isoDate}</CardDescription>
 			</CardHeader>
-			<CardContent className={cn("flex-1 text-paragraph z-10 max-h-full", contentClassName)}>
+			<CardContent
+				style={viewTransitionKey ? { viewTransitionName: `episode-content-${viewTransitionKey}` } : undefined}
+				className={cn("flex-1 text-paragraph z-10 max-h-full", contentClassName)}
+			>
 				{episode?.htmlDescription && (
 					<div
 						className="card-content"

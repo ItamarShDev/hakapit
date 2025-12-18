@@ -43,6 +43,11 @@ export const Route = createFileRoute("/$podcast/episodes/$id/")({
 				{ property: "og:title", content: metadata.title },
 				{ property: "og:description", content: metadata.description || "" },
 				{ property: "og:image", content: metadata.imageUrl || "" },
+				{ name: "twitter:card", content: "summary_large_image" },
+				{ name: "twitter:title", content: metadata.title },
+				{ name: "twitter:description", content: metadata.description || "" },
+				{ name: "twitter:image", content: metadata.imageUrl || "" },
+				{ name: "twitter:url", content: `https://hakapit.online/${params.podcast}/episodes/${params.id}` },
 			],
 		};
 	},

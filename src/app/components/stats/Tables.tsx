@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/@/components/ui/table";
 import { cn } from "~/@/lib/utils";
-import TeamAvatar from "~/app/components/team-avatar";
+import TeamNameAndAvatar from "~/app/components/team-avatar";
 import { LiverpoolId } from "~/app/providers/soccer-api/constants";
 import type { League, Table as TableType } from "~/app/providers/soccer-api/types/league";
 
@@ -57,7 +57,7 @@ function TeamRow({ teamStats }: { teamStats: TableType }) {
 			)}
 		>
 			<TableCell className="text-start p-3 font-bold">
-				<TeamAvatar hoverable team={teamStats.team} />
+				<TeamNameAndAvatar hoverable team={teamStats.team} />
 			</TableCell>
 			<TableCell className="text-start p-3 font-bold">{teamStats.position}</TableCell>
 			<TableCell className="text-start p-3 font-bold">{teamStats?.points}</TableCell>

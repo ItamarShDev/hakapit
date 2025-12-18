@@ -15,6 +15,7 @@ logs
 .idea
 .next
 yarn-error.log
+.output
 npm-debug.log
 
 # Playwright test results

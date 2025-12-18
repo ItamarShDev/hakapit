@@ -39,6 +39,11 @@ export default defineConfig({
 		/* Timeouts */
 		actionTimeout: 10000,
 		navigationTimeout: 30000,
+
+		/* Set test environment variable */
+		processEnv: {
+			PLAYWRIGHT_TEST: "true",
+		},
 	},
 
 	/* Configure projects for optimized browser coverage */

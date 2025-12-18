@@ -12,10 +12,7 @@ export default function Episode({ data }: { data: Doc<"episodes"> }) {
 			<div className="mx-auto w-full max-w-5xl px-4 py-10 sm:py-14 lg:py-20">
 				<div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
 					<div className="lg:col-span-5">
-						<div
-							className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/20 shadow-2xl"
-							style={viewTransitionKey ? { viewTransitionName: `episode-image-${viewTransitionKey}` } : undefined}
-						>
+						<div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/20 shadow-2xl">
 							{data.imageUrl ? (
 								<Image
 									src={data.imageUrl}
@@ -42,6 +39,7 @@ export default function Episode({ data }: { data: Doc<"episodes"> }) {
 
 							{data?.description ? (
 								<div
+									style={viewTransitionKey ? { viewTransitionName: `episode-content-${viewTransitionKey}` } : undefined}
 									className="mt-4 max-w-none whitespace-pre-wrap wrap-break-word text-base leading-7 text-paragraph/90 sm:text-lg"
 									/* biome-ignore lint: noDangerouslySetInnerHtml */
 									dangerouslySetInnerHTML={{
