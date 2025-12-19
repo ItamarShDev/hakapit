@@ -2,6 +2,8 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts, useParams } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { MainLayout } from "~/app/layouts/main";
 import { PlayerProvider } from "~/app/layouts/Player/provider";
 import type { PodcastName } from "~/app/providers/rss/feed";
@@ -118,6 +120,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						]}
 					/>
 				</ConvexProvider>
+				{import.meta.env.PROD && (
+					<>
+						<Analytics />
+						<SpeedInsights />
+					</>
+				)}
 				<Scripts />
 			</body>
 		</html>
