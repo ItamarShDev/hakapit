@@ -8,6 +8,7 @@ export const Route = createFileRoute("/$podcast/episodes/$id/")({
 	component: PodcastEpisode,
 	beforeLoad: async ({ params }) => {
 		if (!validatePodcastParam(params.podcast)) {
+			console.error("Invalid podcast parameter", params.podcast);
 			throw redirect({ to: "/" });
 		}
 		return { podcast: params.podcast as PodcastName };
