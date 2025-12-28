@@ -17,7 +17,6 @@ logs
 yarn-error.log
 .output
 npm-debug.log
-package-lock.json
 
 # Playwright test results
 /test-results/
