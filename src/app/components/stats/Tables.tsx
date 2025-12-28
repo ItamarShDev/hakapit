@@ -78,7 +78,7 @@ export function TeamTournamentInformation({ league }: { league: League }) {
 	const teams = getTeams(league);
 	if (!teams) return null;
 	return (
-		<Table className="text-[10px] sm:text-xs">
+		<Table className="text-xs">
 			<TableHeader>
 				<TableRow className="border-0">
 					<TableHead className="text-start p-1 sm:p-2">קבוצה</TableHead>

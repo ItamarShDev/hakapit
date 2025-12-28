@@ -76,7 +76,7 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
 				</div>
 
 				{nextGame?.utcDate && (
-					<div className="max-w-24 text-wrap text-[10px] sm:text-xs order-first sm:order-none">
+					<div className="max-w-24 text-wrap text-xs order-first sm:order-none">
 						{new Date(nextGame.utcDate).toLocaleDateString()} {new Date(nextGame.utcDate).toLocaleTimeString()}
 					</div>
 				)}
