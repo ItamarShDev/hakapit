@@ -1,6 +1,6 @@
 export default function Footer() {
 	return (
-		<div className="flex flex-wrap justify-center gap-2 py-4">
+		<div className="flex flex-wrap justify-center gap-1 sm:gap-2 py-2 sm:py-4 text-xs sm:text-base px-2">
 			<a href="https://twitter.com/KapitPod" target="_blank" rel="noreferrer">
 				Twitter
 			</a>

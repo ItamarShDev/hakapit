@@ -27,7 +27,7 @@ function TransferView({
 					</Avatar>
 				</div>
 			</PopoverTrigger>
-			<PopoverContent side="bottom" className="w-80 p-0" align="center">
+			<PopoverContent side="bottom" className="w-[90vw] max-w-80 p-0" align="center">
 				<Card className="shadow-lg text-paragraph" dir="rtl">
 					<CardHeader className="pb-3">
 						<div className="flex items-center gap-4">
@@ -128,24 +128,24 @@ export function RecentTransfers() {
 	));
 
 	return (
-		<div className="flex flex-col gap-4 items-center">
+		<div className="flex flex-col gap-3 sm:gap-4 items-center w-full">
 			<div className="flex items-center gap-4">
-				<h2 data-testid="recent-transfers-title">העברות אחרונות</h2>
+				<h2 data-testid="recent-transfers-title" className="text-base sm:text-lg">העברות אחרונות</h2>
 			</div>
 
 			{/* IN Transfers Row */}
 			{inTransferViews.length > 0 && (
-				<div className="flex flex-col gap-2 items-center">
-					<div className="text-sm font-semibold text-green-600 mb-1">העברות פנימה (IN)</div>
-					<ul className="flex flex-row gap-2 list-none">{inTransferViews}</ul>
+				<div className="flex flex-col gap-2 items-center w-full">
+					<div className="text-xs sm:text-sm font-semibold text-green-600 mb-1">העברות פנימה (IN)</div>
+					<ul className="flex flex-row flex-wrap gap-2 list-none justify-center">{inTransferViews}</ul>
 				</div>
 			)}
 
 			{/* OUT Transfers Row */}
 			{outTransferViews.length > 0 && (
-				<div className="flex flex-col gap-2 items-center">
-					<div className="text-sm font-semibold text-red-600 mb-1">העברות חוצה (OUT)</div>
-					<ul className="flex flex-row gap-2 list-none">{outTransferViews}</ul>
+				<div className="flex flex-col gap-2 items-center w-full">
+					<div className="text-xs sm:text-sm font-semibold text-red-600 mb-1">העברות חוצה (OUT)</div>
+					<ul className="flex flex-row flex-wrap gap-2 list-none justify-center">{outTransferViews}</ul>
 				</div>
 			)}
 		</div>

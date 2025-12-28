@@ -72,13 +72,13 @@ function Home() {
 	const { leaguesData, nextMatchData } = Route.useLoaderData();
 
 	return (
-		<section className="lg:about lg:py-0 flex flex-col items-center justify-center h-full py-4 text-center">
-			<div className="flex flex-col w-full gap-10">
+		<section className="lg:about lg:py-0 flex flex-col items-center justify-center h-full py-2 sm:py-4 text-center">
+			<div className="flex flex-col w-full gap-6 sm:gap-10">
 				<Trophies />
-				<div className="flex flex-wrap justify-center">
+				<div className="flex flex-wrap justify-center px-2 sm:px-0">
 					<LatestEpisode />
 				</div>
-				<div className="flex flex-wrap justify-center">
+				<div className="flex flex-wrap justify-center px-2 sm:px-0">
 					<RecentTransfers />
 				</div>
 				<NextMatchOverview nextMatchData={nextMatchData} />

@@ -31,10 +31,10 @@ export function LastEpisodeCardPreview({ episode }: { episode: EpisodeWithPodcas
 	const episodeNumber = episode?.episodeNumber;
 
 	return (
-		<div className="flex items-center justify-center w-full gap-4 py-4">
+		<div className="flex items-center justify-center w-full gap-2 sm:gap-4 py-2 sm:py-4">
 			{playerProps && (
 				<Button
-					className="md:size-14 size-20 md:rounded-full relative p-3 overflow-hidden"
+					className="size-14 sm:size-16 md:size-14 rounded-full relative p-2 sm:p-3 overflow-hidden flex-shrink-0"
 					onClick={() => playerProps.setCurrentlyPlaying(episode)}
 				>
 					{episode?.imageUrl && (
@@ -51,16 +51,16 @@ export function LastEpisodeCardPreview({ episode }: { episode: EpisodeWithPodcas
 					<PlayPauseButton episode={episode} />
 				</Button>
 			)}
-			<div className="text-accent flex flex-col items-start">
+			<div className="text-accent flex flex-col items-start min-w-0">
 				<Link
 					preload="intent"
-					className="md:text-lg text-xl"
+					className="text-base sm:text-lg md:text-xl line-clamp-2 break-words"
 					to="/$podcast/episodes/$id"
 					params={{ podcast, id: String(episodeNumber) }}
 				>
 					{episode?.title}
 				</Link>
-				<div className="text-muted flex items-start gap-3 text-sm">
+				<div className="text-muted flex items-start gap-3 text-xs sm:text-sm">
 					<div className="">{isoDate}</div>
 				</div>
 			</div>
@@ -83,9 +83,9 @@ export function EpisodeCard({
 	const viewTransitionKey = episode?.guid ? String(episode.guid) : episodeNumber != null ? String(episodeNumber) : "";
 
 	return (
-		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className, heebo.className)}>
+		<Card className={cn("episode-card relative max-w-xl rounded-2xl sm:rounded-3xl overflow-hidden", className, heebo.className)}>
 			{episode?.imageUrl && (
-				<div className="absolute inset-0 overflow-hidden rounded-3xl z-0">
+				<div className="absolute inset-0 overflow-hidden rounded-2xl sm:rounded-3xl z-0">
 					<Image
 						src={episode?.imageUrl}
 						alt="episode"
@@ -96,8 +96,8 @@ export function EpisodeCard({
 					/>
 				</div>
 			)}
-			<CardHeader className="z-10">
-				<CardTitle className="text-accent">
+			<CardHeader className="z-10 p-3 sm:p-6">
+				<CardTitle className="text-accent text-base sm:text-lg">
 					<Link
 						to="/$podcast/episodes/$id"
 						params={{ podcast, id: String(episodeNumber) }}
@@ -106,11 +106,11 @@ export function EpisodeCard({
 						{episode?.title}
 					</Link>
 				</CardTitle>
-				<CardDescription className="text-muted">{isoDate}</CardDescription>
+				<CardDescription className="text-muted text-xs sm:text-sm">{isoDate}</CardDescription>
 			</CardHeader>
 			<CardContent
 				style={viewTransitionKey ? { viewTransitionName: `episode-content-${viewTransitionKey}` } : undefined}
-				className={cn("flex-1 text-paragraph z-10 max-h-full", contentClassName)}
+				className={cn("flex-1 text-paragraph z-10 max-h-full p-3 sm:p-6 pt-0 text-sm sm:text-base", contentClassName)}
 			>
 				{episode?.htmlDescription && (
 					<div
@@ -122,11 +122,11 @@ export function EpisodeCard({
 					/>
 				)}
 			</CardContent>
-			<CardFooter>
+			<CardFooter className="p-3 sm:p-6 pt-0">
 				{playerProps ? (
 					<Button
 						disabled={playerProps.currentlyPlaying?.guid === episode?.guid}
-						className="z-10 w-full"
+						className="z-10 w-full text-sm sm:text-base py-2 sm:py-3"
 						onClick={() => playerProps.setCurrentlyPlaying(episode)}
 					>
 						{playerProps.currentlyPlaying?.guid === episode?.guid ? (

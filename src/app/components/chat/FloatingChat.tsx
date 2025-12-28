@@ -96,7 +96,7 @@ export function FloatingChat() {
 	return (
 		<div
 			data-testid="floating-chat"
-			className={"fixed bottom-4 left-4 xs:bottom-0 xs:left-0 xs:right-0 xs:px-4 xs:pb-4 z-50"}
+			className={"fixed bottom-4 left-4 right-4 sm:right-auto sm:left-4 z-50"}
 		>
 			<Drawer
 				direction={"right"}
@@ -115,7 +115,7 @@ export function FloatingChat() {
 						ref={triggerRef}
 						data-testid="chat-trigger-button"
 						size="lg"
-						className={"text-accent hover:bg-accent hover:text-primary rounded-full xs:w-full xs:py-6"}
+						className={"text-accent hover:bg-accent hover:text-primary rounded-full w-full sm:w-auto text-sm sm:text-base px-4 sm:px-6"}
 					>
 						שאל אותי על ליברפול
 					</Button>

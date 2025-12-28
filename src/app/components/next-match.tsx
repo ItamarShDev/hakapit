@@ -29,7 +29,7 @@ export function FullBleed({
 	...props
 }: { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
 	return (
-		<div className={`flex flex-col gap-2  pb-6 bg-primary py-3 full-bleed ${heebo.className}`} {...props}>
+		<div className={`flex flex-col gap-2 pb-4 sm:pb-6 bg-primary py-2 sm:py-3 full-bleed ${heebo.className}`} {...props}>
 			{children}
 		</div>
 	);
@@ -50,10 +50,10 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
 	return (
 		<FullBleed data-testid="next-match-overview">
 			<div className="flex justify-center">
-				<div className="text-slate-200 text-sm">{nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}</div>
+				<div className="text-slate-200 text-xs sm:text-sm">{nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}</div>
 			</div>
 			<div className="flex flex-row items-center justify-center gap-2">
-				<div className="font-bold">{nextGame.competition.name}</div>
+				<div className="font-bold text-sm sm:text-base">{nextGame.competition.name}</div>
 				<Image
 					className="h-[20px]"
 					width={20}
@@ -62,8 +62,8 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
 					alt={`${nextGame.competition.name} logo`}
 				/>
 			</div>
-			<div className={`game-title ${heebo.className}`}>
-				<div className="flex flex-col items-end gap-1">
+			<div className={`game-title px-2 sm:px-4 ${heebo.className}`}>
+				<div className="flex flex-col items-center sm:items-end gap-1">
 					<TeamStatus
 						team={nextGame.awayTeam}
 						isRunning={nextGame.status === "LIVE"}
@@ -76,11 +76,11 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
 				</div>
 
 				{nextGame?.utcDate && (
-					<div className="max-w-24 text-wrap text-xs">
+					<div className="max-w-24 text-wrap text-[10px] sm:text-xs order-first sm:order-none">
 						{new Date(nextGame.utcDate).toLocaleDateString()} {new Date(nextGame.utcDate).toLocaleTimeString()}
 					</div>
 				)}
-				<div className="flex flex-col items-start gap-1">
+				<div className="flex flex-col items-center sm:items-start gap-1">
 					<TeamStatus
 						team={nextGame.homeTeam}
 						isRunning={nextGame.status === "LIVE"}

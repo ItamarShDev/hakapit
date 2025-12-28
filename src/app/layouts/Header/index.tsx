@@ -17,24 +17,24 @@ export default function Header({ data }: Props) {
 
 	return (
 		<header className="header overflow-hidden">
-			<div className="lg:items-center flex flex-wrap items-start gap-4 p-4">
-				<div className="header-image">
-					{imageUrl && <img src={imageUrl} alt="podcast logo" className="object-contain" width={48} height={48} />}
+			<div className="lg:items-center flex flex-wrap items-start gap-2 sm:gap-4 p-2 sm:p-4">
+				<div className="header-image w-10 h-10 sm:w-12 sm:h-12">
+					{imageUrl && <img src={imageUrl} alt="podcast logo" className="object-contain w-full h-full" width={48} height={48} />}
 				</div>
-				<div className={cn("flex-1 header-title flex gap-3 items-baseline", karantina.className)}>
+				<div className={cn("flex-1 header-title flex gap-2 sm:gap-3 items-baseline min-w-0", karantina.className)}>
 					<Link to="/">
-						<h1>{data.title}</h1>
+						<h1 className="truncate">{data.title}</h1>
 					</Link>
 				</div>
-				<div className="lg:gap-4 lg:hidden flex flex-col flex-wrap items-end gap-2 pt-2">
-					<Button onClick={() => setOpen(!open)} variant="link" className="menu-button">
+				<div className="lg:gap-4 lg:hidden flex flex-col flex-wrap items-end gap-2 pt-1 sm:pt-2">
+					<Button onClick={() => setOpen(!open)} variant="link" className="menu-button p-1 sm:p-2">
 						<MenuIcon />
 					</Button>
 				</div>
 				<Links className="lg:flex flex-row hidden" />
 			</div>
 			<div className={cn("grid-transition header-links grid items-start", open ? "show-menu mb-4" : "hide-menu")}>
-				<Links className="flex flex-col items-center text-2xl" onSelect={() => setOpen(false)} />
+				<Links className="flex flex-col items-center text-xl sm:text-2xl" onSelect={() => setOpen(false)} />
 			</div>
 		</header>
 	);
