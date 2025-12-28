@@ -1,12 +1,14 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, HeadContent, Scripts, useParams } from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts, useRouterState } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { useEffect } from "react";
 import { MainLayout } from "~/app/layouts/main";
 import { PlayerProvider } from "~/app/layouts/Player/provider";
 import type { PodcastName } from "~/app/providers/rss/feed";
+import { validatePodcastParam } from "~/app/utils/validatie-podcast-param";
 import ConvexProvider from "../integrations/convex/provider";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
@@ -91,35 +93,18 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		],
 	}),
 
+	component: RootComponent,
 	shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-	const { podcast = "hakapit" } = useParams({ strict: false });
-
 	return (
 		<html lang="he">
 			<head>
 				<HeadContent />
 			</head>
-			<body className={podcast}>
-				<ConvexProvider>
-					<MainLayout params={{ podcast: podcast as PodcastName }}>
-						<PlayerProvider>{children}</PlayerProvider>
-					</MainLayout>
-					<TanStackDevtools
-						config={{
-							position: "bottom-right",
-						}}
-						plugins={[
-							{
-								name: "Tanstack Router",
-								render: <TanStackRouterDevtoolsPanel />,
-							},
-							TanStackQueryDevtools,
-						]}
-					/>
-				</ConvexProvider>
+			<body className="hakapit">
+				{children}
 				{import.meta.env.PROD && (
 					<>
 						<Analytics />
@@ -129,5 +114,53 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<Scripts />
 			</body>
 		</html>
+	);
+}
+
+function RootComponent() {
+	const podcast = useRouterState({
+		select: (state) => {
+			// Get the podcast param from the current location pathname
+			const pathname = state.location.pathname;
+			const segments = pathname.split("/").filter(Boolean);
+			const firstSegment = segments[0];
+			// Check if the first segment is a valid podcast name
+			if (firstSegment && validatePodcastParam(firstSegment)) {
+				return firstSegment;
+			}
+			return "hakapit";
+		},
+	});
+
+	// Update body class when podcast changes
+	useEffect(() => {
+		// Remove previous podcast classes and add new one
+		const validClasses = ["hakapit", "nitk", "balcony-albums"];
+		for (const cls of validClasses) {
+			document.body.classList.remove(cls);
+		}
+		document.body.classList.add(podcast);
+	}, [podcast]);
+
+	return (
+		<ConvexProvider>
+			<MainLayout params={{ podcast: podcast as PodcastName }}>
+				<PlayerProvider>
+					<Outlet />
+				</PlayerProvider>
+			</MainLayout>
+			<TanStackDevtools
+				config={{
+					position: "bottom-right",
+				}}
+				plugins={[
+					{
+						name: "Tanstack Router",
+						render: <TanStackRouterDevtoolsPanel />,
+					},
+					TanStackQueryDevtools,
+				]}
+			/>
+		</ConvexProvider>
 	);
 }
