@@ -62,31 +62,37 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
 					alt={`${nextGame.competition.name} logo`}
 				/>
 			</div>
-			<div className={`game-title px-2 sm:px-4 ${heebo.className}`}>
-				<div className="flex flex-col items-center sm:items-end gap-1">
+			{/* Date/time - shown at top on mobile for better flow */}
+			{nextGame?.utcDate && (
+				<div className="text-center text-xs sm:hidden py-1">
+					{new Date(nextGame.utcDate).toLocaleDateString()} {new Date(nextGame.utcDate).toLocaleTimeString()}
+				</div>
+			)}
+			<div className={`game-title-mobile sm:game-title px-2 sm:px-4 ${heebo.className}`}>
+				<div className="flex flex-col items-center gap-1">
 					<TeamStatus
 						team={nextGame.awayTeam}
 						isRunning={nextGame.status === "LIVE"}
 						iconPosition="after"
 						score={getDisplayScore(nextGame.score, "away") ?? undefined}
 					/>
-					<div>
+					<div className="flex flex-row">
 						<Form form={awayForm} />
 					</div>
 				</div>
 
 				{nextGame?.utcDate && (
-					<div className="max-w-24 text-wrap text-xs order-first sm:order-none">
+					<div className="hidden sm:block max-w-24 text-wrap text-xs text-center">
 						{new Date(nextGame.utcDate).toLocaleDateString()} {new Date(nextGame.utcDate).toLocaleTimeString()}
 					</div>
 				)}
-				<div className="flex flex-col items-center sm:items-start gap-1">
+				<div className="flex flex-col items-center gap-1">
 					<TeamStatus
 						team={nextGame.homeTeam}
 						isRunning={nextGame.status === "LIVE"}
 						score={getDisplayScore(nextGame.score, "home") ?? undefined}
 					/>
-					<div>
+					<div className="flex flex-row">
 						<Form form={homeForm} />
 					</div>
 				</div>
