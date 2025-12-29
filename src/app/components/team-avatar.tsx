@@ -26,7 +26,7 @@ export default function TeamNameAndAvatar({
 
 	const teamCrest = (
 		<div className="size-6.25 rounded-full overflow-hidden" style={{ width: 25, height: 25 }}>
-			<Image src={crest} width={25} height={25} loading="eager" alt={teamShortName || "TL"} />
+			<Image src={crest} width={25} height={25} loading="lazy" alt={teamShortName || "TL"} />
 		</div>
 	);
 

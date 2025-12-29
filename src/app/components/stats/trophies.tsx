@@ -34,6 +34,10 @@ export function Trophies() {
 										<AvatarImage
 											alt={leagueName}
 											src={`https://images.fotmob.com/image_resources/logo/leaguelogo/dark/${tournamentId}.png`}
+											loading="lazy"
+											decoding="async"
+											className="object-contain"
+											sizes="64px"
 											onLoad={() => handleImageLoad(tournamentId)}
 										/>
 									</Avatar>

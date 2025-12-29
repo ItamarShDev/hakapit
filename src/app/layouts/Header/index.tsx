@@ -19,7 +19,17 @@ export default function Header({ data }: Props) {
 		<header className="header overflow-hidden">
 			<div className="lg:items-center flex flex-wrap items-start gap-4 p-4">
 				<div className="header-image">
-					{imageUrl && <img src={imageUrl} alt="podcast logo" className="object-contain" width={48} height={48} />}
+					{imageUrl && (
+						<img
+							src={imageUrl}
+							alt="podcast logo"
+							className="object-contain"
+							width={48}
+							height={48}
+							loading="lazy"
+							decoding="async"
+						/>
+					)}
 				</div>
 				<div className={cn("flex-1 header-title flex gap-3 items-baseline", karantina.className)}>
 					<Link to="/">

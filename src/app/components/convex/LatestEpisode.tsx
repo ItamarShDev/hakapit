@@ -1,23 +1,29 @@
+import type { Doc } from "convex/_generated/dataModel";
 import { LastEpisodeCardPreview } from "~/app/components/EpisodeCard";
 import { useLatestEpisode, usePodcastWithEpisodes } from "~/app/hooks/usePodcasts";
 
-export function LatestEpisode() {
-	const episode = useLatestEpisode("hakapit");
+type EpisodeDoc = Doc<"episodes"> | null | undefined;
+
+export function LatestEpisode({ initialEpisode }: { initialEpisode?: EpisodeDoc }) {
+	const liveEpisode = useLatestEpisode("hakapit");
+	const episode = liveEpisode ?? initialEpisode;
 	const podcastData = usePodcastWithEpisodes("hakapit", 1);
 
-	if (episode === undefined) {
+	if (episode === undefined && !initialEpisode) {
 		return <div className="size-22 text-center vertical-align-middle text-slate-700 italic">טוען פרק</div>;
 	}
 
-	if (!episode || !podcastData) {
+	if (!episode) {
 		return null;
 	}
+
+	const podcastName = podcastData?.name ?? "hakapit";
 
 	// Create episode data that matches the expected EpisodeData interface
 	const episodeData = {
 		...episode,
-		id: episode.episodeNumber, // Map episodeNumber to id
-		podcast: podcastData.name, // Use podcast name as string
+		id: episode.episodeNumber ?? episode._id, // Map episodeNumber to id
+		podcast: podcastName, // Use podcast name as string
 		createdAt: new Date(episode.createdAt),
 		updatedAt: new Date(episode.updatedAt),
 		duration: episode.duration || null, // Convert undefined to null

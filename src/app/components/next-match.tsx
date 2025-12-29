@@ -1,6 +1,6 @@
 import { Image } from "@unpic/react";
 import type React from "react";
-import Form from "~/app/components/stats/Form";
+import Form from "~/app/components/stats/form";
 import TeamNameAndAvatar from "~/app/components/team-avatar";
 import { heebo } from "~/app/fonts";
 import type { Team } from "~/app/providers/soccer-api/types/team-matches";

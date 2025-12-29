@@ -24,7 +24,7 @@ function TransferView({
 			<PopoverTrigger asChild>
 				<div className="relative cursor-pointer">
 					<Avatar className="aspect-square w-full h-auto">
-						<AvatarImage src={transfer.playerPhoto ?? undefined} />
+						<AvatarImage src={transfer.playerPhoto ?? undefined} loading="lazy" className="object-cover" />
 					</Avatar>
 				</div>
 			</PopoverTrigger>
@@ -33,7 +33,7 @@ function TransferView({
 					<CardHeader className="pb-3">
 						<div className="flex items-center gap-4">
 							<Avatar className="w-16 h-16">
-								<AvatarImage src={transfer.playerPhoto ?? undefined} />
+								<AvatarImage src={transfer.playerPhoto ?? undefined} loading="lazy" className="object-cover" />
 							</Avatar>
 							<div className="flex-1">
 								<CardTitle className="text-lg">{transfer.playerName}</CardTitle>
@@ -85,8 +85,9 @@ function TransferView({
 	);
 }
 
-export function RecentTransfers() {
-	const transfers = useAllTransfers();
+export function RecentTransfers({ initialTransfers }: { initialTransfers?: Doc<"transfers">[] | null }) {
+	const liveTransfers = useAllTransfers();
+	const transfers = liveTransfers ?? initialTransfers;
 	const [openTransferId, setOpenTransferId] = useState<string | null>(null);
 
 	if (transfers === undefined) {
