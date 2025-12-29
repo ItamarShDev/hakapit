@@ -24,3 +24,4 @@ npm-debug.log
 /blob-report/
 /playwright/.cache/
 .env.local
+package-lock.json
