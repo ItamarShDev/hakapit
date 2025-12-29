@@ -1,12 +1,13 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, HeadContent, Scripts, useParams } from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { MainLayout } from "~/app/layouts/main";
 import { PlayerProvider } from "~/app/layouts/Player/provider";
 import type { PodcastName } from "~/app/providers/rss/feed";
+import { validatePodcastParam } from "~/app/utils/validatie-podcast-param";
 import ConvexProvider from "../integrations/convex/provider";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
@@ -95,7 +96,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-	const { podcast = "hakapit" } = useParams({ strict: false });
+	// Use useRouterState to get the podcast from the matched route params
+	// This works correctly during SSR unlike useParams in shellComponent
+	const podcast = useRouterState({
+		select: (state) => {
+			// Find the podcast param from matched routes
+			for (const match of state.matches) {
+				const params = match.params as { podcast?: string };
+				if (params.podcast && validatePodcastParam(params.podcast)) {
+					return params.podcast;
+				}
+			}
+			return "hakapit";
+		},
+	});
 
 	return (
 		<html lang="he">
