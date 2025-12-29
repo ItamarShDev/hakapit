@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import type { Doc } from "convex/_generated/dataModel";
 import { useState } from "react";
 import { Avatar, AvatarImage } from "~/@/components/ui/avatar";
@@ -22,7 +23,7 @@ function TransferView({
 		<Popover open={isOpen} onOpenChange={onOpenChange}>
 			<PopoverTrigger asChild>
 				<div className="relative cursor-pointer">
-					<Avatar>
+					<Avatar className="aspect-square w-full h-auto">
 						<AvatarImage src={transfer.playerPhoto ?? undefined} />
 					</Avatar>
 				</div>
@@ -108,7 +109,13 @@ export function RecentTransfers() {
 	const outTransfers = sortedTransfers.filter((t) => t.direction === "OUT");
 
 	const inTransferViews = inTransfers.map((transfer) => (
-		<li key={transfer._id} className={openTransferId && openTransferId !== transfer._id ? "opacity-30" : ""}>
+		<li
+			key={transfer._id}
+			className={clsx(
+				" aspect-square w-full h-auto",
+				openTransferId && openTransferId !== transfer._id ? "opacity-30" : "",
+			)}
+		>
 			<TransferView
 				transfer={transfer}
 				isOpen={openTransferId === transfer._id}
@@ -118,7 +125,13 @@ export function RecentTransfers() {
 	));
 
 	const outTransferViews = outTransfers.map((transfer) => (
-		<li key={transfer._id} className={openTransferId && openTransferId !== transfer._id ? "opacity-30" : ""}>
+		<li
+			key={transfer._id}
+			className={clsx(
+				" aspect-square w-full h-auto",
+				openTransferId && openTransferId !== transfer._id ? "opacity-30" : "",
+			)}
+		>
 			<TransferView
 				transfer={transfer}
 				isOpen={openTransferId === transfer._id}
@@ -137,7 +150,7 @@ export function RecentTransfers() {
 			{inTransferViews.length > 0 && (
 				<div className="flex flex-col gap-2 items-center">
 					<div className="text-sm font-semibold text-green-600 mb-1">העברות פנימה (IN)</div>
-					<ul className="flex flex-row gap-2 list-none">{inTransferViews}</ul>
+					<ul className="avatar-grid list-none">{inTransferViews}</ul>
 				</div>
 			)}
 
@@ -145,7 +158,7 @@ export function RecentTransfers() {
 			{outTransferViews.length > 0 && (
 				<div className="flex flex-col gap-2 items-center">
 					<div className="text-sm font-semibold text-red-600 mb-1">העברות חוצה (OUT)</div>
-					<ul className="flex flex-row gap-2 list-none">{outTransferViews}</ul>
+					<ul className="avatar-grid list-none">{outTransferViews}</ul>
 				</div>
 			)}
 		</div>

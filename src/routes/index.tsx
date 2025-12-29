@@ -52,15 +52,15 @@ export const Route = createFileRoute("/")({
         content: "דף הבית של משפחת הכפית",
       },
       {
-        property: "viewport",
+        name: "viewport",
         content: "width=device-width, initial-scale=1.0",
       },
       {
-        property: "theme-color",
+        name: "theme-color",
         content: "var(--color-primary)",
       },
       {
-        property: "color-scheme",
+        name: "color-scheme",
         content: "dark light",
       },
       { property: "og:type", content: "website" },

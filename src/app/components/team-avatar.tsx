@@ -19,7 +19,7 @@ export default function TeamNameAndAvatar({
 	}
 
 	const teamNameComponent = (
-		<div className="text-amber-100" style={{ color }}>
+		<div className="text-sm md:text-lg text-amber-100" style={{ color }}>
 			{teamName}
 		</div>
 	);

@@ -11,6 +11,10 @@
 }
 
 @layer base {
+	html {
+		height: 100%;
+	}
+
 	.hakapit {
 		--color-primary: 350, 85%, 25%;
 		--color-primary-opaque: 350 85% 42% / 0.2;
@@ -229,6 +233,12 @@ audio.audio::-webkit-media-controls-timeline-container {
 
 .direction {
 	direction: rtl;
+}
+
+.avatar-grid {
+	@apply gap-2 max-w-2xl mx-auto;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, clamp(20px, 7vw, 50px));
 }
 
 @keyframes fadeIn {
