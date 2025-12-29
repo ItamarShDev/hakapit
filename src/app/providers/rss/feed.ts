@@ -72,18 +72,27 @@ export async function fetchLatestEpisode(podcast: PodcastName) {
 export async function fetchUpdatedLatestEpisode(podcast: PodcastName) {
 	if (!convex) return null;
 
-	// Check if podcast data was updated recently
-	const updateStatus = await convex.query(api.podcasts.getPodcastUpdateStatus, {
-		name: podcast,
+	const cacheKey = `podcast-rss-${podcast}`;
+	const cacheStatus = await convex.query(api.cache.isCacheExpired, {
+		dataType: cacheKey,
 	});
 
-	if (updateStatus?.wasUpdatedRecently) {
-		// Data is fresh, return directly
+	if (!cacheStatus.expired) {
+		// Cache is fresh, return directly from database
 		return await fetchLatestEpisode(podcast);
 	}
 
-	// Update the feed first
+	// Cache expired or doesn't exist - fetch from RSS and update database
 	await updateFeedInDb(podcast);
+
+	// Update cache tracking with 1 hour expiration
+	const oneHourFromNow = Date.now() + 60 * 60 * 1000;
+	await convex.mutation(api.cache.updateCacheTracking, {
+		dataType: cacheKey,
+		source: "rss",
+		expiresAt: oneHourFromNow,
+	});
+
 	return await fetchLatestEpisode(podcast);
 }
 
@@ -169,13 +178,13 @@ export async function updateFeedsInDb() {
 export async function fetchUpdatedFeed(podcast: PodcastName, number = 5) {
 	if (!convex) return null;
 
-	// Check if podcast data was updated recently
-	const updateStatus = await convex.query(api.podcasts.getPodcastUpdateStatus, {
-		name: podcast,
+	const cacheKey = `podcast-rss-${podcast}`;
+	const cacheStatus = await convex.query(api.cache.isCacheExpired, {
+		dataType: cacheKey,
 	});
 
-	if (updateStatus?.wasUpdatedRecently) {
-		// Data is fresh, return directly
+	if (!cacheStatus.expired) {
+		// Cache is fresh, return directly from database
 		const result = await fetchFeed(podcast, number);
 		// Clean iframes from episode content in the result
 		if (result?.episodes) {
@@ -188,8 +197,17 @@ export async function fetchUpdatedFeed(podcast: PodcastName, number = 5) {
 		return result;
 	}
 
-	// Update the feed
+	// Cache expired or doesn't exist - fetch from RSS and update database
 	await updateFeedInDb(podcast);
+
+	// Update cache tracking with 1 hour expiration
+	const oneHourFromNow = Date.now() + 60 * 60 * 1000;
+	await convex.mutation(api.cache.updateCacheTracking, {
+		dataType: cacheKey,
+		source: "rss",
+		expiresAt: oneHourFromNow,
+	});
+
 	const result = await fetchFeed(podcast, number);
 
 	// Ensure episodes are sorted from highest to lowest episode number
