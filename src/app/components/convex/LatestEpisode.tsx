@@ -1,12 +1,12 @@
 import { LastEpisodeCardPreview } from "~/app/components/EpisodeCard";
 import { useLatestEpisode, usePodcastWithEpisodes } from "~/app/hooks/usePodcasts";
 
-function LatestEpisodeContent() {
+export function LatestEpisode() {
 	const episode = useLatestEpisode("hakapit");
 	const podcastData = usePodcastWithEpisodes("hakapit", 1);
 
 	if (episode === undefined) {
-		return <div className="size-[88px] text-center vertical-align-middle text-slate-700 italic">טוען פרק</div>;
+		return <div className="size-22 text-center vertical-align-middle text-slate-700 italic">טוען פרק</div>;
 	}
 
 	if (!episode || !podcastData) {
@@ -30,8 +30,4 @@ function LatestEpisodeContent() {
 	};
 
 	return <LastEpisodeCardPreview episode={episodeData as any} />;
-}
-
-export function LatestEpisode() {
-	return <LatestEpisodeContent />;
 }

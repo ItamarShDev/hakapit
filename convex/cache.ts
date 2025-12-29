@@ -59,7 +59,12 @@ export const isCacheExpired = query({
 		const now = Date.now();
 		const expired = cache.expiresAt ? cache.expiresAt < now : true;
 
-		return { expired, exists: true, lastUpdated: cache.lastUpdated };
+		return {
+			expired,
+			exists: true,
+			lastUpdated: cache.lastUpdated,
+			expiredAt: cache.expiresAt,
+		};
 	},
 });
 

@@ -34,7 +34,7 @@ export function LastEpisodeCardPreview({ episode }: { episode: EpisodeWithPodcas
 		<div className="flex items-center justify-center w-full gap-4 py-4">
 			{playerProps && (
 				<Button
-					className="md:size-14 size-20 md:rounded-full relative p-3 overflow-hidden"
+					className="size-10 md:size-14 lg:size-20 md:rounded-full relative p-3 overflow-hidden"
 					onClick={() => playerProps.setCurrentlyPlaying(episode)}
 				>
 					{episode?.imageUrl && (
@@ -54,7 +54,7 @@ export function LastEpisodeCardPreview({ episode }: { episode: EpisodeWithPodcas
 			<div className="text-accent flex flex-col items-start">
 				<Link
 					preload="intent"
-					className="md:text-lg text-xl"
+					className="text-base md:text-lg lg:text-xl"
 					to="/$podcast/episodes/$id"
 					params={{ podcast, id: String(episodeNumber) }}
 				>
