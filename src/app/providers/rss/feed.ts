@@ -68,6 +68,25 @@ export async function fetchLatestEpisode(podcast: PodcastName) {
 	return result;
 }
 
+// Get latest episode with caching logic
+export async function fetchUpdatedLatestEpisode(podcast: PodcastName) {
+	if (!convex) return null;
+
+	// Check if podcast data was updated recently
+	const updateStatus = await convex.query(api.podcasts.getPodcastUpdateStatus, {
+		name: podcast,
+	});
+
+	if (updateStatus?.wasUpdatedRecently) {
+		// Data is fresh, return directly
+		return await fetchLatestEpisode(podcast);
+	}
+
+	// Update the feed first
+	await updateFeedInDb(podcast);
+	return await fetchLatestEpisode(podcast);
+}
+
 export async function fetchEpisode({ podcastName, episodeNumber }: { podcastName: string; episodeNumber: number }) {
 	if (!convex) {
 		return null;

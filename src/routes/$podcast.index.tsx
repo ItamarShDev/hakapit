@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { FeedPage } from "~/app/components/Feed";
-import { fetchFeed, type PodcastName } from "~/app/providers/rss/feed";
+import { fetchUpdatedFeed, type PodcastName } from "~/app/providers/rss/feed";
 import { validatePodcastParam } from "~/app/utils/validatie-podcast-param";
 
 export const Route = createFileRoute("/$podcast/")({
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/$podcast/")({
 	},
 	loader: async ({ context }) => {
 		const podcastName = context.podcast;
-		const metadata = await fetchFeed(podcastName, 10);
+		const metadata = await fetchUpdatedFeed(podcastName, 10);
 		return { metadata };
 	},
 	head: ({ loaderData, params }) => {
