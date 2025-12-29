@@ -10,7 +10,7 @@ async function getDataCached<T>(key: string, ttlMs: number, fetcher: () => Promi
 	const cached = await getCachedValue<T>(key);
 	console.info(`Getting data for key: ${key}`);
 	if (cached != null) {
-		console.info(`Cache hit for key: ${key}=${JSON.stringify(cached)}`);
+		console.info(`Cache hit for key: ${key}`);
 		return cached;
 	}
 	console.info(`Cache miss for key: ${key}`);
