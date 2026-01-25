@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "convex/_generated/api";
 import type { Doc } from "convex/_generated/dataModel";
-import { ConvexHttpClient } from "convex/browser";
 import { Suspense } from "react";
 import { FloatingChat } from "~/app/components/chat/FloatingChat";
 import { LatestEpisode } from "~/app/components/convex/LatestEpisode";
@@ -10,10 +9,10 @@ import { RecentTransfers } from "~/app/components/convex/RecentTransfers";
 import { FullBleed, NextMatchOverview } from "~/app/components/next-match";
 import { StatsTable } from "~/app/components/stats/stats";
 import { Trophies } from "~/app/components/stats/trophies";
+import { getConvexClient } from "~/app/providers/convex/env";
 import { getSoccerSnapshot } from "~/app/providers/soccer-api";
 
-const convexUrl = process.env.CONVEX_URL || import.meta.env.VITE_CONVEX_URL || "";
-const convexClient = convexUrl ? new ConvexHttpClient(convexUrl) : null;
+const convexClient = getConvexClient("warn");
 
 async function getTransfersSnapshot(): Promise<Doc<"transfers">[] | null> {
 	if (!convexClient) return null;

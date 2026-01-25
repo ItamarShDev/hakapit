@@ -4,7 +4,8 @@
 		"includes": [
 			"**",
 			"!**/build/**/*.js",
-			"!**/app/api/fotmob-api/**/*.ts"
+			"!**/app/api/fotmob-api/**/*.ts",
+			"!**/node_modules"
 		]
 	},
 	"assist": {

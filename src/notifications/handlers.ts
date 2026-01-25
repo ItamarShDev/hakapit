@@ -1,13 +1,12 @@
 import { api } from "convex/_generated/api";
-import { ConvexHttpClient } from "convex/browser";
 import webpush from "web-push";
+import { getConvexClient } from "~/app/providers/convex/env";
 
 // Initialize Convex client
-const convexUrl = process.env.CONVEX_URL || import.meta.env.CONVEX_URL;
-if (!convexUrl) {
+const convex = getConvexClient("throw");
+if (!convex) {
 	throw new Error("CONVEX_URL environment variable is required");
 }
-const convex = new ConvexHttpClient(convexUrl);
 
 export async function sendNotification(userId: string, title: string, message: string) {
 	const subscription = await convex.query(api.subscriptions.getSubscriptionByUserId, { userId });

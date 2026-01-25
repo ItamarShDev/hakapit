@@ -1,6 +1,6 @@
 import { api } from "convex/_generated/api";
 import type { Doc } from "convex/_generated/dataModel";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "~/app/providers/convex/env";
 import { baseUrl, LiverpoolId } from "~/app/providers/football-api/constants";
 import type { PlayerStatsResponse } from "~/app/providers/football-api/types/player-stats";
 import type { TransferResponse } from "~/app/providers/football-api/types/transfer";
@@ -9,11 +9,7 @@ import { isTransferBuy } from "~/app/providers/football-api/utils";
 let transfersCacheBust = 0;
 
 // Initialize Convex client
-const convexUrl = process.env.CONVEX_URL || import.meta.env.CONVEX_URL;
-if (!convexUrl) {
-	throw new Error("CONVEX_URL environment variable is required");
-}
-const convex = new ConvexHttpClient(convexUrl);
+const convex = getConvexClient("throw");
 
 async function fetchData<T>(path: string, query?: URLSearchParams | Record<string, string>) {
 	const params = new URLSearchParams(query);

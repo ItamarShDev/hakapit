@@ -1,15 +1,13 @@
 import { api } from "convex/_generated/api";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "~/app/providers/convex/env";
 
-const convexUrl = process.env.CONVEX_URL || import.meta.env.CONVEX_URL || import.meta.env.VITE_CONVEX_URL;
-if (!convexUrl) {
-	throw new Error("CONVEX_URL environment variable is required");
-}
-
-const convex = new ConvexHttpClient(convexUrl);
+const convex = getConvexClient("warn");
 const CACHE_SOURCE = "soccer-api";
 
 export async function getCachedValue<T>(key: string): Promise<T | null> {
+	if (!convex) {
+		return null;
+	}
 	try {
 		const record = await convex.query(api.cache.getCacheTracking, { dataType: key });
 		if (!record) {
@@ -33,7 +31,7 @@ export async function setCachedValue<T>(key: string, value: T, ttlMs: number) {
 		return;
 	}
 	try {
-		await convex.mutation(api.cache.updateCacheTracking, {
+		await convex?.mutation(api.cache.updateCacheTracking, {
 			dataType: key,
 			source: CACHE_SOURCE,
 			payload: JSON.stringify(value),
