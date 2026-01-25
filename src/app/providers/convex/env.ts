@@ -29,6 +29,7 @@ export function resolveConvexUrl(onMissing: ConvexUrlMissingMode = "throw"): str
 }
 
 let convexClientSingleton: ConvexHttpClient | null | undefined;
+let convexAvailable: boolean | undefined;
 
 /**
  * Get a shared Convex HTTP client. Respects resolveConvexUrl missing behavior per mode.
@@ -48,4 +49,13 @@ export function getConvexClient(onMissing: ConvexUrlMissingMode = "throw"): Conv
 
 	convexClientSingleton = new ConvexHttpClient(url);
 	return convexClientSingleton;
+}
+
+/**
+ * Whether Convex is configured (URL present). Uses silent mode to avoid noisy logs in optional envs (e.g., CI/e2e).
+ */
+export function isConvexAvailable(): boolean {
+	if (convexAvailable !== undefined) return convexAvailable;
+	convexAvailable = resolveConvexUrl("silent") !== null;
+	return convexAvailable;
 }

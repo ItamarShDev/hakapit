@@ -9,7 +9,7 @@ import { RecentTransfers } from "~/app/components/convex/RecentTransfers";
 import { FullBleed, NextMatchOverview } from "~/app/components/next-match";
 import { StatsTable } from "~/app/components/stats/stats";
 import { Trophies } from "~/app/components/stats/trophies";
-import { getConvexClient } from "~/app/providers/convex/env";
+import { getConvexClient, isConvexAvailable } from "~/app/providers/convex/env";
 import { getSoccerSnapshot } from "~/app/providers/soccer-api";
 
 const convexClient = getConvexClient("warn");
@@ -144,6 +144,7 @@ function TransfersSkeleton() {
 
 function Home() {
 	const { snapshot: initialSnapshot, transfers, latestEpisode } = Route.useLoaderData();
+	const convexEnabled = isConvexAvailable();
 
 	const { data: soccerSnapshot, isLoading: snapshotLoading } = useSoccerSnapshot(initialSnapshot);
 	const leaguesData = soccerSnapshot?.leaguesData ?? [];
@@ -154,11 +155,11 @@ function Home() {
 			<div className="flex flex-col w-full gap-10">
 				<Trophies />
 				<div className="flex flex-wrap justify-center">
-					<LatestEpisode initialEpisode={latestEpisode ?? undefined} />
+					{convexEnabled ? <LatestEpisode initialEpisode={latestEpisode ?? undefined} /> : null}
 				</div>
 				<Suspense fallback={<TransfersSkeleton />}>
 					<div className="flex flex-wrap justify-center w-full">
-						<RecentTransfers initialTransfers={transfers ?? undefined} />
+						{convexEnabled ? <RecentTransfers initialTransfers={transfers ?? undefined} /> : null}
 					</div>
 				</Suspense>
 				{snapshotLoading ? (
