@@ -6,15 +6,16 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "~/@/components/ui/button";
 import {
-	Drawer,
-	DrawerClose,
-	DrawerContent,
-	DrawerDescription,
-	DrawerHeader,
-	DrawerTitle,
-	DrawerTrigger,
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
 } from "~/@/components/ui/drawer";
 import { Textarea } from "~/@/components/ui/textarea";
+import { useIsDesktop } from "~/@/lib/use-is-desktop";
 import { getDirectionFromText } from "~/app/utils/text-direction";
 
 export function FloatingChat() {
@@ -25,6 +26,8 @@ export function FloatingChat() {
 	const inputDir = getDirectionFromText(input);
 	const [sendError, setSendError] = useState<string | null>(null);
 	const [open, setOpen] = useState(false);
+	const isDesktop = useIsDesktop("(min-width: 768px)");
+	const drawerDirection = isDesktop ? "right" : "bottom";
 
 	// The most recent user message id (used to show the loader next to it while waiting for an answer)
 	const lastUserMessageId = [...messages].reverse().find((m) => m.role === "user")?.id;
@@ -99,7 +102,7 @@ export function FloatingChat() {
 			className={"fixed bottom-4 left-4 xs:bottom-0 xs:left-0 xs:right-0 xs:px-4 xs:pb-4 z-50"}
 		>
 			<Drawer
-				direction={"right"}
+				direction={drawerDirection as "right" | "bottom"}
 				open={open}
 				onOpenChange={(nextOpen) => {
 					setOpen(nextOpen);
@@ -115,7 +118,7 @@ export function FloatingChat() {
 						ref={triggerRef}
 						data-testid="chat-trigger-button"
 						size="lg"
-						className={"text-accent hover:bg-accent hover:text-primary rounded-full xs:w-full xs:py-6"}
+						className={`text-accent hover:bg-accent hover:text-primary ${isDesktop ? "rounded-full" : "w-full rounded-lg"}`}
 					>
 						שאל אותי על ליברפול
 					</Button>

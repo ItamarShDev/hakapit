@@ -10,6 +10,7 @@ import { FullBleed, NextMatchOverview } from "~/app/components/next-match";
 import { StatsTable } from "~/app/components/stats/stats";
 import { Trophies } from "~/app/components/stats/trophies";
 import { getConvexClient, isConvexAvailable } from "~/app/providers/convex/env";
+import { fetchUpdatedLatestEpisode } from "~/app/providers/rss/feed";
 import { getSoccerSnapshot } from "~/app/providers/soccer-api";
 
 const convexClient = getConvexClient("warn");
@@ -25,32 +26,7 @@ async function getTransfersSnapshot(): Promise<Doc<"transfers">[] | null> {
 }
 
 async function getLatestEpisodeSnapshot(): Promise<Doc<"episodes"> | null> {
-	if (!convexClient) return null;
-	const cacheKey = "latest-episode-hakapit";
-	try {
-		const cached = await convexClient.query(api.cache.getCacheTracking, { dataType: cacheKey });
-		if (cached?.expiresAt && cached.payload && cached.expiresAt > Date.now()) {
-			return JSON.parse(cached.payload) as Doc<"episodes">;
-		}
-	} catch (err) {
-		console.warn("latest episode cache read failed", err);
-	}
-
-	try {
-		const latest = await convexClient.query(api.podcasts.getLatestEpisode, { podcastName: "hakapit" });
-		if (latest) {
-			await convexClient.mutation(api.cache.updateCacheTracking, {
-				dataType: cacheKey,
-				source: "podcast-feed",
-				payload: JSON.stringify(latest),
-				expiresAt: Date.now() + 5 * 60 * 1000,
-			});
-		}
-		return latest;
-	} catch (err) {
-		console.warn("latest episode fetch failed", err);
-		return null;
-	}
+	return await fetchUpdatedLatestEpisode("hakapit");
 }
 
 export const Route = createFileRoute("/")({

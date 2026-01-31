@@ -1,9 +1,9 @@
-import { PauseIcon, PlayIcon } from "@radix-ui/react-icons";
 import { Link } from "@tanstack/react-router";
 import { Image } from "@unpic/react";
 import { Button } from "~/@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/@/components/ui/card";
 import { cn } from "~/@/lib/utils";
+import { PlayButton } from "~/app/components/PlayButton";
 import { heebo } from "~/app/fonts";
 import { usePlayer } from "~/app/layouts/Player/provider";
 import { type EpisodeWithPodcast, toDateString } from "~/app/utils";
@@ -14,14 +14,6 @@ function removeIframes(content: string): string {
 
 	// Remove iframe tags and their content
 	return content.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "");
-}
-
-function PlayPauseButton({ episode }: { episode: EpisodeWithPodcast }) {
-	const playerProps = usePlayer();
-	if (!playerProps) return null;
-	if (playerProps.isPlaying && playerProps.currentlyPlaying?.guid === episode?.guid)
-		return <PauseIcon className="size-7 md:size-4 z-10" />;
-	return <PlayIcon className="size-7 md:size-4 z-10" />;
 }
 
 export function LastEpisodeCardPreview({ episode }: { episode: EpisodeWithPodcast }) {
@@ -48,7 +40,7 @@ export function LastEpisodeCardPreview({ episode }: { episode: EpisodeWithPodcas
 							/>
 						</div>
 					)}
-					<PlayPauseButton episode={episode} />
+					<PlayButton episode={episode} size="md" />
 				</Button>
 			)}
 			<div className="text-accent flex flex-col items-start">
@@ -129,13 +121,10 @@ export function EpisodeCard({
 						className="z-10 w-full"
 						onClick={() => playerProps.setCurrentlyPlaying(episode)}
 					>
-						{playerProps.currentlyPlaying?.guid === episode?.guid ? (
-							"מנגן כרגע"
-						) : (
-							<>
-								נגן פרק <PlayIcon className="ms-4" />
-							</>
-						)}
+						<div className="flex items-center justify-center gap-2">
+							{episode && <PlayButton episode={episode} size="sm" />}
+							{playerProps.currentlyPlaying?.guid === episode?.guid ? "מנגן כרגע" : "נגן פרק"}
+						</div>
 					</Button>
 				) : (
 					<audio className="audio" controls src={episode?.audioUrl}>
