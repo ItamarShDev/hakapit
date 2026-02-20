@@ -7,8 +7,8 @@ const crons = cronJobs();
 // Refresh snapshot every 15 minutes to keep next match fresh
 crons.cron("refresh-soccer-snapshot-15m", "*/15 * * * *", internal.football.refreshSnapshot);
 
-// Refresh latest episode cache every 5 minutes
-crons.cron("refresh-latest-episode-5m", "*/5 * * * *", internal.podcasts.refreshLatestEpisodeCache, {
+// Refresh latest episode cache every hour
+crons.cron("refresh-latest-episode-hourly", "0 * * * *", internal.podcasts.refreshLatestEpisodeCache, {
 	podcastName: "hakapit",
 });
 
