@@ -33,6 +33,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/ai": "^0.10.0",
+    "@tanstack/ai-gemini": "^0.8.5",
     "@tanstack/ai-openai": "^0.7.3",
     "@tanstack/react-devtools": "^0.10.1",
     "@tanstack/react-query": "^5.96.2",
