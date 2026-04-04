@@ -1,6 +1,6 @@
-import { openai } from "@ai-sdk/openai";
+import { chat, toServerSentEventsResponse } from "@tanstack/ai";
+import { openaiText } from "@tanstack/ai-openai";
 import { createFileRoute } from "@tanstack/react-router";
-import { streamText } from "ai";
 import { z } from "zod";
 
 const chatRequestSchema = z.object({
@@ -20,13 +20,15 @@ export const Route = createFileRoute("/api/chat")({
 			POST: async ({ request }) => {
 				const parsed = chatRequestSchema.parse(await request.json());
 
-				const result = streamText({
-					model: openai("gpt-4o-mini"),
-					messages: parsed.messages as any,
-					system: `You are a Liverpool FC expert. always search the web to find the answer. do not provide any additional information. keep it short and sweet. unless said otherwise the year asked about is ${new Date().getFullYear()}. Verify the information you provide is correct.`,
+				const stream = chat({
+					adapter: openaiText("gpt-4o-mini"),
+					messages: [
+						{ role: "system", content: `You are a Liverpool FC expert. always search the web to find the answer. do not provide any additional information. keep it short and sweet. unless said otherwise the year asked about is ${new Date().getFullYear()}. Verify the information you provide is correct.` },
+						...parsed.messages,
+					] as any,
 				});
 
-				return result.toTextStreamResponse();
+				return toServerSentEventsResponse(stream);
 			},
 		},
 	},
