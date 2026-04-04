@@ -3,12 +3,41 @@ import { geminiText } from "@tanstack/ai-gemini";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
+// TanStack AI message format with parts
 const chatRequestSchema = z.object({
 	messages: z
 		.array(
 			z.object({
 				role: z.enum(["system", "user", "assistant", "tool"]),
-				content: z.string().min(1),
+				parts: z.array(
+					z.object({
+						type: z.literal("text"),
+						content: z.string(),
+					})
+				).optional(),
+				content: z.string().optional(),
+			})
+			.transform((msg) => {
+				// Extract content from parts if available
+				if (msg.parts && msg.parts.length > 0) {
+					const textParts = msg.parts
+						.filter((p) => p.type === "text")
+						.map((p) => p.content)
+						.join("");
+					if (textParts) {
+						return { role: msg.role, content: textParts };
+					}
+				}
+				// Fallback to direct content
+				if (msg.content) {
+					return { role: msg.role, content: msg.content };
+				}
+				throw new Error("Message has neither parts nor content");
+			})
+			.refine((msg): msg is { role: "system" | "user" | "assistant" | "tool"; content: string } => {
+				return msg.content.length > 0;
+			}, {
+				message: "Message content cannot be empty",
 			}),
 		)
 		.min(1),
