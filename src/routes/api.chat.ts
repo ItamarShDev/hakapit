@@ -1,6 +1,6 @@
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import { createFileRoute } from "@tanstack/react-router";
-import { streamText, type CoreMessage } from "ai";
+import { streamText } from "ai";
 import { z } from "zod";
 
 const chatRequestSchema = z.object({
@@ -19,15 +19,14 @@ export const Route = createFileRoute("/api/chat")({
 		handlers: {
 			POST: async ({ request }) => {
 				const parsed = chatRequestSchema.parse(await request.json());
-				const messages = parsed.messages as CoreMessage[];
 
 				const result = streamText({
-					model: google("gemini-2.5-flash"),
-					messages,
+					model: openai("gpt-4o-mini"),
+					messages: parsed.messages as any,
 					system: `You are a Liverpool FC expert. always search the web to find the answer. do not provide any additional information. keep it short and sweet. unless said otherwise the year asked about is ${new Date().getFullYear()}. Verify the information you provide is correct.`,
 				});
 
-				return result.toDataStreamResponse();
+				return result.toTextStreamResponse();
 			},
 		},
 	},
