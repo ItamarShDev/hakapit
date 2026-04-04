@@ -1,7 +1,7 @@
 import type { League } from "~/app/providers/soccer-api/types/league";
 import { TeamTournamentInformation } from "./tables";
 
-export function StatTable({ initialData }: { leagueId: string; initialData: League }) {
+export function StatTable({ initialData }: { initialData: League }) {
 	const league = initialData;
 
 	if (!league?.competition) return null;
@@ -22,11 +22,11 @@ export function StatTable({ initialData }: { leagueId: string; initialData: Leag
 	);
 }
 
-export function StatsTable({ leaguesData }: { leaguesData: Array<{ leagueId: string; league: League }> }) {
+export function StatsTable({ leaguesData }: { leaguesData: Array<{ league: League }> }) {
 	return (
 		<div className="grid-col-responsive grid items-start justify-items-center w-full gap-3">
-			{leaguesData.map(({ leagueId, league }) => (
-				<StatTable key={leagueId} leagueId={leagueId} initialData={league} />
+			{leaguesData.map(({ league }) => (
+				<StatTable key={league.competition?.id} initialData={league} />
 			))}
 		</div>
 	);

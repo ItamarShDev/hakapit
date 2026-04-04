@@ -50,10 +50,10 @@ const PodcastEpisodesIdIndexRoute = PodcastEpisodesIdIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/chat': typeof ApiChatRoute
-  '/$podcast': typeof PodcastIndexRoute
-  '/$podcast/episodes': typeof PodcastEpisodesIndexRoute
-  '/$podcast/latest': typeof PodcastLatestIndexRoute
-  '/$podcast/episodes/$id': typeof PodcastEpisodesIdIndexRoute
+  '/$podcast/': typeof PodcastIndexRoute
+  '/$podcast/episodes/': typeof PodcastEpisodesIndexRoute
+  '/$podcast/latest/': typeof PodcastLatestIndexRoute
+  '/$podcast/episodes/$id/': typeof PodcastEpisodesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -77,10 +77,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/api/chat'
-    | '/$podcast'
-    | '/$podcast/episodes'
-    | '/$podcast/latest'
-    | '/$podcast/episodes/$id'
+    | '/$podcast/'
+    | '/$podcast/episodes/'
+    | '/$podcast/latest/'
+    | '/$podcast/episodes/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -120,7 +120,7 @@ declare module '@tanstack/react-router' {
     '/$podcast/': {
       id: '/$podcast/'
       path: '/$podcast'
-      fullPath: '/$podcast'
+      fullPath: '/$podcast/'
       preLoaderRoute: typeof PodcastIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -134,21 +134,21 @@ declare module '@tanstack/react-router' {
     '/$podcast/latest/': {
       id: '/$podcast/latest/'
       path: '/$podcast/latest'
-      fullPath: '/$podcast/latest'
+      fullPath: '/$podcast/latest/'
       preLoaderRoute: typeof PodcastLatestIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$podcast/episodes/': {
       id: '/$podcast/episodes/'
       path: '/$podcast/episodes'
-      fullPath: '/$podcast/episodes'
+      fullPath: '/$podcast/episodes/'
       preLoaderRoute: typeof PodcastEpisodesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$podcast/episodes/$id/': {
       id: '/$podcast/episodes/$id/'
       path: '/$podcast/episodes/$id'
-      fullPath: '/$podcast/episodes/$id'
+      fullPath: '/$podcast/episodes/$id/'
       preLoaderRoute: typeof PodcastEpisodesIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
