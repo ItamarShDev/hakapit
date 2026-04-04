@@ -18,9 +18,9 @@ export const Route = createFileRoute("/api/chat")({
 	server: {
 		handlers: {
 			POST: async ({ request }) => {
-				if (!process.env.GEMINI_API_KEY) {
+				if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
 					return new Response(
-						JSON.stringify({ error: "GEMINI_API_KEY not configured" }),
+						JSON.stringify({ error: "GOOGLE_GENERATIVE_AI_API_KEY not configured" }),
 						{ status: 500, headers: { "Content-Type": "application/json" } },
 					);
 				}
