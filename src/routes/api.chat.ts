@@ -1,6 +1,6 @@
-import { chat, toServerSentEventsResponse } from "@tanstack/ai";
-import { geminiText } from "@tanstack/ai-gemini";
+import { google } from "@ai-sdk/google";
 import { createFileRoute } from "@tanstack/react-router";
+import { streamText } from "ai";
 import { z } from "zod";
 
 const chatRequestSchema = z.object({
@@ -28,15 +28,13 @@ export const Route = createFileRoute("/api/chat")({
 				const parsed = chatRequestSchema.parse(await request.json());
 
 				try {
-					const stream = chat({
-						adapter: geminiText("gemini-2.5-flash"),
-						messages: [
-							{ role: "system", content: `You are a Liverpool FC expert. always search the web to find the answer. do not provide any additional information. keep it short and sweet. unless said otherwise the year asked about is ${new Date().getFullYear()}. Verify the information you provide is correct.` },
-							...parsed.messages,
-						] as any,
+					const result = streamText({
+						model: google("gemini-2.0-flash-exp"),
+						messages: parsed.messages as any,
+						system: `You are a Liverpool FC expert. always search the web to find the answer. do not provide any additional information. keep it short and sweet. unless said otherwise the year asked about is ${new Date().getFullYear()}. Verify the information you provide is correct.`,
 					});
 
-					return toServerSentEventsResponse(stream);
+					return result.toDataStreamResponse();
 				} catch (error) {
 					return new Response(
 						JSON.stringify({ error: error instanceof Error ? error.message : "An error occurred" }),
