@@ -19,12 +19,12 @@ export const Route = createFileRoute("/api/chat")({
 		handlers: {
 			POST: async ({ request }) => {
 				console.log("[API Chat] Received request");
-				console.log("[API Chat] GOOGLE_API_KEY exists:", !!process.env.GOOGLE_API_KEY);
+				console.log("[API Chat] GOOGLE_GENERATIVE_AI_API_KEY exists:", !!process.env.GOOGLE_GENERATIVE_AI_API_KEY);
 
-				if (!process.env.GOOGLE_API_KEY) {
-					console.error("[API Chat] GOOGLE_API_KEY not configured");
+				if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+					console.error("[API Chat] GOOGLE_GENERATIVE_AI_API_KEY not configured");
 					return new Response(
-						JSON.stringify({ error: "GOOGLE_API_KEY not configured" }),
+						JSON.stringify({ error: "GOOGLE_GENERATIVE_AI_API_KEY not configured" }),
 						{ status: 500, headers: { "Content-Type": "application/json" } },
 					);
 				}
