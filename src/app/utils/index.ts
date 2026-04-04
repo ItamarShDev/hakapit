@@ -1,11 +1,14 @@
 import type { fetchFeed, fetchLatestEpisode } from "~/app/providers/rss/feed";
 
 export function toDateString(value?: Date | null) {
-	return value && new Date(value).toLocaleDateString();
+	if (!value) return undefined;
+	return new Date(value).toLocaleDateString();
 }
 
 export function toDate(value?: string) {
-	return value ? new Date(Date.parse(value)) : null;
+	if (!value) return null;
+	const date = new Date(Date.parse(value));
+	return isNaN(date.getTime()) ? null : date;
 }
 
 type Latest = { latest: true };

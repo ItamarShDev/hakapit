@@ -102,7 +102,7 @@ export function EpisodeCard({
 			</CardHeader>
 			<CardContent
 				style={viewTransitionKey ? { viewTransitionName: `episode-content-${viewTransitionKey}` } : undefined}
-				className={cn("flex-1 text-paragraph z-10 overflow-hidden", contentClassName)}
+				className={cn("flex-1 min-h-0 text-paragraph z-10 overflow-hidden", contentClassName)}
 			>
 				{episode?.htmlDescription && (
 					<div
