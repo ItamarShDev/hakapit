@@ -43,7 +43,7 @@ export const Route = createFileRoute("/api/chat")({
 						] as any,
 					});
 
-					console.log("[API Chat] chat succeeded, returning stream");
+					console.log("[API Chat] chat succeeded, returning SSE stream");
 					return toServerSentEventsResponse(stream);
 				} catch (error) {
 					console.error("[API Chat] Error during chat:", error);

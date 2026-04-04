@@ -1,10 +1,6 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
+import { useChat, fetchServerSentEvents } from "@tanstack/ai-react";
 import { z } from "zod";
-
-interface AnswerStreamChunk {
-	content: string;
-	citations: { url: string }[];
-}
 
 const chatInputSchema = z.object({
 	query: z.string().min(1),
@@ -12,104 +8,41 @@ const chatInputSchema = z.object({
 
 type ChatInput = z.infer<typeof chatInputSchema>;
 
-export function useChat() {
-	const [answer, setAnswer] = useState<string>("");
-	const [citations, setCitations] = useState<AnswerStreamChunk["citations"]>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>(null);
+export function useChatHook() {
+	const [input, setInput] = useState("");
+	
+	const { messages, sendMessage, isLoading, error } = useChat({
+		connection: fetchServerSentEvents("/api/chat"),
+	});
 
-	const streamAnswer = useCallback(async (query: string) => {
-		// Reset state
-		setAnswer("");
-		setCitations([]);
-		setError(null);
-		setIsLoading(true);
+	const streamAnswer = async (query: string) => {
+		const parsed: ChatInput = chatInputSchema.parse({ query });
+		
+		// Send message using TanStack AI
+		sendMessage(parsed.query);
+	};
 
-		try {
-			const parsed: ChatInput = chatInputSchema.parse({ query });
-			const response = await fetch("/api/chat", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					messages: [
-						{
-							role: "user",
-							content: parsed.query,
-						},
-					],
-				}),
-			});
+	// Combine all message parts into a single answer string
+	const answer = messages
+		.filter((m) => m.role === "assistant")
+		.flatMap((m) => m.parts)
+		.filter((p) => p.type === "text")
+		.map((p) => p.content)
+		.join("");
 
-			console.log("[Client] Response status:", response.status);
-			console.log("[Client] Response headers:", Object.fromEntries(response.headers.entries()));
-
-			if (!response.ok) {
-				throw new Error(`API error: ${response.status}`);
-			}
-
-			const reader = response.body?.getReader();
-			const decoder = new TextDecoder();
-
-			if (!reader) {
-				throw new Error("Failed to get reader");
-			}
-
-			let buffer = "";
-			while (true) {
-				const { done, value } = await reader.read();
-				if (done) break;
-
-				buffer += decoder.decode(value, { stream: true });
-				const parts = buffer.split("\n\n");
-				buffer = parts.pop() ?? "";
-
-				console.log("[Client] Received chunk, parts:", parts.length);
-
-				for (const line of parts) {
-					console.log("[Client] Processing line:", line.substring(0, 100));
-					if (line.startsWith("data: ")) {
-						try {
-							const data: AnswerStreamChunk = JSON.parse(line.substring(6));
-							console.log("[Client] Parsed data:", data);
-
-							if (data.content) {
-								setAnswer((prev) => prev + data.content);
-							}
-
-							if (data.citations && data.citations.length > 0) {
-								setCitations((prev) => {
-									// Filter out duplicates by URL
-									const newCitations = data.citations.filter((citation) => !prev.some((c) => c.url === citation.url));
-
-									return [...prev, ...newCitations];
-								});
-							}
-						} catch (e) {
-							console.error("[Client] Error parsing stream data:", e, "Line:", line);
-						}
-					}
-				}
-			}
-		} catch (err: unknown) {
-			if (err instanceof Error) {
-				setError(err.message);
-			}
-			console.error("Stream error:", err);
-		} finally {
-			setIsLoading(false);
-		}
-	}, []);
+	// Extract citations if any (from tool calls or metadata)
+	const citations: { url: string }[] = [];
 
 	return {
 		answer,
 		citations,
 		isLoading,
-		error,
+		error: error?.message || null,
 		streamAnswer,
+		input,
+		setInput,
 		reset: () => {
-			setAnswer("");
-			setCitations([]);
-			setError(null);
+			setInput("");
 		},
 	};
 }
