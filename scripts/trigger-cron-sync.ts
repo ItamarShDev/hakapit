@@ -1,5 +1,3 @@
-import { ConvexHttpClient } from "convex/browser";
-import { internal } from "../convex/_generated/api";
 
 const CONVEX_URL = process.env.CONVEX_URL || process.env.VITE_CONVEX_URL;
 
@@ -7,8 +5,6 @@ if (!CONVEX_URL) {
 	console.error("CONVEX_URL not set");
 	process.exit(1);
 }
-
-const client = new ConvexHttpClient(CONVEX_URL);
 
 async function triggerSync() {
 	console.log("🚀 Manually triggering cron sync...\n");

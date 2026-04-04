@@ -9,10 +9,10 @@ if (!HAKAPIT_RSS) {
 
 async function checkRSSFeed() {
 	console.log("🔍 Fetching RSS feed...\n");
-	
+
 	try {
 		const parser = new Parser();
-		const feed = await parser.parseURL(HAKAPIT_RSS);
+		const feed = await parser.parseURL(HAKAPIT_RSS!);
 		
 		const episodes = feed.items
 			.filter((item) => !item.title?.includes("מתוך פרק"))

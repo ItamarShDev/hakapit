@@ -1,5 +1,5 @@
 import type { League } from "~/app/providers/soccer-api/types/league";
-import { TeamTournamentInformation } from "./Tables";
+import { TeamTournamentInformation } from "./tables";
 
 export function StatTable({ initialData }: { leagueId: string; initialData: League }) {
 	const league = initialData;
