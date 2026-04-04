@@ -40,6 +40,9 @@ export function useChat() {
 				}),
 			});
 
+			console.log("[Client] Response status:", response.status);
+			console.log("[Client] Response headers:", Object.fromEntries(response.headers.entries()));
+
 			if (!response.ok) {
 				throw new Error(`API error: ${response.status}`);
 			}
@@ -60,10 +63,14 @@ export function useChat() {
 				const parts = buffer.split("\n\n");
 				buffer = parts.pop() ?? "";
 
+				console.log("[Client] Received chunk, parts:", parts.length);
+
 				for (const line of parts) {
+					console.log("[Client] Processing line:", line.substring(0, 100));
 					if (line.startsWith("data: ")) {
 						try {
 							const data: AnswerStreamChunk = JSON.parse(line.substring(6));
+							console.log("[Client] Parsed data:", data);
 
 							if (data.content) {
 								setAnswer((prev) => prev + data.content);
@@ -78,7 +85,7 @@ export function useChat() {
 								});
 							}
 						} catch (e) {
-							console.error("Error parsing stream data:", e);
+							console.error("[Client] Error parsing stream data:", e, "Line:", line);
 						}
 					}
 				}
