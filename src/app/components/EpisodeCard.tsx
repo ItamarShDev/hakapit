@@ -75,7 +75,7 @@ export function EpisodeCard({
 	const viewTransitionKey = episode?.guid ? String(episode.guid) : episodeNumber != null ? String(episodeNumber) : "";
 
 	return (
-		<Card className={cn("episode-card relative max-w-xl rounded-3xl overflow-hidden", className, heebo.className)}>
+		<Card className={cn("episode-card relative max-w-xl max-h-[450px] rounded-3xl overflow-hidden flex flex-col", className, heebo.className)}>
 			{episode?.imageUrl && (
 				<div className="absolute inset-0 overflow-hidden rounded-3xl z-0">
 					<Image
@@ -102,7 +102,7 @@ export function EpisodeCard({
 			</CardHeader>
 			<CardContent
 				style={viewTransitionKey ? { viewTransitionName: `episode-content-${viewTransitionKey}` } : undefined}
-				className={cn("flex-1 text-paragraph z-10 max-h-full", contentClassName)}
+				className={cn("flex-1 text-paragraph z-10 overflow-hidden", contentClassName)}
 			>
 				{episode?.htmlDescription && (
 					<div
@@ -114,7 +114,7 @@ export function EpisodeCard({
 					/>
 				)}
 			</CardContent>
-			<CardFooter>
+			<CardFooter className="mt-auto">
 				{playerProps ? (
 					<Button
 						disabled={playerProps.currentlyPlaying?.guid === episode?.guid}
