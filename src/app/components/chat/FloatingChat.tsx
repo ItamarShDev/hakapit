@@ -1,7 +1,7 @@
 import { useChat, fetchServerSentEvents } from "@tanstack/ai-react";
 import { Image } from "@unpic/react";
-import { CornerDownLeft, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { CornerDownLeft, X, Search, AlertCircle } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "~/@/components/ui/button";
@@ -19,6 +19,7 @@ import { useIsDesktop } from "~/@/lib/use-is-desktop";
 import { getDirectionFromText } from "~/app/utils/text-direction";
 
 export function FloatingChat() {
+
 	const { messages, sendMessage, isLoading, error } = useChat({
 		connection: fetchServerSentEvents("/api/chat"),
 	});
@@ -27,10 +28,25 @@ export function FloatingChat() {
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [input, setInput] = useState("");
 	const inputDir = getDirectionFromText(input);
-	const [sendError, setSendError] = useState<string | null>(null);
 	const [open, setOpen] = useState(false);
 	const isDesktop = useIsDesktop("(min-width: 768px)");
 	const drawerDirection = isDesktop ? "right" : "bottom";
+
+	// Check if any tool is currently being called
+	const activeTool = messages
+		.flatMap((m) => m.parts)
+		.find((p) => p.type === "tool-call" && (p as { state?: string }).state !== "complete");
+
+	// Get tool name for display
+	const activeToolName = activeTool ? (activeTool as { name?: string }).name : null;
+
+	// Get combined content from message parts
+	const getMessageContent = useCallback((message: (typeof messages)[0]) => {
+		return message.parts
+			.filter((part) => part.type === "text")
+			.map((part) => (part as { content: string }).content)
+			.join("");
+	}, []);
 
 	// The most recent user message
 	const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
@@ -38,9 +54,6 @@ export function FloatingChat() {
 	const handleSendMessage = async () => {
 		if (!input.trim()) return;
 		if (isLoading) return;
-
-		// Clear any previous error
-		setSendError(null);
 
 		// Store the current input and clear it immediately
 		const currentInput = input;
@@ -50,7 +63,6 @@ export function FloatingChat() {
 			sendMessage(currentInput);
 		} catch (error) {
 			console.error("Failed to send message:", error);
-			setSendError("אירעה שגיאה בשליחת ההודעה. אנא נסה שוב.");
 			// Restore input if sending fails, allowing user to retry
 			setInput(currentInput);
 		}
@@ -90,14 +102,6 @@ export function FloatingChat() {
 			return () => window.clearTimeout(id);
 		}
 	}, [isLoading, messages.length]);
-
-	// Get combined content from message parts
-	const getMessageContent = (message: typeof messages[0]) => {
-		return message.parts
-			.filter((part) => part.type === "text")
-			.map((part) => part.content)
-			.join("");
-	};
 
 	return (
 		<div
@@ -144,91 +148,121 @@ export function FloatingChat() {
 							</DrawerClose>
 						</DrawerTitle>
 
-                        <DrawerDescription data-testid="chat-description" dir="rtl" className="self-start">
-                            ניתן לשאול כל שאלה לגבי הקבוצה, בכל שפה
-                        </DrawerDescription>
-                    </DrawerHeader>
-                    <div ref={contentRef} data-testid="chat-messages" className="grow px-4 overflow-y-auto text-paragraph">
-                        {messages.map((message) => {
-                            const content = getMessageContent(message);
-                            if (message.role === "assistant" && content) {
-                                const dir = getDirectionFromText(content);
-                                return (
-                                    <div key={message.id} dir={dir} className="py-2 text-sm whitespace-pre-wrap">
-                                        <ReactMarkdown
-                                            remarkPlugins={[remarkGfm]}
-                                            components={{
-                                                a: (props) => (
-                                                    <a {...props} className="underline text-accent" target="_blank" rel="noreferrer" />
-                                                ),
-                                                code: (props) => <code {...props} className="bg-black/30 rounded px-1" />,
-                                                pre: (props) => <pre {...props} className="bg-black/30 rounded p-2 overflow-x-auto" />,
-                                            }}
-                                        >
-                                            {content}
-                                        </ReactMarkdown>
-                                    </div>
-                                );
-                            }
-                            if (message.role === "user") {
-                                const content = getMessageContent(message);
-                                const dir = getDirectionFromText(content);
-                                return (
-                                    <div
-                                        className="flex items-center gap-2 text-accent py-4 sticky top-0 bg-popover"
-                                        key={message.id}
-                                        dir={dir}
-                                    >
-                                        {content}
-                                        {message.id === lastUserMessage?.id && isLoading && (
-                                            <div className="h-8 w-8">
-                                                <Image
-                                                    className="grayscale"
-                                                    src="/liverpool-animation.gif"
-                                                    alt="liverbird"
-                                                    width={30}
-                                                    height={30}
-                                                    priority
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            }
-                            return null;
-                        })}
-                    </div>
-                    {sendError && (
-                        <div className="px-4 py-2 text-red-500 text-sm text-center" dir="rtl">
-                            {sendError}
-                        </div>
-                    )}
-                    <div className="p-2 flex flex-row border-t">
-                        <Textarea
-                            data-testid="chat-input"
-                            ref={inputRef}
-                            value={input}
-                            onChange={(e) => {
-                                setInput(e.target.value);
-                            }}
-                            onKeyDown={handleKeyDown}
-                            placeholder="הקלד שאלה..."
-                            dir={inputDir}
-                            className={`pr-10 border-0 text-accent bg-transparent ${inputDir === "ltr" ? "text-left" : "text-right"}`}
-                            disabled={isLoading}
-                        />
-                        <Button
-                            data-testid="chat-send-button"
-                            size="icon"
-                            onClick={handleSendMessage}
-                            disabled={isLoading}
-                            className="bg-transparent"
-                        >
-                            <CornerDownLeft className="h-4 w-4" color="yellow" />
-                        </Button>
-                    </div>
-                </DrawerContent>
-            </Drawer>
-        </div>
-    );
+						<DrawerDescription data-testid="chat-description" dir="rtl" className="self-start">
+							ניתן לשאול כל שאלה לגבי הקבוצה, בכל שפה
+						</DrawerDescription>
+					</DrawerHeader>
+					<div ref={contentRef} data-testid="chat-messages" className="grow px-4 overflow-y-auto text-paragraph">
+						{/* Tool indicator */}
+						{activeToolName && (
+							<div className="flex items-center gap-2 text-accent/70 py-2 text-sm" dir="rtl">
+								<Search className="h-4 w-4 animate-pulse" />
+								<span>מחפש באינטרנט...</span>
+							</div>
+						)}
+				
+						{messages.map((message) => {
+							const content = getMessageContent(message);
+							if (message.role === "assistant" && content) {
+								const dir = getDirectionFromText(content);
+								return (
+									<div key={message.id} dir={dir} className="py-2 text-sm whitespace-pre-wrap">
+										<ReactMarkdown
+											remarkPlugins={[remarkGfm]}
+											components={{
+												a: (props) => (
+													<a {...props} className="underline text-accent" target="_blank" rel="noreferrer" />
+												),
+												code: (props) => <code {...props} className="bg-black/30 rounded px-1" />,
+												pre: (props) => <pre {...props} className="bg-black/30 rounded p-2 overflow-x-auto" />,
+											}}
+										>
+											{content}
+										</ReactMarkdown>
+									</div>
+								);
+								}
+								if (message.role === "user") {
+									const content = getMessageContent(message);
+									const dir = getDirectionFromText(content);
+									return (
+										<div
+											className="flex items-center gap-2 text-accent py-4 sticky top-0 bg-popover"
+											key={message.id}
+											dir={dir}
+										>
+											{content}
+											{message.id === lastUserMessage?.id && isLoading && (
+												<div className="h-8 w-8">
+													<Image
+														className="grayscale"
+														src="/liverpool-animation.gif"
+														alt="liverbird"
+														width={30}
+														height={30}
+														priority
+													/>
+												</div>
+											)}
+										</div>
+									);
+								}
+								return null;
+							})}
+						</div>
+						
+						{/* Error message with retry button */}
+						{error  && (
+							<div className="flex flex-col items-center gap-2 px-4 py-2 text-red-500 text-sm text-center" dir="rtl">
+								<div className="flex items-center gap-2">
+									<AlertCircle className="h-4 w-4" />
+									<span>שגיאה: {error.message}</span>
+								</div>
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={() => {
+										const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
+										if (lastUserMsg) {
+											const content = lastUserMsg.parts
+												.filter((p) => p.type === "text")
+												.map((p) => (p as { content: string }).content)
+												.join("");
+											if (content) sendMessage(content);
+										}
+									}}
+									className="text-accent hover:text-accent/80"
+								>
+									נסה שוב
+								</Button>
+							</div>
+						)}
+						<div className="p-2 flex flex-row border-t">
+							<Textarea
+								data-testid="chat-input"
+								ref={inputRef}
+								value={input}
+								onChange={(e) => {
+									setInput(e.target.value);
+								}}
+								onKeyDown={handleKeyDown}
+								placeholder="הקלד שאלה..."
+								dir={inputDir}
+								className={`pr-10 border-0 text-accent bg-transparent ${inputDir === "ltr" ? "text-left" : "text-right"}`}
+								disabled={isLoading}
+							/>
+							<Button
+								data-testid="chat-send-button"
+								size="icon"
+								onClick={handleSendMessage}
+								disabled={isLoading}
+								className="bg-transparent"
+							>
+								<CornerDownLeft className="h-4 w-4" color="yellow" />
+							</Button>
+						</div>
+					</DrawerContent>
+				</Drawer>
+		</div>
+	);
 }
