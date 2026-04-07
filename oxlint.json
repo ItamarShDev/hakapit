@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["import", "typescript", "react", "react-hooks", "jsx-a11y"],
+  "env": {
+    "browser": true,
+    "es2024": true,
+    "node": true
+  },
+  "ignorePatterns": ["**/build/**", "**/node_modules/**", "**/app/api/fotmob-api/**"]
+}

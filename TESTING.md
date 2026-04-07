@@ -50,6 +50,6 @@ Tests automatically run on every GitHub commit across multiple browsers and devi
 ## Current Status
 
 ✅ **36 core tests passing** - Critical user flows validated  
-🔄 **32 tests skipped** - Optimization opportunities for future iteration  
+🔄 **32 tests skipped** - Optimization opportunities for future iteration
 
 The foundation is production-ready with solid coverage of page loading, Hebrew text rendering, component visibility, and responsive design.

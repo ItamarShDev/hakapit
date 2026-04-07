@@ -1,14 +1,14 @@
 {
-    "framework": "tanstack-start",
-    "outputDirectory": ".output",
-    "crons": [
-        {
-            "path": "/api/load",
-            "schedule": "0 20 * * *"
-        },
-        {
-            "path": "/api/notify",
-            "schedule": "0 18 * * *"
-        }
-    ]
+  "framework": "tanstack-start",
+  "outputDirectory": ".output",
+  "crons": [
+    {
+      "path": "/api/load",
+      "schedule": "0 20 * * *"
+    },
+    {
+      "path": "/api/notify",
+      "schedule": "0 18 * * *"
+    }
+  ]
 }

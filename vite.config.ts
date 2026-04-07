@@ -7,32 +7,32 @@ import { defineConfig } from "vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig({
-	plugins: [
-		devtools({
-			editor: {
-				name: "windsurf",
-				open: async (path, lineNumber, columnNumber) => {
-					const { exec } = await import("node:child_process");
-					exec(
-						// or windsurf/cursor/webstorm
-						`windsurf-next -g "${(path).replaceAll("$", "\\$")}${lineNumber ? `:${lineNumber}` : ""}${columnNumber ? `:${columnNumber}` : ""}"`,
-					);
-				},
-			},
-		}),
-		nitro(),
-		// this is the plugin that enables path aliases
-		viteTsConfigPaths({
-			projects: ["./tsconfig.json"],
-		}),
-		tailwindcss(),
-		tanstackStart(),
-		viteReact({
-			babel: {
-				plugins: [["babel-plugin-react-compiler", { target: "19" }]],
-			},
-		}),
-	],
+  plugins: [
+    devtools({
+      editor: {
+        name: "windsurf",
+        open: async (path, lineNumber, columnNumber) => {
+          const { exec } = await import("node:child_process");
+          exec(
+            // or windsurf/cursor/webstorm
+            `windsurf-next -g "${path.replaceAll("$", "\\$")}${lineNumber ? `:${lineNumber}` : ""}${columnNumber ? `:${columnNumber}` : ""}"`,
+          );
+        },
+      },
+    }),
+    nitro(),
+    // this is the plugin that enables path aliases
+    viteTsConfigPaths({
+      projects: ["./tsconfig.json"],
+    }),
+    tailwindcss(),
+    tanstackStart(),
+    viteReact({
+      babel: {
+        plugins: [["babel-plugin-react-compiler", { target: "19" }]],
+      },
+    }),
+  ],
 });
 
 export default config;

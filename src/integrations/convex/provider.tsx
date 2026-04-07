@@ -6,16 +6,16 @@ import { resolveConvexUrl } from "~/app/providers/convex/env";
 const CONVEX_URL = resolveConvexUrl("warn") ?? undefined;
 
 export default function AppConvexProvider({ children }: { children: React.ReactNode }) {
-	const convexQueryClient = useMemo(() => {
-		if (!CONVEX_URL) {
-			return null;
-		}
-		return new ConvexQueryClient(CONVEX_URL);
-	}, []);
+  const convexQueryClient = useMemo(() => {
+    if (!CONVEX_URL) {
+      return null;
+    }
+    return new ConvexQueryClient(CONVEX_URL);
+  }, []);
 
-	if (!convexQueryClient) {
-		return <>{children}</>;
-	}
+  if (!convexQueryClient) {
+    return <>{children}</>;
+  }
 
-	return <ConvexProvider client={convexQueryClient.convexClient}>{children}</ConvexProvider>;
+  return <ConvexProvider client={convexQueryClient.convexClient}>{children}</ConvexProvider>;
 }

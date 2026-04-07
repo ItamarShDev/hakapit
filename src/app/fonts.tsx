@@ -1,9 +1,9 @@
 export const heebo = {
-	className: "font-sans",
+  className: "font-sans",
 };
 export const amaticSc = {
-	className: "font-display",
+  className: "font-display",
 };
 export const karantina = {
-	className: "font-heading",
+  className: "font-heading",
 };

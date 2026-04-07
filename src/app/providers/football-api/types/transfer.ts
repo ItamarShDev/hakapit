@@ -1,46 +1,46 @@
 export interface TransferResponse {
-	get: string;
-	parameters: Parameters;
-	// biome-ignore lint/suspicious/noExplicitAny: false positive
-	errors: any[];
-	results: number;
-	paging: Paging;
-	response: Response[];
+  get: string;
+  parameters: Parameters;
+  // biome-ignore lint/suspicious/noExplicitAny: false positive
+  errors: any[];
+  results: number;
+  paging: Paging;
+  response: Response[];
 }
 
 export interface Paging {
-	current: number;
-	total: number;
+  current: number;
+  total: number;
 }
 
 export interface Parameters {
-	player: string;
+  player: string;
 }
 
 export interface Response {
-	player: Player;
-	update: Date;
-	transfers: Transfer[];
+  player: Player;
+  update: Date;
+  transfers: Transfer[];
 }
 
 export interface Player {
-	id: number;
-	name: string;
+  id: number;
+  name: string;
 }
 
 export interface Transfer {
-	date: Date;
-	type: null | string;
-	teams: Teams;
+  date: Date;
+  type: null | string;
+  teams: Teams;
 }
 
 export interface Teams {
-	in: In;
-	out: In;
+  in: In;
+  out: In;
 }
 
 export interface In {
-	id: number;
-	name: string;
-	logo: string;
+  id: number;
+  name: string;
+  logo: string;
 }
