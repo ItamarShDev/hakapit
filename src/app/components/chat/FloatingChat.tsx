@@ -1,6 +1,6 @@
 import { useChat, fetchServerSentEvents } from "@tanstack/ai-react";
 import { Image } from "@unpic/react";
-import { CornerDownLeft, X, Search, AlertCircle } from "lucide-react";
+import { CornerDownLeft, X, Search } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -34,7 +34,7 @@ export function FloatingChat() {
 
 	// Check if any tool is currently being called
 	const activeTool = messages
-		.flatMap((m) => m.parts)
+		.flatMap((m) => m.parts || [])
 		.find((p) => p.type === "tool-call" && (p as { state?: string }).state !== "complete");
 
 	// Get tool name for display
@@ -42,7 +42,8 @@ export function FloatingChat() {
 
 	// Get combined content from message parts
 	const getMessageContent = useCallback((message: (typeof messages)[0]) => {
-		return message.parts
+		const parts = message.parts || [];
+		return parts
 			.filter((part) => part.type === "text")
 			.map((part) => (part as { content: string }).content)
 			.join("");
@@ -215,7 +216,7 @@ export function FloatingChat() {
 						{error  && (
 							<div className="flex flex-col items-center gap-2 px-4 py-2 text-red-500 text-sm text-center" dir="rtl">
 								<div className="flex items-center gap-2">
-									<AlertCircle className="h-4 w-4" />
+						<span>שגיאה: {error?.message || "אירעה שגיאה לא ידועה"}</span>
 									<span>שגיאה: {error.message}</span>
 								</div>
 								<Button
@@ -237,7 +238,16 @@ export function FloatingChat() {
 								</Button>
 							</div>
 						)}
-						<div className="p-2 flex flex-row border-t">
+						<div className="p-2 flex flex-row border-t items-center">
+							<Button
+								data-testid="chat-send-button"
+								size="icon"
+								onClick={handleSendMessage}
+								disabled={isLoading}
+								className="bg-transparent"
+							>
+								<CornerDownLeft className="h-4 w-4" color="yellow" />
+							</Button>
 							<Textarea
 								data-testid="chat-input"
 								ref={inputRef}
@@ -251,15 +261,7 @@ export function FloatingChat() {
 								className={`pr-10 border-0 text-accent bg-transparent ${inputDir === "ltr" ? "text-left" : "text-right"}`}
 								disabled={isLoading}
 							/>
-							<Button
-								data-testid="chat-send-button"
-								size="icon"
-								onClick={handleSendMessage}
-								disabled={isLoading}
-								className="bg-transparent"
-							>
-								<CornerDownLeft className="h-4 w-4" color="yellow" />
-							</Button>
+							
 						</div>
 					</DrawerContent>
 				</Drawer>

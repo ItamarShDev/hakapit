@@ -26,7 +26,7 @@ export const DrawerContent = React.forwardRef<
 			ref={ref}
 			className={cn(
 				// base
-				"fixed z-50 flex bg-popover text-paragraph transition",
+				"fixed z-50 flex bg-popover text-paragraph transition select-text",
 				"data-[state=open]:animate-in data-[state=closed]:animate-out",
 				// right side drawer
 				"data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0",
