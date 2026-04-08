@@ -1,7 +1,8 @@
 import { expect, test } from "bun:test";
 
-import type { Match, TeamMatches } from "./types/team-matches";
 import { getFirstMatch } from "./utils";
+
+import type { Match, TeamMatches } from "./types/team-matches";
 
 const mockMatch: Match = {
   id: 1,

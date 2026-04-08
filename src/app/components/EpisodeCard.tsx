@@ -1,14 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Image } from "@unpic/react";
+
 import { Button } from "~/@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/@/components/ui/card";
 import { cn } from "~/@/lib/utils";
 import { PlayButton } from "~/app/components/PlayButton";
 import { heebo } from "~/app/fonts";
@@ -79,11 +73,7 @@ export function EpisodeCard({
   const playerProps = usePlayer();
   const podcast = episode?.podcast?.name || "hakapit";
   const episodeNumber = episode?.episodeNumber;
-  const viewTransitionKey = episode?.guid
-    ? String(episode.guid)
-    : episodeNumber != null
-      ? String(episodeNumber)
-      : "";
+  const viewTransitionKey = episode?.guid ? String(episode.guid) : episodeNumber != null ? String(episodeNumber) : "";
 
   return (
     <Card
@@ -110,11 +100,7 @@ export function EpisodeCard({
           <Link
             to="/$podcast/episodes/$id"
             params={{ podcast, id: String(episodeNumber) }}
-            style={
-              viewTransitionKey
-                ? { viewTransitionName: `episode-title-${viewTransitionKey}` }
-                : undefined
-            }
+            style={viewTransitionKey ? { viewTransitionName: `episode-title-${viewTransitionKey}` } : undefined}
           >
             {episode?.title}
           </Link>
@@ -122,11 +108,7 @@ export function EpisodeCard({
         <CardDescription className="text-muted">{isoDate}</CardDescription>
       </CardHeader>
       <CardContent
-        style={
-          viewTransitionKey
-            ? { viewTransitionName: `episode-content-${viewTransitionKey}` }
-            : undefined
-        }
+        style={viewTransitionKey ? { viewTransitionName: `episode-content-${viewTransitionKey}` } : undefined}
         className={cn("flex-1 min-h-0 text-paragraph z-10 overflow-hidden", contentClassName)}
       >
         {episode?.htmlDescription && (

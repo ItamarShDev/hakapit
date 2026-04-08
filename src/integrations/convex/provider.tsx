@@ -1,6 +1,7 @@
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { ConvexProvider } from "convex/react";
 import { useMemo } from "react";
+
 import { resolveConvexUrl } from "~/app/providers/convex/env";
 
 const CONVEX_URL = resolveConvexUrl("warn") ?? undefined;

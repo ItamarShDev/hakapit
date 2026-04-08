@@ -1,7 +1,8 @@
 import Footer from "~/app/layouts/Footer";
 import Header from "~/app/layouts/Header";
-import type { PodcastName } from "~/app/providers/rss/feed";
 import { validatePodcastParam } from "~/app/utils/validatie-podcast-param";
+
+import type { PodcastName } from "~/app/providers/rss/feed";
 
 const podcasts: Record<PodcastName, { title: string; imageUrl: string }> = {
   hakapit: {

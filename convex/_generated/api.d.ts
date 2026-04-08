@@ -16,7 +16,6 @@ import type * as football from "../football.js";
 import type * as migrate from "../migrate.js";
 import type * as podcasts from "../podcasts.js";
 import type * as subscriptions from "../subscriptions.js";
-
 import type { ApiFromModules, FilterApi, FunctionReference } from "convex/server";
 
 declare const fullApi: ApiFromModules<{

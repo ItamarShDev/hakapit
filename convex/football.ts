@@ -1,7 +1,9 @@
 import { v } from "convex/values";
+
 import { internal } from "./_generated/api";
-import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { internalAction, internalMutation, mutation, query } from "./_generated/server";
+
+import type { MutationCtx, QueryCtx } from "./_generated/server";
 
 // --- Helpers for football-data fetching and snapshot caching ---
 
@@ -54,9 +56,7 @@ function firstScheduled(matches?: Match[]) {
 
 async function getPastMatches(teamId?: number) {
   if (!teamId) return null;
-  const data = await fetchFootball<MatchesResponse>(
-    `teams/${teamId}/matches?status=FINISHED&limit=5`,
-  );
+  const data = await fetchFootball<MatchesResponse>(`teams/${teamId}/matches?status=FINISHED&limit=5`);
   return data?.matches ?? null;
 }
 
@@ -82,9 +82,7 @@ async function buildSnapshot() {
     })
     .filter(Boolean) as Array<{ leagueId: string; league: StandingLeague }>;
 
-  const nextGames = await fetchFootball<MatchesResponse>(
-    `teams/${LIVERPOOL_ID}/matches?status=SCHEDULED`,
-  );
+  const nextGames = await fetchFootball<MatchesResponse>(`teams/${LIVERPOOL_ID}/matches?status=SCHEDULED`);
   const matchDetails = firstScheduled(nextGames.matches);
   const awayForm = await getPastMatches(matchDetails?.awayTeam?.id);
   const homeForm = await getPastMatches(matchDetails?.homeTeam?.id);

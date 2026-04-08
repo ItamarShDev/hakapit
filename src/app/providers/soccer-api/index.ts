@@ -1,11 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
+
+import { getFirstMatch } from "./utils";
 import { getCachedValue, setCachedValue } from "~/app/providers/soccer-api/cacheStore";
 import { LiverpoolId } from "~/app/providers/soccer-api/constants";
+
 import type { League } from "~/app/providers/soccer-api/types/league";
 import type { Team } from "~/app/providers/soccer-api/types/team";
 import type { TeamMatches } from "~/app/providers/soccer-api/types/team-matches";
-
-import { getFirstMatch } from "./utils";
 
 async function getDataCached<T>(key: string, ttlMs: number, fetcher: () => Promise<T>) {
   const cached = await getCachedValue<T>(key);
@@ -81,9 +82,7 @@ async function getTeamForms(data: ReturnType<typeof getFirstMatch> | null) {
 export const getTeam = createServerFn({ method: "GET" })
   .inputValidator((id?: number) => id ?? LiverpoolId)
   .handler(async ({ data: id }) => {
-    return await getDataCached(`team-${id}`, 6 * 60 * 60 * 1000, () =>
-      getData<Team>(`teams/${id}`),
-    );
+    return await getDataCached(`team-${id}`, 6 * 60 * 60 * 1000, () => getData<Team>(`teams/${id}`));
   });
 
 export const getLeague = createServerFn({ method: "GET" })

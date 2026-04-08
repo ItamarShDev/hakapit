@@ -1,10 +1,12 @@
 import clsx from "clsx";
-import type { Doc } from "convex/_generated/dataModel";
 import { useState } from "react";
+
 import { Avatar, AvatarImage } from "~/@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "~/@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "~/@/components/ui/popover";
 import { useAllTransfers } from "~/app/hooks/useFootball";
+
+import type { Doc } from "convex/_generated/dataModel";
 
 function TransferView({
   transfer,
@@ -24,11 +26,7 @@ function TransferView({
       <PopoverTrigger asChild>
         <div className="relative cursor-pointer">
           <Avatar className="aspect-square w-full h-auto">
-            <AvatarImage
-              src={transfer.playerPhoto ?? undefined}
-              loading="lazy"
-              className="object-cover"
-            />
+            <AvatarImage src={transfer.playerPhoto ?? undefined} loading="lazy" className="object-cover" />
           </Avatar>
         </div>
       </PopoverTrigger>
@@ -37,11 +35,7 @@ function TransferView({
           <CardHeader className="pb-3">
             <div className="flex items-center gap-4">
               <Avatar className="w-16 h-16">
-                <AvatarImage
-                  src={transfer.playerPhoto ?? undefined}
-                  loading="lazy"
-                  className="object-cover"
-                />
+                <AvatarImage src={transfer.playerPhoto ?? undefined} loading="lazy" className="object-cover" />
               </Avatar>
               <div className="flex-1">
                 <CardTitle className="text-lg">{transfer.playerName}</CardTitle>
@@ -65,9 +59,7 @@ function TransferView({
           <CardContent className="space-y-3 text-paragraph">
             {transfer.price && (
               <div className="flex flex-row-reverse items-center justify-between">
-                <span className="text-sm font-semibold text-yellow-600 text-left">
-                  💰 {transfer.price}
-                </span>
+                <span className="text-sm font-semibold text-yellow-600 text-left">💰 {transfer.price}</span>
                 <span className="text-sm text-muted-foreground text-right">דמי העברה</span>
               </div>
             )}
@@ -95,21 +87,13 @@ function TransferView({
   );
 }
 
-export function RecentTransfers({
-  initialTransfers,
-}: {
-  initialTransfers?: Doc<"transfers">[] | null;
-}) {
+export function RecentTransfers({ initialTransfers }: { initialTransfers?: Doc<"transfers">[] | null }) {
   const liveTransfers = useAllTransfers();
   const transfers = liveTransfers ?? initialTransfers;
   const [openTransferId, setOpenTransferId] = useState<string | null>(null);
 
   if (transfers === undefined) {
-    return (
-      <div className="size-[88px] text-center vertical-align-middle text-slate-700 italic">
-        טוען העברות
-      </div>
-    );
+    return <div className="size-[88px] text-center vertical-align-middle text-slate-700 italic">טוען העברות</div>;
   }
 
   if (!transfers || transfers.length === 0) {

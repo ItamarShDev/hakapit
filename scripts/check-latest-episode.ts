@@ -1,4 +1,5 @@
 import { ConvexHttpClient } from "convex/browser";
+
 import { api } from "../convex/_generated/api";
 
 const CONVEX_URL = process.env.CONVEX_URL || process.env.VITE_CONVEX_URL;
@@ -23,9 +24,7 @@ async function checkLatestEpisode() {
       console.log(`📺 Latest Episode in DB:`);
       console.log(`   Episode #${latest.episodeNumber}`);
       console.log(`   Title: ${latest.title}`);
-      console.log(
-        `   Published: ${latest.publishedAt ? new Date(latest.publishedAt).toLocaleDateString() : "N/A"}`,
-      );
+      console.log(`   Published: ${latest.publishedAt ? new Date(latest.publishedAt).toLocaleDateString() : "N/A"}`);
     } else {
       console.log("❌ No latest episode found!");
     }
@@ -44,9 +43,7 @@ async function checkLatestEpisode() {
       const expired = rssCache.expiresAt ? rssCache.expiresAt < Date.now() : true;
       console.log(`   Status: ${expired ? "❌ EXPIRED" : "✅ FRESH"}`);
       console.log(`   Last Updated: ${new Date(rssCache.lastUpdated).toLocaleString()}`);
-      console.log(
-        `   Expires: ${rssCache.expiresAt ? new Date(rssCache.expiresAt).toLocaleString() : "N/A"}`,
-      );
+      console.log(`   Expires: ${rssCache.expiresAt ? new Date(rssCache.expiresAt).toLocaleString() : "N/A"}`);
     } else {
       console.log(`   ❌ Not found`);
     }
@@ -56,9 +53,7 @@ async function checkLatestEpisode() {
       const expired = episodeCache.expiresAt ? episodeCache.expiresAt < Date.now() : true;
       console.log(`   Status: ${expired ? "❌ EXPIRED" : "✅ FRESH"}`);
       console.log(`   Last Updated: ${new Date(episodeCache.lastUpdated).toLocaleString()}`);
-      console.log(
-        `   Expires: ${episodeCache.expiresAt ? new Date(episodeCache.expiresAt).toLocaleString() : "N/A"}`,
-      );
+      console.log(`   Expires: ${episodeCache.expiresAt ? new Date(episodeCache.expiresAt).toLocaleString() : "N/A"}`);
       if (episodeCache.payload) {
         try {
           const cached = JSON.parse(episodeCache.payload);

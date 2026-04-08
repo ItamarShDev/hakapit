@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+
 import { Button } from "~/@/components/ui/button";
 import { cn } from "~/@/lib/utils";
 import { Links } from "~/app/components/links";
@@ -43,12 +44,7 @@ export default function Header({ data }: Props) {
         </div>
         <Links className="lg:flex flex-row hidden" />
       </div>
-      <div
-        className={cn(
-          "grid-transition header-links grid items-start",
-          open ? "show-menu mb-4" : "hide-menu",
-        )}
-      >
+      <div className={cn("grid-transition header-links grid items-start", open ? "show-menu mb-4" : "hide-menu")}>
         <Links className="flex flex-col items-center text-2xl" onSelect={() => setOpen(false)} />
       </div>
     </header>

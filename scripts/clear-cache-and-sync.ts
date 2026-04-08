@@ -1,4 +1,5 @@
 import { ConvexHttpClient } from "convex/browser";
+
 import { api } from "../convex/_generated/api";
 
 const CONVEX_URL = process.env.CONVEX_URL || process.env.VITE_CONVEX_URL;
@@ -39,9 +40,7 @@ async function clearCacheAndSync() {
       console.log(`✅ Latest Episode:`);
       console.log(`   Episode #${latest.episodeNumber}`);
       console.log(`   Title: ${latest.title}`);
-      console.log(
-        `   Published: ${latest.publishedAt ? new Date(latest.publishedAt).toLocaleDateString() : "N/A"}`,
-      );
+      console.log(`   Published: ${latest.publishedAt ? new Date(latest.publishedAt).toLocaleDateString() : "N/A"}`);
     } else {
       console.log("❌ No latest episode found!");
     }

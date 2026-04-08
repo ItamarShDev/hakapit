@@ -1,7 +1,8 @@
 import { expect, test } from "bun:test";
 
-import type { Score } from "../providers/soccer-api/types/team-matches";
 import { getDisplayScore } from "./utils";
+
+import type { Score } from "../providers/soccer-api/types/team-matches";
 
 test("getDisplayScore should return fullTime score when available", () => {
   const score: Score = {

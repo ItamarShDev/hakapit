@@ -1,7 +1,9 @@
 import { v } from "convex/values";
+
 import { api, internal } from "./_generated/api";
-import type { Doc } from "./_generated/dataModel";
 import { internalAction, mutation, query } from "./_generated/server";
+
+import type { Doc } from "./_generated/dataModel";
 
 // RSS Feed parsing types
 interface RSSItem {
@@ -65,8 +67,7 @@ async function fetchAndParseRSS(url: string): Promise<RSSFeed | null> {
 
     // Simple XML parsing for RSS feeds
     const parseRSSXML = (xml: string): RSSFeed => {
-      const removeIframes = (content: string) =>
-        content?.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "") || "";
+      const removeIframes = (content: string) => content?.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "") || "";
       const getTextContent = (xml: string, tag: string): string | undefined => {
         const match = xml.match(new RegExp(`<${tag}[^>]*>([^]*?)</${tag}>`, "i"));
         return match?.[1]?.trim();
@@ -102,9 +103,7 @@ async function fetchAndParseRSS(url: string): Promise<RSSFeed | null> {
 
         const guid = getTextContent(itemXml, "guid");
         const content = removeIframes(
-          getTextContent(itemXml, "content:encoded") ||
-            getTextContent(itemXml, "description") ||
-            "",
+          getTextContent(itemXml, "content:encoded") || getTextContent(itemXml, "description") || "",
         );
         const enclosureUrl = itemXml.match(/<enclosure[^>]*url="([^"]+)"/)?.[1];
 
@@ -216,9 +215,7 @@ export const updateFeedFromRSS = internalAction({
     }
 
     // Log the highest episode number we just synced
-    const allNumbers = feed.items
-      .map((item) => extractEpisodeNumber(item.title || ""))
-      .filter((n) => n > 0);
+    const allNumbers = feed.items.map((item) => extractEpisodeNumber(item.title || "")).filter((n) => n > 0);
     const highestSynced = allNumbers.length > 0 ? Math.max(...allNumbers) : 0;
     console.log(
       `RSS sync complete: ${episodesAdded} added, ${episodesUpdated} updated. Highest episode: ${highestSynced}`,
@@ -269,9 +266,7 @@ export const refreshLatestEpisodeCache = internalAction({
       return null;
     }
 
-    console.log(
-      `Latest episode for ${args.podcastName}: #${latest.episodeNumber} - ${latest.title}`,
-    );
+    console.log(`Latest episode for ${args.podcastName}: #${latest.episodeNumber} - ${latest.title}`);
 
     // Update homepage cache with fresh episode data
     const payload = JSON.stringify(latest);
@@ -314,9 +309,7 @@ export const getPodcastWithEpisodes = query({
       .order("desc");
 
     const episodes =
-      args.limit && args.limit > 0
-        ? await episodesQuery.take(args.limit)
-        : await episodesQuery.collect();
+      args.limit && args.limit > 0 ? await episodesQuery.take(args.limit) : await episodesQuery.collect();
 
     return {
       ...podcast,
@@ -347,23 +340,17 @@ export const getLatestEpisode = query({
 
     if (allEpisodes.length > 0) {
       const numbers = allEpisodes.map((e) => e.episodeNumber).sort((a, b) => b - a);
-      console.log(
-        `All episode numbers in DB: ${numbers.slice(0, 10).join(", ")}... (${allEpisodes.length} total)`,
-      );
+      console.log(`All episode numbers in DB: ${numbers.slice(0, 10).join(", ")}... (${allEpisodes.length} total)`);
     }
 
     const latestByNumber = await ctx.db
       .query("episodes")
-      .withIndex("by_podcastId_and_number", (q) =>
-        q.eq("podcastId", podcast._id).gt("episodeNumber", 0),
-      )
+      .withIndex("by_podcastId_and_number", (q) => q.eq("podcastId", podcast._id).gt("episodeNumber", 0))
       .order("desc")
       .first();
 
     if (latestByNumber) {
-      console.log(
-        `getLatestEpisode returning: #${latestByNumber.episodeNumber} - ${latestByNumber.title}`,
-      );
+      console.log(`getLatestEpisode returning: #${latestByNumber.episodeNumber} - ${latestByNumber.title}`);
       return {
         ...latestByNumber,
         podcast,

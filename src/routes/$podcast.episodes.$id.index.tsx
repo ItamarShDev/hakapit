@@ -1,8 +1,10 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+
 import Episode from "~/app/components/Episode";
-import type { PodcastName } from "~/app/providers/rss/feed";
 import { fetchEpisode } from "~/app/providers/rss/feed";
 import { validatePodcastParam } from "~/app/utils/validatie-podcast-param";
+
+import type { PodcastName } from "~/app/providers/rss/feed";
 
 export const Route = createFileRoute("/$podcast/episodes/$id/")({
   component: PodcastEpisode,

@@ -4,6 +4,7 @@ import { CornerDownLeft, Search, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
 import { Button } from "~/@/components/ui/button";
 import {
   Drawer,
@@ -152,11 +153,7 @@ export function FloatingChat() {
               ניתן לשאול כל שאלה לגבי הקבוצה, בכל שפה
             </DrawerDescription>
           </DrawerHeader>
-          <div
-            ref={contentRef}
-            data-testid="chat-messages"
-            className="grow px-4 overflow-y-auto text-paragraph"
-          >
+          <div ref={contentRef} data-testid="chat-messages" className="grow px-4 overflow-y-auto text-paragraph">
             {/* Tool indicator */}
             {activeToolName && (
               <div className="flex items-center gap-2 text-accent/70 py-2 text-sm" dir="rtl">
@@ -175,17 +172,10 @@ export function FloatingChat() {
                       remarkPlugins={[remarkGfm]}
                       components={{
                         a: (props) => (
-                          <a
-                            {...props}
-                            className="underline text-accent"
-                            target="_blank"
-                            rel="noreferrer"
-                          />
+                          <a {...props} className="underline text-accent" target="_blank" rel="noreferrer" />
                         ),
                         code: (props) => <code {...props} className="bg-black/30 rounded px-1" />,
-                        pre: (props) => (
-                          <pre {...props} className="bg-black/30 rounded p-2 overflow-x-auto" />
-                        ),
+                        pre: (props) => <pre {...props} className="bg-black/30 rounded p-2 overflow-x-auto" />,
                       }}
                     >
                       {content}
@@ -224,10 +214,7 @@ export function FloatingChat() {
 
           {/* Error message with retry button */}
           {error && (
-            <div
-              className="flex flex-col items-center gap-2 px-4 py-2 text-red-500 text-sm text-center"
-              dir="rtl"
-            >
+            <div className="flex flex-col items-center gap-2 px-4 py-2 text-red-500 text-sm text-center" dir="rtl">
               <div className="flex items-center gap-2">
                 <span>שגיאה: {error?.message || "אירעה שגיאה לא ידועה"}</span>
                 <span>שגיאה: {error.message}</span>

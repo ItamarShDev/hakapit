@@ -1,11 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "~/@/components/ui/avatar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/@/components/ui/tooltip";
 import { LiverpoolId } from "~/app/providers/soccer-api/constants";
+
 import type { Match } from "~/app/providers/soccer-api/types/team-matches";
 
 export function resultToString(match: Match) {
@@ -47,9 +43,7 @@ const TooltipScore: React.FC<{ game: Match }> = ({ game }) => {
         <AvatarImage src={game.homeTeam.crest} />
         <AvatarFallback>{game.homeTeam.name}</AvatarFallback>
       </Avatar>
-      <div className={`text-xl direction-alternate ${getFormTextColor(game)}`}>
-        {scoreString(game.score)}
-      </div>
+      <div className={`text-xl direction-alternate ${getFormTextColor(game)}`}>{scoreString(game.score)}</div>
       <Avatar className="h-[25px] w-[25px]">
         <AvatarImage src={game.awayTeam.crest} />
         <AvatarFallback>{game.awayTeam.name}</AvatarFallback>
@@ -58,10 +52,7 @@ const TooltipScore: React.FC<{ game: Match }> = ({ game }) => {
   );
 };
 
-export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { game: Match }> = ({
-  game,
-  children,
-}) => (
+export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { game: Match }> = ({ game, children }) => (
   <TooltipProvider key={game.id}>
     <Tooltip>
       <TooltipTrigger>{children}</TooltipTrigger>
@@ -76,9 +67,7 @@ const Form: React.FC<{ form?: Match[] }> = ({ form }) => {
   return form?.map((game) => (
     <ResultTooltip game={game} key={game.id}>
       <Avatar className="h-[25px] w-[25px]">
-        <AvatarFallback className={`scale-75 ${getFormColor(game)}`}>
-          {resultToString(game)}
-        </AvatarFallback>
+        <AvatarFallback className={`scale-75 ${getFormColor(game)}`}>{resultToString(game)}</AvatarFallback>
       </Avatar>
     </ResultTooltip>
   ));

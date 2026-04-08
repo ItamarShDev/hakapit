@@ -1,4 +1,5 @@
 import { Image } from "@unpic/react";
+
 import type { Doc } from "convex/_generated/dataModel";
 
 export default function Episode({ data }: { data: Doc<"episodes"> }) {
@@ -32,22 +33,14 @@ export default function Episode({ data }: { data: Doc<"episodes"> }) {
             <div className="rounded-3xl border border-white/10 bg-black/20 p-5 shadow-2xl sm:p-8">
               <h1
                 className="text-balance text-2xl font-semibold leading-tight text-accent sm:text-3xl"
-                style={
-                  viewTransitionKey
-                    ? { viewTransitionName: `episode-title-${viewTransitionKey}` }
-                    : undefined
-                }
+                style={viewTransitionKey ? { viewTransitionName: `episode-title-${viewTransitionKey}` } : undefined}
               >
                 {data?.title}
               </h1>
 
               {data?.description ? (
                 <div
-                  style={
-                    viewTransitionKey
-                      ? { viewTransitionName: `episode-content-${viewTransitionKey}` }
-                      : undefined
-                  }
+                  style={viewTransitionKey ? { viewTransitionName: `episode-content-${viewTransitionKey}` } : undefined}
                   className="mt-4 max-w-none whitespace-pre-wrap wrap-break-word text-base leading-7 text-paragraph/90 sm:text-lg"
                   /* biome-ignore lint: noDangerouslySetInnerHtml */
                   dangerouslySetInnerHTML={{

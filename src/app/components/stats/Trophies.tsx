@@ -1,11 +1,7 @@
 import { useState } from "react";
+
 import { Avatar, AvatarImage } from "~/@/components/ui/avatar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/@/components/ui/tooltip";
 
 export function Trophies() {
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
@@ -35,10 +31,7 @@ export function Trophies() {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Avatar
-                    className="aspect-square w-full h-auto"
-                    data-testid={`trophy-${tournamentId}`}
-                  >
+                  <Avatar className="aspect-square w-full h-auto" data-testid={`trophy-${tournamentId}`}>
                     <AvatarImage
                       alt={leagueName}
                       src={`https://images.fotmob.com/image_resources/logo/leaguelogo/dark/${tournamentId}.png`}
@@ -50,10 +43,7 @@ export function Trophies() {
                     />
                   </Avatar>
                 </TooltipTrigger>
-                <TooltipContent
-                  side="bottom"
-                  className="rounded-xl bg-primary border-primary text-accent"
-                >
+                <TooltipContent side="bottom" className="rounded-xl bg-primary border-primary text-accent">
                   <div>{leagueName}</div>
                 </TooltipContent>
               </Tooltip>

@@ -1,10 +1,7 @@
 import { Image } from "@unpic/react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/@/components/ui/tooltip";
+
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/@/components/ui/tooltip";
+
 import type { Team } from "~/app/providers/soccer-api/types/league";
 
 export default function TeamNameAndAvatar({
@@ -49,9 +46,7 @@ export default function TeamNameAndAvatar({
   }
 
   return (
-    <div
-      className={`flex items-center gap-3 ${iconPosition === "after" ? "justify-end" : "justify-start"}`}
-    >
+    <div className={`flex items-center gap-3 ${iconPosition === "after" ? "justify-end" : "justify-start"}`}>
       {iconPosition === "after" && teamNameComponent}
       {teamCrest}
       {iconPosition === "before" && teamNameComponent}

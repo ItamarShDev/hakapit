@@ -1,5 +1,6 @@
-import type { Doc } from "convex/_generated/dataModel";
 import { type PodcastName, updateFeedsInDb } from "~/app/providers/rss/feed";
+
+import type { Doc } from "convex/_generated/dataModel";
 
 export async function getLatestEpisode() {
   const results = await updateFeedsInDb();

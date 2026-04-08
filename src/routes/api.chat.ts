@@ -86,13 +86,10 @@ export const Route = createFileRoute("/api/chat")({
     handlers: {
       POST: async ({ request }) => {
         if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-          return new Response(
-            JSON.stringify({ error: "GOOGLE_GENERATIVE_AI_API_KEY not configured" }),
-            {
-              status: 500,
-              headers: { "Content-Type": "application/json" },
-            },
-          );
+          return new Response(JSON.stringify({ error: "GOOGLE_GENERATIVE_AI_API_KEY not configured" }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          });
         }
 
         const body = await request.json();
@@ -111,10 +108,7 @@ export const Route = createFileRoute("/api/chat")({
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
           try {
             const stream = chat({
-              adapter: createGeminiChat(
-                "gemini-2.0-flash",
-                process.env.GOOGLE_GENERATIVE_AI_API_KEY!,
-              ),
+              adapter: createGeminiChat("gemini-2.0-flash", process.env.GOOGLE_GENERATIVE_AI_API_KEY!),
               tools: [searchTool],
               systemPrompts: [
                 `You are a Liverpool FC expert. Always use the search tool to find current information. Keep responses short and factual. Current year: ${new Date().getFullYear()}.`,
@@ -128,8 +122,7 @@ export const Route = createFileRoute("/api/chat")({
               // Check for rate limit error
               if (chunk.type === "RUN_ERROR") {
                 const errorCode = String(chunk.error?.code || "");
-                const isRateLimit =
-                  errorCode === "429" || String(chunk.error?.message || "").includes("429");
+                const isRateLimit = errorCode === "429" || String(chunk.error?.message || "").includes("429");
 
                 if (isRateLimit) {
                   console.error("[API Chat] Rate limit exceeded");

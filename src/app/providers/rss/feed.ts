@@ -1,9 +1,9 @@
-import { fetch_rss } from "~/app/providers/rss/fetch-rss";
-import type { Feed } from "~/app/providers/rss/types";
-
 import { api } from "../../../../convex/_generated/api";
 import { getConvexClient } from "../convex/env";
 import { sliceFeedItems } from "./feed.utils";
+import { fetch_rss } from "~/app/providers/rss/fetch-rss";
+
+import type { Feed } from "~/app/providers/rss/types";
 
 const convex = getConvexClient("warn");
 
@@ -96,13 +96,7 @@ export async function fetchUpdatedLatestEpisode(podcast: PodcastName) {
   return await fetchLatestEpisode(podcast);
 }
 
-export async function fetchEpisode({
-  podcastName,
-  episodeNumber,
-}: {
-  podcastName: string;
-  episodeNumber: number;
-}) {
+export async function fetchEpisode({ podcastName, episodeNumber }: { podcastName: string; episodeNumber: number }) {
   if (!convex) {
     return null;
   }
@@ -146,11 +140,7 @@ async function updateFeedInDb(feedName: PodcastName) {
   });
 
   let newEpisodes = feed.items;
-  if (
-    existingPodcast &&
-    existingEpisodes?.episodes?.length &&
-    existingEpisodes.episodes.length > 0
-  ) {
+  if (existingPodcast && existingEpisodes?.episodes?.length && existingEpisodes.episodes.length > 0) {
     const latestEpisodeNumber = Math.max(...existingEpisodes.episodes.map((e) => e.episodeNumber));
     newEpisodes = feed.items.filter((episode) => episode.number > latestEpisodeNumber);
   }
@@ -181,9 +171,7 @@ async function updateFeedInDb(feedName: PodcastName) {
 
 // Update all feeds
 export async function updateFeedsInDb() {
-  return await Promise.all(
-    PODCAST_NAMES.filter((key) => isPodcastName(key)).map((key) => updateFeedInDb(key)),
-  );
+  return await Promise.all(PODCAST_NAMES.filter((key) => isPodcastName(key)).map((key) => updateFeedInDb(key)));
 }
 
 // Get updated feed with caching logic

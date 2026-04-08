@@ -1,9 +1,7 @@
 import { ConvexHttpClient } from "convex/browser";
 
 const metaEnv =
-  typeof import.meta === "undefined"
-    ? undefined
-    : (import.meta.env as Record<string, string | undefined> | undefined);
+  typeof import.meta === "undefined" ? undefined : (import.meta.env as Record<string, string | undefined> | undefined);
 
 export type ConvexUrlMissingMode = "throw" | "warn" | "silent";
 
@@ -19,9 +17,7 @@ export function resolveConvexUrl(onMissing: ConvexUrlMissingMode = "throw"): str
       case "throw":
         throw new Error("CONVEX_URL environment variable is required");
       case "warn":
-        console.warn(
-          "Convex URL missing; Convex-backed features will be disabled (likely in CI/e2e)",
-        );
+        console.warn("Convex URL missing; Convex-backed features will be disabled (likely in CI/e2e)");
         break;
       case "silent":
       default:
@@ -40,12 +36,8 @@ let convexAvailable: boolean | undefined;
  * Returns null when URL is absent (unless throw mode).
  */
 export function getConvexClient(onMissing: "throw"): ConvexHttpClient;
-export function getConvexClient(
-  onMissing?: Exclude<ConvexUrlMissingMode, "throw">,
-): ConvexHttpClient | null;
-export function getConvexClient(
-  onMissing: ConvexUrlMissingMode = "throw",
-): ConvexHttpClient | null {
+export function getConvexClient(onMissing?: Exclude<ConvexUrlMissingMode, "throw">): ConvexHttpClient | null;
+export function getConvexClient(onMissing: ConvexUrlMissingMode = "throw"): ConvexHttpClient | null {
   if (convexClientSingleton !== undefined) {
     return convexClientSingleton;
   }

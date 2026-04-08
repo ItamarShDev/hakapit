@@ -1,17 +1,11 @@
 import { Cross1Icon } from "@radix-ui/react-icons";
-import type { Doc } from "convex/_generated/dataModel";
-import {
-  createContext,
-  forwardRef,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, forwardRef, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+
 import { Button } from "~/@/components/ui/button";
 import { Toaster } from "~/@/components/ui/sonner";
+
+import type { Doc } from "convex/_generated/dataModel";
 
 type PlayerContextType = {
   currentlyPlaying: Doc<"episodes"> | undefined;
@@ -35,9 +29,7 @@ const Player = forwardRef(function Player(
     toast.error("הניגון נכשל", { description: "סביר להניח שנחסמת על ידי השירות" });
   }, [closePlayer]);
   return (
-    <div
-      className={`bottom-0 left-0 flex flex-col w-full p-2 bg-primary ${episode ? "fixed z-50" : "hidden"}`}
-    >
+    <div className={`bottom-0 left-0 flex flex-col w-full p-2 bg-primary ${episode ? "fixed z-50" : "hidden"}`}>
       <div className="flex flex-row items-start py-2">
         {episode?.imageUrl && (
           <img
@@ -55,13 +47,7 @@ const Player = forwardRef(function Player(
           <Cross1Icon />
         </Button>
       </div>
-      <audio
-        ref={ref}
-        className="audio"
-        controls
-        src={episode?.audioUrl}
-        onError={() => showError()}
-      >
+      <audio ref={ref} className="audio" controls src={episode?.audioUrl} onError={() => showError()}>
         <track kind="captions" />
       </audio>
     </div>
@@ -108,9 +94,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     setCurrentlyPlaying(undefined);
   }, []);
   return (
-    <PlayerContext.Provider
-      value={{ currentlyPlaying, setCurrentlyPlaying: setCurrentEpisode, isPlaying }}
-    >
+    <PlayerContext.Provider value={{ currentlyPlaying, setCurrentlyPlaying: setCurrentEpisode, isPlaying }}>
       <div className={`${currentlyPlaying ? "mb-36" : ""}`}>{children}</div>
       <Player episode={currentlyPlaying} ref={ref} closePlayer={closePlayer} />
       <Toaster richColors closeButton dir="rtl" />

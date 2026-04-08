@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+
 import { EpisodeCard } from "~/app/components/EpisodeCard";
 import { usePodcastWithEpisodes } from "~/app/hooks/usePodcasts";
+
 import type { PodcastName, fetchUpdatedFeed } from "~/app/providers/rss/feed";
 
 type FeedData = Awaited<ReturnType<typeof fetchUpdatedFeed>>;
@@ -28,9 +30,7 @@ export function MasonryFeed({ data, podcast }: { data: FeedData; podcast: Podcas
         {stableData?.episodes?.map((episode) => (
           <EpisodeCard
             key={String(
-              (episode as { _id?: unknown } | null | undefined)?._id ??
-                episode.guid ??
-                episode.episodeNumber,
+              (episode as { _id?: unknown } | null | undefined)?._id ?? episode.guid ?? episode.episodeNumber,
             )}
             episode={episode}
           />

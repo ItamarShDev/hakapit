@@ -1,14 +1,8 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/@/components/ui/table";
 import { cn } from "~/@/lib/utils";
 import TeamNameAndAvatar from "~/app/components/team-avatar";
 import { LiverpoolId } from "~/app/providers/soccer-api/constants";
+
 import type { League, Table as TableType } from "~/app/providers/soccer-api/types/league";
 
 function getStandings(league: League) {
@@ -23,17 +17,9 @@ function getTeams(league: League) {
     return [standings?.[0], standings?.[1], standings?.[2]];
   }
   if (teamStatsIndex === standings.length - 1) {
-    return [
-      standings?.[teamStatsIndex - 2],
-      standings?.[teamStatsIndex - 1],
-      standings?.[teamStatsIndex],
-    ];
+    return [standings?.[teamStatsIndex - 2], standings?.[teamStatsIndex - 1], standings?.[teamStatsIndex]];
   }
-  return [
-    standings?.[teamStatsIndex - 1],
-    standings?.[teamStatsIndex],
-    standings?.[teamStatsIndex + 1],
-  ];
+  return [standings?.[teamStatsIndex - 1], standings?.[teamStatsIndex], standings?.[teamStatsIndex + 1]];
 }
 
 export function TournamentInformation({ league }: { league: League }) {
@@ -42,29 +28,19 @@ export function TournamentInformation({ league }: { league: League }) {
     <Table>
       <TableBody>
         <TableRow className="border-0">
-          <TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">
-            מחזור / סבב
-          </TableCell>
-          <TableCell className="text-start p-3 font-bold capitalize">
-            {league.standings[0].stage}
-          </TableCell>
+          <TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מחזור / סבב</TableCell>
+          <TableCell className="text-start p-3 font-bold capitalize">{league.standings[0].stage}</TableCell>
         </TableRow>
         <TableRow className="border-0">
-          <TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">
-            מיקום
-          </TableCell>
+          <TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">מיקום</TableCell>
           <TableCell className="text-start p-3 font-bold">{teamStats?.position}</TableCell>
         </TableRow>
         <TableRow className="border-0" hidden={teamStats?.points === undefined}>
-          <TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">
-            נקודות
-          </TableCell>
+          <TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">נקודות</TableCell>
           <TableCell className="text-start p-3 font-bold">{teamStats?.points}</TableCell>
         </TableRow>
         <TableRow className="border-0" hidden={teamStats?.goalDifference === undefined}>
-          <TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">
-            יחס שערים
-          </TableCell>
+          <TableCell className="p-3 text-start w-[100px] text-slate-300 whitespace-nowrap">יחס שערים</TableCell>
           <TableCell className="text-start p-3 font-bold">{teamStats?.goalDifference}</TableCell>
         </TableRow>
       </TableBody>
@@ -77,8 +53,7 @@ function TeamRow({ teamStats }: { teamStats: TableType }) {
     <TableRow
       className={cn(
         "border-0",
-        teamStats.team.id === LiverpoolId &&
-          "bg-primary-opaque text-accent hover:bg-primary-opaque",
+        teamStats.team.id === LiverpoolId && "bg-primary-opaque text-accent hover:bg-primary-opaque",
         teamStats.team.id === LiverpoolId && teamStats.position === 1 && "text-green-400",
       )}
     >

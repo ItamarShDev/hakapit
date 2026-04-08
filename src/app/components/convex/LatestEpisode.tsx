@@ -1,6 +1,7 @@
-import type { Doc } from "convex/_generated/dataModel";
 import { LastEpisodeCardPreview } from "~/app/components/EpisodeCard";
 import { useLatestEpisode, usePodcastWithEpisodes } from "~/app/hooks/usePodcasts";
+
+import type { Doc } from "convex/_generated/dataModel";
 
 type EpisodeDoc = Doc<"episodes"> | null | undefined;
 
@@ -10,11 +11,7 @@ export function LatestEpisode({ initialEpisode }: { initialEpisode?: EpisodeDoc 
   const podcastData = usePodcastWithEpisodes("hakapit", 1);
 
   if (episode === undefined && !initialEpisode) {
-    return (
-      <div className="size-22 text-center vertical-align-middle text-slate-700 italic">
-        טוען פרק
-      </div>
-    );
+    return <div className="size-22 text-center vertical-align-middle text-slate-700 italic">טוען פרק</div>;
   }
 
   if (!episode) {

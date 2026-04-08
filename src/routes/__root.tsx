@@ -1,21 +1,17 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import type { QueryClient } from "@tanstack/react-query";
-import {
-  HeadContent,
-  Scripts,
-  createRootRouteWithContext,
-  useParams,
-} from "@tanstack/react-router";
+import { HeadContent, Scripts, createRootRouteWithContext, useParams } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import { PlayerProvider } from "~/app/layouts/Player/provider";
-import { MainLayout } from "~/app/layouts/main";
-import type { PodcastName } from "~/app/providers/rss/feed";
 
 import ConvexProvider from "../integrations/convex/provider";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
+import { MainLayout } from "~/app/layouts/main";
+import { PlayerProvider } from "~/app/layouts/Player/provider";
+
+import type { QueryClient } from "@tanstack/react-query";
+import type { PodcastName } from "~/app/providers/rss/feed";
 
 interface MyRouterContext {
   queryClient: QueryClient;

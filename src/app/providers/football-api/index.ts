@@ -1,10 +1,12 @@
 import { api } from "convex/_generated/api";
-import type { Doc } from "convex/_generated/dataModel";
+
 import { getConvexClient } from "~/app/providers/convex/env";
 import { LiverpoolId, baseUrl } from "~/app/providers/football-api/constants";
+import { isTransferBuy } from "~/app/providers/football-api/utils";
+
+import type { Doc } from "convex/_generated/dataModel";
 import type { PlayerStatsResponse } from "~/app/providers/football-api/types/player-stats";
 import type { TransferResponse } from "~/app/providers/football-api/types/transfer";
-import { isTransferBuy } from "~/app/providers/football-api/utils";
 
 let transfersCacheBust = 0;
 
@@ -27,9 +29,7 @@ async function fetchData<T>(path: string, query?: URLSearchParams | Record<strin
 export async function getLatestTransfers() {
   const results = await getCachedTransferData();
   const newTransfers = results.filter((result) => result.updatedAt === Date.now());
-  const transfersPerPlayer = Object.fromEntries(
-    newTransfers.map((result) => [result.playerName, result]),
-  );
+  const transfersPerPlayer = Object.fromEntries(newTransfers.map((result) => [result.playerName, result]));
   return transfersPerPlayer;
 }
 
@@ -72,18 +72,13 @@ export async function getCachedTransferData(): Promise<Doc<"transfers">[]> {
 
   // Sort and filter transfers first
   const validTransferItems: TransferItem[] = data.response
-    .sort(
-      (a: TransferItem, b: TransferItem) =>
-        new Date(b.update).getTime() - new Date(a.update).getTime(),
-    )
+    .sort((a: TransferItem, b: TransferItem) => new Date(b.update).getTime() - new Date(a.update).getTime())
     .filter((transferItem: TransferItem) => {
       const isCurrentYear = transferItem.transfers.some(
-        (transfer: InnerTransfer) =>
-          new Date(transfer.date).getFullYear() === new Date().getFullYear(),
+        (transfer: InnerTransfer) => new Date(transfer.date).getFullYear() === new Date().getFullYear(),
       );
       const isBuy = transferItem.transfers.every(
-        (transfer: InnerTransfer) =>
-          transfer.teams.in.id === LiverpoolId && isTransferBuy(transfer.type),
+        (transfer: InnerTransfer) => transfer.teams.in.id === LiverpoolId && isTransferBuy(transfer.type),
       );
       return isCurrentYear && isBuy;
     });
