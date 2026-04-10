@@ -1,5 +1,10 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { HeadContent, Scripts, createRootRouteWithContext, useParams } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+  useParams,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -89,6 +94,38 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         rel: "stylesheet",
         href: appCss,
+      },
+
+      // Favicons and app icons
+      {
+        rel: "icon",
+        href: "/favicon.ico",
+      },
+      {
+        rel: "icon",
+        href: "/icon.svg",
+        type: "image/svg+xml",
+      },
+      {
+        rel: "icon",
+        href: "/icon.png",
+        type: "image/png",
+        sizes: "any",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/apple-icon.png",
+        sizes: "180x180",
+      },
+      {
+        rel: "manifest",
+        href: "/manifest.webmanifest",
+      },
+      // Optional Safari pinned tab icon
+      {
+        rel: "mask-icon",
+        href: "/icon.svg",
+        color: "#000000",
       },
     ],
   }),
