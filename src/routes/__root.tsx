@@ -1,10 +1,5 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import {
-  HeadContent,
-  Scripts,
-  createRootRouteWithContext,
-  useParams,
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Scripts, useParams } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -21,9 +16,19 @@ import type { PodcastName } from "~/app/providers/rss/feed";
 interface MyRouterContext {
   queryClient: QueryClient;
 }
-
+function getColorByParam(param: PodcastName) {
+  console.log("getColorByParam", param);
+  switch (param) {
+    case "nitk":
+      return "#3d0040";
+    case "balcony-albums":
+      return "#b54f52";
+    default:
+      return "#760d2a";
+  }
+}
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  head: () => ({
+  head: ({ params }) => ({
     meta: [
       {
         charSet: "utf-8",
@@ -34,7 +39,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
       {
         name: "theme-color",
-        content: "var(--color-primary)",
+        content: getColorByParam((params as any).podcast as PodcastName),
       },
       {
         name: "color-scheme",

@@ -217,7 +217,6 @@ export function FloatingChat() {
             <div className="flex flex-col items-center gap-2 px-4 py-2 text-red-500 text-sm text-center" dir="rtl">
               <div className="flex items-center gap-2">
                 <span>שגיאה: {error?.message || "אירעה שגיאה לא ידועה"}</span>
-                <span>שגיאה: {error.message}</span>
               </div>
               <Button
                 variant="ghost"
