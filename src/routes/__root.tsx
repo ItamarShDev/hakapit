@@ -1,5 +1,10 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { createRootRouteWithContext, HeadContent, Scripts, useParams } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  Scripts,
+  useParams,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -17,7 +22,6 @@ interface MyRouterContext {
   queryClient: QueryClient;
 }
 function getColorByParam(param: PodcastName) {
-  console.log("getColorByParam", param);
   switch (param) {
     case "nitk":
       return "#3d0040";
