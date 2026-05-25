@@ -1,1 +1,0 @@
-ALTER TABLE "episode" ADD COLUMN "html_description" text;

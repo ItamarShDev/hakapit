@@ -1,38 +1,7 @@
-import tailwindcss from "@tailwindcss/vite";
-import { devtools } from "@tanstack/devtools-vite";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
-import { nitro } from "nitro/vite";
-import { defineConfig } from "vite";
-import viteTsConfigPaths from "vite-tsconfig-paths";
+import tailwindcss from '@tailwindcss/vite';
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
 
-const config = defineConfig({
-  plugins: [
-    devtools({
-      editor: {
-        name: "windsurf",
-        open: async (path, lineNumber, columnNumber) => {
-          const { exec } = await import("node:child_process");
-          exec(
-            // or windsurf/cursor/webstorm
-            `windsurf-next -g "${path.replaceAll("$", "\\$")}${lineNumber ? `:${lineNumber}` : ""}${columnNumber ? `:${columnNumber}` : ""}"`,
-          );
-        },
-      },
-    }),
-    nitro(),
-    // this is the plugin that enables path aliases
-    viteTsConfigPaths({
-      projects: ["./tsconfig.json"],
-    }),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact({
-      babel: {
-        plugins: [["babel-plugin-react-compiler", { target: "19" }]],
-      },
-    }),
-  ],
+export default defineConfig({
+	plugins: [tailwindcss(), sveltekit()]
 });
-
-export default config;

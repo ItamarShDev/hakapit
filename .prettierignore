@@ -1,0 +1,13 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+
+# Build
+.svelte-kit
+build
+node_modules
+
+# Convex generated
+convex/_generated

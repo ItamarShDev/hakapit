@@ -1,6 +1,5 @@
 {
-  "framework": "tanstack-start",
-  "outputDirectory": ".output",
+  "framework": "sveltekit",
   "crons": [
     {
       "path": "/api/load",
