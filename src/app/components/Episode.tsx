@@ -1,8 +1,8 @@
 import { Image } from "@unpic/react";
 
-import type { Doc } from "convex/_generated/dataModel";
+import type { Episode } from "~/app/utils";
 
-export default function Episode({ data }: { data: Doc<"episodes"> | null }) {
+export default function Episode({ data }: { data: Episode | null }) {
   if (!data) {
     return null;
   }
@@ -22,7 +22,7 @@ export default function Episode({ data }: { data: Doc<"episodes"> | null }) {
                 <Image
                   src={data.imageUrl}
                   className="aspect-square w-full object-cover"
-                  alt={data?.title ?? "episode"}
+                  alt={data.title ?? "episode"}
                   sizes="(min-width: 1024px) 420px, 100vw"
                   width={768}
                   height={768}

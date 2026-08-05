@@ -31,7 +31,7 @@ export const Route = createFileRoute("/$podcast/")({
     return {
       title: metadata.title,
       meta: [
-        { name: "description", content: metadata.description },
+        { name: "description", content: metadata.description ?? undefined },
         { name: "author", content: metadata.authorName || "hakapit" },
         { property: "og:type", content: "website" },
         {

@@ -5,11 +5,11 @@ import { toast } from "sonner";
 import { Button } from "~/@/components/ui/button";
 import { Toaster } from "~/@/components/ui/sonner";
 
-import type { Doc } from "convex/_generated/dataModel";
+import type { Episode } from "~/app/utils";
 
 type PlayerContextType = {
-  currentlyPlaying: Doc<"episodes"> | undefined;
-  setCurrentlyPlaying: (episode?: Doc<"episodes">) => void;
+  currentlyPlaying: Episode | undefined;
+  setCurrentlyPlaying: (episode?: Episode) => void;
   isPlaying: boolean;
 };
 
@@ -19,7 +19,7 @@ const Player = forwardRef(function Player(
     episode,
     closePlayer,
   }: {
-    episode: Doc<"episodes"> | undefined;
+    episode: Episode | undefined;
     closePlayer: () => void;
   },
   ref: React.ForwardedRef<HTMLAudioElement>,
@@ -55,11 +55,11 @@ const Player = forwardRef(function Player(
 });
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<Doc<"episodes"> | undefined>(undefined);
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<Episode | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
   const ref = useRef<HTMLAudioElement | null>(null);
   const setCurrentEpisode = useCallback(
-    (episode?: Doc<"episodes">) => {
+    (episode?: Episode) => {
       if (episode?.audioUrl === currentlyPlaying?.audioUrl) {
         if (isPlaying) {
           ref.current?.pause();

@@ -14,6 +14,7 @@ import { fetchUpdatedLatestEpisode } from "~/app/providers/rss/feed";
 import { getSoccerSnapshot } from "~/app/providers/soccer-api";
 
 import type { Doc } from "convex/_generated/dataModel";
+import type { Episode } from "~/app/utils";
 
 const convexClient = getConvexClient("warn");
 
@@ -27,7 +28,7 @@ async function getTransfersSnapshot(): Promise<Doc<"transfers">[] | null> {
   }
 }
 
-async function getLatestEpisodeSnapshot(): Promise<Doc<"episodes"> | null> {
+async function getLatestEpisodeSnapshot(): Promise<Episode | null> {
   return await fetchUpdatedLatestEpisode("hakapit");
 }
 
@@ -41,7 +42,7 @@ export const Route = createFileRoute("/")({
       console.warn("Failed to fetch soccer snapshot", err);
     }
     let transfers: Awaited<ReturnType<typeof getTransfersSnapshot>> | null = null;
-    let latestEpisode: Doc<"episodes"> | null = null;
+    let latestEpisode: Episode | null = null;
     try {
       transfers = await getTransfersSnapshot();
     } catch (err) {
