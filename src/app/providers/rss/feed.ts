@@ -13,12 +13,7 @@ const PODCAST_URLS = {
   "balcony-albums": process.env.BALCONY_RSS,
 };
 
-const PODCAST_NAMES = Object.keys(PODCAST_URLS) as PodcastName[];
 export type PodcastName = keyof typeof PODCAST_URLS;
-
-function isPodcastName(value: string): value is PodcastName {
-  return (PODCAST_NAMES as string[]).includes(value);
-}
 
 // Remove iframes from HTML content (defensive approach for feed responses)
 function removeIframes(content: string): string {
@@ -167,11 +162,6 @@ async function updateFeedInDb(feedName: PodcastName) {
   });
 
   return { podcast: feedName, latestEpisode };
-}
-
-// Update all feeds
-export async function updateFeedsInDb() {
-  return await Promise.all(PODCAST_NAMES.filter((key) => isPodcastName(key)).map((key) => updateFeedInDb(key)));
 }
 
 // Get updated feed with caching logic

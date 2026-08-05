@@ -33,20 +33,13 @@ export function FullBleed({
   ...props
 }: { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div
-      className={`flex flex-col gap-2  pb-6 bg-primary py-3 full-bleed ${heebo.className}`}
-      {...props}
-    >
+    <div className={`flex flex-col gap-2  pb-6 bg-primary py-3 full-bleed ${heebo.className}`} {...props}>
       {children}
     </div>
   );
 }
 
-export function NextMatchOverview({
-  nextMatchData,
-}: {
-  nextMatchData: NextMatchData | undefined;
-}) {
+export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchData | undefined }) {
   if (!nextMatchData) {
     return null;
   }
@@ -58,9 +51,7 @@ export function NextMatchOverview({
   return (
     <FullBleed data-testid="next-match-overview">
       <div className="flex justify-center">
-        <div className="text-slate-200 text-sm">
-          {nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}
-        </div>
+        <div className="text-slate-200 text-sm">{nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}</div>
       </div>
       <div className="flex flex-row items-center justify-center gap-2">
         <div className="font-bold">{nextGame.competition.name}</div>
@@ -87,8 +78,7 @@ export function NextMatchOverview({
 
         {nextGame?.utcDate && (
           <div className="max-w-24 text-wrap text-xs">
-            {new Date(nextGame.utcDate).toLocaleDateString()}{" "}
-            {new Date(nextGame.utcDate).toLocaleTimeString()}
+            {new Date(nextGame.utcDate).toLocaleDateString()} {new Date(nextGame.utcDate).toLocaleTimeString()}
           </div>
         )}
         <div className="flex flex-col items-start gap-1">

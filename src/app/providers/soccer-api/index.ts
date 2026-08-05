@@ -80,13 +80,13 @@ async function getTeamForms(data: ReturnType<typeof getFirstMatch> | null) {
 }
 
 export const getTeam = createServerFn({ method: "GET" })
-  .inputValidator((id?: number) => id ?? LiverpoolId)
+  .validator((id?: number) => id ?? LiverpoolId)
   .handler(async ({ data: id }) => {
     return await getDataCached(`team-${id}`, 6 * 60 * 60 * 1000, () => getData<Team>(`teams/${id}`));
   });
 
 export const getLeague = createServerFn({ method: "GET" })
-  .inputValidator((league: string) => league)
+  .validator((league: string) => league)
   .handler(async ({ data: league }) => {
     return await getDataCached(`league-${league}`, 2 * 60 * 60 * 1000, () =>
       getData<League>(`competitions/${league}/standings`),
