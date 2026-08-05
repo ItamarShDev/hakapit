@@ -34,7 +34,12 @@ async function getLatestEpisodeSnapshot(): Promise<Doc<"episodes"> | null> {
 export const Route = createFileRoute("/")({
   component: Home,
   loader: async () => {
-    const snapshot = await getSoccerSnapshot();
+    let snapshot: Awaited<ReturnType<typeof getSoccerSnapshot>> | null = null;
+    try {
+      snapshot = await getSoccerSnapshot();
+    } catch (err) {
+      console.warn("Failed to fetch soccer snapshot", err);
+    }
     let transfers: Awaited<ReturnType<typeof getTransfersSnapshot>> | null = null;
     let latestEpisode: Doc<"episodes"> | null = null;
     try {
@@ -90,13 +95,13 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const useSoccerSnapshot = (initialSnapshot: Awaited<ReturnType<typeof getSoccerSnapshot>>) => {
+const useSoccerSnapshot = (initialSnapshot: Awaited<ReturnType<typeof getSoccerSnapshot>> | null) => {
   return useQuery({
     queryKey: ["soccerSnapshot"],
     queryFn: () => getSoccerSnapshot(),
     staleTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,
-    initialData: initialSnapshot,
+    initialData: initialSnapshot ?? undefined,
     initialDataUpdatedAt: Date.now(),
   });
 };

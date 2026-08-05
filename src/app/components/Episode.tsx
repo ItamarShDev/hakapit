@@ -2,8 +2,12 @@ import { Image } from "@unpic/react";
 
 import type { Doc } from "convex/_generated/dataModel";
 
-export default function Episode({ data }: { data: Doc<"episodes"> }) {
-  const viewTransitionKey = data?.guid
+export default function Episode({ data }: { data: Doc<"episodes"> | null }) {
+  if (!data) {
+    return null;
+  }
+
+  const viewTransitionKey = data.guid
     ? String(data.guid)
     : data?.episodeNumber != null
       ? String(data.episodeNumber)
