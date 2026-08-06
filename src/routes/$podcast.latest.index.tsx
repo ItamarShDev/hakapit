@@ -30,7 +30,7 @@ export const Route = createFileRoute("/$podcast/latest/")({
     return {
       title: episode.title,
       meta: [
-        { name: "description", content: episode.description },
+        { name: "description", content: episode.description ?? undefined },
         { property: "og:type", content: "website" },
         { property: "og:url", content: `https://hakapit.online/${params.podcast}/latest` },
         { property: "og:title", content: episode.title },
@@ -44,5 +44,5 @@ export const Route = createFileRoute("/$podcast/latest/")({
 function LatestEpisode() {
   const { episode } = Route.useLoaderData();
 
-  return <Episode data={episode as any} />;
+  return <Episode data={episode} />;
 }

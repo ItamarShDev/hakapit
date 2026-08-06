@@ -12,8 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PodcastIndexRouteImport } from './routes/$podcast.index'
 import { Route as ApiChatRouteImport } from './routes/api.chat'
-import { Route as PodcastLatestIndexRouteImport } from './routes/$podcast.latest.index'
 import { Route as PodcastEpisodesIndexRouteImport } from './routes/$podcast.episodes.index'
+import { Route as PodcastLatestIndexRouteImport } from './routes/$podcast.latest.index'
 import { Route as PodcastEpisodesIdIndexRouteImport } from './routes/$podcast.episodes.$id.index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -31,14 +31,14 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PodcastLatestIndexRoute = PodcastLatestIndexRouteImport.update({
-  id: '/$podcast/latest/',
-  path: '/$podcast/latest/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PodcastEpisodesIndexRoute = PodcastEpisodesIndexRouteImport.update({
   id: '/$podcast/episodes/',
   path: '/$podcast/episodes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PodcastLatestIndexRoute = PodcastLatestIndexRouteImport.update({
+  id: '/$podcast/latest/',
+  path: '/$podcast/latest/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PodcastEpisodesIdIndexRoute = PodcastEpisodesIdIndexRouteImport.update({
@@ -131,18 +131,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$podcast/latest/': {
-      id: '/$podcast/latest/'
-      path: '/$podcast/latest'
-      fullPath: '/$podcast/latest/'
-      preLoaderRoute: typeof PodcastLatestIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/$podcast/episodes/': {
       id: '/$podcast/episodes/'
       path: '/$podcast/episodes'
       fullPath: '/$podcast/episodes/'
       preLoaderRoute: typeof PodcastEpisodesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$podcast/latest/': {
+      id: '/$podcast/latest/'
+      path: '/$podcast/latest'
+      fullPath: '/$podcast/latest/'
+      preLoaderRoute: typeof PodcastLatestIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$podcast/episodes/$id/': {

@@ -14,6 +14,7 @@ import { fetchUpdatedLatestEpisode } from "~/app/providers/rss/feed";
 import { getSoccerSnapshot } from "~/app/providers/soccer-api";
 
 import type { Doc } from "convex/_generated/dataModel";
+import type { Episode } from "~/app/utils";
 
 const convexClient = getConvexClient("warn");
 
@@ -27,16 +28,21 @@ async function getTransfersSnapshot(): Promise<Doc<"transfers">[] | null> {
   }
 }
 
-async function getLatestEpisodeSnapshot(): Promise<Doc<"episodes"> | null> {
+async function getLatestEpisodeSnapshot(): Promise<Episode | null> {
   return await fetchUpdatedLatestEpisode("hakapit");
 }
 
 export const Route = createFileRoute("/")({
   component: Home,
   loader: async () => {
-    const snapshot = await getSoccerSnapshot();
+    let snapshot: Awaited<ReturnType<typeof getSoccerSnapshot>> | null = null;
+    try {
+      snapshot = await getSoccerSnapshot();
+    } catch (err) {
+      console.warn("Failed to fetch soccer snapshot", err);
+    }
     let transfers: Awaited<ReturnType<typeof getTransfersSnapshot>> | null = null;
-    let latestEpisode: Doc<"episodes"> | null = null;
+    let latestEpisode: Episode | null = null;
     try {
       transfers = await getTransfersSnapshot();
     } catch (err) {
@@ -90,13 +96,13 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const useSoccerSnapshot = (initialSnapshot: Awaited<ReturnType<typeof getSoccerSnapshot>>) => {
+const useSoccerSnapshot = (initialSnapshot: Awaited<ReturnType<typeof getSoccerSnapshot>> | null) => {
   return useQuery({
     queryKey: ["soccerSnapshot"],
     queryFn: () => getSoccerSnapshot(),
     staleTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,
-    initialData: initialSnapshot,
+    initialData: initialSnapshot ?? undefined,
     initialDataUpdatedAt: Date.now(),
   });
 };
