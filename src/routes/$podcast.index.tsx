@@ -1,16 +1,17 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { FeedPage } from "~/app/components/Feed";
-import { type PodcastName, fetchUpdatedFeed } from "~/app/providers/rss/feed";
-import { validatePodcastParam } from "~/app/utils/validatie-podcast-param";
+import { FeedPage } from "~/features/podcast/feed";
+import { isPodcastName } from "~/features/podcast/podcasts";
+import { podcastHead } from "~/lib/seo";
+import { fetchUpdatedFeed } from "~/server/podcasts";
 
 export const Route = createFileRoute("/$podcast/")({
   component: PodcastEpisodes,
   beforeLoad: async ({ params }) => {
-    if (!validatePodcastParam(params.podcast)) {
+    if (!isPodcastName(params.podcast)) {
       throw redirect({ to: "/" });
     }
-    return { podcast: params.podcast as PodcastName };
+    return { podcast: params.podcast };
   },
   loader: async ({ context }) => {
     const podcastName = context.podcast;
@@ -19,38 +20,7 @@ export const Route = createFileRoute("/$podcast/")({
   },
   head: ({ loaderData, params }) => {
     const metadata = loaderData?.metadata;
-    if (!metadata) {
-      return {
-        title: params.podcast,
-        meta: [
-          { name: "description", content: `${params.podcast} podcast` },
-          { name: "author", content: params.podcast },
-        ],
-      };
-    }
-    return {
-      title: metadata.title,
-      meta: [
-        { name: "description", content: metadata.description ?? undefined },
-        { name: "author", content: metadata.authorName || "hakapit" },
-        { property: "og:type", content: "website" },
-        {
-          property: "og:url",
-          content: `https://hakapit.online/${params.podcast}`,
-        },
-        { property: "og:title", content: metadata.title },
-        { property: "og:description", content: metadata.description || "" },
-        { property: "og:image", content: metadata.imageUrl || "" },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: metadata.title },
-        { name: "twitter:description", content: metadata.description || "" },
-        { name: "twitter:image", content: metadata.imageUrl || "" },
-        {
-          name: "twitter:url",
-          content: `https://hakapit.online/${params.podcast}`,
-        },
-      ],
-    };
+    return podcastHead(metadata, params.podcast, `/${params.podcast}`);
   },
 });
 

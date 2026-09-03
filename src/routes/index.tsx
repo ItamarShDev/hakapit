@@ -3,25 +3,27 @@ import { createFileRoute } from "@tanstack/react-router";
 import { api } from "convex/_generated/api";
 import { Suspense } from "react";
 
-import { FloatingChat } from "~/app/components/chat/FloatingChat";
-import { LatestEpisode } from "~/app/components/convex/LatestEpisode";
-import { RecentTransfers } from "~/app/components/convex/RecentTransfers";
-import { FullBleed, NextMatchOverview } from "~/app/components/next-match";
-import { StatsTable } from "~/app/components/stats/stats";
-import { Trophies } from "~/app/components/stats/trophies";
-import { getConvexClient, isConvexAvailable } from "~/app/providers/convex/env";
-import { fetchUpdatedLatestEpisode } from "~/app/providers/rss/feed";
-import { getSoccerSnapshot } from "~/app/providers/soccer-api";
+import { FloatingChat } from "~/features/chat/floating-chat";
+import { FullBleed, NextMatchOverview } from "~/features/football/next-match";
+import { RecentTransfers } from "~/features/football/recent-transfers";
+import { StatsTable } from "~/features/football/stats/stats";
+import { Trophies } from "~/features/football/stats/trophies";
+import { LatestEpisode } from "~/features/podcast/latest-episode";
+import { ConvexBoundary } from "~/integrations/convex/convex-boundary";
+import { pageHead, SITE_TITLE, SITE_URL } from "~/lib/seo";
+import { getConvexClient, isConvexAvailable } from "~/server/convex-client";
+import { fetchUpdatedLatestEpisode } from "~/server/podcasts";
+import { getSoccerSnapshot } from "~/server/soccer-api";
 
 import type { Doc } from "convex/_generated/dataModel";
-import type { Episode } from "~/app/utils";
+import type { Episode } from "~/features/podcast/types";
 
 const convexClient = getConvexClient("warn");
 
 async function getTransfersSnapshot(): Promise<Doc<"transfers">[] | null> {
   if (!convexClient) return null;
   try {
-    return await convexClient.query(api.football.getAllTransfers, {});
+    return await convexClient.query(api.transfers.getAllTransfers, {});
   } catch (err) {
     console.warn("getTransfersSnapshot failed", err);
     return null;
@@ -55,45 +57,13 @@ export const Route = createFileRoute("/")({
     }
     return { snapshot, transfers, latestEpisode };
   },
-  head: () => ({
-    title: "הכפית",
-
-    meta: [
-      {
-        name: "description",
-        content: "דף הבית של משפחת הכפית",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1.0",
-      },
-      {
-        name: "theme-color",
-        content: "var(--color-primary)",
-      },
-      {
-        name: "color-scheme",
-        content: "dark light",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://hakapit.online/" },
-      { property: "og:title", content: "הכפית" },
-      { property: "og:description", content: "דף הבית של משפחת הכפית" },
-      {
-        property: "og:image",
-        content: "https://hakapit.online/icon-512x512.png",
-      },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "הכפית" },
-      { name: "twitter:description", content: "דף הבית של משפחת הכפית" },
-      {
-        name: "twitter:image",
-        content: "https://hakapit.online/icon-512x512.png",
-      },
-      { name: "twitter:url", content: "https://hakapit.online/" },
-      { name: "twitter:site", content: "@hakapit" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: SITE_TITLE,
+      description: "דף הבית של משפחת הכפית",
+      image: `${SITE_URL}/icon-512x512.png`,
+      path: "/",
+    }),
 });
 
 const useSoccerSnapshot = (initialSnapshot: Awaited<ReturnType<typeof getSoccerSnapshot>> | null) => {
@@ -139,11 +109,19 @@ function Home() {
       <div className="flex flex-col w-full gap-10">
         <Trophies />
         <div className="flex flex-wrap justify-center">
-          {convexEnabled ? <LatestEpisode initialEpisode={latestEpisode ?? undefined} /> : null}
+          {convexEnabled ? (
+            <ConvexBoundary>
+              <LatestEpisode podcast="hakapit" initialEpisode={latestEpisode} />
+            </ConvexBoundary>
+          ) : null}
         </div>
         <Suspense fallback={<TransfersSkeleton />}>
           <div className="flex flex-wrap justify-center w-full">
-            {convexEnabled ? <RecentTransfers initialTransfers={transfers ?? undefined} /> : null}
+            {convexEnabled ? (
+              <ConvexBoundary>
+                <RecentTransfers initialTransfers={transfers ?? undefined} />
+              </ConvexBoundary>
+            ) : null}
           </div>
         </Suspense>
         {snapshotLoading ? (

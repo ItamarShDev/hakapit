@@ -1,1 +1,0 @@
-ALTER TABLE "subscription" ALTER COLUMN "subscription" SET DATA TYPE json;

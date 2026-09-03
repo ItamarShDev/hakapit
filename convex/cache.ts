@@ -1,20 +1,48 @@
 import { v } from "convex/values";
 
-import { mutation, query } from "./_generated/server";
+import { internalMutation, internalQuery } from "./_generated/server";
 
-// Get cache tracking by data type
-export const getCacheTracking = query({
+import type { MutationCtx, QueryCtx } from "./_generated/server";
+
+export function getCacheEntry(ctx: QueryCtx, dataType: string) {
+  return ctx.db
+    .query("cacheTracking")
+    .withIndex("by_dataType", (q) => q.eq("dataType", dataType))
+    .first();
+}
+
+export async function readCachedJson(ctx: QueryCtx, dataType: string) {
+  const entry = await getCacheEntry(ctx, dataType);
+  if (!entry?.payload) return null;
+  if (entry.expiresAt && entry.expiresAt < Date.now()) return null;
+  try {
+    return JSON.parse(entry.payload);
+  } catch (err) {
+    console.warn(`Failed to parse ${dataType} cache`, err);
+    return null;
+  }
+}
+
+export async function upsertCacheEntry(
+  ctx: MutationCtx,
+  entry: { dataType: string; source: string; metadata?: string; expiresAt?: number; payload?: string },
+) {
+  const existing = await getCacheEntry(ctx, entry.dataType);
+  const now = Date.now();
+  const cacheData = { ...entry, lastUpdated: now, updatedAt: now };
+  if (existing) {
+    await ctx.db.patch(existing._id, cacheData);
+    return existing._id;
+  }
+  return await ctx.db.insert("cacheTracking", { ...cacheData, createdAt: now });
+}
+
+export const getCacheTracking = internalQuery({
   args: { dataType: v.string() },
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query("cacheTracking")
-      .withIndex("by_dataType", (q) => q.eq("dataType", args.dataType))
-      .first();
-  },
+  handler: (ctx, args) => getCacheEntry(ctx, args.dataType),
 });
 
-// Update cache tracking
-export const updateCacheTracking = mutation({
+export const updateCacheTracking = internalMutation({
   args: {
     dataType: v.string(),
     source: v.string(),
@@ -22,38 +50,13 @@ export const updateCacheTracking = mutation({
     expiresAt: v.optional(v.number()),
     payload: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
-    const existing = await ctx.db
-      .query("cacheTracking")
-      .withIndex("by_dataType", (q) => q.eq("dataType", args.dataType))
-      .first();
-
-    const now = Date.now();
-    const cacheData = {
-      ...args,
-      lastUpdated: now,
-      updatedAt: now,
-    };
-
-    if (existing) {
-      await ctx.db.patch(existing._id, cacheData);
-      return existing._id;
-    }
-    return await ctx.db.insert("cacheTracking", {
-      ...cacheData,
-      createdAt: now,
-    });
-  },
+  handler: (ctx, args) => upsertCacheEntry(ctx, args),
 });
 
-// Check if cache is expired
-export const isCacheExpired = query({
+export const isCacheExpired = internalQuery({
   args: { dataType: v.string() },
   handler: async (ctx, args) => {
-    const cache = await ctx.db
-      .query("cacheTracking")
-      .withIndex("by_dataType", (q) => q.eq("dataType", args.dataType))
-      .first();
+    const cache = await getCacheEntry(ctx, args.dataType);
 
     if (!cache) return { expired: true, exists: false };
 
@@ -69,8 +72,7 @@ export const isCacheExpired = query({
   },
 });
 
-// Clean up expired cache entries
-export const cleanupExpiredCache = mutation({
+export const cleanupExpiredCache = internalMutation({
   handler: async (ctx) => {
     const now = Date.now();
     const cacheEntries = await ctx.db.query("cacheTracking").collect();
@@ -84,33 +86,5 @@ export const cleanupExpiredCache = mutation({
     }
 
     return { cleanedCount };
-  },
-});
-
-// Get all cache entries
-export const getAllCacheEntries = query({
-  handler: async (ctx) => {
-    return await ctx.db.query("cacheTracking").collect();
-  },
-});
-
-// Clear/expire a specific cache entry
-export const clearCache = mutation({
-  args: { dataType: v.string() },
-  handler: async (ctx, args) => {
-    const existing = await ctx.db
-      .query("cacheTracking")
-      .withIndex("by_dataType", (q) => q.eq("dataType", args.dataType))
-      .first();
-
-    if (existing) {
-      await ctx.db.patch(existing._id, {
-        expiresAt: 0, // Expire immediately
-        lastUpdated: Date.now(),
-        updatedAt: Date.now(),
-      });
-      return { cleared: true, dataType: args.dataType };
-    }
-    return { cleared: false, dataType: args.dataType };
   },
 });

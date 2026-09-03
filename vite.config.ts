@@ -16,7 +16,6 @@ const config = defineConfig({
         open: async (path, lineNumber, columnNumber) => {
           const { exec } = await import("node:child_process");
           exec(
-            // or windsurf/cursor/webstorm
             `windsurf-next -g "${path.replaceAll("$", "\\$")}${lineNumber ? `:${lineNumber}` : ""}${columnNumber ? `:${columnNumber}` : ""}"`,
           );
         },
