@@ -18,7 +18,6 @@ test("validatePodcastParam should return false for invalid podcast names", () =>
 test("validatePodcastParam should provide type narrowing", () => {
   const podcast = "hakapit" as string;
   if (validatePodcastParam(podcast)) {
-    // At this point, TypeScript should know podcast is of type PodcastName
     expect(["hakapit", "nitk", "balcony-albums"]).toContain(podcast);
   }
 });

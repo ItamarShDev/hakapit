@@ -135,7 +135,6 @@ export const getSoccerSnapshot = createServerFn({ method: "GET" }).handler(async
 
   const snapshot = { team, leaguesData, nextMatchData };
 
-  // Cache the full snapshot for quick repeat loads
   await setCachedValue(cacheKey, snapshot, 10 * 60 * 1000);
 
   return snapshot;

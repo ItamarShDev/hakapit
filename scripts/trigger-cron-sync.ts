@@ -9,8 +9,6 @@ async function triggerSync() {
   console.log("🚀 Manually triggering cron sync...\n");
 
   try {
-    // Note: We can't directly call internal actions from the client
-    // But we can check if the cron will run by expiring the cache
     console.log("⚠️ Cannot directly trigger internal action from client.");
     console.log("The cron job should run automatically within 5 minutes.");
     console.log("\nTo force sync immediately, you need to:");

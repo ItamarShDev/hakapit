@@ -2,7 +2,6 @@ import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
 
-// Get subscription by user ID
 export const getSubscriptionByUserId = query({
   args: { userId: v.string() },
   handler: async (ctx, args) => {
@@ -13,7 +12,6 @@ export const getSubscriptionByUserId = query({
   },
 });
 
-// Get subscriptions by podcast
 export const getSubscriptionsByPodcast = query({
   args: { podcast: v.string() },
   handler: async (ctx, args) => {
@@ -24,13 +22,12 @@ export const getSubscriptionsByPodcast = query({
   },
 });
 
-// Create or update subscription
 export const upsertSubscription = mutation({
   args: {
     podcast: v.string(),
     userId: v.string(),
     expirationTime: v.optional(v.number()),
-    subscription: v.any(), // PushSubscription object
+    subscription: v.any(),
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db
@@ -54,7 +51,6 @@ export const upsertSubscription = mutation({
   },
 });
 
-// Delete subscription
 export const deleteSubscription = mutation({
   args: { userId: v.string() },
   handler: async (ctx, args) => {
@@ -72,14 +68,12 @@ export const deleteSubscription = mutation({
   },
 });
 
-// Get all subscriptions
 export const getAllSubscriptions = query({
   handler: async (ctx) => {
     return await ctx.db.query("subscriptions").collect();
   },
 });
 
-// Clean up expired subscriptions
 export const cleanupExpiredSubscriptions = mutation({
   handler: async (ctx) => {
     const now = Date.now();

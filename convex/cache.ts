@@ -2,7 +2,6 @@ import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
 
-// Get cache tracking by data type
 export const getCacheTracking = query({
   args: { dataType: v.string() },
   handler: async (ctx, args) => {
@@ -13,7 +12,6 @@ export const getCacheTracking = query({
   },
 });
 
-// Update cache tracking
 export const updateCacheTracking = mutation({
   args: {
     dataType: v.string(),
@@ -46,7 +44,6 @@ export const updateCacheTracking = mutation({
   },
 });
 
-// Check if cache is expired
 export const isCacheExpired = query({
   args: { dataType: v.string() },
   handler: async (ctx, args) => {
@@ -69,7 +66,6 @@ export const isCacheExpired = query({
   },
 });
 
-// Clean up expired cache entries
 export const cleanupExpiredCache = mutation({
   handler: async (ctx) => {
     const now = Date.now();
@@ -87,14 +83,12 @@ export const cleanupExpiredCache = mutation({
   },
 });
 
-// Get all cache entries
 export const getAllCacheEntries = query({
   handler: async (ctx) => {
     return await ctx.db.query("cacheTracking").collect();
   },
 });
 
-// Clear/expire a specific cache entry
 export const clearCache = mutation({
   args: { dataType: v.string() },
   handler: async (ctx, args) => {
@@ -105,7 +99,7 @@ export const clearCache = mutation({
 
     if (existing) {
       await ctx.db.patch(existing._id, {
-        expiresAt: 0, // Expire immediately
+        expiresAt: 0,
         lastUpdated: Date.now(),
         updatedAt: Date.now(),
       });

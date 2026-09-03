@@ -5,8 +5,6 @@ import { internalAction, internalMutation, mutation, query } from "./_generated/
 
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 
-// --- Helpers for football-data fetching and snapshot caching ---
-
 const FOOTBALL_API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 const LIVERPOOL_ID = 64;
 
@@ -138,14 +136,11 @@ async function readSnapshotCache(ctx: QueryCtx) {
 
 const SNAPSHOT_TTL = 10 * 60 * 1000;
 
-// --- Snapshot query/mutation for reuse and cron warmup ---
-
 export const getSnapshot = query({
   args: {},
   handler: async (ctx) => {
     const cached = await readSnapshotCache(ctx);
     if (cached) return cached;
-    // If cache is cold, build snapshot without writing (queries should not mutate)
     const snapshot = await buildSnapshot();
     return snapshot;
   },
@@ -168,7 +163,6 @@ export const refreshSnapshot = internalAction({
   },
 });
 
-// Clear transfer photo field
 export const clearTransferPhoto = mutation({
   args: {
     transferId: v.id("transfers"),
@@ -179,25 +173,20 @@ export const clearTransferPhoto = mutation({
       throw new Error("Transfer not found");
     }
 
-    // Create a new object without the playerPhoto field
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { playerPhoto, ...transferWithoutPhoto } = transfer;
+    const { playerPhoto: _playerPhoto, ...transferWithoutPhoto } = transfer;
 
-    // Use replace instead of patch to actually remove the field
     await ctx.db.replace(args.transferId, transferWithoutPhoto);
 
     return { success: true };
   },
 });
 
-// Get all transfers
 export const getAllTransfers = query({
   handler: async (ctx) => {
     return await ctx.db.query("transfers").collect();
   },
 });
 
-// Get transfer by player ID
 export const getTransferByPlayerId = query({
   args: { playerId: v.number() },
   handler: async (ctx, args) => {
@@ -208,7 +197,6 @@ export const getTransferByPlayerId = query({
   },
 });
 
-// Get transfers by team ID
 export const getTransfersByTeamId = query({
   args: { teamId: v.number() },
   handler: async (ctx, args) => {
@@ -219,7 +207,6 @@ export const getTransfersByTeamId = query({
   },
 });
 
-// Create or update transfer
 export const upsertTransfer = mutation({
   args: {
     playerId: v.number(),
@@ -230,9 +217,9 @@ export const upsertTransfer = mutation({
     teamName: v.string(),
     teamLogo: v.optional(v.string()),
     type: v.optional(v.string()),
-    direction: v.string(), // "IN" or "OUT"
-    action: v.string(), // "BUY" or "SELL"
-    price: v.optional(v.string()), // Transfer fee amount
+    direction: v.string(),
+    action: v.string(),
+    price: v.optional(v.string()),
     updatedAt: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
@@ -254,7 +241,6 @@ export const upsertTransfer = mutation({
   },
 });
 
-// Get fetch time
 export const getFetchTime = query({
   handler: async (ctx) => {
     const fetchTimeRecord = await ctx.db.query("fetchTime").first();
@@ -262,7 +248,6 @@ export const getFetchTime = query({
   },
 });
 
-// Update fetch time
 export const updateFetchTime = mutation({
   handler: async (ctx) => {
     const existing = await ctx.db.query("fetchTime").first();
@@ -279,7 +264,6 @@ export const updateFetchTime = mutation({
   },
 });
 
-// Delete transfer
 export const deleteTransfer = mutation({
   args: { playerId: v.number() },
   handler: async (ctx, args) => {

@@ -15,7 +15,6 @@ async function checkLatestEpisode() {
   console.log("🔍 Checking latest episode...\n");
 
   try {
-    // Get latest episode
     const latest = await client.query(api.podcasts.getLatestEpisode, {
       podcastName: "hakapit",
     });
@@ -29,7 +28,6 @@ async function checkLatestEpisode() {
       console.log("❌ No latest episode found!");
     }
 
-    // Check cache status
     const rssCache = await client.query(api.cache.getCacheTracking, {
       dataType: "podcast-rss-hakapit",
     });

@@ -100,7 +100,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         href: appCss,
       },
 
-      // Favicons and app icons
       {
         rel: "icon",
         href: "/favicon.ico",
@@ -125,7 +124,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         rel: "manifest",
         href: "/manifest.webmanifest",
       },
-      // Optional Safari pinned tab icon
       {
         rel: "mask-icon",
         href: "/icon.svg",

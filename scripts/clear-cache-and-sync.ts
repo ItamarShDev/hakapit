@@ -15,13 +15,11 @@ async function clearCacheAndSync() {
   console.log("🧹 Clearing podcast caches...\n");
 
   try {
-    // Clear RSS cache
     const rssResult = await client.mutation(api.cache.clearCache, {
       dataType: "podcast-rss-hakapit",
     });
     console.log(`RSS Cache: ${rssResult.cleared ? "✅ Cleared" : "⚠️ Not found"}`);
 
-    // Clear episode cache
     const episodeResult = await client.mutation(api.cache.clearCache, {
       dataType: "latest-episode-hakapit",
     });
@@ -30,7 +28,6 @@ async function clearCacheAndSync() {
     console.log("\n⏳ Waiting 2 seconds...\n");
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    // Now check the latest episode - this should trigger a fresh fetch
     console.log("📡 Fetching latest episode (should trigger RSS sync)...\n");
     const latest = await client.query(api.podcasts.getLatestEpisode, {
       podcastName: "hakapit",

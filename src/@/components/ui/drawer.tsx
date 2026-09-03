@@ -25,16 +25,13 @@ export const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        // base
         "fixed z-50 flex bg-popover text-paragraph transition select-text",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
-        // right side drawer
         "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0",
         "data-[vaul-drawer-direction=right]:h-full data-[vaul-drawer-direction=right]:w-96",
         "data-[vaul-drawer-direction=right]:flex-col",
         "data-[vaul-drawer-direction=right]:border-l",
         "data-[vaul-drawer-direction=right]:data-[state=open]:slide-in-from-right-2 data-[vaul-drawer-direction=right]:data-[state=closed]:slide-out-to-right-2",
-        // bottom drawer
         "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0",
         "data-[vaul-drawer-direction=bottom]:w-full data-[vaul-drawer-direction=bottom]:h-5/6",
         "data-[vaul-drawer-direction=bottom]:flex-col",

@@ -2,13 +2,8 @@ import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
 
-// Migration mutations to transfer data from PostgreSQL to Convex
-
-// Migrate podcasts
 export const migratePodcasts = mutation({
   handler: async (ctx) => {
-    // This would be called with data from PostgreSQL
-    // For now, let's create the structure for migration
     const existingPodcasts = await ctx.db.query("podcasts").collect();
 
     if (existingPodcasts.length > 0) {
@@ -18,7 +13,6 @@ export const migratePodcasts = mutation({
       };
     }
 
-    // Sample migration data - replace with actual PostgreSQL data
     const podcastData = [
       {
         name: "hakapit",
@@ -64,7 +58,6 @@ export const migratePodcasts = mutation({
   },
 });
 
-// Migrate episodes
 export const migrateEpisodes = mutation({
   args: {
     podcastName: v.string(),
@@ -114,7 +107,6 @@ export const migrateEpisodes = mutation({
   },
 });
 
-// Migrate subscriptions
 export const migrateSubscriptions = mutation({
   args: {
     subscriptions: v.array(
@@ -147,7 +139,6 @@ export const migrateSubscriptions = mutation({
   },
 });
 
-// Migrate transfers
 export const migrateTransfers = mutation({
   args: {
     transfers: v.array(
@@ -187,7 +178,6 @@ export const migrateTransfers = mutation({
   },
 });
 
-// Initialize fetch time
 export const initializeFetchTime = mutation({
   handler: async (ctx) => {
     const existing = await ctx.db.query("fetchTime").collect();
@@ -203,7 +193,6 @@ export const initializeFetchTime = mutation({
   },
 });
 
-// Check migration status
 export const getMigrationStatus = query({
   handler: async (ctx) => {
     const podcasts = await ctx.db.query("podcasts").collect();
@@ -222,7 +211,6 @@ export const getMigrationStatus = query({
   },
 });
 
-// Get cache tracking by data type
 export const getCacheByDataType = query({
   args: {
     dataType: v.string(),
@@ -235,7 +223,6 @@ export const getCacheByDataType = query({
   },
 });
 
-// Upsert cache tracking
 export const upsertCacheTracking = mutation({
   args: {
     dataType: v.string(),

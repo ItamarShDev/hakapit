@@ -46,7 +46,6 @@ export default function Episode({ data }: { data: Episode | null }) {
                 <div
                   style={viewTransitionKey ? { viewTransitionName: `episode-content-${viewTransitionKey}` } : undefined}
                   className="mt-4 max-w-none whitespace-pre-wrap wrap-break-word text-base leading-7 text-paragraph/90 sm:text-lg"
-                  /* biome-ignore lint: noDangerouslySetInnerHtml */
                   dangerouslySetInnerHTML={{
                     __html: data.description || "",
                   }}

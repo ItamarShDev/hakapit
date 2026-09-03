@@ -30,7 +30,6 @@ export interface Match {
   status: string;
   matchday: number;
   stage: string;
-  // biome-ignore lint/suspicious/noExplicitAny: false positive
   group: any;
   lastUpdated: string;
   homeTeam: HomeTeam;
@@ -60,7 +59,6 @@ export interface Season {
   startDate: string;
   endDate: string;
   currentMatchday: number;
-  // biome-ignore lint/suspicious/noExplicitAny: false positive
   winner: any;
 }
 

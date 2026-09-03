@@ -9,11 +9,9 @@ import { heebo } from "~/app/fonts";
 import { usePlayer } from "~/app/layouts/Player/provider";
 import { type EpisodeWithPodcast, toDateString } from "~/app/utils";
 
-// Remove iframes from HTML content (defensive approach for UI)
 function removeIframes(content: string): string {
   if (!content) return content;
 
-  // Remove iframe tags and their content
   return content.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "");
 }
 
@@ -114,7 +112,6 @@ export function EpisodeCard({
         {episode?.htmlDescription && (
           <div
             className="card-content"
-            // biome-ignore lint: noDangerouslySetInnerHtml
             dangerouslySetInnerHTML={{
               __html: removeIframes(episode?.htmlDescription),
             }}

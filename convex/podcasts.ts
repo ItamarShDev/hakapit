@@ -5,7 +5,6 @@ import { internalAction, mutation, query } from "./_generated/server";
 
 import type { Doc } from "./_generated/dataModel";
 
-// RSS Feed parsing types
 interface RSSItem {
   title?: string;
   guid?: string;
@@ -44,7 +43,6 @@ const PODCAST_RSS_URLS: Record<string, string | undefined> = {
   "balcony-albums": process.env.BALCONY_RSS,
 };
 
-// Get podcast by name
 export const getPodcastByName = query({
   args: { name: v.string() },
   handler: async (ctx, args) => {
@@ -55,7 +53,6 @@ export const getPodcastByName = query({
   },
 });
 
-// Fetch RSS feed and parse it (server-side)
 async function fetchAndParseRSS(url: string): Promise<RSSFeed | null> {
   try {
     const response = await fetch(url);
@@ -65,7 +62,6 @@ async function fetchAndParseRSS(url: string): Promise<RSSFeed | null> {
     }
     const xmlText = await response.text();
 
-    // Simple XML parsing for RSS feeds
     const parseRSSXML = (xml: string): RSSFeed => {
       const removeIframes = (content: string) => content?.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "") || "";
       const getTextContent = (xml: string, tag: string): string | undefined => {
@@ -132,13 +128,11 @@ async function fetchAndParseRSS(url: string): Promise<RSSFeed | null> {
   }
 }
 
-// Extract episode number from title
 function extractEpisodeNumber(title: string): number {
   const match = title.match(/פרק (\d+)/) || title.match(/פרק - (\d+)/);
   return match ? Number(match[1]) : 0;
 }
 
-// Update feed from RSS (internal action callable from cron)
 export const updateFeedFromRSS = internalAction({
   args: { podcastName: v.string() },
   handler: async (ctx, args) => {
@@ -154,7 +148,6 @@ export const updateFeedFromRSS = internalAction({
       return null;
     }
 
-    // Upsert podcast
     await ctx.runMutation(api.podcasts.upsertPodcast, {
       name: args.podcastName,
       title: feed.title,
@@ -168,18 +161,15 @@ export const updateFeedFromRSS = internalAction({
       authorImageUrl: feed.itunes?.image,
     });
 
-    // Get existing episodes
     const existingEpisodes = await ctx.runQuery(api.podcasts.getPodcastWithEpisodes, {
       name: args.podcastName,
     });
 
-    // Build a set of existing episode numbers for quick lookup
     const existingNumbers = new Set(existingEpisodes?.episodes?.map((e) => e.episodeNumber) || []);
 
     console.log(`Found ${feed.items.length} episodes in RSS feed for ${args.podcastName}`);
     console.log(`Existing episodes in DB: ${existingNumbers.size}`);
 
-    // Process all episodes from the feed
     let episodesAdded = 0;
     let episodesUpdated = 0;
 
@@ -192,7 +182,6 @@ export const updateFeedFromRSS = internalAction({
 
       console.log(`Processing episode ${episodeNumber}: ${item.title}`);
 
-      // Insert or update episode (createEpisode already handles upsert)
       await ctx.runMutation(api.podcasts.createEpisode, {
         podcastName: args.podcastName,
         episodeNumber,
@@ -214,7 +203,6 @@ export const updateFeedFromRSS = internalAction({
       }
     }
 
-    // Log the highest episode number we just synced
     const allNumbers = feed.items.map((item) => extractEpisodeNumber(item.title || "")).filter((n) => n > 0);
     const highestSynced = allNumbers.length > 0 ? Math.max(...allNumbers) : 0;
     console.log(
@@ -224,18 +212,15 @@ export const updateFeedFromRSS = internalAction({
   },
 });
 
-// Refresh latest episode cache into cacheTracking (used by cron)
 export const refreshLatestEpisodeCache = internalAction({
   args: { podcastName: v.string() },
   handler: async (ctx, args): Promise<Doc<"episodes"> | null> => {
     const rssCacheKey = `podcast-rss-${args.podcastName}`;
 
-    // Check if RSS cache is expired
     const cacheStatus = await ctx.runQuery(api.cache.isCacheExpired, {
       dataType: rssCacheKey,
     });
 
-    // If RSS cache expired, fetch from RSS and update DB
     if (cacheStatus.expired) {
       console.log(`RSS cache expired for ${args.podcastName}, fetching fresh data...`);
       const result = await ctx.runAction(internal.podcasts.updateFeedFromRSS, {
@@ -248,7 +233,6 @@ export const refreshLatestEpisodeCache = internalAction({
         );
       }
 
-      // Update RSS cache timestamp
       await ctx.runMutation(api.cache.updateCacheTracking, {
         dataType: rssCacheKey,
         source: "rss",
@@ -256,7 +240,6 @@ export const refreshLatestEpisodeCache = internalAction({
       });
     }
 
-    // Now get the latest episode (which should be fresh)
     const latest = await ctx.runQuery(api.podcasts.getLatestEpisode, {
       podcastName: args.podcastName,
     });
@@ -268,7 +251,6 @@ export const refreshLatestEpisodeCache = internalAction({
 
     console.log(`Latest episode for ${args.podcastName}: #${latest.episodeNumber} - ${latest.title}`);
 
-    // Update homepage cache with fresh episode data
     const payload = JSON.stringify(latest);
     const cacheKey = `latest-episode-${args.podcastName}`;
     const expiresAt = Date.now() + 5 * 60 * 1000;
@@ -283,7 +265,6 @@ export const refreshLatestEpisodeCache = internalAction({
   },
 });
 
-// Get podcast with episodes
 export const getPodcastWithEpisodes = query({
   args: {
     name: v.string(),
@@ -322,7 +303,6 @@ export const getPodcastWithEpisodes = query({
   },
 });
 
-// Get latest episode for a podcast
 export const getLatestEpisode = query({
   args: { podcastName: v.string() },
   handler: async (ctx, args) => {
@@ -332,7 +312,6 @@ export const getLatestEpisode = query({
       .first();
     if (!podcast) return null;
 
-    // Get all episodes to debug
     const allEpisodes = await ctx.db
       .query("episodes")
       .withIndex("by_podcastId", (q) => q.eq("podcastId", podcast._id))
@@ -372,7 +351,6 @@ export const getLatestEpisode = query({
   },
 });
 
-// Get episode by number
 export const getEpisodeByNumber = query({
   args: {
     podcastName: v.string(),
@@ -403,7 +381,6 @@ export const getEpisodeByNumber = query({
   },
 });
 
-// Create or update podcast
 export const upsertPodcast = mutation({
   args: {
     name: v.string(),
@@ -447,7 +424,6 @@ export const upsertPodcast = mutation({
   },
 });
 
-// Create episode
 export const createEpisode = mutation({
   args: {
     podcastName: v.string(),
@@ -508,14 +484,12 @@ export const createEpisode = mutation({
   },
 });
 
-// Get all podcasts
 export const getAllPodcasts = query({
   handler: async (ctx) => {
     return await ctx.db.query("podcasts").collect();
   },
 });
 
-// Check if podcast was updated recently
 export const getPodcastUpdateStatus = query({
   args: { name: v.string() },
   handler: async (ctx, args) => {

@@ -1,6 +1,5 @@
 import { mutation, query } from "./_generated/server";
 
-// Clear all episodes from the database
 export const clearAllEpisodes = mutation({
   handler: async (ctx) => {
     const episodes = await ctx.db.query("episodes").collect();
@@ -18,7 +17,6 @@ export const clearAllEpisodes = mutation({
   },
 });
 
-// Check how many episodes exist
 export const getEpisodeCount = query({
   handler: async (ctx) => {
     const episodes = await ctx.db.query("episodes").collect();

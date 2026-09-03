@@ -47,7 +47,6 @@ export function TournamentInformation({ league }: { league: League }) {
     </Table>
   );
 }
-// Remove async since this component doesn't need it
 function TeamRow({ teamStats }: { teamStats: TableType }) {
   return (
     <TableRow

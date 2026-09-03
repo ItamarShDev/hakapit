@@ -32,15 +32,12 @@ export function FloatingChat() {
   const isDesktop = useIsDesktop("(min-width: 768px)");
   const drawerDirection = isDesktop ? "right" : "bottom";
 
-  // Check if any tool is currently being called
   const activeTool = messages
     .flatMap((m) => m.parts || [])
     .find((p) => p.type === "tool-call" && (p as { state?: string }).state !== "complete");
 
-  // Get tool name for display
   const activeToolName = activeTool ? (activeTool as { name?: string }).name : null;
 
-  // Get combined content from message parts
   const getMessageContent = useCallback((message: (typeof messages)[0]) => {
     const parts = message.parts || [];
     return parts
@@ -49,14 +46,12 @@ export function FloatingChat() {
       .join("");
   }, []);
 
-  // The most recent user message
   const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
     if (isLoading) return;
 
-    // Store the current input and clear it immediately
     const currentInput = input;
     setInput("");
 
@@ -64,7 +59,6 @@ export function FloatingChat() {
       sendMessage(currentInput);
     } catch (error) {
       console.error("Failed to send message:", error);
-      // Restore input if sending fails, allowing user to retry
       setInput(currentInput);
     }
   };
@@ -76,14 +70,12 @@ export function FloatingChat() {
     }
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to scroll to the bottom every time the answer or loading state changes.
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTop = contentRef.current.scrollHeight;
     }
   }, [messages]);
 
-  // Move focus into the drawer as soon as it opens to avoid aria-hidden warnings
   useEffect(() => {
     if (!open) {
       return;
@@ -94,7 +86,6 @@ export function FloatingChat() {
     return () => window.clearTimeout(id);
   }, [open]);
 
-  // Refocus input after chat finishes loading
   useEffect(() => {
     if (!isLoading && messages.length > 0) {
       const id = window.setTimeout(() => {
@@ -154,7 +145,6 @@ export function FloatingChat() {
             </DrawerDescription>
           </DrawerHeader>
           <div ref={contentRef} data-testid="chat-messages" className="grow px-4 overflow-y-auto text-paragraph">
-            {/* Tool indicator */}
             {activeToolName && (
               <div className="flex items-center gap-2 text-accent/70 py-2 text-sm" dir="rtl">
                 <Search className="h-4 w-4 animate-pulse" />
@@ -212,7 +202,6 @@ export function FloatingChat() {
             })}
           </div>
 
-          {/* Error message with retry button */}
           {error && (
             <div className="flex flex-col items-center gap-2 px-4 py-2 text-red-500 text-sm text-center" dir="rtl">
               <div className="flex items-center gap-2">

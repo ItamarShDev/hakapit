@@ -100,14 +100,12 @@ export function RecentTransfers({ initialTransfers }: { initialTransfers?: Doc<"
     return null;
   }
 
-  // sort by date descending (most recent first)
   const sortedTransfers = transfers.slice().sort((a, b) => {
     const dateA = a.date ? new Date(a.date).getTime() : 0;
     const dateB = b.date ? new Date(b.date).getTime() : 0;
     return dateB - dateA;
   });
 
-  // Separate IN and OUT transfers
   const inTransfers = sortedTransfers.filter((t) => t.direction === "IN");
   const outTransfers = sortedTransfers.filter((t) => t.direction === "OUT");
 
@@ -149,7 +147,6 @@ export function RecentTransfers({ initialTransfers }: { initialTransfers?: Doc<"
         <h2 data-testid="recent-transfers-title">העברות אחרונות</h2>
       </div>
 
-      {/* IN Transfers Row */}
       {inTransferViews.length > 0 && (
         <div className="flex flex-col gap-2 items-center">
           <div className="text-sm font-semibold text-green-600 mb-1">העברות פנימה (IN)</div>
@@ -157,7 +154,6 @@ export function RecentTransfers({ initialTransfers }: { initialTransfers?: Doc<"
         </div>
       )}
 
-      {/* OUT Transfers Row */}
       {outTransferViews.length > 0 && (
         <div className="flex flex-col gap-2 items-center">
           <div className="text-sm font-semibold text-red-600 mb-1">העברות חוצה (OUT)</div>

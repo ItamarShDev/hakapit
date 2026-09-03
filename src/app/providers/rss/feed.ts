@@ -52,11 +52,9 @@ function rssFeedToPodcast(feed: Feed, podcastName: PodcastName, limit = 0): Podc
   };
 }
 
-// Remove iframes from HTML content (defensive approach for feed responses)
 function removeIframes(content: string): string {
   if (!content) return content;
 
-  // Remove iframe tags and their content
   return content.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "");
 }
 
@@ -70,7 +68,6 @@ async function fetchRSSFeed(podcast: PodcastName, number = 5): Promise<Feed> {
   return sliceFeedItems(rss as Feed, number);
 }
 
-// Get podcast with episodes from Convex
 export async function fetchFeed(podcast: PodcastName, number = 5): Promise<PodcastWithEpisodes | null> {
   if (!convex) {
     const feed = await fetchRSSFeed(podcast, number);
@@ -81,7 +78,6 @@ export async function fetchFeed(podcast: PodcastName, number = 5): Promise<Podca
     limit: number > 0 ? number : undefined,
   });
 
-  // Clean iframes from episode content before returning to UI
   if (result?.episodes) {
     result.episodes = result.episodes.map((episode) => ({
       ...episode,
@@ -93,7 +89,6 @@ export async function fetchFeed(podcast: PodcastName, number = 5): Promise<Podca
   return result;
 }
 
-// Get latest episode from Convex
 export async function fetchLatestEpisode(podcast: PodcastName): Promise<Episode | null> {
   if (!convex) {
     const feed = await fetchRSSFeed(podcast, 0);
@@ -112,7 +107,6 @@ export async function fetchLatestEpisode(podcast: PodcastName): Promise<Episode 
   return result;
 }
 
-// Get latest episode with caching logic
 export async function fetchUpdatedLatestEpisode(podcast: PodcastName): Promise<Episode | null> {
   if (!convex) return fetchLatestEpisode(podcast);
 
@@ -122,14 +116,11 @@ export async function fetchUpdatedLatestEpisode(podcast: PodcastName): Promise<E
   });
 
   if (!cacheStatus.expired) {
-    // Cache is fresh, return directly from database
     return await fetchLatestEpisode(podcast);
   }
 
-  // Cache expired or doesn't exist - fetch from RSS and update database
   await updateFeedInDb(podcast);
 
-  // Update cache tracking with 5 minutes expiration
   const oneHourFromNow = Date.now() + 5 * 60 * 1000;
   await convex.mutation(api.cache.updateCacheTracking, {
     dataType: cacheKey,
@@ -159,7 +150,6 @@ export async function fetchEpisode({
   });
 }
 
-// Update feed in Convex (migration from PostgreSQL)
 async function updateFeedInDb(feedName: PodcastName) {
   if (!convex) return;
 
@@ -168,12 +158,10 @@ async function updateFeedInDb(feedName: PodcastName) {
     return;
   }
 
-  // Check if podcast exists
   const existingPodcast = await convex.query(api.podcasts.getPodcastByName, {
     name: feedName,
   });
 
-  // Create or update podcast
   await convex.mutation(api.podcasts.upsertPodcast, {
     name: feedName,
     title: feed.title,
@@ -187,7 +175,6 @@ async function updateFeedInDb(feedName: PodcastName) {
     authorImageUrl: feed.itunes?.image,
   });
 
-  // Get existing episodes to determine new ones
   const existingEpisodes = await convex.query(api.podcasts.getPodcastWithEpisodes, {
     name: feedName,
   });
@@ -198,7 +185,6 @@ async function updateFeedInDb(feedName: PodcastName) {
     newEpisodes = feed.items.filter((episode) => episode.number > latestEpisodeNumber);
   }
 
-  // Insert new episodes
   for (const episode of newEpisodes) {
     await convex.mutation(api.podcasts.createEpisode, {
       podcastName: feedName,
@@ -222,7 +208,6 @@ async function updateFeedInDb(feedName: PodcastName) {
   return { podcast: feedName, latestEpisode };
 }
 
-// Get updated feed with caching logic
 export async function fetchUpdatedFeed(podcast: PodcastName, number = 5): Promise<PodcastWithEpisodes | null> {
   if (!convex) {
     const feed = await fetchRSSFeed(podcast, number);
@@ -236,9 +221,7 @@ export async function fetchUpdatedFeed(podcast: PodcastName, number = 5): Promis
   });
 
   if (!cacheStatus.expired) {
-    // Cache is fresh, return directly from database
     const result = await fetchFeed(podcast, number);
-    // Clean iframes from episode content in the result
     if (result?.episodes) {
       result.episodes = result.episodes.map((episode) => ({
         ...episode,
@@ -249,10 +232,8 @@ export async function fetchUpdatedFeed(podcast: PodcastName, number = 5): Promis
     return result;
   }
 
-  // Cache expired or doesn't exist - fetch from RSS and update database
   await updateFeedInDb(podcast);
 
-  // Update cache tracking with 5 minutes expiration
   const oneHourFromNow = Date.now() + 5 * 60 * 1000;
   await convex.mutation(api.cache.updateCacheTracking, {
     dataType: cacheKey,
@@ -262,10 +243,8 @@ export async function fetchUpdatedFeed(podcast: PodcastName, number = 5): Promis
 
   const result = await fetchFeed(podcast, number);
 
-  // Ensure episodes are sorted from highest to lowest episode number
   if (result?.episodes) {
     result.episodes.sort((a, b) => b.episodeNumber - a.episodeNumber);
-    // Clean iframes from episode content in the result
     result.episodes = result.episodes.map((episode) => ({
       ...episode,
       description: removeIframes(episode.description || ""),
