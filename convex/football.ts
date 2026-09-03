@@ -145,22 +145,26 @@ async function buildSnapshot(ctx: FootballCtx): Promise<Snapshot> {
 
   const fresh: Snapshot = { team, leaguesData, nextMatchData: { matchDetails, awayForm, homeForm } };
   const previous = (await ctx.runQuery(internal.football.readSnapshot, { allowStale: true })) as Snapshot | null;
-  return previous ? mergeWithPrevious(fresh, previous) : fresh;
+  return previous ? mergeWithPrevious(fresh, previous, nextGames != null) : fresh;
 }
 
 // A failed sub-request yields null/empty; keep the previous snapshot's section
 // rather than replacing complete data with a hole.
-function mergeWithPrevious(fresh: Snapshot, previous: Snapshot): Snapshot {
+function mergeWithPrevious(fresh: Snapshot, previous: Snapshot, fixturesFetched: boolean): Snapshot {
+  const next = fresh.nextMatchData;
+  const prev = previous.nextMatchData;
+  const sameMatch = next.matchDetails != null && next.matchDetails.id === prev?.matchDetails?.id;
   return {
     team: fresh.team,
     leaguesData: fresh.leaguesData.length > 0 ? fresh.leaguesData : previous.leaguesData,
-    nextMatchData: fresh.nextMatchData.matchDetails
-      ? {
-          matchDetails: fresh.nextMatchData.matchDetails,
-          awayForm: fresh.nextMatchData.awayForm ?? previous.nextMatchData?.awayForm ?? null,
-          homeForm: fresh.nextMatchData.homeForm ?? previous.nextMatchData?.homeForm ?? null,
-        }
-      : (previous.nextMatchData ?? fresh.nextMatchData),
+    nextMatchData:
+      !fixturesFetched && prev
+        ? prev
+        : {
+            matchDetails: next.matchDetails,
+            awayForm: next.awayForm ?? (sameMatch ? prev.awayForm : null),
+            homeForm: next.homeForm ?? (sameMatch ? prev.homeForm : null),
+          },
   };
 }
 
