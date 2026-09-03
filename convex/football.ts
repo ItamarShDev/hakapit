@@ -90,13 +90,22 @@ async function getPastMatches(ctx: FootballCtx, teamId?: number) {
   return data?.matches ?? null;
 }
 
-async function buildSnapshot(ctx: FootballCtx) {
+type Snapshot = {
+  team: TeamResponse;
+  leaguesData: Array<{ leagueId: string; league: StandingLeague }>;
+  nextMatchData: { matchDetails: Match | null; awayForm: Match[] | null; homeForm: Match[] | null };
+};
+
+async function buildSnapshot(ctx: FootballCtx): Promise<Snapshot> {
   const team = await fetchFootballCached<TeamResponse>(
     ctx,
     `team-${LIVERPOOL_ID}`,
     TEAM_TTL_MS,
     `teams/${LIVERPOOL_ID}`,
   );
+  if (!team) {
+    throw new Error("football-data team request failed");
+  }
 
   const leagueIds =
     team?.runningCompetitions
@@ -134,14 +143,24 @@ async function buildSnapshot(ctx: FootballCtx) {
   const awayForm = await getPastMatches(ctx, matchDetails?.awayTeam?.id);
   const homeForm = await getPastMatches(ctx, matchDetails?.homeTeam?.id);
 
+  const fresh: Snapshot = { team, leaguesData, nextMatchData: { matchDetails, awayForm, homeForm } };
+  const previous = (await ctx.runQuery(internal.football.readSnapshot, { allowStale: true })) as Snapshot | null;
+  return previous ? mergeWithPrevious(fresh, previous) : fresh;
+}
+
+// A failed sub-request yields null/empty; keep the previous snapshot's section
+// rather than replacing complete data with a hole.
+function mergeWithPrevious(fresh: Snapshot, previous: Snapshot): Snapshot {
   return {
-    team,
-    leaguesData,
-    nextMatchData: {
-      matchDetails,
-      awayForm,
-      homeForm,
-    },
+    team: fresh.team,
+    leaguesData: fresh.leaguesData.length > 0 ? fresh.leaguesData : previous.leaguesData,
+    nextMatchData: fresh.nextMatchData.matchDetails
+      ? {
+          matchDetails: fresh.nextMatchData.matchDetails,
+          awayForm: fresh.nextMatchData.awayForm ?? previous.nextMatchData?.awayForm ?? null,
+          homeForm: fresh.nextMatchData.homeForm ?? previous.nextMatchData?.homeForm ?? null,
+        }
+      : (previous.nextMatchData ?? fresh.nextMatchData),
   };
 }
 
@@ -179,9 +198,7 @@ export const refreshSnapshot = internalAction({
   args: {},
   handler: async (ctx) => {
     const snapshot = await buildSnapshot(ctx);
-    if (snapshot.team) {
-      await ctx.runMutation(internal.football.storeSnapshot, { snapshot });
-    }
+    await ctx.runMutation(internal.football.storeSnapshot, { snapshot });
     return snapshot;
   },
 });
