@@ -11,10 +11,10 @@ export function getCacheEntry(ctx: QueryCtx, dataType: string) {
     .first();
 }
 
-export async function readCachedJson(ctx: QueryCtx, dataType: string) {
+export async function readCachedJson(ctx: QueryCtx, dataType: string, opts: { allowStale?: boolean } = {}) {
   const entry = await getCacheEntry(ctx, dataType);
   if (!entry?.payload) return null;
-  if (entry.expiresAt !== undefined && entry.expiresAt <= Date.now()) return null;
+  if (!opts.allowStale && entry.expiresAt !== undefined && entry.expiresAt <= Date.now()) return null;
   try {
     return JSON.parse(entry.payload);
   } catch (err) {
