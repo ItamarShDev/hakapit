@@ -21,7 +21,7 @@ const convexClient = getConvexClient("warn");
 async function getTransfersSnapshot(): Promise<Doc<"transfers">[] | null> {
   if (!convexClient) return null;
   try {
-    return await convexClient.query(api.football.getAllTransfers, {});
+    return await convexClient.query(api.transfers.getAllTransfers, {});
   } catch (err) {
     console.warn("getTransfersSnapshot failed", err);
     return null;

@@ -312,16 +312,6 @@ export const getLatestEpisode = query({
       .first();
     if (!podcast) return null;
 
-    const allEpisodes = await ctx.db
-      .query("episodes")
-      .withIndex("by_podcastId", (q) => q.eq("podcastId", podcast._id))
-      .collect();
-
-    if (allEpisodes.length > 0) {
-      const numbers = allEpisodes.map((e) => e.episodeNumber).sort((a, b) => b - a);
-      console.log(`All episode numbers in DB: ${numbers.slice(0, 10).join(", ")}... (${allEpisodes.length} total)`);
-    }
-
     const latestByNumber = await ctx.db
       .query("episodes")
       .withIndex("by_podcastId_and_number", (q) => q.eq("podcastId", podcast._id).gt("episodeNumber", 0))
@@ -329,13 +319,16 @@ export const getLatestEpisode = query({
       .first();
 
     if (latestByNumber) {
-      console.log(`getLatestEpisode returning: #${latestByNumber.episodeNumber} - ${latestByNumber.title}`);
       return {
         ...latestByNumber,
         podcast,
       };
     }
 
+    const allEpisodes = await ctx.db
+      .query("episodes")
+      .withIndex("by_podcastId", (q) => q.eq("podcastId", podcast._id))
+      .collect();
     if (allEpisodes.length === 0) return null;
 
     const latestByPublishedAt = allEpisodes.reduce((best, current) => {

@@ -3,7 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { EpisodeCard } from "~/features/podcast/episode-card";
 import { usePodcastWithEpisodes } from "~/features/podcast/use-podcasts";
 
-import type { PodcastName, fetchUpdatedFeed } from "~/server/rss/feed";
+import type { PodcastName } from "~/features/podcast/podcasts";
+import type { fetchUpdatedFeed } from "~/server/rss/feed";
 
 type FeedData = Awaited<ReturnType<typeof fetchUpdatedFeed>>;
 

@@ -1,19 +1,17 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import Episode from "~/features/podcast/episode";
-import { validatePodcastParam } from "~/features/podcast/validate-podcast-param";
+import { isPodcastName } from "~/features/podcast/podcasts";
+import { podcastFallbackHead, podcastHead } from "~/features/podcast/seo";
 import { fetchEpisode } from "~/server/rss/feed";
-
-import type { PodcastName } from "~/server/rss/feed";
 
 export const Route = createFileRoute("/$podcast/episodes/$id/")({
   component: PodcastEpisode,
   beforeLoad: async ({ params }) => {
-    if (!validatePodcastParam(params.podcast)) {
-      console.error("Invalid podcast parameter", params.podcast);
+    if (!isPodcastName(params.podcast)) {
       throw redirect({ to: "/" });
     }
-    return { podcast: params.podcast as PodcastName };
+    return { podcast: params.podcast };
   },
   loader: async ({ params }) => {
     const episodeNumber = Number.parseInt(params.id, 10);
@@ -26,39 +24,8 @@ export const Route = createFileRoute("/$podcast/episodes/$id/")({
   },
   head: ({ loaderData, params }) => {
     const metadata = loaderData?.metadata;
-    if (!metadata) {
-      return {
-        title: params.podcast,
-        meta: [
-          { name: "description", content: `${params.podcast} podcast` },
-          { name: "author", content: params.podcast },
-        ],
-      };
-    }
-
-    const contentWithoutNewLine = metadata?.description?.replace(/\n/g, " ");
-    return {
-      title: metadata.title,
-      meta: [
-        { name: "description", content: contentWithoutNewLine },
-        { property: "og:type", content: "website" },
-        {
-          property: "og:url",
-          content: `https://hakapit.online/${params.podcast}/episodes/${params.id}`,
-        },
-        { property: "og:title", content: metadata.title },
-        { property: "og:description", content: metadata.description || "" },
-        { property: "og:image", content: metadata.imageUrl || "" },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: metadata.title },
-        { name: "twitter:description", content: metadata.description || "" },
-        { name: "twitter:image", content: metadata.imageUrl || "" },
-        {
-          name: "twitter:url",
-          content: `https://hakapit.online/${params.podcast}/episodes/${params.id}`,
-        },
-      ],
-    };
+    if (!metadata) return podcastFallbackHead(params.podcast);
+    return podcastHead(metadata, `/${params.podcast}/episodes/${params.id}`);
   },
 });
 

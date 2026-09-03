@@ -8,25 +8,23 @@
  * @module
  */
 
-import type * as backfill from "../backfill.js";
+import type * as admin from "../admin.js";
 import type * as cache from "../cache.js";
-import type * as clear from "../clear.js";
 import type * as crons from "../crons.js";
 import type * as football from "../football.js";
-import type * as migrate from "../migrate.js";
 import type * as podcasts from "../podcasts.js";
 import type * as subscriptions from "../subscriptions.js";
+import type * as transfers from "../transfers.js";
 import type { ApiFromModules, FilterApi, FunctionReference } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
-  backfill: typeof backfill;
+  admin: typeof admin;
   cache: typeof cache;
-  clear: typeof clear;
   crons: typeof crons;
   football: typeof football;
-  migrate: typeof migrate;
   podcasts: typeof podcasts;
   subscriptions: typeof subscriptions;
+  transfers: typeof transfers;
 }>;
 
 /**

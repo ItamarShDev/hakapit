@@ -11,7 +11,7 @@ import { MainLayout } from "~/layouts/main";
 import { PlayerProvider } from "~/layouts/player/provider";
 
 import type { QueryClient } from "@tanstack/react-query";
-import type { PodcastName } from "~/server/rss/feed";
+import type { PodcastName } from "~/features/podcast/podcasts";
 
 interface MyRouterContext {
   queryClient: QueryClient;

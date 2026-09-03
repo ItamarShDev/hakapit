@@ -4,18 +4,17 @@ import { sliceFeedItems } from "./feed.utils";
 import { getConvexClient } from "~/server/convex-client";
 import { fetch_rss } from "~/server/rss/fetch-rss";
 
+import type { PodcastName } from "~/features/podcast/podcasts";
 import type { Episode, PodcastWithEpisodes } from "~/features/podcast/types";
 import type { EpisodeData, Feed } from "~/server/rss/types";
 
 const convex = getConvexClient("warn");
 
-const PODCAST_URLS = {
+const PODCAST_URLS: Record<PodcastName, string | undefined> = {
   hakapit: process.env.HAKAPIT_RSS,
   nitk: process.env.NITK_RSS,
   "balcony-albums": process.env.BALCONY_RSS,
 };
-
-export type PodcastName = keyof typeof PODCAST_URLS;
 
 function rssItemToEpisode(item: EpisodeData, podcastName: PodcastName): Episode {
   return {

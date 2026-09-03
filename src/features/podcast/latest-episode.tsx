@@ -1,8 +1,8 @@
 import { LastEpisodeCardPreview } from "~/features/podcast/episode-card";
 import { useLatestEpisode } from "~/features/podcast/use-podcasts";
 
+import type { PodcastName } from "~/features/podcast/podcasts";
 import type { Episode } from "~/features/podcast/types";
-import type { PodcastName } from "~/server/rss/feed";
 
 export function LatestEpisode({ podcast, initialEpisode }: { podcast: PodcastName; initialEpisode?: Episode | null }) {
   const liveEpisode = useLatestEpisode(podcast);

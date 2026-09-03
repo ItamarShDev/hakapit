@@ -1,8 +1,32 @@
 import { v } from "convex/values";
 
-import { mutation } from "./_generated/server";
+import { internalMutation, internalQuery } from "./_generated/server";
 
-export const deleteOldEpisodes = mutation({
+export const clearAllEpisodes = internalMutation({
+  handler: async (ctx) => {
+    const episodes = await ctx.db.query("episodes").collect();
+
+    let deletedCount = 0;
+    for (const episode of episodes) {
+      await ctx.db.delete(episode._id);
+      deletedCount++;
+    }
+
+    return {
+      message: `Successfully deleted ${deletedCount} episodes`,
+      deletedCount,
+    };
+  },
+});
+
+export const getEpisodeCount = internalQuery({
+  handler: async (ctx) => {
+    const episodes = await ctx.db.query("episodes").collect();
+    return episodes.length;
+  },
+});
+
+export const deleteOldEpisodes = internalMutation({
   handler: async (ctx) => {
     const episodes = await ctx.db.query("episodes").collect();
 
@@ -21,7 +45,7 @@ export const deleteOldEpisodes = mutation({
   },
 });
 
-export const dedupeEpisodesByNumberPerPodcast = mutation({
+export const dedupeEpisodesByNumberPerPodcast = internalMutation({
   args: {
     dryRun: v.optional(v.boolean()),
   },
