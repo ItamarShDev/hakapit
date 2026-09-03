@@ -3,18 +3,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { api } from "convex/_generated/api";
 import { Suspense } from "react";
 
-import { FloatingChat } from "~/app/components/chat/FloatingChat";
-import { LatestEpisode } from "~/app/components/convex/LatestEpisode";
-import { RecentTransfers } from "~/app/components/convex/RecentTransfers";
-import { FullBleed, NextMatchOverview } from "~/app/components/next-match";
-import { StatsTable } from "~/app/components/stats/stats";
-import { Trophies } from "~/app/components/stats/trophies";
-import { getConvexClient, isConvexAvailable } from "~/app/providers/convex/env";
-import { fetchUpdatedLatestEpisode } from "~/app/providers/rss/feed";
-import { getSoccerSnapshot } from "~/app/providers/soccer-api";
+import { FloatingChat } from "~/features/chat/floating-chat";
+import { FullBleed, NextMatchOverview } from "~/features/football/next-match";
+import { RecentTransfers } from "~/features/football/recent-transfers";
+import { StatsTable } from "~/features/football/stats/stats";
+import { Trophies } from "~/features/football/stats/trophies";
+import { LatestEpisode } from "~/features/podcast/latest-episode";
+import { getConvexClient, isConvexAvailable } from "~/server/convex-client";
+import { fetchUpdatedLatestEpisode } from "~/server/rss/feed";
+import { getSoccerSnapshot } from "~/server/soccer-api";
 
 import type { Doc } from "convex/_generated/dataModel";
-import type { Episode } from "~/app/utils";
+import type { Episode } from "~/features/podcast/types";
 
 const convexClient = getConvexClient("warn");
 

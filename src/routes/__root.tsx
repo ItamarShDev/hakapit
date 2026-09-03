@@ -7,11 +7,11 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import ConvexProvider from "../integrations/convex/provider";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
-import { MainLayout } from "~/app/layouts/main";
-import { PlayerProvider } from "~/app/layouts/Player/provider";
+import { MainLayout } from "~/layouts/main";
+import { PlayerProvider } from "~/layouts/player/provider";
 
 import type { QueryClient } from "@tanstack/react-query";
-import type { PodcastName } from "~/app/providers/rss/feed";
+import type { PodcastName } from "~/server/rss/feed";
 
 interface MyRouterContext {
   queryClient: QueryClient;
