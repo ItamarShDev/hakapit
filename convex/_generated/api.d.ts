@@ -13,6 +13,7 @@ import type * as cache from "../cache.js";
 import type * as crons from "../crons.js";
 import type * as football from "../football.js";
 import type * as podcasts from "../podcasts.js";
+import type * as rss from "../rss.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as transfers from "../transfers.js";
 import type { ApiFromModules, FilterApi, FunctionReference } from "convex/server";
@@ -23,6 +24,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   football: typeof football;
   podcasts: typeof podcasts;
+  rss: typeof rss;
   subscriptions: typeof subscriptions;
   transfers: typeof transfers;
 }>;

@@ -1,13 +1,13 @@
 import { cronJobs } from "convex/server";
 
-import { internal } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 
 const crons = cronJobs();
 
 crons.cron("refresh-soccer-snapshot-15m", "*/15 * * * *", internal.football.refreshSnapshot);
 
-crons.cron("refresh-latest-episode-hourly", "0 * * * *", internal.podcasts.refreshLatestEpisodeCache, {
-  podcastName: "hakapit",
-});
+for (const podcastName of ["hakapit", "nitk", "balcony-albums"]) {
+  crons.cron(`refresh-feed-${podcastName}`, "0 * * * *", api.podcasts.ensureFeedFresh, { podcastName });
+}
 
 export default crons;

@@ -2,8 +2,8 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import Episode from "~/features/podcast/episode";
 import { isPodcastName } from "~/features/podcast/podcasts";
-import { podcastFallbackHead, podcastHead } from "~/features/podcast/seo";
-import { fetchEpisode } from "~/server/rss/feed";
+import { podcastHead } from "~/lib/seo";
+import { fetchEpisode } from "~/server/podcasts";
 
 export const Route = createFileRoute("/$podcast/episodes/$id/")({
   component: PodcastEpisode,
@@ -13,19 +13,18 @@ export const Route = createFileRoute("/$podcast/episodes/$id/")({
     }
     return { podcast: params.podcast };
   },
-  loader: async ({ params }) => {
+  loader: async ({ params, context }) => {
     const episodeNumber = Number.parseInt(params.id, 10);
     if (Number.isNaN(episodeNumber)) {
       throw redirect({ to: "/" });
     }
-    const metadata = await fetchEpisode({ podcastName: params.podcast, episodeNumber });
+    const metadata = await fetchEpisode(context.podcast, episodeNumber);
 
     return { metadata };
   },
   head: ({ loaderData, params }) => {
     const metadata = loaderData?.metadata;
-    if (!metadata) return podcastFallbackHead(params.podcast);
-    return podcastHead(metadata, `/${params.podcast}/episodes/${params.id}`);
+    return podcastHead(metadata, params.podcast, `/${params.podcast}/episodes/${params.id}`);
   },
 });
 
