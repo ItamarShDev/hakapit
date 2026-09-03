@@ -26,5 +26,8 @@
   },
   "workbench.editor.wrapTabs": false,
   "editor.wordWrapColumn": 120,
-  "cSpell.words": ["appinstalled", "beforeinstallprompt"]
+  "cSpell.words": [
+    "appinstalled",
+    "beforeinstallprompt"
+  ]
 }
