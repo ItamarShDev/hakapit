@@ -11,8 +11,7 @@ if (!CONVEX_URL) {
 
 const client = new ConvexHttpClient(CONVEX_URL);
 
-await client.mutation(api.cache.clearCache, { dataType: `podcast-rss-${podcastName}` });
-const sync = await client.action(api.podcasts.ensureFeedFresh, { podcastName });
+const sync = await client.action(api.podcasts.ensureFeedFresh, { podcastName, force: true });
 const latest = await client.query(api.podcasts.getLatestEpisode, { podcastName });
 
 console.log(`Synced ${podcastName}: ${sync.synced}`);

@@ -51,6 +51,8 @@ export async function fetchAndParseRSS(url: string): Promise<RSSFeed | null> {
         const match = xml.match(new RegExp(`<${tag}[^>]*>([^]*?)</${tag}>`, "i"));
         return match?.[1]?.trim();
       };
+      const getAttribute = (xml: string, tag: string, attribute: string): string | undefined =>
+        xml.match(new RegExp(`<${tag}[^>]*\\s${attribute}="([^"]+)"`, "i"))?.[1];
 
       const channel = xml.match(/<channel[^>]*>([\s\S]*?)<\/channel>/i)?.[1] || "";
 
@@ -60,7 +62,7 @@ export async function fetchAndParseRSS(url: string): Promise<RSSFeed | null> {
         description: getTextContent(channel, "description"),
         feedUrl: url,
         itunes: {
-          image: getTextContent(channel, "itunes:image")?.match(/href="([^"]+)"/)?.[1],
+          image: getAttribute(channel, "itunes:image", "href"),
           owner: {
             name: getTextContent(channel, "itunes:name"),
             email: getTextContent(channel, "itunes:email"),
@@ -93,7 +95,7 @@ export async function fetchAndParseRSS(url: string): Promise<RSSFeed | null> {
           contentSnippet: removeIframes(getTextContent(itemXml, "description") || ""),
           isoDate: getTextContent(itemXml, "pubDate"),
           itunes: {
-            image: getTextContent(itemXml, "itunes:image")?.match(/href="([^"]+)"/)?.[1],
+            image: getAttribute(itemXml, "itunes:image", "href"),
             duration: getTextContent(itemXml, "itunes:duration"),
           },
           enclosure: enclosureUrl ? { url: enclosureUrl } : undefined,

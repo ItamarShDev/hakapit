@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 
 import { internal } from "./_generated/api";
-import { internalAction, internalMutation, query } from "./_generated/server";
+import { action, internalMutation, query } from "./_generated/server";
 import { readCachedJson, upsertCacheEntry } from "./cache";
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_DATA_API_KEY;
@@ -101,10 +101,7 @@ const SNAPSHOT_TTL_MS = 10 * 60 * 1000;
 export const getSnapshot = query({
   args: {},
   handler: async (ctx) => {
-    const cached = await readCachedJson(ctx, SNAPSHOT_CACHE_KEY);
-    if (cached) return cached;
-    const snapshot = await buildSnapshot();
-    return snapshot;
+    return await readCachedJson(ctx, SNAPSHOT_CACHE_KEY);
   },
 });
 
@@ -121,7 +118,7 @@ export const storeSnapshot = internalMutation({
   },
 });
 
-export const refreshSnapshot = internalAction({
+export const refreshSnapshot = action({
   args: {},
   handler: async (ctx) => {
     const snapshot = await buildSnapshot();

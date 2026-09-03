@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { internalMutation, mutation, query } from "./_generated/server";
+import { internalMutation, internalQuery } from "./_generated/server";
 
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 
@@ -37,12 +37,12 @@ export async function upsertCacheEntry(
   return await ctx.db.insert("cacheTracking", { ...cacheData, createdAt: now });
 }
 
-export const getCacheTracking = query({
+export const getCacheTracking = internalQuery({
   args: { dataType: v.string() },
   handler: (ctx, args) => getCacheEntry(ctx, args.dataType),
 });
 
-export const updateCacheTracking = mutation({
+export const updateCacheTracking = internalMutation({
   args: {
     dataType: v.string(),
     source: v.string(),
@@ -53,7 +53,7 @@ export const updateCacheTracking = mutation({
   handler: (ctx, args) => upsertCacheEntry(ctx, args),
 });
 
-export const isCacheExpired = query({
+export const isCacheExpired = internalQuery({
   args: { dataType: v.string() },
   handler: async (ctx, args) => {
     const cache = await getCacheEntry(ctx, args.dataType);
@@ -86,22 +86,5 @@ export const cleanupExpiredCache = internalMutation({
     }
 
     return { cleanedCount };
-  },
-});
-
-export const clearCache = mutation({
-  args: { dataType: v.string() },
-  handler: async (ctx, args) => {
-    const existing = await getCacheEntry(ctx, args.dataType);
-
-    if (existing) {
-      await ctx.db.patch(existing._id, {
-        expiresAt: 0,
-        lastUpdated: Date.now(),
-        updatedAt: Date.now(),
-      });
-      return { cleared: true, dataType: args.dataType };
-    }
-    return { cleared: false, dataType: args.dataType };
   },
 });

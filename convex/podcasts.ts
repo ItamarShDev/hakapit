@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { api, internal } from "./_generated/api";
+import { internal } from "./_generated/api";
 import { action, internalAction, internalMutation, query } from "./_generated/server";
 import { extractEpisodeNumber, fetchAndParseRSS, PODCAST_RSS_URLS } from "./rss";
 
@@ -174,14 +174,22 @@ export const syncFeedFromRSS = internalAction({
 });
 
 export const ensureFeedFresh = action({
-  args: { podcastName: v.string() },
+  args: { podcastName: v.string(), force: v.optional(v.boolean()) },
   handler: async (ctx, args) => {
-    const cacheKey = rssCacheKey(args.podcastName);
-    const cacheStatus = await ctx.runQuery(api.cache.isCacheExpired, { dataType: cacheKey });
-    if (!cacheStatus.expired) return { synced: false };
+    if (!PODCAST_RSS_URLS[args.podcastName]) {
+      throw new Error(`Unknown podcast: ${args.podcastName}`);
+    }
 
-    await ctx.runAction(internal.podcasts.syncFeedFromRSS, { podcastName: args.podcastName });
-    await ctx.runMutation(api.cache.updateCacheTracking, {
+    const cacheKey = rssCacheKey(args.podcastName);
+    if (!args.force) {
+      const cacheStatus = await ctx.runQuery(internal.cache.isCacheExpired, { dataType: cacheKey });
+      if (!cacheStatus.expired) return { synced: false };
+    }
+
+    const result = await ctx.runAction(internal.podcasts.syncFeedFromRSS, { podcastName: args.podcastName });
+    if (!result) return { synced: false };
+
+    await ctx.runMutation(internal.cache.updateCacheTracking, {
       dataType: cacheKey,
       source: "rss",
       expiresAt: Date.now() + RSS_CACHE_TTL_MS,
