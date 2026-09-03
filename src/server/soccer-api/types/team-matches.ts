@@ -30,7 +30,7 @@ export interface Match {
   status: string;
   matchday: number;
   stage: string;
-  group: any;
+  group: string | null;
   lastUpdated: string;
   homeTeam: HomeTeam;
   awayTeam: Team;
@@ -59,7 +59,7 @@ export interface Season {
   startDate: string;
   endDate: string;
   currentMatchday: number;
-  winner: any;
+  winner: string | null;
 }
 
 export interface HomeTeam {

@@ -4,7 +4,7 @@ import { EpisodeCard } from "~/features/podcast/episode-card";
 import { usePodcastWithEpisodes } from "~/features/podcast/use-podcasts";
 
 import type { PodcastName } from "~/features/podcast/podcasts";
-import type { fetchUpdatedFeed } from "~/server/rss/feed";
+import type { fetchUpdatedFeed } from "~/server/podcasts";
 
 type FeedData = Awaited<ReturnType<typeof fetchUpdatedFeed>>;
 

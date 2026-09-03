@@ -12,8 +12,7 @@
     "check": "oxfmt --check . && oxlint .",
     "start": "vite",
     "typecheck": "tsc",
-    "test:e2e": "playwright test --reporter=html",
-    "test:e2e:accessibility": "playwright test --grep=\"accessibility\" --project=chromium"
+    "sync-feed": "bun scripts/sync-feed.ts"
   },
   "dependencies": {
     "@convex-dev/react-query": "^0.1.0",
@@ -50,7 +49,6 @@
     "react-dom": "19.2.8",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "rss-parser": "^3.13.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.3",
@@ -58,7 +56,6 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
     "@tanstack/devtools-vite": "^0.8.3",
     "@types/bun": "^1.3.14",
     "@types/node": "^26.1.2",

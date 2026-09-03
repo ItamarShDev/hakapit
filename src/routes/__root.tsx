@@ -9,15 +9,16 @@ import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 import { MainLayout } from "~/layouts/main";
 import { PlayerProvider } from "~/layouts/player/provider";
+import { pageHead, SITE_TITLE, SITE_URL } from "~/lib/seo";
 
 import type { QueryClient } from "@tanstack/react-query";
 import type { PodcastName } from "~/features/podcast/podcasts";
 
-interface MyRouterContext {
+interface RouterContext {
   queryClient: QueryClient;
 }
-function getColorByParam(param: PodcastName) {
-  switch (param) {
+function getThemeColor(podcast: string | undefined) {
+  switch (podcast) {
     case "nitk":
       return "#3d0040";
     case "balcony-albums":
@@ -26,73 +27,20 @@ function getColorByParam(param: PodcastName) {
       return "#760d2a";
   }
 }
-export const Route = createRootRouteWithContext<MyRouterContext>()({
+export const Route = createRootRouteWithContext<RouterContext>()({
   head: ({ params }) => ({
     meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1.0",
-      },
-      {
-        name: "theme-color",
-        content: getColorByParam((params as any).podcast as PodcastName),
-      },
-      {
-        name: "color-scheme",
-        content: "dark light",
-      },
-      { title: "הכפית" },
-      {
-        name: "description",
-        content: "אתר הבית של משפחת הכפית",
-      },
-      {
-        name: "author",
-        content: "משפחת הכפית",
-      },
-      {
-        property: "og:type",
-        content: "website",
-      },
-      {
-        property: "og:url",
-        content: "https://hakapit.online",
-      },
-      {
-        property: "og:title",
-        content: "הכפית",
-      },
-      {
-        property: "og:description",
-        content: "אתר הבית של משפחת הכפית",
-      },
-      {
-        property: "og:image",
-        content: "https://hakapit.online/logo.webp",
-      },
-      {
-        name: "twitter:card",
-        content: "summary_large_image",
-      },
-      {
-        name: "twitter:title",
-        content: "הכפית",
-      },
-      {
-        name: "twitter:description",
-        content: "אתר הבית של משפחת הכפית",
-      },
-      {
-        name: "twitter:image",
-        content: "https://hakapit.online/logo.webp",
-      },
-      {
-        name: "twitter:url",
-        content: "https://hakapit.online",
-      },
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1.0" },
+      { name: "theme-color", content: getThemeColor((params as { podcast?: string }).podcast) },
+      { name: "color-scheme", content: "dark light" },
+      ...pageHead({
+        title: SITE_TITLE,
+        description: "אתר הבית של משפחת הכפית",
+        image: `${SITE_URL}/logo.webp`,
+        path: "",
+        author: "משפחת הכפית",
+      }).meta,
     ],
     links: [
       {

@@ -10,8 +10,9 @@ import { StatsTable } from "~/features/football/stats/stats";
 import { Trophies } from "~/features/football/stats/trophies";
 import { LatestEpisode } from "~/features/podcast/latest-episode";
 import { ConvexBoundary } from "~/integrations/convex/convex-boundary";
+import { pageHead, SITE_TITLE, SITE_URL } from "~/lib/seo";
 import { getConvexClient, isConvexAvailable } from "~/server/convex-client";
-import { fetchUpdatedLatestEpisode } from "~/server/rss/feed";
+import { fetchUpdatedLatestEpisode } from "~/server/podcasts";
 import { getSoccerSnapshot } from "~/server/soccer-api";
 
 import type { Doc } from "convex/_generated/dataModel";
@@ -56,45 +57,13 @@ export const Route = createFileRoute("/")({
     }
     return { snapshot, transfers, latestEpisode };
   },
-  head: () => ({
-    title: "הכפית",
-
-    meta: [
-      {
-        name: "description",
-        content: "דף הבית של משפחת הכפית",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1.0",
-      },
-      {
-        name: "theme-color",
-        content: "var(--color-primary)",
-      },
-      {
-        name: "color-scheme",
-        content: "dark light",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://hakapit.online/" },
-      { property: "og:title", content: "הכפית" },
-      { property: "og:description", content: "דף הבית של משפחת הכפית" },
-      {
-        property: "og:image",
-        content: "https://hakapit.online/icon-512x512.png",
-      },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "הכפית" },
-      { name: "twitter:description", content: "דף הבית של משפחת הכפית" },
-      {
-        name: "twitter:image",
-        content: "https://hakapit.online/icon-512x512.png",
-      },
-      { name: "twitter:url", content: "https://hakapit.online/" },
-      { name: "twitter:site", content: "@hakapit" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: SITE_TITLE,
+      description: "דף הבית של משפחת הכפית",
+      image: `${SITE_URL}/icon-512x512.png`,
+      path: "/",
+    }),
 });
 
 const useSoccerSnapshot = (initialSnapshot: Awaited<ReturnType<typeof getSoccerSnapshot>> | null) => {

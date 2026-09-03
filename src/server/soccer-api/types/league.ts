@@ -30,14 +30,14 @@ export interface Season {
   startDate: string;
   endDate: string;
   currentMatchday: number;
-  winner: any;
+  winner: string | null;
   stages: string[];
 }
 
 export interface Standing {
   stage: string;
   type: string;
-  group: any;
+  group: string | null;
   table: Table[];
 }
 

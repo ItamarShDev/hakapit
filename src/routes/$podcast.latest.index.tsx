@@ -2,8 +2,8 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import Episode from "~/features/podcast/episode";
 import { isPodcastName } from "~/features/podcast/podcasts";
-import { podcastFallbackHead, podcastHead } from "~/features/podcast/seo";
-import { fetchUpdatedLatestEpisode } from "~/server/rss/feed";
+import { podcastHead } from "~/lib/seo";
+import { fetchUpdatedLatestEpisode } from "~/server/podcasts";
 
 export const Route = createFileRoute("/$podcast/latest/")({
   component: LatestEpisode,
@@ -19,8 +19,7 @@ export const Route = createFileRoute("/$podcast/latest/")({
   },
   head: ({ loaderData, params }) => {
     const episode = loaderData?.episode;
-    if (!episode) return podcastFallbackHead(params.podcast);
-    return podcastHead(episode, `/${params.podcast}/latest`);
+    return podcastHead(episode, params.podcast, `/${params.podcast}/latest`);
   },
 });
 
