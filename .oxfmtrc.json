@@ -1,10 +1,23 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "src/routeTree.gen.ts",
+    "convex/_generated",
+    ".vscode"
+  ],
   "printWidth": 120,
   "sortImports": {
     "groups": [
-      ["value-builtin", "value-external"],
-      ["value-internal", "value-parent", "value-sibling", "value-index"],
+      [
+        "value-builtin",
+        "value-external"
+      ],
+      [
+        "value-internal",
+        "value-parent",
+        "value-sibling",
+        "value-index"
+      ],
       {
         "newlinesBetween": true
       },
