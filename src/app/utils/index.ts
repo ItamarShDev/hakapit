@@ -3,12 +3,6 @@ export function toDateString(value?: Date | null) {
   return new Date(value).toLocaleDateString();
 }
 
-export function toDate(value?: string) {
-  if (!value) return null;
-  const date = new Date(Date.parse(value));
-  return isNaN(date.getTime()) ? null : date;
-}
-
 export interface Episode {
   _id?: unknown;
   episodeNumber: number;
@@ -42,6 +36,4 @@ export interface PodcastWithEpisodes {
   totalEpisodes?: number;
 }
 
-export type FeedData = PodcastWithEpisodes | null;
-export type EpisodeData = Episode | null;
 export type EpisodeWithPodcast = Episode;

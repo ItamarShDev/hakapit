@@ -1,1 +1,0 @@
-ALTER TABLE "podcast" ALTER COLUMN "link" DROP NOT NULL;

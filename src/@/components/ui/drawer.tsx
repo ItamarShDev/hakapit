@@ -51,10 +51,6 @@ export function DrawerHeader({ className, ...props }: React.HTMLAttributes<HTMLD
   return <div className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)} {...props} />;
 }
 
-export function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("mt-auto flex items-center gap-2 p-4", className)} {...props} />;
-}
-
 export const DrawerTitle = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>

@@ -13,9 +13,7 @@
     "start": "vite",
     "typecheck": "tsc",
     "test:e2e": "playwright test --reporter=html",
-    "test:e2e:accessibility": "playwright test --grep=\"accessibility\" --project=chromium",
-    "migrate:to-convex": "bun scripts/migrate-to-convex.ts",
-    "populate:convex": "bun scripts/populate-convex.ts"
+    "test:e2e:accessibility": "playwright test --grep=\"accessibility\" --project=chromium"
   },
   "dependencies": {
     "@convex-dev/react-query": "^0.1.0",

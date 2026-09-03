@@ -1,1 +1,0 @@
-ALTER TABLE "episode" DROP CONSTRAINT "episode_episode_number_unique";
