@@ -44,7 +44,7 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
     return null;
   }
   const { awayForm, homeForm, matchDetails: nextGame } = nextMatchData;
-  if (!nextMatchData.awayForm || !nextMatchData.homeForm || !nextGame) {
+  if (!awayForm || !homeForm || !nextGame) {
     return null;
   }
 
