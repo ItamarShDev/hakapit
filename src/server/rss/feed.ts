@@ -1,4 +1,5 @@
-import { api } from "../../../convex/_generated/api";
+import { api } from "convex/_generated/api";
+
 import { sliceFeedItems } from "./feed.utils";
 import { getConvexClient } from "~/server/convex-client";
 import { fetch_rss } from "~/server/rss/fetch-rss";

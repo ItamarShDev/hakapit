@@ -1,9 +1,7 @@
-import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
 
-import { api } from "../../../convex/_generated/api";
-import { isConvexAvailable } from "~/server/convex-client";
+import { useConvexQuery } from "~/integrations/convex/use-convex-query";
 
 export function useAllTransfers() {
-  if (!isConvexAvailable()) return undefined;
-  return useQuery(api.football.getAllTransfers);
+  return useConvexQuery(api.football.getAllTransfers);
 }

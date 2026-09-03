@@ -139,7 +139,7 @@ function Home() {
       <div className="flex flex-col w-full gap-10">
         <Trophies />
         <div className="flex flex-wrap justify-center">
-          {convexEnabled ? <LatestEpisode initialEpisode={latestEpisode ?? undefined} /> : null}
+          {convexEnabled ? <LatestEpisode podcast="hakapit" initialEpisode={latestEpisode} /> : null}
         </div>
         <Suspense fallback={<TransfersSkeleton />}>
           <div className="flex flex-wrap justify-center w-full">
