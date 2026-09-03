@@ -79,7 +79,7 @@ export const cleanupExpiredCache = internalMutation({
 
     let cleanedCount = 0;
     for (const entry of cacheEntries) {
-      if (entry.expiresAt && entry.expiresAt < now) {
+      if (entry.expiresAt !== undefined && entry.expiresAt <= now) {
         await ctx.db.delete(entry._id);
         cleanedCount++;
       }
