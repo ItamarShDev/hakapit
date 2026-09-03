@@ -8,7 +8,7 @@ function removeIframes(content: string): string {
   return content.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "");
 }
 
-export async function fetch_rss(url: string | undefined) {
+export async function fetchRss(url: string | undefined) {
   if (!url) {
     return { items: [] };
   }

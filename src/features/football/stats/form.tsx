@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "~/lib/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/lib/ui/tooltip";
-import { LiverpoolId } from "~/server/soccer-api/constants";
+import { LIVERPOOL_TEAM_ID } from "~/server/soccer-api/constants";
 
 import type { Match } from "~/server/soccer-api/types/team-matches";
 
 export function resultToString(match: Match) {
-  const isHome = match.homeTeam.id === LiverpoolId;
+  const isHome = match.homeTeam.id === LIVERPOOL_TEAM_ID;
   const isWon = isHome ? match.score.winner === "HOME_TEAM" : match.score.winner === "AWAY_TEAM";
   if (match.score.winner === "DRAW") {
     return "D";
@@ -14,7 +14,7 @@ export function resultToString(match: Match) {
   return "L";
 }
 export function getFormColor(match: Match) {
-  const isHome = match.homeTeam.id === LiverpoolId;
+  const isHome = match.homeTeam.id === LIVERPOOL_TEAM_ID;
   const isWon = isHome ? match.score.winner === "HOME_TEAM" : match.score.winner === "AWAY_TEAM";
   if (match.score.winner === "DRAW") {
     return "bg-slate-400";
@@ -24,7 +24,7 @@ export function getFormColor(match: Match) {
 }
 
 function getFormTextColor(match: Match) {
-  const isHome = match.homeTeam.id === LiverpoolId;
+  const isHome = match.homeTeam.id === LIVERPOOL_TEAM_ID;
   const isWon = isHome ? match.score.winner === "HOME_TEAM" : match.score.winner === "AWAY_TEAM";
   if (match.score.winner === "DRAW") {
     return "text-slate-200";

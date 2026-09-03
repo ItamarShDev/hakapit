@@ -1,8 +1,8 @@
 import { api } from "convex/_generated/api";
 
-import { sliceFeedItems } from "./feed.utils";
+import { sliceFeedItems } from "./feed-utils";
 import { getConvexClient } from "~/server/convex-client";
-import { fetch_rss } from "~/server/rss/fetch-rss";
+import { fetchRss } from "~/server/rss/fetch-rss";
 
 import type { PodcastName } from "~/features/podcast/podcasts";
 import type { Episode, PodcastWithEpisodes } from "~/features/podcast/types";
@@ -60,7 +60,7 @@ function removeIframes(content: string): string {
 
 function _fetch(podcast: PodcastName) {
   const url = PODCAST_URLS[podcast];
-  return fetch_rss(url);
+  return fetchRss(url);
 }
 
 async function fetchRSSFeed(podcast: PodcastName, number = 5): Promise<Feed> {

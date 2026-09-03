@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 
 import { getFirstMatch } from "./utils";
 import { getCachedValue, setCachedValue } from "~/server/soccer-api/cache-store";
-import { LiverpoolId } from "~/server/soccer-api/constants";
+import { LIVERPOOL_TEAM_ID } from "~/server/soccer-api/constants";
 
 import type { League } from "~/server/soccer-api/types/league";
 import type { Team } from "~/server/soccer-api/types/team";
@@ -50,7 +50,7 @@ async function getData<T>(path: string) {
 
 function getNextGames() {
   return getDataCached("games-liverpool-next", 20 * 60 * 1000, () =>
-    getData<TeamMatches>(`teams/${LiverpoolId}/matches?status=SCHEDULED`),
+    getData<TeamMatches>(`teams/${LIVERPOOL_TEAM_ID}/matches?status=SCHEDULED`),
   );
 }
 
@@ -79,27 +79,24 @@ async function getTeamForms(data: ReturnType<typeof getFirstMatch> | null) {
   };
 }
 
-export const getTeam = createServerFn({ method: "GET" })
-  .validator((id?: number) => id ?? LiverpoolId)
-  .handler(async ({ data: id }) => {
-    return await getDataCached(`team-${id}`, 6 * 60 * 60 * 1000, () => getData<Team>(`teams/${id}`));
-  });
+const HOUR_MS = 60 * 60 * 1000;
+const MINUTE_MS = 60 * 1000;
 
-export const getLeague = createServerFn({ method: "GET" })
-  .validator((league: string) => league)
-  .handler(async ({ data: league }) => {
-    return await getDataCached(`league-${league}`, 2 * 60 * 60 * 1000, () =>
-      getData<League>(`competitions/${league}/standings`),
-    );
-  });
+function getTeam(id: number = LIVERPOOL_TEAM_ID) {
+  return getDataCached(`team-${id}`, 6 * HOUR_MS, () => getData<Team>(`teams/${id}`));
+}
 
-export const getNextMatchData = createServerFn({ method: "GET" }).handler(async () => {
+function getLeague(league: string) {
+  return getDataCached(`league-${league}`, 2 * HOUR_MS, () => getData<League>(`competitions/${league}/standings`));
+}
+
+async function getNextMatchData() {
   const nextGames = await getNextGames();
   const matchDetails = getFirstMatch(nextGames);
   const teamForms = await getTeamForms(matchDetails);
 
   return { matchDetails, ...teamForms };
-});
+}
 
 export type NextMatchData = Awaited<ReturnType<typeof getNextMatchData>>;
 
@@ -122,7 +119,7 @@ export const getSoccerSnapshot = createServerFn({ method: "GET" }).handler(async
       .filter(Boolean)
       .filter((value, index, self) => self.indexOf(value) === index) ?? [];
 
-  const leagues = await Promise.all(leagueIds.map((leagueId) => getLeague({ data: leagueId })));
+  const leagues = await Promise.all(leagueIds.map((leagueId) => getLeague(leagueId)));
   const leaguesData = leagues
     .map((league, index) => {
       const leagueId = leagueIds[index];
@@ -135,7 +132,7 @@ export const getSoccerSnapshot = createServerFn({ method: "GET" }).handler(async
 
   const snapshot = { team, leaguesData, nextMatchData };
 
-  await setCachedValue(cacheKey, snapshot, 10 * 60 * 1000);
+  await setCachedValue(cacheKey, snapshot, 10 * MINUTE_MS);
 
   return snapshot;
 });

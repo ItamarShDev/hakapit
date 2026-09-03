@@ -1,1 +1,1 @@
-export const LiverpoolId = 64;
+export const LIVERPOOL_TEAM_ID = 64;

@@ -1,7 +1,7 @@
 import TeamNameAndAvatar from "~/features/football/team-avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/lib/ui/table";
 import { cn } from "~/lib/utils";
-import { LiverpoolId } from "~/server/soccer-api/constants";
+import { LIVERPOOL_TEAM_ID } from "~/server/soccer-api/constants";
 
 import type { League, Table as TableType } from "~/server/soccer-api/types/league";
 
@@ -10,7 +10,7 @@ function getStandings(league: League) {
 }
 function getTeams(league: League) {
   const standings = getStandings(league);
-  const teamStatsIndex = standings?.findIndex((stat) => stat.team.id === LiverpoolId);
+  const teamStatsIndex = standings?.findIndex((stat) => stat.team.id === LIVERPOOL_TEAM_ID);
   if (teamStatsIndex === -1 || teamStatsIndex === undefined) return null;
 
   if (teamStatsIndex === 0) {
@@ -23,7 +23,7 @@ function getTeams(league: League) {
 }
 
 export function TournamentInformation({ league }: { league: League }) {
-  const teamStats = league.standings[0].table.find((t) => t.team.id === LiverpoolId);
+  const teamStats = league.standings[0].table.find((t) => t.team.id === LIVERPOOL_TEAM_ID);
   return (
     <Table>
       <TableBody>
@@ -52,8 +52,8 @@ function TeamRow({ teamStats }: { teamStats: TableType }) {
     <TableRow
       className={cn(
         "border-0",
-        teamStats.team.id === LiverpoolId && "bg-primary-opaque text-accent hover:bg-primary-opaque",
-        teamStats.team.id === LiverpoolId && teamStats.position === 1 && "text-green-400",
+        teamStats.team.id === LIVERPOOL_TEAM_ID && "bg-primary-opaque text-accent hover:bg-primary-opaque",
+        teamStats.team.id === LIVERPOOL_TEAM_ID && teamStats.position === 1 && "text-green-400",
       )}
     >
       <TableCell className="text-start p-3 font-bold">
