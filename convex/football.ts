@@ -35,7 +35,7 @@ async function fetchFootball<T>(path: string): Promise<T | null> {
 
 async function fetchFootballCached<T>(ctx: FootballCtx, key: string, ttlMs: number, path: string): Promise<T | null> {
   const cached = (await ctx.runQuery(internal.football.readCached, { key })) as T | null;
-  if (cached) return cached;
+  if (cached != null) return cached;
   const value = await fetchFootball<T>(path);
   if (value != null) {
     await ctx.runMutation(internal.cache.updateCacheTracking, {
@@ -107,11 +107,9 @@ async function buildSnapshot(ctx: FootballCtx): Promise<Snapshot> {
     throw new Error("football-data team request failed");
   }
 
-  const leagueIds =
-    team?.runningCompetitions
-      ?.map((c) => c.code)
-      .filter(Boolean)
-      .filter((v, i, arr) => arr.indexOf(v) === i) ?? [];
+  const leagueIds = [
+    ...new Set((team.runningCompetitions ?? []).map((c) => c.code).filter((code): code is string => !!code)),
+  ];
 
   const leagues = await Promise.all(
     leagueIds.map((leagueId) =>
@@ -145,18 +143,30 @@ async function buildSnapshot(ctx: FootballCtx): Promise<Snapshot> {
 
   const fresh: Snapshot = { team, leaguesData, nextMatchData: { matchDetails, awayForm, homeForm } };
   const previous = (await ctx.runQuery(internal.football.readSnapshot, { allowStale: true })) as Snapshot | null;
-  return previous ? mergeWithPrevious(fresh, previous, nextGames != null) : fresh;
+  return previous ? mergeWithPrevious(fresh, previous, leagueIds, nextGames != null) : fresh;
 }
 
 // A failed sub-request yields null/empty; keep the previous snapshot's section
 // rather than replacing complete data with a hole.
-function mergeWithPrevious(fresh: Snapshot, previous: Snapshot, fixturesFetched: boolean): Snapshot {
+function mergeWithPrevious(
+  fresh: Snapshot,
+  previous: Snapshot,
+  requestedLeagueIds: string[],
+  fixturesFetched: boolean,
+): Snapshot {
   const next = fresh.nextMatchData;
-  const prev = previous.nextMatchData;
-  const sameMatch = next.matchDetails != null && next.matchDetails.id === prev?.matchDetails?.id;
+  const prev: Snapshot["nextMatchData"] | undefined = previous.nextMatchData;
+  const nextId = next.matchDetails?.id;
+  const sameMatch = nextId != null && nextId === prev?.matchDetails?.id;
+
+  const freshLeagueIds = new Set(fresh.leaguesData.map((l) => l.leagueId));
+  const keptLeagues = (previous.leaguesData ?? []).filter(
+    (l) => requestedLeagueIds.includes(l.leagueId) && !freshLeagueIds.has(l.leagueId),
+  );
+
   return {
     team: fresh.team,
-    leaguesData: fresh.leaguesData.length > 0 ? fresh.leaguesData : previous.leaguesData,
+    leaguesData: [...fresh.leaguesData, ...keptLeagues],
     nextMatchData:
       !fixturesFetched && prev
         ? prev
@@ -211,7 +221,7 @@ export const ensureSnapshot = action({
   args: {},
   handler: async (ctx): Promise<unknown> => {
     const cached = await ctx.runQuery(internal.football.readSnapshot, {});
-    if (cached) return cached;
+    if (cached != null) return cached;
     try {
       return await ctx.runAction(internal.football.refreshSnapshot);
     } catch (err) {
