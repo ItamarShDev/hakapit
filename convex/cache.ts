@@ -14,7 +14,7 @@ export function getCacheEntry(ctx: QueryCtx, dataType: string) {
 export async function readCachedJson(ctx: QueryCtx, dataType: string) {
   const entry = await getCacheEntry(ctx, dataType);
   if (!entry?.payload) return null;
-  if (entry.expiresAt && entry.expiresAt < Date.now()) return null;
+  if (entry.expiresAt !== undefined && entry.expiresAt <= Date.now()) return null;
   try {
     return JSON.parse(entry.payload);
   } catch (err) {
@@ -61,7 +61,7 @@ export const isCacheExpired = internalQuery({
     if (!cache) return { expired: true, exists: false };
 
     const now = Date.now();
-    const expired = cache.expiresAt ? cache.expiresAt < now : true;
+    const expired = cache.expiresAt === undefined || cache.expiresAt <= now;
 
     return {
       expired,
@@ -79,7 +79,7 @@ export const cleanupExpiredCache = internalMutation({
 
     let cleanedCount = 0;
     for (const entry of cacheEntries) {
-      if (entry.expiresAt && entry.expiresAt < now) {
+      if (entry.expiresAt !== undefined && entry.expiresAt <= now) {
         await ctx.db.delete(entry._id);
         cleanedCount++;
       }
