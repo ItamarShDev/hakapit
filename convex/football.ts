@@ -4,8 +4,18 @@ import { internal } from "./_generated/api";
 import { action, internalAction, internalMutation, internalQuery } from "./_generated/server";
 import { readCachedJson, upsertCacheEntry } from "./cache";
 
+import type { ActionCtx } from "./_generated/server";
+
 const FOOTBALL_API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 const LIVERPOOL_ID = 64;
+
+type FootballCtx = ActionCtx;
+
+const HOUR_MS = 60 * 60 * 1000;
+const TEAM_TTL_MS = 6 * HOUR_MS;
+const STANDINGS_TTL_MS = 2 * HOUR_MS;
+const FIXTURES_TTL_MS = 20 * 60 * 1000;
+const FORM_TTL_MS = 3 * HOUR_MS;
 
 // football-data.org returns 403 for competitions outside the plan and 429 on rate
 // limits; a single failing sub-request must not take down the whole snapshot.
@@ -21,6 +31,21 @@ async function fetchFootball<T>(path: string): Promise<T | null> {
     return null;
   }
   return (await res.json()) as T;
+}
+
+async function fetchFootballCached<T>(ctx: FootballCtx, key: string, ttlMs: number, path: string): Promise<T | null> {
+  const cached = (await ctx.runQuery(internal.football.readCached, { key })) as T | null;
+  if (cached) return cached;
+  const value = await fetchFootball<T>(path);
+  if (value != null) {
+    await ctx.runMutation(internal.cache.updateCacheTracking, {
+      dataType: key,
+      source: "football-api",
+      payload: JSON.stringify(value),
+      expiresAt: Date.now() + ttlMs,
+    });
+  }
+  return value;
 }
 
 type StandingLeague = {
@@ -54,14 +79,24 @@ function firstScheduled(matches?: Match[]) {
   return matches?.find((m) => m?.status === "SCHEDULED" || m?.status === "TIMED") ?? null;
 }
 
-async function getPastMatches(teamId?: number) {
+async function getPastMatches(ctx: FootballCtx, teamId?: number) {
   if (!teamId) return null;
-  const data = await fetchFootball<MatchesResponse>(`teams/${teamId}/matches?status=FINISHED&limit=5`);
+  const data = await fetchFootballCached<MatchesResponse>(
+    ctx,
+    `games-${teamId}-past-5`,
+    FORM_TTL_MS,
+    `teams/${teamId}/matches?status=FINISHED&limit=5`,
+  );
   return data?.matches ?? null;
 }
 
-async function buildSnapshot() {
-  const team = await fetchFootball<TeamResponse>(`teams/${LIVERPOOL_ID}`);
+async function buildSnapshot(ctx: FootballCtx) {
+  const team = await fetchFootballCached<TeamResponse>(
+    ctx,
+    `team-${LIVERPOOL_ID}`,
+    TEAM_TTL_MS,
+    `teams/${LIVERPOOL_ID}`,
+  );
 
   const leagueIds =
     team?.runningCompetitions
@@ -71,7 +106,14 @@ async function buildSnapshot() {
 
   const leagues = await Promise.all(
     leagueIds.map((leagueId) =>
-      leagueId ? fetchFootball<StandingLeague>(`competitions/${leagueId}/standings`) : null,
+      leagueId
+        ? fetchFootballCached<StandingLeague>(
+            ctx,
+            `league-${leagueId}`,
+            STANDINGS_TTL_MS,
+            `competitions/${leagueId}/standings`,
+          )
+        : null,
     ),
   );
   const leaguesData = leagues
@@ -82,10 +124,15 @@ async function buildSnapshot() {
     })
     .filter(Boolean) as Array<{ leagueId: string; league: StandingLeague }>;
 
-  const nextGames = await fetchFootball<MatchesResponse>(`teams/${LIVERPOOL_ID}/matches?status=SCHEDULED`);
+  const nextGames = await fetchFootballCached<MatchesResponse>(
+    ctx,
+    "games-liverpool-next",
+    FIXTURES_TTL_MS,
+    `teams/${LIVERPOOL_ID}/matches?status=SCHEDULED`,
+  );
   const matchDetails = firstScheduled(nextGames?.matches);
-  const awayForm = await getPastMatches(matchDetails?.awayTeam?.id);
-  const homeForm = await getPastMatches(matchDetails?.homeTeam?.id);
+  const awayForm = await getPastMatches(ctx, matchDetails?.awayTeam?.id);
+  const homeForm = await getPastMatches(ctx, matchDetails?.homeTeam?.id);
 
   return {
     team,
@@ -101,10 +148,17 @@ async function buildSnapshot() {
 const SNAPSHOT_CACHE_KEY = "soccer-snapshot";
 const SNAPSHOT_TTL_MS = 20 * 60 * 1000;
 
+export const readCached = internalQuery({
+  args: { key: v.string() },
+  handler: async (ctx, args): Promise<unknown> => {
+    return await readCachedJson(ctx, args.key);
+  },
+});
+
 export const readSnapshot = internalQuery({
-  args: {},
-  handler: async (ctx): Promise<unknown> => {
-    return await readCachedJson(ctx, SNAPSHOT_CACHE_KEY);
+  args: { allowStale: v.optional(v.boolean()) },
+  handler: async (ctx, args): Promise<unknown> => {
+    return await readCachedJson(ctx, SNAPSHOT_CACHE_KEY, { allowStale: args.allowStale });
   },
 });
 
@@ -124,7 +178,7 @@ export const storeSnapshot = internalMutation({
 export const refreshSnapshot = internalAction({
   args: {},
   handler: async (ctx) => {
-    const snapshot = await buildSnapshot();
+    const snapshot = await buildSnapshot(ctx);
     if (snapshot.team) {
       await ctx.runMutation(internal.football.storeSnapshot, { snapshot });
     }
@@ -135,8 +189,13 @@ export const refreshSnapshot = internalAction({
 export const ensureSnapshot = action({
   args: {},
   handler: async (ctx): Promise<unknown> => {
-    const cached = await ctx.runQuery(internal.football.readSnapshot);
+    const cached = await ctx.runQuery(internal.football.readSnapshot, {});
     if (cached) return cached;
-    return await ctx.runAction(internal.football.refreshSnapshot);
+    try {
+      return await ctx.runAction(internal.football.refreshSnapshot);
+    } catch (err) {
+      console.warn("soccer snapshot refresh failed, serving stale snapshot", err);
+      return await ctx.runQuery(internal.football.readSnapshot, { allowStale: true });
+    }
   },
 });
