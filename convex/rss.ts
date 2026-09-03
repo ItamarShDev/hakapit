@@ -54,7 +54,10 @@ export async function fetchAndParseRSS(url: string): Promise<RSSFeed | null> {
       const getAttribute = (xml: string, tag: string, attribute: string): string | undefined =>
         xml.match(new RegExp(`<${tag}[^>]*\\s${attribute}="([^"]+)"`, "i"))?.[1];
 
-      const channel = xml.match(/<channel[^>]*>([\s\S]*?)<\/channel>/i)?.[1] || "";
+      const channel = (xml.match(/<channel[^>]*>([\s\S]*?)<\/channel>/i)?.[1] || "").replace(
+        /<item[^>]*>[\s\S]*?<\/item>/gi,
+        "",
+      );
 
       const feed: RSSFeed = {
         title: getTextContent(channel, "title"),

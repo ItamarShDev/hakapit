@@ -88,3 +88,13 @@ export const cleanupExpiredCache = internalMutation({
     return { cleanedCount };
   },
 });
+
+export const clearCache = internalMutation({
+  args: { dataType: v.string() },
+  handler: async (ctx, args) => {
+    const existing = await getCacheEntry(ctx, args.dataType);
+    if (!existing) return { cleared: false };
+    await ctx.db.patch(existing._id, { expiresAt: 0, lastUpdated: Date.now(), updatedAt: Date.now() });
+    return { cleared: true };
+  },
+});
