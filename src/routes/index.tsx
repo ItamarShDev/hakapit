@@ -9,6 +9,7 @@ import { RecentTransfers } from "~/features/football/recent-transfers";
 import { StatsTable } from "~/features/football/stats/stats";
 import { Trophies } from "~/features/football/stats/trophies";
 import { LatestEpisode } from "~/features/podcast/latest-episode";
+import { ConvexBoundary } from "~/integrations/convex/convex-boundary";
 import { getConvexClient, isConvexAvailable } from "~/server/convex-client";
 import { fetchUpdatedLatestEpisode } from "~/server/rss/feed";
 import { getSoccerSnapshot } from "~/server/soccer-api";
@@ -139,11 +140,19 @@ function Home() {
       <div className="flex flex-col w-full gap-10">
         <Trophies />
         <div className="flex flex-wrap justify-center">
-          {convexEnabled ? <LatestEpisode podcast="hakapit" initialEpisode={latestEpisode} /> : null}
+          {convexEnabled ? (
+            <ConvexBoundary>
+              <LatestEpisode podcast="hakapit" initialEpisode={latestEpisode} />
+            </ConvexBoundary>
+          ) : null}
         </div>
         <Suspense fallback={<TransfersSkeleton />}>
           <div className="flex flex-wrap justify-center w-full">
-            {convexEnabled ? <RecentTransfers initialTransfers={transfers ?? undefined} /> : null}
+            {convexEnabled ? (
+              <ConvexBoundary>
+                <RecentTransfers initialTransfers={transfers ?? undefined} />
+              </ConvexBoundary>
+            ) : null}
           </div>
         </Suspense>
         {snapshotLoading ? (
