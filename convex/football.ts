@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 
 import { internal } from "./_generated/api";
-import { action, internalMutation, query } from "./_generated/server";
+import { action, internalAction, internalMutation, internalQuery } from "./_generated/server";
 import { readCachedJson, upsertCacheEntry } from "./cache";
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_DATA_API_KEY;
@@ -96,11 +96,11 @@ async function buildSnapshot() {
 }
 
 const SNAPSHOT_CACHE_KEY = "soccer-snapshot";
-const SNAPSHOT_TTL_MS = 10 * 60 * 1000;
+const SNAPSHOT_TTL_MS = 20 * 60 * 1000;
 
-export const getSnapshot = query({
+export const readSnapshot = internalQuery({
   args: {},
-  handler: async (ctx) => {
+  handler: async (ctx): Promise<unknown> => {
     return await readCachedJson(ctx, SNAPSHOT_CACHE_KEY);
   },
 });
@@ -118,11 +118,20 @@ export const storeSnapshot = internalMutation({
   },
 });
 
-export const refreshSnapshot = action({
+export const refreshSnapshot = internalAction({
   args: {},
   handler: async (ctx) => {
     const snapshot = await buildSnapshot();
     await ctx.runMutation(internal.football.storeSnapshot, { snapshot });
     return snapshot;
+  },
+});
+
+export const ensureSnapshot = action({
+  args: {},
+  handler: async (ctx): Promise<unknown> => {
+    const cached = await ctx.runQuery(internal.football.readSnapshot);
+    if (cached) return cached;
+    return await ctx.runAction(internal.football.refreshSnapshot);
   },
 });

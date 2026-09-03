@@ -174,17 +174,15 @@ export const syncFeedFromRSS = internalAction({
 });
 
 export const ensureFeedFresh = action({
-  args: { podcastName: v.string(), force: v.optional(v.boolean()) },
+  args: { podcastName: v.string() },
   handler: async (ctx, args) => {
     if (!PODCAST_RSS_URLS[args.podcastName]) {
       throw new Error(`Unknown podcast: ${args.podcastName}`);
     }
 
     const cacheKey = rssCacheKey(args.podcastName);
-    if (!args.force) {
-      const cacheStatus = await ctx.runQuery(internal.cache.isCacheExpired, { dataType: cacheKey });
-      if (!cacheStatus.expired) return { synced: false };
-    }
+    const cacheStatus = await ctx.runQuery(internal.cache.isCacheExpired, { dataType: cacheKey });
+    if (!cacheStatus.expired) return { synced: false };
 
     const result = await ctx.runAction(internal.podcasts.syncFeedFromRSS, { podcastName: args.podcastName });
     if (!result) return { synced: false };

@@ -23,7 +23,5 @@ const convex = getConvexClient("warn");
 
 export const getSoccerSnapshot = createServerFn({ method: "GET" }).handler(async (): Promise<SoccerSnapshot | null> => {
   if (!convex) return null;
-  const cached = (await convex.query(api.football.getSnapshot)) as SoccerSnapshot | null;
-  if (cached) return cached;
-  return (await convex.action(api.football.refreshSnapshot)) as SoccerSnapshot;
+  return (await convex.action(api.football.ensureSnapshot)) as SoccerSnapshot;
 });
