@@ -7,7 +7,9 @@ import { readCachedJson, upsertCacheEntry } from "./cache";
 const FOOTBALL_API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 const LIVERPOOL_ID = 64;
 
-async function fetchFootball<T>(path: string) {
+// football-data.org returns 403 for competitions outside the plan and 429 on rate
+// limits; a single failing sub-request must not take down the whole snapshot.
+async function fetchFootball<T>(path: string): Promise<T | null> {
   if (!FOOTBALL_API_KEY) {
     throw new Error("FOOTBALL_DATA_API_KEY missing in Convex environment");
   }
@@ -15,7 +17,8 @@ async function fetchFootball<T>(path: string) {
     headers: { "X-Auth-Token": FOOTBALL_API_KEY },
   });
   if (!res.ok) {
-    throw new Error(`football-data error ${res.status} for ${path}`);
+    console.warn(`football-data ${res.status} for ${path}`);
+    return null;
   }
   return (await res.json()) as T;
 }
@@ -80,7 +83,7 @@ async function buildSnapshot() {
     .filter(Boolean) as Array<{ leagueId: string; league: StandingLeague }>;
 
   const nextGames = await fetchFootball<MatchesResponse>(`teams/${LIVERPOOL_ID}/matches?status=SCHEDULED`);
-  const matchDetails = firstScheduled(nextGames.matches);
+  const matchDetails = firstScheduled(nextGames?.matches);
   const awayForm = await getPastMatches(matchDetails?.awayTeam?.id);
   const homeForm = await getPastMatches(matchDetails?.homeTeam?.id);
 
@@ -122,7 +125,9 @@ export const refreshSnapshot = internalAction({
   args: {},
   handler: async (ctx) => {
     const snapshot = await buildSnapshot();
-    await ctx.runMutation(internal.football.storeSnapshot, { snapshot });
+    if (snapshot.team) {
+      await ctx.runMutation(internal.football.storeSnapshot, { snapshot });
+    }
     return snapshot;
   },
 });
