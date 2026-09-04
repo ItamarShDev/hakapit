@@ -47,11 +47,12 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
   if (!awayForm || !homeForm || !nextGame) {
     return null;
   }
+  const isRunning = nextGame.status === "IN_PLAY" || nextGame.status === "PAUSED";
 
   return (
     <FullBleed data-testid="next-match-overview">
       <div className="flex justify-center">
-        <div className="text-slate-200 text-sm">{nextGame.status === "LIVE" ? "כרגע" : "המשחק הבא"}</div>
+        <div className="text-slate-200 text-sm">{isRunning ? "כרגע" : "המשחק הבא"}</div>
       </div>
       <div className="flex flex-row items-center justify-center gap-2">
         <div className="font-bold">{nextGame.competition.name}</div>
@@ -67,7 +68,7 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
         <div className="flex flex-col items-end gap-1">
           <TeamStatus
             team={nextGame.awayTeam}
-            isRunning={nextGame.status === "LIVE"}
+            isRunning={isRunning}
             iconPosition="after"
             score={getDisplayScore(nextGame.score, "away") ?? undefined}
           />
@@ -84,7 +85,7 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
         <div className="flex flex-col items-start gap-1">
           <TeamStatus
             team={nextGame.homeTeam}
-            isRunning={nextGame.status === "LIVE"}
+            isRunning={isRunning}
             score={getDisplayScore(nextGame.score, "home") ?? undefined}
           />
           <div>

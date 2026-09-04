@@ -15,6 +15,7 @@ const HOUR_MS = 60 * 60 * 1000;
 const TEAM_TTL_MS = 6 * HOUR_MS;
 const STANDINGS_TTL_MS = 2 * HOUR_MS;
 const FIXTURES_TTL_MS = 20 * 60 * 1000;
+const LIVE_TTL_MS = 2 * 60 * 1000;
 const FORM_TTL_MS = 3 * HOUR_MS;
 
 // football-data.org returns 403 for competitions outside the plan and 429 on rate
@@ -33,7 +34,12 @@ async function fetchFootball<T>(path: string): Promise<T | null> {
   return (await res.json()) as T;
 }
 
-async function fetchFootballCached<T>(ctx: FootballCtx, key: string, ttlMs: number, path: string): Promise<T | null> {
+async function fetchFootballCached<T>(
+  ctx: FootballCtx,
+  key: string,
+  ttl: number | ((value: T) => number),
+  path: string,
+): Promise<T | null> {
   const cached = (await ctx.runQuery(internal.football.readCached, { key })) as T | null;
   if (cached != null) return cached;
   const value = await fetchFootball<T>(path);
@@ -42,7 +48,7 @@ async function fetchFootballCached<T>(ctx: FootballCtx, key: string, ttlMs: numb
       dataType: key,
       source: "football-api",
       payload: JSON.stringify(value),
-      expiresAt: Date.now() + ttlMs,
+      expiresAt: Date.now() + (typeof ttl === "function" ? ttl(value) : ttl),
     });
   }
   return value;
@@ -75,8 +81,16 @@ type Match = {
 
 type MatchesResponse = { matches?: Match[] };
 
-function firstScheduled(matches?: Match[]) {
-  return matches?.find((m) => m?.status === "SCHEDULED" || m?.status === "TIMED") ?? null;
+const LIVE_STATUSES = ["IN_PLAY", "PAUSED"];
+const UPCOMING_STATUSES = ["SCHEDULED", "TIMED"];
+
+function isLive(match?: Match | null) {
+  return !!match?.status && LIVE_STATUSES.includes(match.status);
+}
+
+// Prefer a match in progress; otherwise the earliest upcoming one.
+function pickNextMatch(matches?: Match[]) {
+  return matches?.find(isLive) ?? matches?.find((m) => !!m?.status && UPCOMING_STATUSES.includes(m.status)) ?? null;
 }
 
 async function getPastMatches(ctx: FootballCtx, teamId?: number) {
@@ -134,10 +148,10 @@ async function buildSnapshot(ctx: FootballCtx): Promise<Snapshot> {
   const nextGames = await fetchFootballCached<MatchesResponse>(
     ctx,
     "games-liverpool-next",
-    FIXTURES_TTL_MS,
-    `teams/${LIVERPOOL_ID}/matches?status=SCHEDULED`,
+    (data) => (isLive(pickNextMatch(data.matches)) ? LIVE_TTL_MS : FIXTURES_TTL_MS),
+    `teams/${LIVERPOOL_ID}/matches?status=${[...LIVE_STATUSES, ...UPCOMING_STATUSES].join(",")}`,
   );
-  const matchDetails = firstScheduled(nextGames?.matches);
+  const matchDetails = pickNextMatch(nextGames?.matches);
   const awayForm = await getPastMatches(ctx, matchDetails?.awayTeam?.id);
   const homeForm = await getPastMatches(ctx, matchDetails?.homeTeam?.id);
 
@@ -202,7 +216,8 @@ export const storeSnapshot = internalMutation({
       dataType: SNAPSHOT_CACHE_KEY,
       source: "football-api",
       payload: JSON.stringify(args.snapshot),
-      expiresAt: Date.now() + SNAPSHOT_TTL_MS,
+      expiresAt:
+        Date.now() + (isLive((args.snapshot as Snapshot).nextMatchData?.matchDetails) ? LIVE_TTL_MS : SNAPSHOT_TTL_MS),
     });
     return args.snapshot;
   },
