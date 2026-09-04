@@ -182,14 +182,15 @@ function mergeWithPrevious(
   const nextId = next.matchDetails?.id;
   const sameMatch = nextId != null && nextId === prev?.matchDetails?.id;
 
-  const freshLeagueIds = new Set(fresh.leaguesData.map((l) => l.leagueId));
-  const keptLeagues = (previous.leaguesData ?? []).filter(
-    (l) => requestedLeagueIds.includes(l.leagueId) && !freshLeagueIds.has(l.leagueId),
-  );
+  const freshLeagues = new Map(fresh.leaguesData.map((entry) => [entry.leagueId, entry]));
+  const previousLeagues = new Map((previous.leaguesData ?? []).map((entry) => [entry.leagueId, entry]));
 
   return {
     team: fresh.team,
-    leaguesData: [...fresh.leaguesData, ...keptLeagues],
+    leaguesData: requestedLeagueIds.flatMap((leagueId) => {
+      const entry = freshLeagues.get(leagueId) ?? previousLeagues.get(leagueId);
+      return entry ? [entry] : [];
+    }),
     nextMatchData:
       !fixturesFetched && prev
         ? prev
