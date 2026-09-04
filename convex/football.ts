@@ -88,6 +88,15 @@ function isLive(match?: Match | null) {
   return !!match?.status && LIVE_STATUSES.includes(match.status);
 }
 
+// Live: refresh often. Upcoming: expire no later than kickoff so the first
+// post-kickoff request picks up the live status.
+function matchTtl(match: Match | null | undefined, defaultTtl: number) {
+  if (isLive(match)) return LIVE_TTL_MS;
+  const kickoff = match?.utcDate ? Date.parse(match.utcDate) : NaN;
+  if (Number.isNaN(kickoff)) return defaultTtl;
+  return Math.max(LIVE_TTL_MS, Math.min(defaultTtl, kickoff - Date.now()));
+}
+
 // Prefer a match in progress; otherwise the earliest upcoming one.
 function pickNextMatch(matches?: Match[]) {
   return matches?.find(isLive) ?? matches?.find((m) => !!m?.status && UPCOMING_STATUSES.includes(m.status)) ?? null;
@@ -148,7 +157,7 @@ async function buildSnapshot(ctx: FootballCtx): Promise<Snapshot> {
   const nextGames = await fetchFootballCached<MatchesResponse>(
     ctx,
     "games-liverpool-next",
-    (data) => (isLive(pickNextMatch(data.matches)) ? LIVE_TTL_MS : FIXTURES_TTL_MS),
+    (data) => matchTtl(pickNextMatch(data.matches), FIXTURES_TTL_MS),
     `teams/${LIVERPOOL_ID}/matches?status=${[...LIVE_STATUSES, ...UPCOMING_STATUSES].join(",")}`,
   );
   const matchDetails = pickNextMatch(nextGames?.matches);
@@ -216,8 +225,7 @@ export const storeSnapshot = internalMutation({
       dataType: SNAPSHOT_CACHE_KEY,
       source: "football-api",
       payload: JSON.stringify(args.snapshot),
-      expiresAt:
-        Date.now() + (isLive((args.snapshot as Snapshot).nextMatchData?.matchDetails) ? LIVE_TTL_MS : SNAPSHOT_TTL_MS),
+      expiresAt: Date.now() + matchTtl((args.snapshot as Snapshot).nextMatchData?.matchDetails, SNAPSHOT_TTL_MS),
     });
     return args.snapshot;
   },
