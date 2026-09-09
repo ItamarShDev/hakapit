@@ -47,17 +47,6 @@ export const cacheTracking = defineTable({
   updatedAt: v.number(),
 }).index("by_dataType", ["dataType"]);
 
-export const subscriptions = defineTable({
-  podcast: v.string(),
-  userId: v.string(),
-  expirationTime: v.optional(v.number()),
-  subscription: v.any(),
-  createdAt: v.number(),
-  updatedAt: v.number(),
-})
-  .index("by_userId", ["userId"])
-  .index("by_podcast", ["podcast"]);
-
 export const transfers = defineTable({
   playerId: v.number(),
   playerName: v.string(),
@@ -77,15 +66,9 @@ export const transfers = defineTable({
   .index("by_direction", ["direction"])
   .index("by_action", ["action"]);
 
-export const fetchTime = defineTable({
-  updatedAt: v.number(),
-});
-
 export default defineSchema({
   podcasts,
   episodes,
   cacheTracking,
-  subscriptions,
   transfers,
-  fetchTime,
 });
