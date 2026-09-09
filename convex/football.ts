@@ -102,6 +102,17 @@ function pickNextMatch(matches?: Match[]) {
   return matches?.find(isLive) ?? matches?.find((m) => !!m?.status && UPCOMING_STATUSES.includes(m.status)) ?? null;
 }
 
+const DAY_MS = 24 * HOUR_MS;
+const FIXTURES_WINDOW_DAYS = 60;
+
+function isoDate(ms: number) {
+  return new Date(ms).toISOString().slice(0, 10);
+}
+
+function fixturesWindow(now = Date.now()) {
+  return `dateFrom=${isoDate(now - DAY_MS)}&dateTo=${isoDate(now + FIXTURES_WINDOW_DAYS * DAY_MS)}`;
+}
+
 async function getPastMatches(ctx: FootballCtx, teamId?: number) {
   if (!teamId) return null;
   const data = await fetchFootballCached<MatchesResponse>(
@@ -154,11 +165,13 @@ async function buildSnapshot(ctx: FootballCtx): Promise<Snapshot> {
     })
     .filter(Boolean) as Array<{ leagueId: string; league: StandingLeague }>;
 
+  // The status filter accepts a single value only, so use a date window and
+  // let pickNextMatch choose between live and upcoming.
   const nextGames = await fetchFootballCached<MatchesResponse>(
     ctx,
     "games-liverpool-next",
     (data) => matchTtl(pickNextMatch(data.matches), FIXTURES_TTL_MS),
-    `teams/${LIVERPOOL_ID}/matches?status=${[...LIVE_STATUSES, ...UPCOMING_STATUSES].join(",")}`,
+    `teams/${LIVERPOOL_ID}/matches?${fixturesWindow()}`,
   );
   const matchDetails = pickNextMatch(nextGames?.matches);
   const awayForm = await getPastMatches(ctx, matchDetails?.awayTeam?.id);
