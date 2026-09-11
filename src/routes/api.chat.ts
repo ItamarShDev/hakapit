@@ -1,17 +1,13 @@
 import { chat } from "@tanstack/ai";
 import { createGeminiChat } from "@tanstack/ai-gemini";
+import { googleSearchTool } from "@tanstack/ai-gemini/tools";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { chatRequestSchema, getMinimalHistory } from "~/features/chat/chat-request";
 
 import type { StreamChunk } from "@tanstack/ai";
 
-// Shape required by Gemini's native Google Search grounding
-const searchTool = {
-  name: "google_search",
-  description: "Search Google for current information",
-  metadata: {},
-};
+const searchTool = googleSearchTool();
 
 const MAX_ATTEMPTS = 2;
 const MAX_CHUNKS = 100;
