@@ -59,7 +59,7 @@ export const Route = createFileRoute("/api/chat")({
         for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
           try {
             const stream = chat({
-              adapter: createGeminiChat("gemini-2.5-flash", apiKey),
+              adapter: createGeminiChat("gemini-3.5-flash-lite", apiKey),
               tools: [searchTool],
               systemPrompts: [
                 `You are a Liverpool FC expert. Always use the search tool to find current information. Keep responses short and factual. Current year: ${new Date().getFullYear()}.`,
