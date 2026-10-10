@@ -16,7 +16,7 @@ export default async function handler(request: IncomingMessage, response: Server
     const cause = error as { code?: string; name?: string; message?: string };
     const code = cause.code ?? cause.name ?? "UNKNOWN";
     const match = cause.message?.match(/Cannot find (?:package|module) ['"]([^'"]+)['"]/);
-    const missing = match?.[1];
+    const missing = match?.[1] ?? cause.message?.match(/require\(\) of ES Module ([^\s]+)/)?.[1];
     const diagnostic = /^[A-Z_a-z]+$/.test(code) ? code : "UNKNOWN";
     response.statusCode = 500;
     response.setHeader("Content-Type", "text/plain; charset=utf-8");

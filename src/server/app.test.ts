@@ -1,4 +1,7 @@
 import { describe, expect, it } from "bun:test";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import { createApp } from "./app";
 
@@ -31,6 +34,29 @@ function request(path: string, init?: RequestInit) {
   return app(new Request("https://hakapit.test" + path, init));
 }
 describe("Remix route parity", () => {
+  it("renders production HTML without depending on CDN files in the function directory", async () => {
+    const previous = process.cwd();
+    const directory = await mkdtemp(join(tmpdir(), "hakapit-function-"));
+    try {
+      process.chdir(directory);
+      const server = createApp(false, {
+        getSoccerSnapshot: async () => null,
+        getTransfersSnapshot: async () => null,
+        fetchUpdatedLatestEpisode: async () => episode,
+        fetchUpdatedFeed: async () => feed,
+        fetchEpisode: async () => episode,
+        chatResponse: async () => new Response(),
+      });
+      const response = await server(new Request("https://hakapit.test/hakapit"));
+      expect(response.status).toBe(200);
+      const html = await response.text();
+      expect(html).toContain("/assets/client.css");
+      expect(html).toContain("/assets/client.js");
+    } finally {
+      process.chdir(previous);
+      await rm(directory, { recursive: true });
+    }
+  });
   it("server-renders the Hebrew home, stylesheet and hydrated entry", async () => {
     const response = await request("/");
     const html = await response.text();
