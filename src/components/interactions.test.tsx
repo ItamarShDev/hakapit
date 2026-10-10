@@ -10,6 +10,7 @@ import { PlayButton } from "~/features/podcast/play-button";
 import Header from "~/layouts/header";
 import { PlayerProvider } from "~/layouts/player/provider";
 import { Popover, PopoverContent, PopoverTrigger } from "~/lib/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/lib/ui/tooltip";
 import { createNavigationResolver } from "~/navigation";
 
 import type { FrameHandle } from "remix/component";
@@ -129,6 +130,39 @@ describe("native update-function interactions", () => {
     expect(ui.$(".play svg:last-child")?.getAttribute("class")).toContain("scale-0");
     await ui.act(() => ui.$('[aria-label="סגור נגן"]')?.click());
     expect(audio.getAttribute("src")).toBeNull();
+  });
+  it("keeps focused tooltips within viewport edges without moving centered tooltips", async () => {
+    const ui = render(
+      <Tooltip>
+        <TooltipTrigger>W</TooltipTrigger>
+        <TooltipContent>1 - 4</TooltipContent>
+      </Tooltip>,
+    );
+    cleanup = ui.cleanup;
+    const element = ui.$('[role="tooltip"]') as unknown as HTMLElement;
+    let left = window.innerWidth - 100;
+    element.getBoundingClientRect = () => ({
+      x: left,
+      y: 0,
+      left,
+      right: left + 200,
+      top: 0,
+      bottom: 30,
+      width: 200,
+      height: 30,
+      toJSON() {},
+    });
+    const enter = () => element.parentElement?.dispatchEvent(new window.Event("pointerenter") as unknown as Event);
+    enter();
+    expect(element.style.marginLeft).toBe("-108px");
+    left = -20 - 108;
+    enter();
+    expect(element.style.marginLeft).toBe("28px");
+    left = 100 + 28;
+    enter();
+    expect(element.style.marginLeft).toBe("0px");
+    expect(element.className).not.toContain("group-focus-within");
+    expect(element.parentElement?.className).toContain(">[role=tooltip]");
   });
 });
 it("keeps audio mounted while transitioning between hydrated frames", async () => {
