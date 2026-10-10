@@ -163,6 +163,18 @@ describe("native update-function interactions", () => {
     expect(element.style.marginLeft).toBe("0px");
     expect(element.className).not.toContain("group-focus-within");
     expect(element.parentElement?.className).toContain(">[role=tooltip]");
+    Object.defineProperty(document.documentElement, "clientWidth", {
+      value: window.innerWidth - 15,
+      configurable: true,
+    });
+    try {
+      left = window.innerWidth - 100;
+      enter();
+      expect(element.style.marginLeft).toBe("-123px");
+      expect(element.style.maxWidth).toBe(window.innerWidth - 31 + "px");
+    } finally {
+      Reflect.deleteProperty(document.documentElement, "clientWidth");
+    }
   });
 });
 it("keeps audio mounted while transitioning between hydrated frames", async () => {

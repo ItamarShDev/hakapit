@@ -32,12 +32,14 @@ export function TooltipContent(handle: Handle<Props<"span"> & { side?: string }>
             const element = node as HTMLElement;
             const parent = element.parentElement;
             function position() {
+              const width = document.documentElement.clientWidth || window.innerWidth;
+              element.style.maxWidth = Math.max(0, width - 16) + "px";
               const rect = element.getBoundingClientRect();
               if (!rect.width) return;
               const offset = Number.parseFloat(element.style.marginLeft) || 0;
               const left = rect.left - offset;
               const right = rect.right - offset;
-              const shift = left < 8 ? 8 - left : Math.min(0, window.innerWidth - 8 - right);
+              const shift = left < 8 ? 8 - left : Math.min(0, width - 8 - right);
               element.style.marginLeft = shift + "px";
             }
             const reposition = () => {
