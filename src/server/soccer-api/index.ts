@@ -1,4 +1,3 @@
-import { createServerFn } from "@tanstack/react-start";
 import { api } from "convex/_generated/api";
 
 import { getConvexClient } from "~/server/convex-client";
@@ -21,7 +20,7 @@ export type SoccerSnapshot = {
 
 const convex = getConvexClient("warn");
 
-export const getSoccerSnapshot = createServerFn({ method: "GET" }).handler(async (): Promise<SoccerSnapshot | null> => {
+export async function getSoccerSnapshot(): Promise<SoccerSnapshot | null> {
   if (!convex) return null;
   return (await convex.action(api.football.ensureSnapshot)) as SoccerSnapshot;
-});
+}

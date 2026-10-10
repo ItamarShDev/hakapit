@@ -1,22 +1,5 @@
-import { ConvexQueryClient } from "@convex-dev/react-query";
-import { ConvexProvider } from "convex/react";
-import { useMemo } from "react";
-
-import { resolveConvexUrl } from "~/server/convex-client";
-
-const CONVEX_URL = resolveConvexUrl("warn") ?? undefined;
-
-export default function AppConvexProvider({ children }: { children: React.ReactNode }) {
-  const convexQueryClient = useMemo(() => {
-    if (!CONVEX_URL) {
-      return null;
-    }
-    return new ConvexQueryClient(CONVEX_URL);
-  }, []);
-
-  if (!convexQueryClient) {
-    return <>{children}</>;
-  }
-
-  return <ConvexProvider client={convexQueryClient.convexClient}>{children}</ConvexProvider>;
+import { type Handle, type RemixNode } from "remix/component";
+export function ConvexProvider(handle: Handle<{ url: string | null; children?: RemixNode }, { url: string | null }>) {
+  handle.context.set({ url: handle.props.url });
+  return () => handle.props.children;
 }

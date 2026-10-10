@@ -1,55 +1,11 @@
-# Testing with Playwright
+# Testing
 
-This project uses Playwright for end-to-end testing with comprehensive coverage of the Hebrew RTL web application.
+`bun test` runs the existing date, text-direction, podcast-name, and football-score tests, plus native Remix component interaction, SSR routing, chat SSE parsing, and HTML sanitization tests.
 
-## Quick Start
+`bun run check`, `bun run typecheck`, and `bun run build` verify formatting, lint, TypeScript, and browser/server production bundles.
 
-```bash
-# Install dependencies
-bun install
+Route tests use injected data services instead of calling a live Convex deployment. Interaction tests use Happy DOM and `remix/component/test`; they exercise explicit update functions and player context without external media or API calls.
 
-# Install Playwright browsers
-bun run test:e2e:install
+For a real-browser parity check, compare the main branch with this branch at both desktop and phone widths. Cover all three podcast themes, menu open/close, load more, episode links, back/forward navigation while audio plays, transfer popovers, trophy/form tooltips, and chat open/close/send/retry. Chat needs a valid Gemini key; live data requires a Convex deployment with the repository's functions.
 
-# Run all tests
-bun run test:e2e
-
-# Run tests in UI mode (interactive)
-bun run test:e2e:ui
-
-# Run tests in headed mode (visible browser)
-bun run test:e2e:headed
-
-# Run tests on specific browser
-bun run test:e2e:chrome
-bun run test:e2e:firefox
-bun run test:e2e:safari
-
-# Run responsive tests
-bun run test:e2e:responsive
-
-# Run Hebrew RTL tests
-bun run test:e2e:hebrew
-
-# View test report
-bun run test:e2e:report
-```
-
-## Test Structure
-
-- **`tests/page-objects/`** - Page Object Models for maintainable test code
-- **`tests/mocks/`** - API mocking infrastructure for deterministic testing
-- **`tests/homepage.spec.ts`** - Core homepage functionality tests
-- **`tests/responsive.spec.ts`** - Mobile/tablet/desktop responsive design tests
-- **`tests/hebrew-rtl.spec.ts`** - Hebrew language and RTL direction tests
-
-## CI/CD
-
-Tests automatically run on every GitHub commit across multiple browsers and devices. See `.github/workflows/e2e-tests.yml` for configuration.
-
-## Current Status
-
-✅ **36 core tests passing** - Critical user flows validated  
-🔄 **32 tests skipped** - Optimization opportunities for future iteration
-
-The foundation is production-ready with solid coverage of page loading, Hebrew text rendering, component visibility, and responsive design.
+The previous Playwright scripts referenced by this document were no longer present in the repository before this migration.

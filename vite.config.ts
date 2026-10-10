@@ -1,31 +1,15 @@
 import tailwindcss from "@tailwindcss/vite";
-import { devtools } from "@tanstack/devtools-vite";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
-import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
-
-const config = defineConfig({
-  resolve: {
-    tsconfigPaths: true,
+export default defineConfig(({ isSsrBuild }) => ({
+  resolve: { tsconfigPaths: true },
+  plugins: [tailwindcss()],
+  oxc: { jsx: { runtime: "automatic", importSource: "remix/component" } },
+  build: {
+    outDir: "dist/client",
+    rolldownOptions: {
+      input: "src/client.ts",
+      preserveEntrySignatures: "strict",
+      output: { entryFileNames: isSsrBuild ? "app.js" : "assets/client.js", assetFileNames: "assets/[name][extname]" },
+    },
   },
-  plugins: [
-    devtools({
-      editor: {
-        name: "windsurf",
-        open: async (path, lineNumber, columnNumber) => {
-          const { exec } = await import("node:child_process");
-          exec(
-            `windsurf-next -g "${path.replaceAll("$", "\\$")}${lineNumber ? `:${lineNumber}` : ""}${columnNumber ? `:${columnNumber}` : ""}"`,
-          );
-        },
-      },
-    }),
-    nitro(),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ],
-});
-
-export default config;
+}));

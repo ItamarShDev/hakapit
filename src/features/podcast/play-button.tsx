@@ -1,6 +1,7 @@
-import { PauseIcon, PlayIcon } from "@radix-ui/react-icons";
+import { type Handle } from "remix/component";
 
-import { usePlayer } from "~/layouts/player/provider";
+import { PlayerProvider } from "~/layouts/player/provider";
+import { PauseIcon, PlayIcon } from "~/lib/ui/icons";
 import { cn } from "~/lib/utils";
 
 import type { EpisodeWithPodcast } from "~/features/podcast/types";
@@ -11,32 +12,35 @@ interface PlayButtonProps {
   className?: string;
 }
 
-export function PlayButton({ episode, size = "md", className }: PlayButtonProps) {
-  const playerProps = usePlayer();
-  if (!playerProps) return null;
+export function PlayButton(handle: Handle<PlayButtonProps>) {
+  return () => {
+    const { episode, size = "md", className } = handle.props;
+    const playerProps = handle.context.get(PlayerProvider);
+    if (!playerProps) return null;
 
-  const isPlaying = playerProps.isPlaying && playerProps.currentlyPlaying?.guid === episode?.guid;
+    const isPlaying = playerProps.isPlaying && playerProps.currentlyPlaying?.guid === episode?.guid;
 
-  const sizeClasses = {
-    sm: "size-4",
-    md: "size-7 md:size-4",
-    lg: "size-8 md:size-6",
+    const sizeClasses = {
+      sm: "size-4",
+      md: "size-7 md:size-4",
+      lg: "size-8 md:size-6",
+    };
+
+    return (
+      <div className={cn("relative z-10", sizeClasses[size], className)}>
+        <PlayIcon
+          className={cn(
+            "absolute inset-0 transition-all duration-300 ease-in-out",
+            isPlaying ? "scale-0 rotate-180 opacity-0" : "scale-100 rotate-0 opacity-100",
+          )}
+        />
+        <PauseIcon
+          className={cn(
+            "absolute inset-0 transition-all duration-300 ease-in-out",
+            isPlaying ? "scale-100 rotate-0 opacity-100" : "scale-0 -rotate-180 opacity-0",
+          )}
+        />
+      </div>
+    );
   };
-
-  return (
-    <div className={cn("relative z-10", sizeClasses[size], className)}>
-      <PlayIcon
-        className={cn(
-          "absolute inset-0 transition-all duration-300 ease-in-out",
-          isPlaying ? "scale-0 rotate-180 opacity-0" : "scale-100 rotate-0 opacity-100",
-        )}
-      />
-      <PauseIcon
-        className={cn(
-          "absolute inset-0 transition-all duration-300 ease-in-out",
-          isPlaying ? "scale-100 rotate-0 opacity-100" : "scale-0 -rotate-180 opacity-0",
-        )}
-      />
-    </div>
-  );
 }

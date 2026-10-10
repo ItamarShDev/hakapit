@@ -1,20 +1,17 @@
+import { api } from "convex/_generated/api";
+import { type Handle } from "remix/component";
+
 import { LastEpisodeCardPreview } from "~/features/podcast/episode-card";
-import { useLatestEpisode } from "~/features/podcast/use-podcasts";
+import { subscribe } from "~/integrations/convex/subscription";
 
 import type { PodcastName } from "~/features/podcast/podcasts";
 import type { Episode } from "~/features/podcast/types";
-
-export function LatestEpisode({ podcast, initialEpisode }: { podcast: PodcastName; initialEpisode?: Episode | null }) {
-  const liveEpisode = useLatestEpisode(podcast);
-  const episode = liveEpisode ?? initialEpisode;
-
-  if (episode === undefined) {
-    return <div className="size-22 text-center vertical-align-middle text-slate-700 italic">טוען פרק</div>;
-  }
-
-  if (!episode) {
-    return null;
-  }
-
-  return <LastEpisodeCardPreview episode={{ ...episode, podcast: { name: podcast } }} />;
+export function LatestEpisode(handle: Handle<{ podcast: PodcastName; initialEpisode?: Episode | null }>) {
+  const liveEpisode = subscribe(handle, api.podcasts.getLatestEpisode, { podcastName: handle.props.podcast });
+  return () => {
+    const episode = liveEpisode() ?? handle.props.initialEpisode;
+    return episode ? (
+      <LastEpisodeCardPreview episode={{ ...episode, podcast: { name: handle.props.podcast } }} />
+    ) : null;
+  };
 }

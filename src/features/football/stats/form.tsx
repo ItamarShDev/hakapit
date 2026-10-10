@@ -1,3 +1,5 @@
+import { type Handle, type Props } from "remix/component";
+
 import { Avatar, AvatarFallback, AvatarImage } from "~/lib/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/lib/ui/tooltip";
 import { LIVERPOOL_TEAM_ID } from "~/server/soccer-api/constants";
@@ -36,41 +38,54 @@ function scoreString(score: Match["score"]) {
   return `${score.fullTime.home} - ${score.fullTime.away}`;
 }
 
-const TooltipScore: React.FC<{ game: Match }> = ({ game }) => {
-  return (
-    <div className="flex flex-row gap-5">
-      <Avatar className="h-[25px] w-[25px]">
-        <AvatarImage src={game.homeTeam.crest} />
-        <AvatarFallback>{game.homeTeam.name}</AvatarFallback>
-      </Avatar>
-      <div className={`text-xl direction-alternate ${getFormTextColor(game)}`}>{scoreString(game.score)}</div>
-      <Avatar className="h-[25px] w-[25px]">
-        <AvatarImage src={game.awayTeam.crest} />
-        <AvatarFallback>{game.awayTeam.name}</AvatarFallback>
-      </Avatar>
-    </div>
-  );
-};
+function TooltipScore(handle: Handle<{ game: Match }>) {
+  return () => {
+    const { game } = handle.props;
 
-export const ResultTooltip: React.FC<React.HTMLAttributes<HTMLDivElement> & { game: Match }> = ({ game, children }) => (
-  <TooltipProvider key={game.id}>
-    <Tooltip>
-      <TooltipTrigger>{children}</TooltipTrigger>
-      <TooltipContent side="top" className="rounded-xl bg-popover border-accent">
-        <TooltipScore game={game} />
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-);
+    return (
+      <div className="flex flex-row gap-5">
+        <Avatar className="h-[25px] w-[25px]">
+          <AvatarImage src={game.homeTeam.crest} />
+          <AvatarFallback>{game.homeTeam.name}</AvatarFallback>
+        </Avatar>
+        <div className={`text-xl direction-alternate ${getFormTextColor(game)}`}>{scoreString(game.score)}</div>
+        <Avatar className="h-[25px] w-[25px]">
+          <AvatarImage src={game.awayTeam.crest} />
+          <AvatarFallback>{game.awayTeam.name}</AvatarFallback>
+        </Avatar>
+      </div>
+    );
+  };
+}
 
-const Form: React.FC<{ form?: Match[] }> = ({ form }) => {
-  return form?.map((game) => (
-    <ResultTooltip game={game} key={game.id}>
-      <Avatar className="h-[25px] w-[25px]">
-        <AvatarFallback className={`scale-75 ${getFormColor(game)}`}>{resultToString(game)}</AvatarFallback>
-      </Avatar>
-    </ResultTooltip>
-  ));
-};
+export function ResultTooltip(handle: Handle<Props<"div"> & { game: Match }>) {
+  return () => {
+    const { game, children } = handle.props;
+    return (
+      <TooltipProvider key={game.id}>
+        <Tooltip>
+          <TooltipTrigger>{children}</TooltipTrigger>
+          <TooltipContent side="top" className="rounded-xl bg-popover border-accent">
+            <TooltipScore game={game} />
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+}
+
+function Form(handle: Handle<{ form?: Match[] }>) {
+  return () => {
+    const { form } = handle.props;
+
+    return form?.map((game) => (
+      <ResultTooltip game={game} key={game.id}>
+        <Avatar className="h-[25px] w-[25px]">
+          <AvatarFallback className={`scale-75 ${getFormColor(game)}`}>{resultToString(game)}</AvatarFallback>
+        </Avatar>
+      </ResultTooltip>
+    ));
+  };
+}
 
 export default Form;
