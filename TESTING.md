@@ -4,6 +4,8 @@
 
 `bun run check`, `bun run typecheck`, and `bun run build` verify formatting, lint, TypeScript, and browser/server production bundles.
 
+After building, `node --no-experimental-require-module --input-type=module -e "await import('./dist/server/app.js')"` checks that the SSR bundle loads without Node's require-ESM interoperability, matching the Vercel runtime failure mode. CI runs this check; the sanitizer is pinned to the compatible 2.17.0 release.
+
 Route tests use injected data services instead of calling a live Convex deployment. Interaction tests use Happy DOM and `remix/component/test`; they exercise explicit update functions and player context without external media or API calls.
 
 For a real-browser parity check, compare the main branch with this branch at both desktop and phone widths. Cover all three podcast themes, menu open/close, load more, episode links, back/forward navigation while audio plays, transfer popovers, trophy/form tooltips, and chat open/close/send/retry. Chat needs a valid Gemini key; live data requires a Convex deployment with the repository's functions.
