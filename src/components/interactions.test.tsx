@@ -10,7 +10,9 @@ import { PlayButton } from "~/features/podcast/play-button";
 import Header from "~/layouts/header";
 import { PlayerProvider } from "~/layouts/player/provider";
 import { Popover, PopoverContent, PopoverTrigger } from "~/lib/ui/popover";
+import { createNavigationResolver } from "~/navigation";
 
+import type { FrameHandle } from "remix/component";
 import type { Episode } from "~/features/podcast/types";
 import type { PageData } from "~/page-data";
 const window = new Window({ url: "https://hakapit.test/" });
@@ -129,7 +131,7 @@ describe("native update-function interactions", () => {
     expect(audio.getAttribute("src")).toBeNull();
   });
 });
-it("hydrates native entries and keeps audio mounted across frame navigation", async () => {
+it("keeps audio mounted while transitioning between hydrated frames", async () => {
   const episode: Episode = {
     guid: "sample-1",
     episodeNumber: 1,
@@ -161,7 +163,32 @@ it("hydrates native entries and keeps audio mounted across frame navigation", as
   document.write(await html(page));
   document.close();
   let nextHtml = "";
-  const runtime = run({ loadModule: () => Application, resolveFrame: () => nextHtml });
+  let oldTheme = "";
+  let newTheme = "";
+  let transitionFinished: Promise<void> | undefined;
+  const originalTransition = document.startViewTransition;
+  document.startViewTransition = (update) => {
+    oldTheme = document.body.className;
+    const updateCallbackDone = Promise.resolve().then(async () => {
+      if (typeof update === "function") await update();
+      newTheme = document.body.className;
+    });
+    transitionFinished = updateCallbackDone;
+    return {
+      ready: Promise.resolve(),
+      updateCallbackDone,
+      finished: updateCallbackDone,
+      types: new Set<string>(),
+      skipTransition() {},
+    };
+  };
+  const runtime = run({
+    loadModule: () => Application,
+    resolveFrame: createNavigationResolver(
+      () => runtime.frames.top,
+      () => new Response(nextHtml),
+    ),
+  });
   try {
     await runtime.ready();
     const audio = document.querySelector("audio")!;
@@ -187,11 +214,145 @@ it("hydrates native entries and keeps audio mounted across frame navigation", as
     runtime.frames.top.src = "https://hakapit.test/nitk";
     await runtime.frames.top.reload();
     await runtime.ready();
+    await transitionFinished;
     runtime.flush();
     expect(document.querySelector("audio") === audio).toBe(true);
     expect(document.querySelector("audio")?.getAttribute("src")).toBe(episode.audioUrl);
     expect(document.body.className).toBe("nitk");
+    expect(oldTheme).toBe("hakapit");
+    expect(newTheme).toBe("nitk");
   } finally {
     runtime.dispose();
+    document.startViewTransition = originalTransition;
   }
+});
+
+function fakeFrame() {
+  return Object.assign(new EventTarget(), { src: "https://hakapit.test/nitk" }) as FrameHandle;
+}
+
+describe("navigation transitions", () => {
+  it("retains the response and renders even when snapshots are rejected", async () => {
+    const frame = fakeFrame();
+    const response = new Response("destination", { status: 404 });
+    const original = document.startViewTransition;
+    let finished: Promise<void> | undefined;
+    document.startViewTransition = (update) => {
+      const updateCallbackDone = Promise.resolve().then(async () => {
+        if (typeof update === "function") await update();
+      });
+      finished = updateCallbackDone;
+      return {
+        ready: Promise.reject(new Error("duplicate transition names")),
+        types: new Set<string>(),
+        updateCallbackDone,
+        finished: updateCallbackDone,
+        skipTransition() {},
+      };
+    };
+    try {
+      const resolve = createNavigationResolver(
+        () => frame,
+        () => response,
+      );
+      expect(await resolve(frame.src)).toBe(response);
+      expect(response.bodyUsed).toBe(false);
+      frame.dispatchEvent(new Event("reloadComplete"));
+      await finished;
+    } finally {
+      document.startViewTransition = original;
+    }
+  });
+  it("does not hang if navigation aborts before the snapshot callback runs", async () => {
+    const frame = fakeFrame();
+    const response = new Response("cancelled destination");
+    const controller = new AbortController();
+    const original = document.startViewTransition;
+    const started = Promise.withResolvers<void>();
+    const finished = Promise.withResolvers<void>();
+    let skipped = false;
+    let callback: (() => Promise<void> | void) | undefined;
+    document.startViewTransition = (update) => {
+      if (typeof update === "function") callback = update;
+      started.resolve();
+      return {
+        ready: Promise.resolve(),
+        types: new Set<string>(),
+        updateCallbackDone: finished.promise,
+        finished: finished.promise,
+        skipTransition() {
+          skipped = true;
+        },
+      };
+    };
+    try {
+      const resolve = createNavigationResolver(
+        () => frame,
+        () => response,
+      );
+      const pending = resolve(frame.src, { signal: controller.signal });
+      await started.promise;
+      controller.abort();
+      expect(await pending).toBe(response);
+      await callback?.();
+      expect(skipped).toBe(true);
+      finished.resolve();
+    } finally {
+      document.startViewTransition = original;
+    }
+  });
+  it("respects reduced motion without buffering or animating the response", async () => {
+    const frame = fakeFrame();
+    const response = new Response("destination");
+    const original = window.matchMedia;
+    const originalTransition = document.startViewTransition;
+    window.matchMedia = (query) => {
+      const result = original.call(window, query);
+      Object.defineProperty(result, "matches", { value: true });
+      return result;
+    };
+    document.startViewTransition = () => {
+      throw new Error("should not animate");
+    };
+    try {
+      const resolve = createNavigationResolver(
+        () => frame,
+        () => response,
+      );
+      expect(await resolve(frame.src)).toBe(response);
+      expect(response.bodyUsed).toBe(false);
+    } finally {
+      window.matchMedia = original;
+      document.startViewTransition = originalTransition;
+    }
+  });
+  it("preserves native request headers, form encoding, and error handling", async () => {
+    const frame = fakeFrame();
+    const originalFetch = globalThis.fetch;
+    const requests: RequestInit[] = [];
+    const formData = new FormData();
+    formData.set("title", "hello world");
+    let status = 200;
+    globalThis.fetch = (async (_url, init) => {
+      requests.push(init!);
+      return new Response("content", { status, headers: { "Content-Type": "text/html" } });
+    }) as typeof fetch;
+    try {
+      const resolve = createNavigationResolver(() => frame);
+      await resolve(frame.src, {
+        target: "form",
+        method: "POST",
+        formData,
+        encType: "application/x-www-form-urlencoded",
+      });
+      expect((requests[0].headers as Headers).get("X-Remix-Frame")).toBe("true");
+      expect((requests[0].headers as Headers).get("X-Remix-Target")).toBe("form");
+      expect(requests[0].mode).toBe("same-origin");
+      expect(requests[0].body?.toString()).toBe("title=hello+world");
+      status = 500;
+      await expect(resolve(frame.src)).rejects.toThrow("Failed to resolve frame: 500");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
 });
