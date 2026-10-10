@@ -4,6 +4,11 @@ import { createRequestListener } from "remix/node-fetch-server";
 import { app } from "../dist/server/app.js";
 
 import type { IncomingMessage, ServerResponse } from "node:http";
-export default function handler(request: IncomingMessage, response: ServerResponse) {
-  return createRequestListener(app, { trustProxy: true })(request, response);
+export default async function handler(request: IncomingMessage, response: ServerResponse) {
+  await new Promise<void>((resolve, reject) => {
+    response.once("finish", resolve);
+    response.once("close", resolve);
+    response.once("error", reject);
+    createRequestListener(app, { trustProxy: true })(request, response);
+  });
 }

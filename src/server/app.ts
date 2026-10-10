@@ -1,5 +1,5 @@
 import { api } from "convex/_generated/api";
-import { readFile, readdir, stat } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -37,11 +37,7 @@ const services = {
 export function createApp(development = false, data: typeof services = services) {
   const router = createRouter();
   async function pageResponse(request: Request, page: PageData, status = 200) {
-    const styles = development
-      ? ["/src/styles.css"]
-      : (await readdir(resolve("dist/client/assets")))
-          .filter((name) => name.endsWith(".css"))
-          .map((name) => "/assets/" + name);
+    const styles = [development ? "/src/styles.css" : "/assets/client.css"];
     return new Response(
       renderToStream(createElement(Document, { page, development, styles }), {
         signal: request.signal,
