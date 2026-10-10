@@ -1,68 +1,32 @@
-import { Link, type LinkProps, linkOptions, useRouterState } from "@tanstack/react-router";
+import { type Handle, type Props } from "remix/component";
 
+import { Link } from "~/components/link";
 import { cn } from "~/lib/utils";
-
-function LinkItem({
-  label,
-  withBorder,
-  onSelect,
-  ...linkProps
-}: {
-  label: string;
-  withBorder: boolean;
-  onSelect?: () => void;
-} & LinkProps) {
-  const pathname = useRouterState({
-    select: (s) => s.location.pathname,
-  });
-  return (
-    <>
-      <Link
-        preload={"intent"}
-        {...linkProps}
-        onClick={onSelect}
-        className={cn(pathname === linkProps.href && "underline")}
-        resetScroll={false}
-      >
-        {label}
-      </Link>
-      {withBorder && <span className="text-accent lg:inline-block hidden">|</span>}
-    </>
-  );
-}
-export const Links: React.FC<
-  React.HTMLAttributes<HTMLDivElement> & { visibilityClass?: string; onSelect?: () => void }
-> = (props) => {
-  const links = linkOptions([
-    {
-      to: "/",
-      href: "/",
-      label: "בית",
-    },
-    {
-      to: "/$podcast",
-      params: { podcast: "hakapit" },
-      href: "/hakapit",
-      label: "הכפית",
-    },
-    {
-      to: "/$podcast",
-      params: { podcast: "nitk" },
-      href: "/nitk",
-      label: "שכונה בממלכה",
-    },
-    {
-      to: "/$podcast",
-      params: { podcast: "balcony-albums" },
-      href: "/balcony-albums",
-      label: "אלבומים במרפסת",
-    },
-  ]);
-  return (
-    <nav className={cn("gap-2 lg:gap-4 links text-1xl overflow-hidden", props.className)}>
-      {links.map((link, index) => (
-        <LinkItem onSelect={props.onSelect} withBorder={index !== links.length - 1} key={link.href} {...link} />
+const links = [
+  ["/", "בית"],
+  ["/hakapit", "הכפית"],
+  ["/nitk", "שכונה בממלכה"],
+  ["/balcony-albums", "אלבומים במרפסת"],
+];
+export function Links(handle: Handle<Props<"nav"> & { onSelect?: () => void }>) {
+  return () => (
+    <nav className={cn("gap-2 lg:gap-4 links text-1xl overflow-hidden", handle.props.className)}>
+      {links.map(([href, label], index) => (
+        <>
+          <Link
+            key={href}
+            to={href}
+            className={
+              new URL(handle.frames.top.src, "https://hakapit.online").pathname === href ? "underline" : undefined
+            }
+            resetScroll={false}
+            onSelect={handle.props.onSelect}
+          >
+            {label}
+          </Link>
+          {index !== links.length - 1 && <span className="text-accent lg:inline-block hidden">|</span>}
+        </>
       ))}
     </nav>
   );
-};
+}

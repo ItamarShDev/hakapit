@@ -6,7 +6,8 @@ const metaEnv =
 export type ConvexUrlMissingMode = "throw" | "warn" | "silent";
 
 export function resolveConvexUrl(onMissing: ConvexUrlMissingMode = "throw"): string | null {
-  const convexUrl = process.env.CONVEX_URL ?? metaEnv?.CONVEX_URL ?? metaEnv?.VITE_CONVEX_URL;
+  const convexUrl =
+    process.env.CONVEX_URL ?? process.env.VITE_CONVEX_URL ?? metaEnv?.CONVEX_URL ?? metaEnv?.VITE_CONVEX_URL;
 
   if (!convexUrl) {
     switch (onMissing) {

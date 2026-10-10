@@ -1,98 +1,104 @@
-import { Image } from "@unpic/react";
+import { type Handle, type Props, type RemixNode } from "remix/component";
 
 import { getDisplayScore } from "./score";
 import Form from "~/features/football/stats/form";
 import TeamNameAndAvatar from "~/features/football/team-avatar";
 import { heebo } from "~/lib/fonts";
+import { Image } from "~/lib/ui/image";
 
-import type React from "react";
 import type { NextMatchData } from "~/server/soccer-api";
 import type { Team } from "~/server/soccer-api/types/team-matches";
 
-function TeamStatus({
-  team,
-  score,
-  isRunning = false,
-  iconPosition = "before",
-}: {
-  team: Team;
-  score?: number;
-  isRunning?: boolean;
-  iconPosition?: "before" | "after";
-}) {
-  return (
-    <div>
-      <TeamNameAndAvatar team={team} iconPosition={iconPosition} />
-      {isRunning && <div className="text-xs">{score}</div>}
-    </div>
-  );
+function TeamStatus(
+  handle: Handle<{
+    team: Team;
+    score?: number;
+    isRunning?: boolean;
+    iconPosition?: "before" | "after";
+  }>,
+) {
+  return () => {
+    const { team, score, isRunning = false, iconPosition = "before" } = handle.props;
+
+    return (
+      <div>
+        <TeamNameAndAvatar team={team} iconPosition={iconPosition} />
+        {isRunning && <div className="text-xs">{score}</div>}
+      </div>
+    );
+  };
 }
 
-export function FullBleed({
-  children,
-  ...props
-}: { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div className={`flex flex-col gap-2  pb-6 bg-primary py-3 full-bleed ${heebo.className}`} {...props}>
-      {children}
-    </div>
-  );
+export function FullBleed(handle: Handle<{ children: RemixNode } & Props<"div">>) {
+  return () => {
+    const { children, ...props } = handle.props;
+
+    return (
+      <div className={`flex flex-col gap-2  pb-6 bg-primary py-3 full-bleed ${heebo.className}`} {...props}>
+        {children}
+      </div>
+    );
+  };
 }
 
-export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchData | undefined }) {
-  if (!nextMatchData) {
-    return null;
-  }
-  const { awayForm, homeForm, matchDetails: nextGame } = nextMatchData;
-  if (!awayForm || !homeForm || !nextGame) {
-    return null;
-  }
-  const isRunning = nextGame.status === "IN_PLAY" || nextGame.status === "PAUSED";
+export function NextMatchOverview(handle: Handle<{ nextMatchData: NextMatchData | undefined }>) {
+  return () => {
+    const { nextMatchData } = handle.props;
 
-  return (
-    <FullBleed data-testid="next-match-overview">
-      <div className="flex justify-center">
-        <div className="text-slate-200 text-sm">{isRunning ? "כרגע" : "המשחק הבא"}</div>
-      </div>
-      <div className="flex flex-row items-center justify-center gap-2">
-        <div className="font-bold">{nextGame.competition.name}</div>
-        <Image
-          className="h-5"
-          width={20}
-          height={20}
-          src={nextGame.competition.emblem}
-          alt={`${nextGame.competition.name} logo`}
-        />
-      </div>
-      <div className={`game-title ${heebo.className}`}>
-        <div className="flex flex-col items-end gap-1">
-          <TeamStatus
-            team={nextGame.awayTeam}
-            isRunning={isRunning}
-            iconPosition="after"
-            score={getDisplayScore(nextGame.score, "away") ?? undefined}
+    if (!nextMatchData) {
+      return null;
+    }
+    const { awayForm, homeForm, matchDetails: nextGame } = nextMatchData;
+    if (!awayForm || !homeForm || !nextGame) {
+      return null;
+    }
+    const isRunning = nextGame.status === "IN_PLAY" || nextGame.status === "PAUSED";
+
+    return (
+      <FullBleed data-testid="next-match-overview">
+        <div className="flex justify-center">
+          <div className="text-slate-200 text-sm">{isRunning ? "כרגע" : "המשחק הבא"}</div>
+        </div>
+        <div className="flex flex-row items-center justify-center gap-2">
+          <div className="font-bold">{nextGame.competition.name}</div>
+          <Image
+            className="h-5"
+            width={20}
+            height={20}
+            src={nextGame.competition.emblem}
+            alt={`${nextGame.competition.name} logo`}
           />
-          <div>
-            <Form form={awayForm} />
+        </div>
+        <div className={`game-title ${heebo.className}`}>
+          <div className="flex flex-col items-end gap-1">
+            <TeamStatus
+              team={nextGame.awayTeam}
+              isRunning={isRunning}
+              iconPosition="after"
+              score={getDisplayScore(nextGame.score, "away") ?? undefined}
+            />
+            <div>
+              <Form form={awayForm} />
+            </div>
+          </div>
+
+          {nextGame?.utcDate && (
+            <div className="max-w-24 text-wrap text-xs">
+              {new Date(nextGame.utcDate).toLocaleDateString()} {new Date(nextGame.utcDate).toLocaleTimeString()}
+            </div>
+          )}
+          <div className="flex flex-col items-start gap-1">
+            <TeamStatus
+              team={nextGame.homeTeam}
+              isRunning={isRunning}
+              score={getDisplayScore(nextGame.score, "home") ?? undefined}
+            />
+            <div>
+              <Form form={homeForm} />
+            </div>
           </div>
         </div>
-
-        {nextGame?.utcDate && (
-          <div className="max-w-24 text-wrap text-xs">
-            {new Date(nextGame.utcDate).toLocaleDateString()} {new Date(nextGame.utcDate).toLocaleTimeString()}
-          </div>
-        )}
-        <div className="flex flex-col items-start gap-1">
-          <TeamStatus
-            team={nextGame.homeTeam}
-            isRunning={isRunning}
-            score={getDisplayScore(nextGame.score, "home") ?? undefined}
-          />
-          <div>
-            <Form form={homeForm} />
-          </div>
-        </div>
-      </div>
-    </FullBleed>
-  );
+      </FullBleed>
+    );
+  };
 }

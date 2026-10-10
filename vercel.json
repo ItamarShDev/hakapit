@@ -1,5 +1,7 @@
 {
-  "framework": "tanstack-start",
+  "framework": null,
   "buildCommand": "if [ \"$VERCEL_ENV\" = \"production\" ]; then bunx convex deploy --cmd 'bun run build'; else bun run build; fi",
-  "outputDirectory": ".output"
+  "outputDirectory": "dist/client",
+  "functions": { "api/index.ts": { "includeFiles": "dist/**", "maxDuration": 60 } },
+  "routes": [{ "handle": "filesystem" }, { "src": "/.*", "dest": "/api/index" }]
 }
