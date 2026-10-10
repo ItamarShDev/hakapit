@@ -10,8 +10,8 @@ const episode: Episode = {
   episodeNumber: 42,
   guid: "sample-42",
   title: "פרק 42",
-  description: "<p>תיאור הפרק</p>",
-  htmlDescription: "<p>תיאור הפרק</p>",
+  description: "<![CDATA[<p>תיאור הפרק</p>]]>",
+  htmlDescription: "<![CDATA[<p>תיאור הפרק</p>]]>",
   audioUrl: "https://example.com/episode.mp3",
   publishedAt: 1,
   podcast: { name: "hakapit" },
@@ -79,13 +79,14 @@ describe("Remix route parity", () => {
       expect(html).toContain("masonry");
       expect(html).toContain("/" + podcast + "/episodes/42");
       expect(html).toContain("הצג עוד");
+      expect(html).toContain("<p>תיאור הפרק</p>");
     });
   it("renders latest and numbered episode detail routes", async () => {
     for (const path of ["/hakapit/latest", "/hakapit/episodes/42"]) {
       const response = await request(path);
       const html = await response.text();
       expect(response.status).toBe(200);
-      expect(html).toContain("תיאור הפרק");
+      expect(html).toContain("<p>תיאור הפרק</p>");
       expect(html).toContain("episode.mp3");
     }
   });

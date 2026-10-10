@@ -136,6 +136,8 @@ it("keeps audio mounted while transitioning between hydrated frames", async () =
     guid: "sample-1",
     episodeNumber: 1,
     title: "sample",
+    htmlDescription: "<![CDATA[<p>Visible description</p>]]>",
+    description: "<![CDATA[<p>Visible detail description</p>]]>",
     audioUrl: "https://example.com/sample.mp3",
   };
   const base = { path: "/hakapit", podcast: "hakapit" as const, title: "הכפית", description: "feed", image: "" };
@@ -191,6 +193,7 @@ it("keeps audio mounted while transitioning between hydrated frames", async () =
   });
   try {
     await runtime.ready();
+    expect(document.querySelector(".card-content")?.innerHTML).toContain("<p>Visible description</p>");
     const audio = document.querySelector("audio")!;
     audio.load = () => {};
     audio.play = async () => {
@@ -221,6 +224,17 @@ it("keeps audio mounted while transitioning between hydrated frames", async () =
     expect(document.body.className).toBe("nitk");
     expect(oldTheme).toBe("hakapit");
     expect(newTheme).toBe("nitk");
+    expect(document.querySelector(".card-content")?.innerHTML).toContain("<p>Visible description</p>");
+    nextHtml = await html({ ...base, path: "/hakapit/episodes/1", kind: "episode", episode });
+    runtime.frames.top.src = "https://hakapit.test/hakapit/episodes/1";
+    await runtime.frames.top.reload();
+    await runtime.ready();
+    await transitionFinished;
+    expect(document.querySelector('[style*="episode-content"]')?.innerHTML).toContain(
+      "<p>Visible detail description</p>",
+    );
+    expect(audio.isConnected).toBe(true);
+    expect(audio.getAttribute("src")).toBe(episode.audioUrl);
   } finally {
     runtime.dispose();
     document.startViewTransition = originalTransition;
