@@ -371,7 +371,7 @@ test("renders responsive image preloads and an accessible latest playback action
   expect(feedMarkup).toContain('loading="lazy"');
   expect(feedMarkup).toContain('sizes="(min-width: 2024px) min(576px, calc((100vw - 224px) / 6))');
   expect(feedMarkup).toContain('sizes="auto, (min-width: 2024px)');
-  expect(feedMarkup).toContain('(min-width: 1692px)');
+  expect(feedMarkup).toContain("(min-width: 1692px)");
   expect(latestMarkup).toContain('aria-label="הפעל פרק: Episode one"');
   expect(latestMarkup).toContain('sizes="(min-width: 1024px) 80px, (min-width: 768px) 56px, 40px"');
   expect(latestMarkup).toContain('aria-hidden="true"');
