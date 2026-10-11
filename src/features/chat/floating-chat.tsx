@@ -75,7 +75,7 @@ export function FloatingChat() {
     <div
       data-testid="floating-chat"
       className={"fixed bottom-0 left-4 pb-4 xs:left-0 xs:right-0 xs:px-4 z-50"}
-      style={!isDesktop && player?.playerHeight ? { bottom: `${player.playerHeight}px` } : undefined}
+      style={player?.playerHeight ? { bottom: `${player.playerHeight}px` } : undefined}
     >
       <Button
         ref={triggerRef}
