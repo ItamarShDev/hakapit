@@ -8,7 +8,7 @@ export function bundleReport(): Plugin {
   return {
     name: "hakapit-bundle-report",
     apply: "build",
-    generateBundle(_, bundle) {
+    writeBundle(_, bundle) {
       if (this.environment.name !== "client") return;
       const root = process.cwd().replaceAll("\\", "/");
       const relativeId = (id: string) => id.replaceAll("\\", "/").replaceAll(root, "<root>");
