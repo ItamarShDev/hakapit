@@ -131,7 +131,7 @@ test("renders an accessible empty feed without a load-more control", async () =>
   }
 });
 
-test("keeps an unresolved feed in an accessible loading state", async () => {
+test("shows server-known empty data while the live feed is pending", async () => {
   const restore = installDom();
   const container = document.createElement("div");
   document.body.append(container);
@@ -140,7 +140,7 @@ test("keeps an unresolved feed in an accessible loading state", async () => {
     await act(async () => {
       root.render(<MasonryFeed data={null} podcast="hakapit" liveBridge={() => null} feedCard={TestCard} />);
     });
-    expect(container.querySelector('[role="status"]')?.textContent).toContain("טוען");
+    expect(container.querySelector('[role="status"]')?.getAttribute("data-feed-state")).toBe("empty");
     expect(container.querySelector("button")).toBeNull();
   } finally {
     await act(async () => root.unmount());
@@ -170,16 +170,23 @@ test("an empty feed with a known zero total has no load-more control", async () 
   }
 });
 
-test("retains cached episodes across a live error and retries the bridge", async () => {
+test("retains the latest feed and disables pagination after a live error", async () => {
   const restore = installDom();
   const previousError = console.error;
   const previousWarn = console.warn;
   console.error = () => {};
   console.warn = () => {};
-  let mode: "error" | "data" = "error";
+  let mode: "error" | "data" = "data";
+  let subscriptionCount = 0;
+  const liveData = {
+    ...snapshot,
+    episodes: snapshot.episodes.map((episode) => ({ ...episode, title: "Latest live episode" })),
+    totalEpisodes: 10,
+  };
   function TestBridge({ onData }: { onData: (data: FeedData) => void }) {
     useEffect(() => {
-      if (mode === "data") onData(snapshot);
+      subscriptionCount += 1;
+      if (mode === "data") onData(liveData);
     }, [onData]);
     if (mode === "error") throw new Error("live failure");
     return null;
@@ -192,8 +199,17 @@ test("retains cached episodes across a live error and retries the bridge", async
     await act(async () => {
       root.render(<MasonryFeed data={snapshot} podcast="hakapit" liveBridge={TestBridge} feedCard={TestCard} />);
     });
+    expect(subscriptionCount).toBe(1);
+    expect(container.textContent).toContain("Latest live episode");
+
+    mode = "error";
+    await act(async () => {
+      root.render(<MasonryFeed data={snapshot} podcast="hakapit" liveBridge={TestBridge} feedCard={TestCard} />);
+    });
     expect(container.querySelector('[role="alert"]')).not.toBeNull();
-    expect(container.textContent).toContain("Episode one");
+    expect(container.textContent).toContain("Latest live episode");
+    expect(container.textContent).not.toContain("Episode one");
+    expect((container.querySelector(".mt-6 button") as HTMLButtonElement).disabled).toBe(true);
 
     mode = "data";
     const retry = container.querySelector('[role="alert"] button') as HTMLButtonElement;
@@ -202,8 +218,53 @@ test("retains cached episodes across a live error and retries the bridge", async
     });
 
     expect(container.querySelector('[role="alert"]')).toBeNull();
-    expect(container.textContent).toContain("Episode one");
+    expect(subscriptionCount).toBe(2);
+    expect(container.textContent).toContain("Latest live episode");
     expect(container.querySelector(".masonry")?.getAttribute("aria-busy")).toBe("false");
+    expect((container.querySelector(".mt-6 button") as HTMLButtonElement).disabled).toBe(false);
+  } finally {
+    await act(async () => root.unmount());
+    console.error = previousError;
+    console.warn = previousWarn;
+    restore();
+  }
+});
+
+test("a resolved deletion remains empty after a live error and Retry", async () => {
+  const restore = installDom();
+  const previousError = console.error;
+  const previousWarn = console.warn;
+  console.error = () => {};
+  console.warn = () => {};
+  let mode: "error" | "deleted" = "deleted";
+  function TestBridge({ onData }: { onData: (data: FeedData) => void }) {
+    useEffect(() => {
+      if (mode === "deleted") onData(null);
+    }, [onData]);
+    if (mode === "error") throw new Error("live failure after deletion");
+    return null;
+  }
+
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  const renderFeed = () =>
+    root.render(<MasonryFeed data={snapshot} podcast="hakapit" liveBridge={TestBridge} feedCard={TestCard} />);
+  try {
+    await act(async () => renderFeed());
+    expect(container.textContent).not.toContain("Episode one");
+
+    mode = "error";
+    await act(async () => renderFeed());
+    expect(container.querySelector('[role="alert"]')).not.toBeNull();
+    expect(container.textContent).not.toContain("Episode one");
+
+    mode = "deleted";
+    const retry = container.querySelector('[role="alert"] button') as HTMLButtonElement;
+    await act(async () => retry.click());
+    expect(container.querySelector('[role="alert"]')).toBeNull();
+    expect(container.textContent).not.toContain("Episode one");
+    expect(container.querySelector("button")).toBeNull();
   } finally {
     await act(async () => root.unmount());
     console.error = previousError;
@@ -273,6 +334,7 @@ test("disables load more while the next limit is loading", async () => {
     const loadMore = container.querySelector("button") as HTMLButtonElement;
     await act(async () => loadMore.click());
     expect(loadMore.disabled).toBe(true);
+    expect(container.querySelector('[data-feed-state="loading-more"]')).not.toBeNull();
   } finally {
     await act(async () => root.unmount());
     restore();
@@ -307,7 +369,9 @@ test("renders responsive image preloads and an accessible latest playback action
   expect(feedMarkup).toContain("(min-width: 1024px) min(576px, calc((100vw - 96px) / 2))");
   expect(feedMarkup).toContain('loading="eager"');
   expect(feedMarkup).toContain('loading="lazy"');
-  expect(feedMarkup).toContain('sizes="(min-width: 1694px)');
+  expect(feedMarkup).toContain('sizes="(min-width: 2024px) min(576px, calc((100vw - 224px) / 6))');
+  expect(feedMarkup).toContain('sizes="auto, (min-width: 2024px)');
+  expect(feedMarkup).toContain('(min-width: 1692px)');
   expect(latestMarkup).toContain('aria-label="הפעל פרק: Episode one"');
   expect(latestMarkup).toContain('sizes="(min-width: 1024px) 80px, (min-width: 768px) 56px, 40px"');
   expect(latestMarkup).toContain('aria-hidden="true"');

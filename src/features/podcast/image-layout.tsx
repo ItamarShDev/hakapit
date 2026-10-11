@@ -3,13 +3,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { EpisodeWithPodcast } from "~/features/podcast/types";
 
 export const FEED_IMAGE_SIZES =
-  "(min-width: 1694px) min(576px, calc((100vw - 192px) / 5)), " +
+  "(min-width: 2024px) min(576px, calc((100vw - 224px) / 6)), " +
+  "(min-width: 1692px) min(576px, calc((100vw - 192px) / 5)), " +
   "(min-width: 1360px) min(576px, calc((100vw - 160px) / 4)), " +
   "(min-width: 1028px) min(576px, calc((100vw - 128px) / 3)), " +
   "(min-width: 1024px) min(576px, calc((100vw - 96px) / 2)), " +
   "(min-width: 996px) min(576px, calc((100vw - 96px) / 3)), " +
   "(min-width: 664px) min(576px, calc((100vw - 64px) / 2)), " +
   "min(576px, calc(100vw - 32px))";
+export const FEED_LAZY_IMAGE_SIZES = `auto, ${FEED_IMAGE_SIZES}`;
 
 export const LATEST_IMAGE_SIZES = "(min-width: 1024px) 80px, (min-width: 768px) 56px, 40px";
 export const DETAIL_IMAGE_SIZES =
