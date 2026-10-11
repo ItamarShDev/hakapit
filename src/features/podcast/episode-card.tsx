@@ -5,17 +5,15 @@ import { PlayButton } from "~/features/podcast/play-button";
 import { usePlayer } from "~/layouts/player/provider";
 import { heebo } from "~/lib/fonts";
 import { toDateString } from "~/lib/format-date";
+import { sanitizeContent } from "~/lib/html";
 import { Button } from "~/lib/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/lib/ui/card";
 import { cn } from "~/lib/utils";
 
 import type { EpisodeWithPodcast } from "~/features/podcast/types";
 
-function removeIframes(content: string): string {
-  if (!content) return content;
-
-  return content.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "");
-}
+const EPISODE_CARD_IMAGE_SIZES =
+  "(min-width: 1692px) 20vw, (min-width: 1360px) 25vw, (min-width: 1028px) 33vw, (min-width: 696px) 50vw, min(576px, calc(100vw - 32px))";
 
 export function LastEpisodeCardPreview({ episode }: { episode: EpisodeWithPodcast }) {
   const isoDate = toDateString(episode?.publishedAt ? new Date(episode.publishedAt) : null);
@@ -65,9 +63,11 @@ export function EpisodeCard({
   episode,
   className,
   contentClassName,
+  priority = false,
 }: {
   episode?: EpisodeWithPodcast;
   contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
+  priority?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>) {
   const isoDate = toDateString(episode?.publishedAt ? new Date(episode.publishedAt) : null);
   const playerProps = usePlayer();
@@ -88,8 +88,9 @@ export function EpisodeCard({
           <Image
             src={episode?.imageUrl}
             alt="episode"
-            loading="eager"
-            sizes="576px"
+            loading={priority ? "eager" : "lazy"}
+            priority={priority}
+            sizes={EPISODE_CARD_IMAGE_SIZES}
             className="min-h-full w-auto brightness-40 filter blur-xs object-cover object-top"
             layout="fullWidth"
           />
@@ -115,7 +116,7 @@ export function EpisodeCard({
           <div
             className="card-content"
             dangerouslySetInnerHTML={{
-              __html: removeIframes(episode?.htmlDescription),
+              __html: sanitizeContent(episode.htmlDescription),
             }}
           />
         )}

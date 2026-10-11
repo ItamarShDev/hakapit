@@ -1,6 +1,7 @@
 import { Image } from "@unpic/react";
 
 import type { Episode } from "~/features/podcast/types";
+import { sanitizeContent } from "~/lib/html";
 
 export default function Episode({ data }: { data: Episode | null }) {
   if (!data) {
@@ -26,6 +27,7 @@ export default function Episode({ data }: { data: Episode | null }) {
                   sizes="(min-width: 1024px) 420px, 100vw"
                   width={768}
                   height={768}
+                  priority
                 />
               ) : (
                 <div className="aspect-square w-full bg-black/10" />
@@ -47,7 +49,7 @@ export default function Episode({ data }: { data: Episode | null }) {
                   style={viewTransitionKey ? { viewTransitionName: `episode-content-${viewTransitionKey}` } : undefined}
                   className="mt-4 max-w-none whitespace-pre-wrap wrap-break-word text-base leading-7 text-paragraph/90 sm:text-lg"
                   dangerouslySetInnerHTML={{
-                    __html: data.description || "",
+                    __html: sanitizeContent(data.description),
                   }}
                 />
               ) : null}

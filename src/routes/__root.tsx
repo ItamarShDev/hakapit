@@ -1,11 +1,10 @@
-import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRouteWithContext, HeadContent, Scripts, useParams } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { lazy, Suspense } from "react";
 
+import heeboHebrew400 from "@fontsource/heebo/files/heebo-hebrew-400-normal.woff2?url";
 import ConvexProvider from "../integrations/convex/provider";
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 import { MainLayout } from "~/layouts/main";
 import { PlayerProvider } from "~/layouts/player/provider";
@@ -17,6 +16,33 @@ import type { PodcastName } from "~/features/podcast/podcasts";
 interface RouterContext {
   queryClient: QueryClient;
 }
+
+const Devtools = import.meta.env.DEV
+  ? lazy(async () => {
+      const [{ TanStackDevtools }, { TanStackRouterDevtoolsPanel }, { default: TanStackQueryDevtools }] = await Promise.all([
+        import("@tanstack/react-devtools"),
+        import("@tanstack/react-router-devtools"),
+        import("../integrations/tanstack-query/devtools"),
+      ]);
+
+      return {
+        default: () => (
+          <TanStackDevtools
+            config={{
+              position: "bottom-right",
+            }}
+            plugins={[
+              {
+                name: "Tanstack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+              TanStackQueryDevtools,
+            ]}
+          />
+        ),
+      };
+    })
+  : null;
 function getThemeColor(podcast: string | undefined) {
   switch (podcast) {
     case "nitk":
@@ -46,6 +72,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "preload",
+        href: heeboHebrew400,
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
       },
 
       {
@@ -96,18 +129,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <MainLayout params={{ podcast: podcast as PodcastName }}>
             <PlayerProvider>{children}</PlayerProvider>
           </MainLayout>
-          <TanStackDevtools
-            config={{
-              position: "bottom-right",
-            }}
-            plugins={[
-              {
-                name: "Tanstack Router",
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              TanStackQueryDevtools,
-            ]}
-          />
+          {Devtools ? (
+            <Suspense fallback={null}>
+              <Devtools />
+            </Suspense>
+          ) : null}
         </ConvexProvider>
         {import.meta.env.PROD && (
           <>

@@ -8,6 +8,10 @@ import type { fetchUpdatedFeed } from "~/server/podcasts";
 
 type FeedData = Awaited<ReturnType<typeof fetchUpdatedFeed>>;
 
+export function shouldPrioritizeEpisodeImage(index: number) {
+  return index < 2;
+}
+
 export function MasonryFeed({ data, podcast }: { data: FeedData; podcast: PodcastName }) {
   const [currentLimit, setCurrentLimit] = useState(10);
 
@@ -28,12 +32,13 @@ export function MasonryFeed({ data, podcast }: { data: FeedData; podcast: Podcas
   return (
     <>
       <div className="masonry">
-        {stableData?.episodes?.map((episode) => (
+        {stableData?.episodes?.map((episode, index) => (
           <EpisodeCard
             key={String(
               (episode as { _id?: unknown } | null | undefined)?._id ?? episode.guid ?? episode.episodeNumber,
             )}
             episode={episode}
+            priority={shouldPrioritizeEpisodeImage(index)}
           />
         ))}
       </div>

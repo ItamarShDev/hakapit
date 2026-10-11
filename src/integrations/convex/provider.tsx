@@ -1,22 +1,26 @@
-import { ConvexQueryClient } from "@convex-dev/react-query";
-import { ConvexProvider } from "convex/react";
+import { ConvexReactClient, ConvexProvider } from "convex/react";
 import { useMemo } from "react";
 
-import { resolveConvexUrl } from "~/server/convex-client";
+import { resolveConvexUrl } from "~/lib/convex-url";
 
 const CONVEX_URL = resolveConvexUrl("warn") ?? undefined;
+let browserClient: ConvexReactClient | null = null;
 
 export default function AppConvexProvider({ children }: { children: React.ReactNode }) {
-  const convexQueryClient = useMemo(() => {
+  const convexClient = useMemo(() => {
     if (!CONVEX_URL) {
       return null;
     }
-    return new ConvexQueryClient(CONVEX_URL);
+    if (typeof window !== "undefined") {
+      browserClient ??= new ConvexReactClient(CONVEX_URL);
+      return browserClient;
+    }
+    return new ConvexReactClient(CONVEX_URL);
   }, []);
 
-  if (!convexQueryClient) {
+  if (!convexClient) {
     return <>{children}</>;
   }
 
-  return <ConvexProvider client={convexQueryClient.convexClient}>{children}</ConvexProvider>;
+  return <ConvexProvider client={convexClient}>{children}</ConvexProvider>;
 }

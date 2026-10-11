@@ -11,6 +11,7 @@ type PlayerContextType = {
   currentlyPlaying: Episode | undefined;
   setCurrentlyPlaying: (episode?: Episode) => void;
   isPlaying: boolean;
+  playerHeight: number;
 };
 
 const PlayerContext = createContext<PlayerContextType | null>(null);
@@ -18,9 +19,11 @@ const Player = forwardRef(function Player(
   {
     episode,
     closePlayer,
+    containerRef,
   }: {
     episode: Episode | undefined;
     closePlayer: () => void;
+    containerRef: React.Ref<HTMLDivElement>;
   },
   ref: React.ForwardedRef<HTMLAudioElement>,
 ) {
@@ -29,7 +32,10 @@ const Player = forwardRef(function Player(
     toast.error("הניגון נכשל", { description: "סביר להניח שנחסמת על ידי השירות" });
   }, [closePlayer]);
   return (
-    <div className={`bottom-0 left-0 flex flex-col w-full p-2 bg-primary ${episode ? "fixed z-50" : "hidden"}`}>
+    <div
+      ref={containerRef}
+      className={`bottom-0 left-0 flex flex-col w-full p-2 bg-primary ${episode ? "fixed z-50" : "hidden"}`}
+    >
       <div className="flex flex-row items-start py-2">
         {episode?.imageUrl && (
           <img
@@ -43,7 +49,13 @@ const Player = forwardRef(function Player(
         <div className="flex flex-col flex-1 px-4 leading-7">
           <p className="text-lg text-white">{episode?.title}</p>
         </div>
-        <Button variant="link" className="text-white" onClick={() => closePlayer()}>
+        <Button
+          type="button"
+          variant="link"
+          className="text-white"
+          aria-label="Close player"
+          onClick={() => closePlayer()}
+        >
           <Cross1Icon />
         </Button>
       </div>
@@ -57,7 +69,9 @@ const Player = forwardRef(function Player(
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [currentlyPlaying, setCurrentlyPlaying] = useState<Episode | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playerHeight, setPlayerHeight] = useState(0);
   const ref = useRef<HTMLAudioElement | null>(null);
+  const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const setCurrentEpisode = useCallback(
     (episode?: Episode) => {
       if (episode?.audioUrl === currentlyPlaying?.audioUrl) {
@@ -89,14 +103,26 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       setIsPlaying(false);
     };
   }, []);
+  useEffect(() => {
+    const element = playerContainerRef.current;
+    if (!element || typeof ResizeObserver === "undefined") return;
+
+    const updateHeight = () => setPlayerHeight(element.getBoundingClientRect().height);
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [currentlyPlaying]);
   const closePlayer = useCallback(() => {
     ref.current?.pause();
     setCurrentlyPlaying(undefined);
   }, []);
   return (
-    <PlayerContext.Provider value={{ currentlyPlaying, setCurrentlyPlaying: setCurrentEpisode, isPlaying }}>
-      <div className={`${currentlyPlaying ? "mb-36" : ""}`}>{children}</div>
-      <Player episode={currentlyPlaying} ref={ref} closePlayer={closePlayer} />
+    <PlayerContext.Provider
+      value={{ currentlyPlaying, setCurrentlyPlaying: setCurrentEpisode, isPlaying, playerHeight }}
+    >
+      <div style={{ marginBottom: playerHeight > 0 ? `${playerHeight}px` : undefined }}>{children}</div>
+      <Player episode={currentlyPlaying} ref={ref} closePlayer={closePlayer} containerRef={playerContainerRef} />
       <Toaster richColors closeButton dir="rtl" />
     </PlayerContext.Provider>
   );

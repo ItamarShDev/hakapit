@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { api } from "convex/_generated/api";
 import { Suspense } from "react";
 
 import { FloatingChat } from "~/features/chat/floating-chat";
@@ -10,25 +9,14 @@ import { StatsTable } from "~/features/football/stats/stats";
 import { Trophies } from "~/features/football/stats/trophies";
 import { LatestEpisode } from "~/features/podcast/latest-episode";
 import { ConvexBoundary } from "~/integrations/convex/convex-boundary";
+import { loadHomeSnapshot } from "~/lib/home-snapshot";
+import { isConvexAvailable } from "~/lib/convex-url";
 import { pageHead, SITE_TITLE, SITE_URL } from "~/lib/seo";
-import { getConvexClient, isConvexAvailable } from "~/server/convex-client";
 import { fetchUpdatedLatestEpisode } from "~/server/podcasts";
 import { getSoccerSnapshot } from "~/server/soccer-api";
+import { getTransfersSnapshot } from "~/server/transfers";
 
-import type { Doc } from "convex/_generated/dataModel";
 import type { Episode } from "~/features/podcast/types";
-
-const convexClient = getConvexClient("warn");
-
-async function getTransfersSnapshot(): Promise<Doc<"transfers">[] | null> {
-  if (!convexClient) return null;
-  try {
-    return await convexClient.query(api.transfers.getAllTransfers, {});
-  } catch (err) {
-    console.warn("getTransfersSnapshot failed", err);
-    return null;
-  }
-}
 
 async function getLatestEpisodeSnapshot(): Promise<Episode | null> {
   return await fetchUpdatedLatestEpisode("hakapit");
@@ -37,25 +25,11 @@ async function getLatestEpisodeSnapshot(): Promise<Episode | null> {
 export const Route = createFileRoute("/")({
   component: Home,
   loader: async () => {
-    let snapshot: Awaited<ReturnType<typeof getSoccerSnapshot>> | null = null;
-    try {
-      snapshot = await getSoccerSnapshot();
-    } catch (err) {
-      console.warn("Failed to fetch soccer snapshot", err);
-    }
-    let transfers: Awaited<ReturnType<typeof getTransfersSnapshot>> | null = null;
-    let latestEpisode: Episode | null = null;
-    try {
-      transfers = await getTransfersSnapshot();
-    } catch (err) {
-      console.warn("Failed to fetch transfers snapshot", err);
-    }
-    try {
-      latestEpisode = await getLatestEpisodeSnapshot();
-    } catch (err) {
-      console.warn("Failed to fetch latest episode snapshot", err);
-    }
-    return { snapshot, transfers, latestEpisode };
+    return loadHomeSnapshot({
+      snapshot: getSoccerSnapshot,
+      transfers: getTransfersSnapshot,
+      latestEpisode: getLatestEpisodeSnapshot,
+    });
   },
   head: () =>
     pageHead({

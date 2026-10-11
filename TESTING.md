@@ -35,6 +35,28 @@ bun run test:e2e:hebrew
 bun run test:e2e:report
 ```
 
+## TanStack comparison checks
+
+These focused checks cover independent homepage fallbacks, safe podcast HTML, the SSR chat launcher and mobile menu, and feed-image priority:
+
+```powershell
+bun test src/lib/home-snapshot.test.ts src/lib/html.test.ts src/features/chat/floating-chat.test.ts src/layouts/header/menu.test.ts src/features/podcast/feed.test.ts
+bun run check
+bun run typecheck
+bun test
+```
+
+For a production build, set the same public Convex read endpoint for server and browser bundles:
+
+```powershell
+$env:NODE_ENV = "production"
+$env:CONVEX_URL = "https://good-elk-277.convex.cloud"
+$env:VITE_CONVEX_URL = "https://good-elk-277.convex.cloud"
+bun run build
+```
+
+The comparison/scoring protocol and runtime measurements are maintained outside this repository; these commands do not produce or claim a score.
+
 ## Test Structure
 
 - **`tests/page-objects/`** - Page Object Models for maintainable test code

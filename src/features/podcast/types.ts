@@ -1,5 +1,5 @@
 export interface Episode {
-  _id?: unknown;
+  _id?: string;
   episodeNumber: number;
   guid?: string;
   title: string;
@@ -16,7 +16,7 @@ export interface Episode {
 }
 
 export interface PodcastWithEpisodes {
-  _id?: unknown;
+  _id?: string;
   name?: string;
   title?: string;
   link?: string;

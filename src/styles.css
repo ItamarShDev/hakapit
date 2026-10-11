@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
-@import "@fontsource/heebo";
-@import "@fontsource/amatic-sc";
-@import "@fontsource/karantina";
+@import "@fontsource/heebo/hebrew-400.css";
+@import "@fontsource/heebo/latin-400.css";
+@import "@fontsource/amatic-sc/hebrew-400.css";
+@import "@fontsource/amatic-sc/latin-400.css";
+@import "@fontsource/karantina/hebrew-400.css";
+@import "@fontsource/karantina/latin-400.css";
 
 @theme inline {
   --font-sans: "Heebo", sans-serif;

@@ -2,9 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { Links } from "~/components/links";
-import MenuIcon from "~/layouts/header/menu";
+import { MenuToggle, MOBILE_NAVIGATION_ID } from "~/layouts/header/menu";
 import { karantina } from "~/lib/fonts";
-import { Button } from "~/lib/ui/button";
 import { cn } from "~/lib/utils";
 
 type Props = {
@@ -27,7 +26,8 @@ export default function Header({ data }: Props) {
               className="object-contain"
               width={48}
               height={48}
-              loading="lazy"
+              loading="eager"
+              fetchPriority="high"
               decoding="async"
             />
           )}
@@ -38,13 +38,14 @@ export default function Header({ data }: Props) {
           </Link>
         </div>
         <div className="lg:gap-4 lg:hidden flex flex-col flex-wrap items-end gap-2 pt-2">
-          <Button onClick={() => setOpen(!open)} variant="link" className="menu-button">
-            <MenuIcon />
-          </Button>
+          <MenuToggle expanded={open} onClick={() => setOpen(!open)} />
         </div>
         <Links className="lg:flex flex-row hidden" />
       </div>
-      <div className={cn("grid-transition header-links grid items-start", open ? "show-menu mb-4" : "hide-menu")}>
+      <div
+        id={MOBILE_NAVIGATION_ID}
+        className={cn("grid-transition header-links grid items-start", open ? "show-menu mb-4" : "hide-menu")}
+      >
         <Links className="flex flex-col items-center text-2xl" onSelect={() => setOpen(false)} />
       </div>
     </header>
