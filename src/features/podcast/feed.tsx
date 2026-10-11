@@ -59,22 +59,20 @@ export function PaginatedFeedBridgeController({
   const requestedCount = useRef(Math.min(limit, 100));
 
   useEffect(() => {
-    if (limit <= requestedCount.current || status !== "CanLoadMore") return;
-    const requestCount = Math.min(limit - requestedCount.current, 100);
-    requestedCount.current += requestCount;
-    loadMore(requestCount);
-  }, [limit, loadMore, status]);
-
-  useEffect(() => {
     if (!initialData || status === "LoadingFirstPage" || status === "LoadingMore") return;
-    if (status === "CanLoadMore" && (requestedCount.current < limit || results.length < requestedCount.current)) return;
+    if (status === "CanLoadMore" && requestedCount.current < limit) {
+      const requestCount = Math.min(limit - requestedCount.current, 100);
+      requestedCount.current += requestCount;
+      loadMore(requestCount);
+      return;
+    }
     onData({
       ...initialData,
       episodes: results,
       hasMore: status === "CanLoadMore",
       totalEpisodes: undefined,
     });
-  }, [initialData, limit, onData, results, status]);
+  }, [initialData, limit, loadMore, onData, results, status]);
 
   return null;
 }
@@ -259,11 +257,30 @@ export function MasonryFeed({
   );
 }
 
-export function FeedPage({ data, podcast }: { data: FeedData; podcast: PodcastName }) {
+export function FeedPage({
+  data,
+  podcast,
+  liveBridge,
+  nativeLiveBridge,
+  feedCard,
+}: {
+  data: FeedData;
+  podcast: PodcastName;
+  liveBridge?: FeedLiveBridgeComponent;
+  nativeLiveBridge?: FeedLiveBridgeComponent;
+  feedCard?: FeedCardComponent;
+}) {
   return (
     <div className="flex flex-col items-center gap-4">
       <span className="info crazy-font font-display p-4 font-light">{unwrapCdata(data?.description ?? "")}</span>
-      <MasonryFeed data={data} podcast={podcast} />
+      <MasonryFeed
+        key={podcast}
+        data={data}
+        podcast={podcast}
+        liveBridge={liveBridge}
+        nativeLiveBridge={nativeLiveBridge}
+        feedCard={feedCard}
+      />
     </div>
   );
 }

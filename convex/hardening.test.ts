@@ -2,10 +2,11 @@ import { expect, test } from "bun:test";
 import { convexTest } from "convex-test";
 
 import { api, internal } from "./_generated/api";
-import { parseCachedJson } from "./cache";
+import { parseCachedJson, withRefreshLease } from "./cache";
 import schema from "./schema";
 
 import type { Id } from "./_generated/dataModel";
+import type { ActionCtx } from "./_generated/server";
 
 const modules = {
   "./_generated/api.js": () => import("./_generated/api"),
@@ -18,6 +19,11 @@ const modules = {
 };
 
 const createTest = () => convexTest(schema, modules);
+const actionContext = (t: ReturnType<typeof createTest>) =>
+  ({
+    runQuery: t.query.bind(t),
+    runMutation: t.mutation.bind(t),
+  }) as unknown as Pick<ActionCtx, "runQuery" | "runMutation">;
 
 async function seedPodcast(name: "hakapit" | "nitk" | "balcony-albums", episodeNumbers: number[]) {
   const t = createTest();
@@ -149,12 +155,13 @@ test("cache parser respects expiry, stale reads, and malformed payloads", () => 
 
 test("fresh caches and live leases cannot be claimed; invalid fresh soccer payloads remain repairable", async () => {
   const t = createTest();
+  const futureExpiry = Date.now() + 60_000;
   await t.run(async (ctx) => {
     await ctx.db.insert("cacheTracking", {
       dataType: "fresh",
       source: "test",
       payload: '{"ok":true}',
-      expiresAt: 200,
+      expiresAt: futureExpiry,
       lastUpdated: 1,
       createdAt: 1,
       updatedAt: 1,
@@ -162,7 +169,7 @@ test("fresh caches and live leases cannot be claimed; invalid fresh soccer paylo
     await ctx.db.insert("cacheTracking", {
       dataType: "rss",
       source: "test",
-      expiresAt: 200,
+      expiresAt: futureExpiry,
       lastUpdated: 1,
       createdAt: 1,
       updatedAt: 1,
@@ -171,21 +178,18 @@ test("fresh caches and live leases cannot be claimed; invalid fresh soccer paylo
   const fresh = await t.mutation(internal.cache.claimRefresh, {
     key: "fresh",
     dataType: "fresh",
-    now: 100,
     token: "fresh-token",
     requirePayload: true,
   });
   const rssFresh = await t.mutation(internal.cache.claimRefresh, {
     key: "rss",
     dataType: "rss",
-    now: 100,
     token: "rss-token",
     requirePayload: false,
   });
   const malformed = await t.mutation(internal.cache.claimRefresh, {
     key: "bad",
     dataType: "bad",
-    now: 100,
     token: "bad-token",
     requirePayload: true,
   });
@@ -200,7 +204,7 @@ test("fresh caches and live leases cannot be claimed; invalid fresh soccer paylo
         dataType,
         source: "test",
         payload,
-        expiresAt: 200,
+        expiresAt: futureExpiry,
         lastUpdated: 1,
         createdAt: 1,
         updatedAt: 1,
@@ -209,7 +213,6 @@ test("fresh caches and live leases cannot be claimed; invalid fresh soccer paylo
     const claim = await t.mutation(internal.cache.claimRefresh, {
       key: dataType,
       dataType,
-      now: 100,
       token: `token-${index}`,
       requirePayload: true,
     });
@@ -219,27 +222,48 @@ test("fresh caches and live leases cannot be claimed; invalid fresh soccer paylo
 
 test("refresh claims serialize concurrent owners and permit expired lease takeover", async () => {
   const t = createTest();
+  const claimsStartedAt = Date.now();
   const claims = await Promise.all(
     ["a", "b"].map((token) =>
       t.mutation(internal.cache.claimRefresh, {
         key: "shared",
         dataType: "shared",
-        now: 100,
         token,
         requirePayload: true,
       }),
     ),
   );
+  const claimsFinishedAt = Date.now();
   expect(claims.filter((claim) => claim.claimed)).toHaveLength(1);
 
+  const claimedLock = await t.run((ctx) =>
+    ctx.db
+      .query("refreshLocks")
+      .withIndex("by_key", (q) => q.eq("key", "shared"))
+      .first(),
+  );
+  expect(claimedLock?.expiresAt).toBeGreaterThanOrEqual(claimsStartedAt + 120_000);
+  expect(claimedLock?.expiresAt).toBeLessThanOrEqual(claimsFinishedAt + 120_000);
+  await t.run(async (ctx) => {
+    if (claimedLock) await ctx.db.patch(claimedLock._id, { expiresAt: Date.now() - 1 });
+  });
+  const takeoverStartedAt = Date.now();
   const takeover = await t.mutation(internal.cache.claimRefresh, {
     key: "shared",
     dataType: "shared",
-    now: 120_101,
     token: "takeover",
     requirePayload: true,
   });
+  const takeoverFinishedAt = Date.now();
   expect(takeover.claimed).toBe(true);
+  const takeoverLock = await t.run((ctx) =>
+    ctx.db
+      .query("refreshLocks")
+      .withIndex("by_key", (q) => q.eq("key", "shared"))
+      .first(),
+  );
+  expect(takeoverLock?.expiresAt).toBeGreaterThanOrEqual(takeoverStartedAt + 120_000);
+  expect(takeoverLock?.expiresAt).toBeLessThanOrEqual(takeoverFinishedAt + 120_000);
 });
 
 test("stale owners cannot complete or delete a successor lease", async () => {
@@ -247,14 +271,21 @@ test("stale owners cannot complete or delete a successor lease", async () => {
   const owner = await t.mutation(internal.cache.claimRefresh, {
     key: "owned",
     dataType: "owned",
-    now: 100,
     token: "old-owner",
     requirePayload: true,
+  });
+  const oldLock = await t.run((ctx) =>
+    ctx.db
+      .query("refreshLocks")
+      .withIndex("by_key", (q) => q.eq("key", "owned"))
+      .first(),
+  );
+  await t.run(async (ctx) => {
+    if (oldLock) await ctx.db.patch(oldLock._id, { expiresAt: Date.now() - 1 });
   });
   const successor = await t.mutation(internal.cache.claimRefresh, {
     key: "owned",
     dataType: "owned",
-    now: 120_101,
     token: "new-owner",
     requirePayload: true,
   });
@@ -270,7 +301,7 @@ test("stale owners cannot complete or delete a successor lease", async () => {
     expiresAt: 500_000,
   });
   expect(rejected.completed).toBe(false);
-  expect(await t.mutation(internal.cache.releaseRefresh, { key: "owned", token: "old-owner", now: 120_102 })).toEqual({
+  expect(await t.mutation(internal.cache.releaseRefresh, { key: "owned", token: "old-owner" })).toEqual({
     released: false,
   });
 
@@ -302,12 +333,13 @@ test("stale owners cannot complete or delete a successor lease", async () => {
 
 test("failed refresh cooldown retains stale cache without extending freshness", async () => {
   const t = createTest();
+  const previousExpiry = Date.now() - 1;
   await t.run(async (ctx) => {
     await ctx.db.insert("cacheTracking", {
       dataType: "stale",
       source: "test",
       payload: '{"previous":true}',
-      expiresAt: 50,
+      expiresAt: previousExpiry,
       lastUpdated: 1,
       createdAt: 1,
       updatedAt: 1,
@@ -316,25 +348,34 @@ test("failed refresh cooldown retains stale cache without extending freshness", 
   const claim = await t.mutation(internal.cache.claimRefresh, {
     key: "stale",
     dataType: "stale",
-    now: 100,
     token: "failure",
     requirePayload: true,
   });
   expect(claim.claimed).toBe(true);
-  expect(await t.mutation(internal.cache.releaseRefresh, { key: "stale", token: "failure", now: 101 })).toEqual({
+  const releasedAt = Date.now();
+  expect(await t.mutation(internal.cache.releaseRefresh, { key: "stale", token: "failure" })).toEqual({
     released: true,
   });
+  const cooldown = await t.run((ctx) =>
+    ctx.db
+      .query("refreshLocks")
+      .withIndex("by_key", (q) => q.eq("key", "stale"))
+      .first(),
+  );
+  expect(cooldown?.expiresAt).toBeGreaterThanOrEqual(releasedAt + 30_000);
+  expect(cooldown?.expiresAt).toBeLessThanOrEqual(Date.now() + 30_000);
   const duringCooldown = await t.mutation(internal.cache.claimRefresh, {
     key: "stale",
     dataType: "stale",
-    now: 102,
     token: "blocked",
     requirePayload: true,
+  });
+  await t.run(async (ctx) => {
+    if (cooldown) await ctx.db.patch(cooldown._id, { expiresAt: Date.now() - 1 });
   });
   const afterCooldown = await t.mutation(internal.cache.claimRefresh, {
     key: "stale",
     dataType: "stale",
-    now: 30_102,
     token: "retry",
     requirePayload: true,
   });
@@ -347,5 +388,124 @@ test("failed refresh cooldown retains stale cache without extending freshness", 
   expect(duringCooldown.claimed).toBe(false);
   expect(afterCooldown.claimed).toBe(true);
   expect(entry?.payload).toBe('{"previous":true}');
-  expect(entry?.expiresAt).toBe(50);
+  expect(entry?.expiresAt).toBe(previousExpiry);
+});
+
+test("refresh lease orchestration serves stale to the loser and commits the single owner's result", async () => {
+  const t = createTest();
+  const oldSnapshot = { snapshot: "old" };
+  await t.run(async (ctx) => {
+    await ctx.db.insert("cacheTracking", {
+      dataType: "snapshot",
+      source: "test",
+      payload: JSON.stringify(oldSnapshot),
+      expiresAt: Date.now() - 1,
+      lastUpdated: 1,
+      createdAt: 1,
+      updatedAt: 1,
+    });
+  });
+  const ctx = actionContext(t);
+  let resolveRefresh!: (value: { snapshot: string }) => void;
+  let markRefreshStarted!: () => void;
+  const refreshStarted = new Promise<void>((resolve) => {
+    markRefreshStarted = resolve;
+  });
+  const refreshGate = new Promise<{ snapshot: string }>((resolve) => {
+    resolveRefresh = resolve;
+  });
+  let refreshCalls = 0;
+  const leaseOptions = {
+    key: "snapshot",
+    dataType: "snapshot",
+    source: "test",
+    requirePayload: true,
+    expiresAt: (_value: { snapshot: string }, now: number) => now + 60_000,
+    payload: (value: { snapshot: string }) => JSON.stringify(value),
+  };
+  const ownerPromise = withRefreshLease(ctx, {
+    ...leaseOptions,
+    refresh: () => {
+      refreshCalls++;
+      markRefreshStarted();
+      return refreshGate;
+    },
+  });
+  await refreshStarted;
+  const loser = await withRefreshLease(ctx, {
+    ...leaseOptions,
+    refresh: async () => {
+      refreshCalls++;
+      return { snapshot: "unexpected" };
+    },
+  });
+  expect(loser.status).toBe("busy");
+  expect(loser.value).toEqual(oldSnapshot);
+
+  resolveRefresh({ snapshot: "new" });
+  const owner = await ownerPromise;
+  expect(owner.status).toBe("refreshed");
+  expect(owner.value).toEqual({ snapshot: "new" });
+  expect(refreshCalls).toBe(1);
+  const cache = await t.run((ctx) =>
+    ctx.db
+      .query("cacheTracking")
+      .withIndex("by_dataType", (q) => q.eq("dataType", "snapshot"))
+      .first(),
+  );
+  expect(cache?.payload).toBe('{"snapshot":"new"}');
+  expect(
+    await t.run((db) =>
+      db.db
+        .query("refreshLocks")
+        .withIndex("by_key", (q) => q.eq("key", "snapshot"))
+        .first(),
+    ),
+  ).toBeNull();
+});
+
+test("refresh lease orchestration returns stale data and creates cooldown after a rejected refresh", async () => {
+  const t = createTest();
+  const oldSnapshot = { snapshot: "old" };
+  await t.run(async (ctx) => {
+    await ctx.db.insert("cacheTracking", {
+      dataType: "snapshot",
+      source: "test",
+      payload: JSON.stringify(oldSnapshot),
+      expiresAt: Date.now() - 1,
+      lastUpdated: 1,
+      createdAt: 1,
+      updatedAt: 1,
+    });
+  });
+  const startedAt = Date.now();
+  const result = await withRefreshLease(actionContext(t), {
+    key: "snapshot",
+    dataType: "snapshot",
+    source: "test",
+    requirePayload: true,
+    refresh: async () => {
+      throw new Error("offline fixture");
+    },
+    expiresAt: (_value: { snapshot: string }, now: number) => now + 60_000,
+    payload: (value) => JSON.stringify(value),
+  });
+  const finishedAt = Date.now();
+  expect(result.status).toBe("failed");
+  expect(result.value).toEqual(oldSnapshot);
+  const lock = await t.run((ctx) =>
+    ctx.db
+      .query("refreshLocks")
+      .withIndex("by_key", (q) => q.eq("key", "snapshot"))
+      .first(),
+  );
+  expect(lock?.expiresAt).toBeGreaterThanOrEqual(startedAt + 30_000);
+  expect(lock?.expiresAt).toBeLessThanOrEqual(finishedAt + 30_000);
+  const cache = await t.run((ctx) =>
+    ctx.db
+      .query("cacheTracking")
+      .withIndex("by_dataType", (q) => q.eq("dataType", "snapshot"))
+      .first(),
+  );
+  expect(cache?.payload).toBe(JSON.stringify(oldSnapshot));
 });

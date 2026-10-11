@@ -5,7 +5,7 @@ import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
-import { bundleReport } from "./scripts/bundle-report";
+import { bundleReport } from "./scripts/bundle-report.ts";
 
 const config = defineConfig({
   resolve: {

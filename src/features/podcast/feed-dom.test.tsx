@@ -1,13 +1,13 @@
 import { Image } from "@unpic/react";
 import { expect, test } from "bun:test";
 import { Window } from "happy-dom";
-import { act, useEffect } from "react";
+import { act, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { isSameEpisode } from "./episode-identity";
 import { LatestEpisodePlaybackControl } from "./episode-preview";
-import { MasonryFeed, PaginatedFeedBridgeController } from "./feed";
+import { FeedPage, MasonryFeed, PaginatedFeedBridgeController } from "./feed";
 import { DETAIL_IMAGE_SIZES } from "./image-layout";
 import { resolveLatestEpisode } from "./latest-episode";
 import { PlayerProvider } from "~/layouts/player/provider";
@@ -430,7 +430,7 @@ test("old SSR metadata selects only the legacy bridge", async () => {
   }
 });
 
-test("native pagination requests added pages and publishes only complete accumulated results", async () => {
+test("native pagination requests added pages, publishes shrinking results, and clears exhausted pages", async () => {
   const restore = installDom();
   const initialData = { ...snapshot, paginationVersion: 1 as const };
   const published: FeedData[] = [];
@@ -448,7 +448,7 @@ test("native pagination requests added pages and publishes only complete accumul
   const container = document.createElement("div");
   document.body.append(container);
   const root = createRoot(container);
-  const renderController = (limit: number, results: Episode[], status: "CanLoadMore" | "LoadingMore") =>
+  const renderController = (limit: number, results: Episode[], status: "CanLoadMore" | "LoadingMore" | "Exhausted") =>
     root.render(
       <PaginatedFeedBridgeController
         podcast="hakapit"
@@ -473,8 +473,140 @@ test("native pagination requests added pages and publishes only complete accumul
     expect(new Set(published.at(-1)?.episodes.map((item) => item.guid)).size).toBe(15);
     expect(published.at(-1)?.hasMore).toBe(true);
     expect(published.at(-1)?.totalEpisodes).toBeUndefined();
+
+    await act(async () => renderController(15, allPages.slice(1), "CanLoadMore"));
+    expect(published.at(-1)?.episodes).toHaveLength(14);
+    expect(requests).toEqual([5]);
+
+    await act(async () => renderController(15, [], "Exhausted"));
+    expect(published.at(-1)?.episodes).toHaveLength(0);
+    expect(published.at(-1)?.hasMore).toBe(false);
   } finally {
     await act(async () => root.unmount());
+    restore();
+  }
+});
+
+test("FeedPage selects native pagination, requests more, and resets it on podcast switch", async () => {
+  const restore = installDom();
+  const initialData = { ...snapshot, paginationVersion: 1 as const, hasMore: true };
+  const firstPage = Array.from({ length: 10 }, (_, index) => ({
+    ...episode,
+    guid: `native-${index}`,
+    episodeNumber: index + 1,
+  }));
+  const nextPage = Array.from({ length: 15 }, (_, index) => ({
+    ...episode,
+    guid: `native-${index}`,
+    episodeNumber: index + 1,
+  }));
+  const requests: number[] = [];
+  const nativeRenders: Array<[string, number]> = [];
+  let legacyRenders = 0;
+  function LegacyBridge() {
+    legacyRenders++;
+    return null;
+  }
+  function NativeBridge(props: {
+    podcast: "hakapit" | "nitk" | "balcony-albums";
+    limit: number;
+    onData: (data: FeedData) => void;
+    initialData?: FeedData;
+  }) {
+    const [results, setResults] = useState(firstPage);
+    const [status, setStatus] = useState<"CanLoadMore" | "LoadingMore">("CanLoadMore");
+    const loadMore = useCallback((count: number) => {
+      requests.push(count);
+      setStatus("LoadingMore");
+      setResults(nextPage);
+      setStatus("CanLoadMore");
+    }, []);
+    nativeRenders.push([props.podcast, props.limit]);
+    return (
+      <PaginatedFeedBridgeController
+        {...props}
+        pagination={{
+          results,
+          status,
+          loadMore,
+        }}
+      />
+    );
+  }
+
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  const renderPage = (podcast: "hakapit" | "nitk") =>
+    root.render(
+      <FeedPage
+        data={initialData}
+        podcast={podcast}
+        liveBridge={LegacyBridge}
+        nativeLiveBridge={NativeBridge}
+        feedCard={TestCard}
+      />,
+    );
+  try {
+    await act(async () => renderPage("hakapit"));
+    expect(legacyRenders).toBe(0);
+    expect(container.querySelectorAll(".masonry article")).toHaveLength(10);
+
+    await act(async () => (container.querySelector(".mt-6 button") as HTMLButtonElement).click());
+    expect(requests).toEqual([5]);
+    expect(container.querySelectorAll(".masonry article")).toHaveLength(15);
+    expect(nativeRenders.at(-1)).toEqual(["hakapit", 15]);
+
+    await act(async () => renderPage("nitk"));
+    expect(nativeRenders.at(-1)).toEqual(["nitk", 10]);
+    expect(container.querySelectorAll(".masonry article")).toHaveLength(10);
+  } finally {
+    await act(async () => root.unmount());
+    restore();
+  }
+});
+
+test("a failed native bridge retains its snapshot and Retry remounts it", async () => {
+  const restore = installDom();
+  const previousError = console.error;
+  const previousWarn = console.warn;
+  console.error = () => {};
+  console.warn = () => {};
+  const liveData = { ...snapshot, paginationVersion: 1 as const, hasMore: true };
+  let mode: "error" | "data" = "data";
+  let subscriptions = 0;
+  function NativeBridge({ onData }: { onData: (data: FeedData) => void }) {
+    useEffect(() => {
+      subscriptions++;
+      if (mode === "data") onData(liveData);
+    }, [onData]);
+    if (mode === "error") throw new Error("native pagination failed");
+    return null;
+  }
+
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  const renderFeed = () =>
+    root.render(<MasonryFeed data={liveData} podcast="hakapit" nativeLiveBridge={NativeBridge} feedCard={TestCard} />);
+  try {
+    await act(async () => renderFeed());
+    expect(subscriptions).toBe(1);
+
+    mode = "error";
+    await act(async () => renderFeed());
+    expect(container.querySelector('[role="alert"]')).not.toBeNull();
+    expect(container.textContent).toContain("Episode one");
+
+    mode = "data";
+    await act(async () => (container.querySelector('[role="alert"] button') as HTMLButtonElement).click());
+    expect(container.querySelector('[role="alert"]')).toBeNull();
+    expect(subscriptions).toBe(2);
+    expect(container.querySelector(".masonry")?.getAttribute("aria-busy")).toBe("false");
+  } finally {
+    await act(async () => root.unmount());
+    console.error = previousError;
+    console.warn = previousWarn;
     restore();
   }
 });

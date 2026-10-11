@@ -8,7 +8,7 @@ Transfer mutations (`upsertTransfer`, `deleteTransfer`, and `clearTransferPhoto`
 
 ## Refresh leases and cache behavior
 
-Football resource TTLs, RSS's five-minute TTL, the cron schedule, RSS ingestion, and snapshot merge behavior are unchanged. Soccer snapshot and RSS refreshes use atomic leases in `refreshLocks`, separate from cache entries. A lease lasts 120 seconds; failed owners leave a 30-second retry cooldown and do not update the cache. Completion and release require the current lease token, preventing an expired owner from overwriting data or releasing a successor's lease.
+Football resource TTLs, RSS's five-minute TTL, the cron schedule, RSS ingestion, and snapshot merge behavior are unchanged. Soccer snapshot and RSS refreshes use atomic leases in `refreshLocks`, separate from cache entries. A lease lasts 120 seconds; failed owners leave a 30-second retry cooldown and do not update the cache. The token fences cache completion and lease release, preventing stale owners from overwriting cache entries or releasing a successor's lease. RSS episode ingestion retains its existing independent upserts and is not fenced by this cache lease.
 
 Cache payload freshness is parsed at action time. Soccer treats a future expiry as fresh only when its JSON payload parses to a non-null value; the atomic claim mutation repeats this check. RSS metadata does not require a payload. Stale soccer data remains available during refresh and failure.
 

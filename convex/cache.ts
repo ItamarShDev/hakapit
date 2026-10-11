@@ -72,25 +72,25 @@ export const claimRefresh = internalMutation({
   args: {
     key: v.string(),
     dataType: v.string(),
-    now: v.number(),
     token: v.string(),
     requirePayload: v.boolean(),
   },
   handler: async (ctx, args) => {
+    const now = Date.now();
     const entry = await getCacheEntry(ctx, args.dataType);
     const lock = await ctx.db
       .query("refreshLocks")
       .withIndex("by_key", (q) => q.eq("key", args.key))
       .first();
 
-    if (isFresh(entry, args.now, args.requirePayload)) {
+    if (isFresh(entry, now, args.requirePayload)) {
       return { claimed: false, reason: "fresh" as const, entry };
     }
-    if (lock && lock.expiresAt > args.now) {
+    if (lock && lock.expiresAt > now) {
       return { claimed: false, reason: "locked" as const, entry };
     }
 
-    const lockData = { key: args.key, token: args.token, expiresAt: args.now + 120_000 };
+    const lockData = { key: args.key, token: args.token, expiresAt: now + 120_000 };
     if (lock) {
       await ctx.db.patch(lock._id, lockData);
     } else {
@@ -137,20 +137,20 @@ export const completeRefresh = internalMutation({
 });
 
 export const releaseRefresh = internalMutation({
-  args: { key: v.string(), token: v.string(), now: v.number() },
+  args: { key: v.string(), token: v.string() },
   handler: async (ctx, args) => {
     const lock = await ctx.db
       .query("refreshLocks")
       .withIndex("by_key", (q) => q.eq("key", args.key))
       .first();
     if (!lock || lock.token !== args.token) return { released: false };
-    await ctx.db.patch(lock._id, { expiresAt: args.now + 30_000 });
+    await ctx.db.patch(lock._id, { expiresAt: Date.now() + 30_000 });
     return { released: true };
   },
 });
 
 export async function withRefreshLease<T>(
-  ctx: ActionCtx,
+  ctx: Pick<ActionCtx, "runQuery" | "runMutation">,
   options: {
     key: string;
     dataType: string;
@@ -171,7 +171,6 @@ export async function withRefreshLease<T>(
   const claim = await ctx.runMutation(internal.cache.claimRefresh, {
     key: options.key,
     dataType: options.dataType,
-    now,
     token: `${now}-${Math.random()}`,
     requirePayload: options.requirePayload,
   });
@@ -206,7 +205,6 @@ export async function withRefreshLease<T>(
     await ctx.runMutation(internal.cache.releaseRefresh, {
       key: options.key,
       token,
-      now: Date.now(),
     });
     return {
       status: "failed",
