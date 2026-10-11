@@ -1,7 +1,8 @@
 import { Image } from "@unpic/react";
 
-import type { Episode } from "~/features/podcast/types";
 import { sanitizeContent } from "~/lib/html";
+
+import type { Episode } from "~/features/podcast/types";
 
 export default function Episode({ data }: { data: Episode | null }) {
   if (!data) {

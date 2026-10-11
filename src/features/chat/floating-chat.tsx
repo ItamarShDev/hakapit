@@ -97,7 +97,7 @@ export function FloatingChat() {
           aria-live="polite"
           className="mt-2 rounded-lg bg-popover p-4 text-center text-accent shadow-lg"
         >
-          Loading chat…
+          טוען את הצ׳אט…
         </div>
       )}
       {open && !Chat && !isLoading && loadError && (
@@ -105,9 +105,9 @@ export function FloatingChat() {
           role="alert"
           className="mt-2 flex flex-col items-center gap-2 rounded-lg bg-popover p-4 text-center text-accent shadow-lg"
         >
-          <span>Chat could not be loaded.</span>
+          <span>טעינת הצ׳אט נכשלה.</span>
           <Button type="button" size="sm" onClick={handleRetry}>
-            Retry
+            נסה שוב
           </Button>
         </div>
       )}

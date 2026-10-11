@@ -1,9 +1,9 @@
+import heeboHebrew400 from "@fontsource/heebo/files/heebo-hebrew-400-normal.woff2?url";
 import { createRootRouteWithContext, HeadContent, Scripts, useParams } from "@tanstack/react-router";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { lazy, Suspense } from "react";
 
-import heeboHebrew400 from "@fontsource/heebo/files/heebo-hebrew-400-normal.woff2?url";
 import ConvexProvider from "../integrations/convex/provider";
 import appCss from "../styles.css?url";
 import { MainLayout } from "~/layouts/main";
@@ -19,11 +19,12 @@ interface RouterContext {
 
 const Devtools = import.meta.env.DEV
   ? lazy(async () => {
-      const [{ TanStackDevtools }, { TanStackRouterDevtoolsPanel }, { default: TanStackQueryDevtools }] = await Promise.all([
-        import("@tanstack/react-devtools"),
-        import("@tanstack/react-router-devtools"),
-        import("../integrations/tanstack-query/devtools"),
-      ]);
+      const [{ TanStackDevtools }, { TanStackRouterDevtoolsPanel }, { default: TanStackQueryDevtools }] =
+        await Promise.all([
+          import("@tanstack/react-devtools"),
+          import("@tanstack/react-router-devtools"),
+          import("../integrations/tanstack-query/devtools"),
+        ]);
 
       return {
         default: () => (

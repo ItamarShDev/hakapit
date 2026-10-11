@@ -83,13 +83,14 @@ export function FloatingChatContent({ open, onOpenChange }: FloatingChatContentP
   }, [open]);
 
   useEffect(() => {
-    if (!isLoading && messages.length > 0) {
-      const id = window.setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
-      return () => window.clearTimeout(id);
+    if (!open || isLoading || messages.length === 0) {
+      return;
     }
-  }, [isLoading, messages.length]);
+    const id = window.setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+    return () => window.clearTimeout(id);
+  }, [open, isLoading, messages.length]);
 
   return (
     <Drawer direction={drawerDirection as "right" | "bottom"} open={open} onOpenChange={onOpenChange}>

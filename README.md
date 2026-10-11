@@ -28,7 +28,7 @@ bun run typecheck
 bun test
 ```
 
-Build the local production server with the public read-only Convex endpoint:
+Build the local production server with the public existing Convex backend:
 
 ```powershell
 $env:NODE_ENV = "production"

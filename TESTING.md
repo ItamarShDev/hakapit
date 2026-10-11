@@ -1,77 +1,69 @@
-# Testing with Playwright
+# Testing and comparison builds
 
-This project uses Playwright for end-to-end testing with comprehensive coverage of the Hebrew RTL web application.
+This TanStack lab uses Bun's test runner. It does not include browser automation.
 
-## Quick Start
+## Runtime requirements
 
-```bash
-# Install dependencies
-bun install
+- Node.js 24.3 or newer (CI and local comparison builds use 24.21.0)
+- Bun 1.4.3
 
-# Install Playwright browsers
-bun run test:e2e:install
+## Revisions
 
-# Run all tests
-bun run test:e2e
+- Baseline: `202cc44f0a89942f99295bc19e6f4b9371ab7458`
+- Optimized implementation: `2fcb83727d2e7d3d7b9bbca6a21418b770e5f639`
 
-# Run tests in UI mode (interactive)
-bun run test:e2e:ui
+The baseline is an untouched worktree. Install each revision from its own
+frozen lockfile and use the same Node, Bun, and public existing Convex backend
+for comparison builds.
 
-# Run tests in headed mode (visible browser)
-bun run test:e2e:headed
+## Install and verify
 
-# Run tests on specific browser
-bun run test:e2e:chrome
-bun run test:e2e:firefox
-bun run test:e2e:safari
-
-# Run responsive tests
-bun run test:e2e:responsive
-
-# Run Hebrew RTL tests
-bun run test:e2e:hebrew
-
-# View test report
-bun run test:e2e:report
-```
-
-## TanStack comparison checks
-
-These focused checks cover independent homepage fallbacks, safe podcast HTML, the SSR chat launcher and mobile menu, and feed-image priority:
+Run these commands from the root of either checkout:
 
 ```powershell
-bun test src/lib/home-snapshot.test.ts src/lib/html.test.ts src/features/chat/floating-chat.test.ts src/layouts/header/menu.test.ts src/features/podcast/feed.test.ts
+$env:NODE_ENV = "development"
+bun install --frozen-lockfile
 bun run check
 bun run typecheck
 bun test
 ```
 
-For a production build, set the same public Convex read endpoint for server and browser bundles:
+`bun run check` runs Oxfmt and Oxlint. Its formatter currently reports
+pre-existing repository-wide issues in the untouched baseline; this work
+formats changed files only. `bun run lint` runs Oxlint separately.
+Focused coverage for the comparison changes:
+
+```powershell
+bun test src/lib/home-snapshot.test.ts src/lib/html.test.ts src/features/chat/floating-chat.test.ts src/layouts/header/menu.test.ts src/features/podcast/feed.test.ts
+```
+
+## Build and start the production server
+
+Use the same public existing Convex backend URL for the server and browser
+bundles:
 
 ```powershell
 $env:NODE_ENV = "production"
 $env:CONVEX_URL = "https://good-elk-277.convex.cloud"
 $env:VITE_CONVEX_URL = "https://good-elk-277.convex.cloud"
 bun run build
+node .output/server/index.mjs
 ```
 
-The comparison/scoring protocol and runtime measurements are maintained outside this repository; these commands do not produce or claim a score.
+The build emits static assets to `.output/public` and the Node server entry to
+`.output/server/index.mjs`. Run the start command from the same checkout root.
 
-## Test Structure
+## Optimization rationale
 
-- **`tests/page-objects/`** - Page Object Models for maintainable test code
-- **`tests/mocks/`** - API mocking infrastructure for deterministic testing
-- **`tests/homepage.spec.ts`** - Core homepage functionality tests
-- **`tests/responsive.spec.ts`** - Mobile/tablet/desktop responsive design tests
-- **`tests/hebrew-rtl.spec.ts`** - Hebrew language and RTL direction tests
+- The SSR-visible chat launcher loads the heavier chat UI only on interaction
+  intent, keeping its Markdown and chat dependencies out of the initial client
+  entry.
+- Podcast and transfer reads cross validated server-function boundaries; the
+  homepage requests remain concurrent with independent fallbacks, and live
+  Convex subscriptions remain client-side.
+- Font subsets and image priorities are narrowed to the rendered surfaces;
+  podcast HTML is sanitized at its render sinks, and player/chat placement and
+  controls account for mobile layout and accessibility.
 
-## CI/CD
-
-Tests automatically run on every GitHub commit across multiple browsers and devices. See `.github/workflows/e2e-tests.yml` for configuration.
-
-## Current Status
-
-✅ **36 core tests passing** - Critical user flows validated  
-🔄 **32 tests skipped** - Optimization opportunities for future iteration
-
-The foundation is production-ready with solid coverage of page loading, Hebrew text rendering, component visibility, and responsive design.
+Browser and visual verification, as well as performance evidence, are pending.
+This repository contains no benchmark harness or scoring claims.
