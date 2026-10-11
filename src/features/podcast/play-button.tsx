@@ -26,12 +26,14 @@ export function PlayButton({ episode, size = "md", className }: PlayButtonProps)
   return (
     <div className={cn("relative z-10", sizeClasses[size], className)}>
       <PlayIcon
+        aria-hidden="true"
         className={cn(
           "absolute inset-0 transition-all duration-300 ease-in-out",
           isPlaying ? "scale-0 rotate-180 opacity-0" : "scale-100 rotate-0 opacity-100",
         )}
       />
       <PauseIcon
+        aria-hidden="true"
         className={cn(
           "absolute inset-0 transition-all duration-300 ease-in-out",
           isPlaying ? "scale-100 rotate-0 opacity-100" : "scale-0 -rotate-180 opacity-0",

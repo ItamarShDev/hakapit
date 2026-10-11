@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import { ChatErrorNotice } from "~/features/chat/chat-error-notice";
 import { getDirectionFromText } from "~/lib/text-direction";
 import { Button } from "~/lib/ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "~/lib/ui/drawer";
@@ -172,25 +173,7 @@ export function FloatingChatContent({ open, onOpenChange }: FloatingChatContentP
           })}
         </div>
 
-        {error && (
-          <div className="flex flex-col items-center gap-2 px-4 py-2 text-red-500 text-sm text-center" dir="rtl">
-            <div className="flex items-center gap-2">
-              <span>שגיאה: {error?.message || "אירעה שגיאה לא ידועה"}</span>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                void chat.reload().catch((error: unknown) => {
-                  console.error("Failed to retry message:", error);
-                });
-              }}
-              className="text-accent hover:text-accent/80"
-            >
-              נסה שוב
-            </Button>
-          </div>
-        )}
+        {error && <ChatErrorNotice message={error.message} onRetry={chat.reload} />}
         <div className="p-2 flex flex-row border-t items-center">
           <Button
             data-testid="chat-send-button"

@@ -1,5 +1,6 @@
 import { Image } from "@unpic/react";
 
+import { DETAIL_IMAGE_SIZES } from "~/features/podcast/image-layout";
 import { sanitizeContent } from "~/lib/html";
 
 import type { Episode } from "~/features/podcast/types";
@@ -25,7 +26,7 @@ export default function Episode({ data }: { data: Episode | null }) {
                   src={data.imageUrl}
                   className="aspect-square w-full object-cover"
                   alt={data.title ?? "episode"}
-                  sizes="(min-width: 1024px) 420px, 100vw"
+                  sizes={DETAIL_IMAGE_SIZES}
                   width={768}
                   height={768}
                   priority

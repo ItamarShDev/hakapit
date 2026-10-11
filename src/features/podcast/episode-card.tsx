@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Image } from "@unpic/react";
 
+import { FEED_IMAGE_SIZES, LATEST_IMAGE_SIZES } from "~/features/podcast/image-layout";
 import { PlayButton } from "~/features/podcast/play-button";
 import { usePlayer } from "~/layouts/player/provider";
 import { heebo } from "~/lib/fonts";
@@ -12,36 +13,46 @@ import { cn } from "~/lib/utils";
 
 import type { EpisodeWithPodcast } from "~/features/podcast/types";
 
-const EPISODE_CARD_IMAGE_SIZES =
-  "(min-width: 1692px) 20vw, (min-width: 1360px) 25vw, (min-width: 1028px) 33vw, (min-width: 696px) 50vw, min(576px, calc(100vw - 32px))";
+export function LatestEpisodePlaybackControl({ episode }: { episode: EpisodeWithPodcast }) {
+  const playerProps = usePlayer();
+  const isCurrentEpisode = playerProps?.currentlyPlaying?.audioUrl === episode.audioUrl;
+  const playbackAction = isCurrentEpisode && playerProps?.isPlaying ? "השהה" : "הפעל";
+
+  if (!playerProps) return null;
+
+  return (
+    <Button
+      type="button"
+      aria-label={`${playbackAction} פרק: ${episode.title}`}
+      className="size-10 md:size-14 lg:size-20 md:rounded-full relative p-3 overflow-hidden"
+      onClick={() => playerProps.setCurrentlyPlaying(episode)}
+    >
+      {episode.imageUrl && (
+        <div className="absolute inset-0 overflow-hidden z-0">
+          <Image
+            src={episode.imageUrl}
+            alt=""
+            loading="eager"
+            fetchPriority="high"
+            sizes={LATEST_IMAGE_SIZES}
+            className="min-h-full w-auto brightness-40 filter object-cover object-top"
+            layout="fullWidth"
+          />
+        </div>
+      )}
+      <PlayButton episode={episode} size="md" />
+    </Button>
+  );
+}
 
 export function LastEpisodeCardPreview({ episode }: { episode: EpisodeWithPodcast }) {
   const isoDate = toDateString(episode?.publishedAt ? new Date(episode.publishedAt) : null);
-  const playerProps = usePlayer();
   const podcast = episode?.podcast?.name || "hakapit";
   const episodeNumber = episode?.episodeNumber;
 
   return (
     <div className="flex items-center justify-center w-full gap-4 py-4">
-      {playerProps && (
-        <Button
-          className="size-10 md:size-14 lg:size-20 md:rounded-full relative p-3 overflow-hidden"
-          onClick={() => playerProps.setCurrentlyPlaying(episode)}
-        >
-          {episode?.imageUrl && (
-            <div className="absolute inset-0 overflow-hidden z-0">
-              <Image
-                src={episode?.imageUrl}
-                alt="episode"
-                sizes="(min-width: 768px) 56px, 80px"
-                className="min-h-full w-auto brightness-40 filter object-cover object-top"
-                layout="fullWidth"
-              />
-            </div>
-          )}
-          <PlayButton episode={episode} size="md" />
-        </Button>
-      )}
+      <LatestEpisodePlaybackControl episode={episode} />
       <div className="text-accent flex flex-col items-start">
         <Link
           preload="intent"
@@ -64,16 +75,22 @@ export function EpisodeCard({
   className,
   contentClassName,
   priority = false,
+  imageKey,
+  imageSizes = FEED_IMAGE_SIZES,
 }: {
   episode?: EpisodeWithPodcast;
   contentClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
   priority?: boolean;
+  imageKey?: string;
+  imageSizes?: string;
 } & React.HTMLAttributes<HTMLDivElement>) {
   const isoDate = toDateString(episode?.publishedAt ? new Date(episode.publishedAt) : null);
   const playerProps = usePlayer();
   const podcast = episode?.podcast?.name || "hakapit";
   const episodeNumber = episode?.episodeNumber;
   const viewTransitionKey = episode?.guid ? String(episode.guid) : episodeNumber != null ? String(episodeNumber) : "";
+  const isCurrentEpisode = playerProps?.currentlyPlaying?.guid === episode?.guid;
+  const playbackLabel = isCurrentEpisode ? "הפרק מתנגן" : "הפעל פרק";
 
   return (
     <Card
@@ -82,15 +99,16 @@ export function EpisodeCard({
         className,
         heebo.className,
       )}
+      data-image-key={imageKey}
     >
       {episode?.imageUrl && (
         <div className="absolute inset-0 overflow-hidden rounded-3xl z-0">
           <Image
             src={episode?.imageUrl}
-            alt="episode"
+            alt=""
             loading={priority ? "eager" : "lazy"}
-            priority={priority}
-            sizes={EPISODE_CARD_IMAGE_SIZES}
+            fetchPriority={priority ? "high" : undefined}
+            sizes={imageSizes}
             className="min-h-full w-auto brightness-40 filter blur-xs object-cover object-top"
             layout="fullWidth"
           />
@@ -125,6 +143,7 @@ export function EpisodeCard({
         {playerProps ? (
           <Button
             disabled={playerProps.currentlyPlaying?.guid === episode?.guid}
+            aria-label={`${playbackLabel}: ${episode?.title ?? "פרק"}`}
             className="z-10 w-full"
             onClick={() => playerProps.setCurrentlyPlaying(episode)}
           >

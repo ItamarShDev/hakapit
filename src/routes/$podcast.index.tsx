@@ -28,8 +28,5 @@ function PodcastEpisodes() {
   const { metadata } = Route.useLoaderData();
   const { podcast } = Route.useRouteContext();
 
-  if (!metadata || !metadata.episodes || metadata.episodes.length === 0) {
-    return null;
-  }
-  return <FeedPage data={metadata} podcast={podcast} />;
+  return <FeedPage key={podcast} data={metadata} podcast={podcast} />;
 }

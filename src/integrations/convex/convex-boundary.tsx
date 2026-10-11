@@ -2,7 +2,8 @@ import { Component } from "react";
 
 import type { ReactNode } from "react";
 
-type Props = { children: ReactNode; fallback?: ReactNode };
+type RetryableFallback = ReactNode | ((retry: () => void) => ReactNode);
+type Props = { children: ReactNode; fallback?: RetryableFallback };
 type State = { failed: boolean };
 
 export class ConvexBoundary extends Component<Props, State> {
@@ -16,7 +17,13 @@ export class ConvexBoundary extends Component<Props, State> {
     console.warn("Convex query failed, hiding live section", error);
   }
 
+  retry = () => {
+    this.setState({ failed: false });
+  };
+
   render() {
-    return this.state.failed ? (this.props.fallback ?? null) : this.props.children;
+    if (!this.state.failed) return this.props.children;
+    const fallback = this.props.fallback;
+    return typeof fallback === "function" ? fallback(this.retry) : (fallback ?? null);
   }
 }
