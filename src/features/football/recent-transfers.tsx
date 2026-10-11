@@ -27,7 +27,7 @@ function TransferView({
         <button
           type="button"
           aria-label={`פרטי העברה: ${transfer.playerName}`}
-          className="relative cursor-pointer w-full"
+          className="relative block cursor-pointer w-full"
         >
           <Avatar className="aspect-square w-full h-auto">
             <AvatarImage
