@@ -213,6 +213,22 @@ audio.audio::-webkit-media-controls-timeline-container {
   transition: grid-template-rows 1s;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 .header-image {
   @apply relative w-12 h-12;
 }

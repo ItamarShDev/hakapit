@@ -44,7 +44,9 @@ export default function Header({ data }: Props) {
       </div>
       <div
         id={MOBILE_NAVIGATION_ID}
-        className={cn("grid-transition header-links grid items-start", open ? "show-menu mb-4" : "hide-menu")}
+        inert={!open}
+        aria-hidden={!open}
+        className={cn("grid-transition header-links grid items-start lg:hidden", open ? "show-menu mb-4" : "hide-menu")}
       >
         <Links className="flex flex-col items-center text-2xl" onSelect={() => setOpen(false)} />
       </div>
