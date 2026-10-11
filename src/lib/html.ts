@@ -1,7 +1,11 @@
 import sanitizeHtml from "sanitize-html";
 
+export function unwrapCdata(content: string) {
+  return content.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1");
+}
+
 export function sanitizeContent(html: string) {
-  const content = html.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1");
+  const content = unwrapCdata(html);
   return sanitizeHtml(content, {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
     allowedAttributes: {

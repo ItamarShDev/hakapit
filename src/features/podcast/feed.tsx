@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { EpisodeCard } from "~/features/podcast/episode-card";
 import { usePodcastWithEpisodes } from "~/features/podcast/use-podcasts";
+import { unwrapCdata } from "~/lib/html";
 
 import type { PodcastName } from "~/features/podcast/podcasts";
 import type { fetchUpdatedFeed } from "~/server/podcasts";
@@ -60,7 +61,7 @@ export function MasonryFeed({ data, podcast }: { data: FeedData; podcast: Podcas
 export function FeedPage({ data, podcast }: { data: FeedData; podcast: PodcastName }) {
   return (
     <div className="flex flex-col gap-4 items-center">
-      <span className={"p-4 font-light info crazy-font font-display"}>{data?.description}</span>
+      <span className={"p-4 font-light info crazy-font font-display"}>{unwrapCdata(data?.description ?? "")}</span>
       <MasonryFeed data={data} podcast={podcast} />
     </div>
   );

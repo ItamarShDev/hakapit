@@ -1,6 +1,12 @@
 import { expect, test } from "bun:test";
 
-import { sanitizeContent } from "./html";
+import { sanitizeContent, unwrapCdata } from "./html";
+
+test("unwraps feed text without changing normal descriptions", () => {
+  expect(unwrapCdata("<![CDATA[תיאור הפודקאסט]]>")).toBe("תיאור הפודקאסט");
+  expect(unwrapCdata("A podcast & friends")).toBe("A podcast & friends");
+  expect(unwrapCdata("")).toBe("");
+});
 
 test("preserves formatted podcast HTML and removes executable markup", () => {
   const content = sanitizeContent(
