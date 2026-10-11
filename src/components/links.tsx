@@ -30,9 +30,7 @@ function LinkItem({
     </>
   );
 }
-export const Links: React.FC<
-  React.HTMLAttributes<HTMLDivElement> & { visibilityClass?: string; onSelect?: () => void }
-> = (props) => {
+export const Links: React.FC<React.HTMLAttributes<HTMLDivElement> & { onSelect?: () => void }> = (props) => {
   const links = linkOptions([
     {
       to: "/",

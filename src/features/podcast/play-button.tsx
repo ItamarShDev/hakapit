@@ -1,5 +1,6 @@
 import { PauseIcon, PlayIcon } from "@radix-ui/react-icons";
 
+import { isSameEpisode } from "~/features/podcast/episode-identity";
 import { usePlayer } from "~/layouts/player/provider";
 import { cn } from "~/lib/utils";
 
@@ -15,7 +16,7 @@ export function PlayButton({ episode, size = "md", className }: PlayButtonProps)
   const playerProps = usePlayer();
   if (!playerProps) return null;
 
-  const isPlaying = playerProps.isPlaying && playerProps.currentlyPlaying?.guid === episode?.guid;
+  const isPlaying = playerProps.isPlaying && isSameEpisode(playerProps.currentlyPlaying, episode);
 
   const sizeClasses = {
     sm: "size-4",

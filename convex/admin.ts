@@ -26,25 +26,6 @@ export const getEpisodeCount = internalQuery({
   },
 });
 
-export const deleteOldEpisodes = internalMutation({
-  handler: async (ctx) => {
-    const episodes = await ctx.db.query("episodes").collect();
-
-    let deletedCount = 0;
-    for (const episode of episodes) {
-      if (!episode.podcastId) {
-        await ctx.db.delete(episode._id);
-        deletedCount++;
-      }
-    }
-
-    return {
-      message: `Successfully deleted ${deletedCount} old episodes without podcastId`,
-      deletedCount,
-    };
-  },
-});
-
 export const dedupeEpisodesByNumberPerPodcast = internalMutation({
   args: {
     dryRun: v.optional(v.boolean()),

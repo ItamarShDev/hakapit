@@ -6,7 +6,7 @@ const crons = cronJobs();
 
 crons.cron("refresh-soccer-snapshot-15m", "*/15 * * * *", internal.football.refreshSnapshot);
 
-for (const podcastName of ["hakapit", "nitk", "balcony-albums"]) {
+for (const podcastName of ["hakapit", "nitk", "balcony-albums"] as const) {
   crons.cron(`refresh-feed-${podcastName}`, "0 * * * *", api.podcasts.ensureFeedFresh, { podcastName });
 }
 

@@ -1,10 +1,12 @@
+import { api } from "convex/_generated/api";
+import { usePaginatedQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { EpisodeCard } from "~/features/podcast/episode-card";
 import { FEED_LAZY_IMAGE_SIZES, getEpisodeImageKey, useAdaptiveImageLayout } from "~/features/podcast/image-layout";
 import { usePodcastWithEpisodes } from "~/features/podcast/use-podcasts";
 import { ConvexBoundary } from "~/integrations/convex/convex-boundary";
-import { unwrapCdata } from "~/lib/html";
+import { unwrapCdata } from "~/lib/rss-content";
 
 import type { PodcastName } from "~/features/podcast/podcasts";
 import type { EpisodeWithPodcast } from "~/features/podcast/types";
@@ -17,6 +19,7 @@ type FeedLiveBridgeProps = {
   podcast: PodcastName;
   limit: number;
   onData: (data: FeedData) => void;
+  initialData?: FeedData;
 };
 
 type FeedLiveBridgeComponent = React.ComponentType<FeedLiveBridgeProps>;
@@ -38,6 +41,51 @@ export function FeedLiveBridge({ podcast, limit, onData }: FeedLiveBridgeProps) 
   }, [liveData, onData]);
 
   return null;
+}
+
+type FeedPagination = {
+  results: EpisodeWithPodcast[];
+  status: "LoadingFirstPage" | "CanLoadMore" | "LoadingMore" | "Exhausted";
+  loadMore: (numItems: number) => void;
+};
+
+export function PaginatedFeedBridgeController({
+  limit,
+  onData,
+  initialData,
+  pagination,
+}: FeedLiveBridgeProps & { pagination: FeedPagination }) {
+  const { results, status, loadMore } = pagination;
+  const requestedCount = useRef(Math.min(limit, 100));
+
+  useEffect(() => {
+    if (limit <= requestedCount.current || status !== "CanLoadMore") return;
+    const requestCount = Math.min(limit - requestedCount.current, 100);
+    requestedCount.current += requestCount;
+    loadMore(requestCount);
+  }, [limit, loadMore, status]);
+
+  useEffect(() => {
+    if (!initialData || status === "LoadingFirstPage" || status === "LoadingMore") return;
+    if (status === "CanLoadMore" && (requestedCount.current < limit || results.length < requestedCount.current)) return;
+    onData({
+      ...initialData,
+      episodes: results,
+      hasMore: status === "CanLoadMore",
+      totalEpisodes: undefined,
+    });
+  }, [initialData, limit, onData, results, status]);
+
+  return null;
+}
+
+export function PaginatedFeedLiveBridge(props: FeedLiveBridgeProps) {
+  const pagination = usePaginatedQuery(
+    api.podcasts.getEpisodesPage,
+    { name: props.podcast },
+    { initialNumItems: Math.min(props.limit, 100) },
+  );
+  return <PaginatedFeedBridgeController {...props} pagination={pagination} />;
 }
 
 export function shouldPrioritizeEpisodeImage(index: number) {
@@ -63,11 +111,13 @@ export function MasonryFeed({
   data,
   podcast,
   liveBridge: LiveBridge = FeedLiveBridge,
+  nativeLiveBridge: NativeLiveBridge = PaginatedFeedLiveBridge,
   feedCard: FeedCard = EpisodeCard,
 }: {
   data: FeedData;
   podcast: PodcastName;
   liveBridge?: FeedLiveBridgeComponent;
+  nativeLiveBridge?: FeedLiveBridgeComponent;
   feedCard?: FeedCardComponent;
 }) {
   const [currentLimit, setCurrentLimit] = useState(10);
@@ -124,11 +174,15 @@ export function MasonryFeed({
   const episodes = displayData?.episodes ?? EMPTY_EPISODES;
   const { gridRef, imageSizes, priorityKeys } = useAdaptiveImageLayout(episodes);
   const nextLimit = useMemo(() => currentLimit + 5, [currentLimit]);
+  const useNativePagination = data?.paginationVersion === 1;
+  const ActiveLiveBridge = useNativePagination ? NativeLiveBridge : LiveBridge;
   const hasMore =
     displayData !== null && displayData !== undefined
-      ? displayData.totalEpisodes != null
-        ? episodes.length < displayData.totalEpisodes
-        : episodes.length >= currentLimit
+      ? displayData.hasMore != null
+        ? displayData.hasMore
+        : displayData.totalEpisodes != null
+          ? episodes.length < displayData.totalEpisodes
+          : episodes.length >= currentLimit
       : false;
 
   const loadMore = () => {
@@ -141,10 +195,11 @@ export function MasonryFeed({
   return (
     <>
       <ConvexBoundary fallback={renderLiveRecovery} onError={handleLiveError}>
-        <LiveBridge
-          key={`${podcast}-${currentLimit}-${liveAttempt}`}
+        <ActiveLiveBridge
+          key={`${podcast}-${useNativePagination ? "native" : currentLimit}-${liveAttempt}`}
           podcast={podcast}
           limit={currentLimit}
+          initialData={data}
           onData={publishLiveData}
         />
       </ConvexBoundary>

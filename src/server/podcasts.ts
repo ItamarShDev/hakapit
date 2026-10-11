@@ -61,7 +61,7 @@ const podcastInput = z.object({
 });
 
 const feedInput = podcastInput.extend({
-  limit: z.number().int().optional(),
+  limit: z.number().int().min(1).max(1000).optional(),
 });
 
 const fetchUpdatedFeedServer = createServerFn({ method: "GET" })
@@ -75,7 +75,7 @@ const fetchUpdatedLatestEpisodeServer = createServerFn({ method: "GET" })
 const fetchEpisodeServer = createServerFn({ method: "GET" })
   .validator(
     podcastInput.extend({
-      episodeNumber: z.number().int(),
+      episodeNumber: z.number().int().positive(),
     }),
   )
   .handler(({ data }) => fetchEpisodeFromConvex(data.podcast, data.episodeNumber));

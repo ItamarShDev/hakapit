@@ -1,15 +1,24 @@
+import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 
 import { internal } from "./_generated/api";
 import { action, internalAction, internalMutation, query } from "./_generated/server";
+import { withRefreshLease } from "./cache";
 import { extractEpisodeNumber, fetchAndParseRSS, PODCAST_RSS_URLS } from "./rss";
+
+export const podcastNameValidator = v.union(v.literal("hakapit"), v.literal("nitk"), v.literal("balcony-albums"));
 
 export const getPodcastWithEpisodes = query({
   args: {
-    name: v.string(),
+    name: podcastNameValidator,
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    const limit = args.limit ?? 10;
+    if (!Number.isSafeInteger(limit) || limit < 1 || limit > 1000) {
+      throw new Error("limit must be a safe integer between 1 and 1000");
+    }
+
     const podcast = await ctx.db
       .query("podcasts")
       .withIndex("by_name", (q) => q.eq("name", args.name))
@@ -17,33 +26,66 @@ export const getPodcastWithEpisodes = query({
 
     if (!podcast) return null;
 
-    const totalEpisodes = await ctx.db
-      .query("episodes")
-      .withIndex("by_podcastId_and_number", (q) => q.eq("podcastId", podcast._id))
-      .collect()
-      .then((all) => all.length);
-
-    const episodesQuery = ctx.db
+    const episodes = await ctx.db
       .query("episodes")
       .withIndex("by_podcastId_and_number", (q) => q.eq("podcastId", podcast._id))
       .order("desc");
-
-    const episodes =
-      args.limit && args.limit > 0 ? await episodesQuery.take(args.limit) : await episodesQuery.collect();
+    const rows = await episodes.take(limit + 1);
+    const hasMore = rows.length > limit;
 
     return {
       ...podcast,
-      episodes: episodes.map((episode) => ({
+      episodes: rows.slice(0, limit).map((episode) => ({
         ...episode,
-        podcast,
+        podcast: { name: podcast.name },
       })),
-      totalEpisodes,
+      hasMore,
+      paginationVersion: 1 as const,
+    };
+  },
+});
+
+export const getEpisodesPage = query({
+  args: {
+    name: podcastNameValidator,
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    if (
+      !Number.isInteger(args.paginationOpts.numItems) ||
+      args.paginationOpts.numItems < 1 ||
+      args.paginationOpts.numItems > 100
+    ) {
+      throw new Error("paginationOpts.numItems must be an integer between 1 and 100");
+    }
+
+    const podcast = await ctx.db
+      .query("podcasts")
+      .withIndex("by_name", (q) => q.eq("name", args.name))
+      .first();
+
+    if (!podcast) {
+      return { page: [], isDone: true, continueCursor: "" };
+    }
+
+    const result = await ctx.db
+      .query("episodes")
+      .withIndex("by_podcastId_and_number", (q) => q.eq("podcastId", podcast._id))
+      .order("desc")
+      .paginate(args.paginationOpts);
+
+    return {
+      ...result,
+      page: result.page.map((episode) => ({
+        ...episode,
+        podcast: { name: podcast.name },
+      })),
     };
   },
 });
 
 export const getLatestEpisode = query({
-  args: { podcastName: v.string() },
+  args: { podcastName: podcastNameValidator },
   handler: async (ctx, args) => {
     const podcast = await ctx.db
       .query("podcasts")
@@ -60,35 +102,34 @@ export const getLatestEpisode = query({
     if (latestByNumber) {
       return {
         ...latestByNumber,
-        podcast,
+        podcast: { name: podcast.name },
       };
     }
 
-    const allEpisodes = await ctx.db
+    const latestByPublishedAt = await ctx.db
       .query("episodes")
-      .withIndex("by_podcastId", (q) => q.eq("podcastId", podcast._id))
-      .collect();
-    if (allEpisodes.length === 0) return null;
-
-    const latestByPublishedAt = allEpisodes.reduce((best, current) => {
-      const bestPublishedAt = best.publishedAt ?? 0;
-      const currentPublishedAt = current.publishedAt ?? 0;
-      return currentPublishedAt > bestPublishedAt ? current : best;
-    }, allEpisodes[0]);
+      .withIndex("by_podcastId_and_publishedAt", (q) => q.eq("podcastId", podcast._id))
+      .order("desc")
+      .first();
+    if (!latestByPublishedAt) return null;
 
     return {
       ...latestByPublishedAt,
-      podcast,
+      podcast: { name: podcast.name },
     };
   },
 });
 
 export const getEpisodeByNumber = query({
   args: {
-    podcastName: v.string(),
+    podcastName: podcastNameValidator,
     episodeNumber: v.number(),
   },
   handler: async (ctx, args) => {
+    if (!Number.isSafeInteger(args.episodeNumber) || args.episodeNumber <= 0) {
+      throw new Error("episodeNumber must be a positive integer");
+    }
+
     const podcast = await ctx.db
       .query("podcasts")
       .withIndex("by_name", (q) => q.eq("name", args.podcastName))
@@ -120,7 +161,7 @@ function rssCacheKey(podcastName: string) {
 }
 
 export const syncFeedFromRSS = internalAction({
-  args: { podcastName: v.string() },
+  args: { podcastName: podcastNameValidator },
   handler: async (ctx, args) => {
     const rssUrl = PODCAST_RSS_URLS[args.podcastName];
     if (!rssUrl) {
@@ -174,31 +215,32 @@ export const syncFeedFromRSS = internalAction({
 });
 
 export const ensureFeedFresh = action({
-  args: { podcastName: v.string() },
-  handler: async (ctx, args) => {
+  args: { podcastName: podcastNameValidator },
+  handler: async (ctx, args): Promise<{ synced: boolean }> => {
     if (!PODCAST_RSS_URLS[args.podcastName]) {
       throw new Error(`Unknown podcast: ${args.podcastName}`);
     }
 
     const cacheKey = rssCacheKey(args.podcastName);
-    const cacheStatus = await ctx.runQuery(internal.cache.isCacheExpired, { dataType: cacheKey });
-    if (!cacheStatus.expired) return { synced: false };
-
-    const result = await ctx.runAction(internal.podcasts.syncFeedFromRSS, { podcastName: args.podcastName });
-    if (!result) return { synced: false };
-
-    await ctx.runMutation(internal.cache.updateCacheTracking, {
+    const result = await withRefreshLease<{ synced: number }>(ctx, {
+      key: cacheKey,
       dataType: cacheKey,
       source: "rss",
-      expiresAt: Date.now() + RSS_CACHE_TTL_MS,
+      requirePayload: false,
+      refresh: async (): Promise<{ synced: number } | null> =>
+        ctx.runAction(internal.podcasts.syncFeedFromRSS, { podcastName: args.podcastName }),
+      expiresAt: (_, now) => now + RSS_CACHE_TTL_MS,
     });
-    return { synced: true };
+    if (result.status === "failed") {
+      throw result.error instanceof Error ? result.error : new Error("RSS refresh failed");
+    }
+    return { synced: result.status === "refreshed" };
   },
 });
 
 export const upsertPodcast = internalMutation({
   args: {
-    name: v.string(),
+    name: podcastNameValidator,
     title: v.string(),
     link: v.optional(v.string()),
     description: v.optional(v.string()),
@@ -241,7 +283,7 @@ export const upsertPodcast = internalMutation({
 
 export const createEpisode = internalMutation({
   args: {
-    podcastName: v.string(),
+    podcastName: podcastNameValidator,
     episodeNumber: v.number(),
     guid: v.optional(v.string()),
     title: v.string(),
@@ -254,6 +296,10 @@ export const createEpisode = internalMutation({
     duration: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    if (!Number.isSafeInteger(args.episodeNumber) || args.episodeNumber <= 0) {
+      throw new Error("episodeNumber must be a positive integer");
+    }
+
     const podcast = await ctx.db
       .query("podcasts")
       .withIndex("by_name", (q) => q.eq("name", args.podcastName))

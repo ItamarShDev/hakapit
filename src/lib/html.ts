@@ -1,8 +1,6 @@
 import sanitizeHtml from "sanitize-html";
 
-export function unwrapCdata(content: string) {
-  return content.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1");
-}
+import { unwrapCdata } from "./rss-content";
 
 export function sanitizeContent(html: string) {
   const content = unwrapCdata(html);

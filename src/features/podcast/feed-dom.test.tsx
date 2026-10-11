@@ -5,9 +5,11 @@ import { act, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { LatestEpisodePlaybackControl } from "./episode-card";
-import { MasonryFeed } from "./feed";
+import { isSameEpisode } from "./episode-identity";
+import { LatestEpisodePlaybackControl } from "./episode-preview";
+import { MasonryFeed, PaginatedFeedBridgeController } from "./feed";
 import { DETAIL_IMAGE_SIZES } from "./image-layout";
+import { resolveLatestEpisode } from "./latest-episode";
 import { PlayerProvider } from "~/layouts/player/provider";
 
 import type { FeedData } from "./feed";
@@ -386,4 +388,102 @@ test("SSR preload URLs from the image renderer match its rendered image source",
   const imageUrl = imageMarkup.match(/<img[^>]*src="([^"]+)"/)?.[1];
   expect(preloadUrl).toBe(imageUrl);
   expect(imageMarkup).toContain(`sizes="${DETAIL_IMAGE_SIZES}"`);
+});
+
+test("old SSR metadata selects only the legacy bridge", async () => {
+  const restore = installDom();
+  let legacyCalls = 0;
+  let nativeCalls = 0;
+  function LegacyBridge() {
+    useEffect(() => {
+      legacyCalls++;
+    }, []);
+    return null;
+  }
+  function NativeBridge() {
+    useEffect(() => {
+      nativeCalls++;
+    }, []);
+    return null;
+  }
+
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  try {
+    await act(async () => {
+      root.render(
+        <MasonryFeed
+          data={snapshot}
+          podcast="hakapit"
+          liveBridge={LegacyBridge}
+          nativeLiveBridge={NativeBridge}
+          feedCard={TestCard}
+        />,
+      );
+    });
+    expect(legacyCalls).toBe(1);
+    expect(nativeCalls).toBe(0);
+  } finally {
+    await act(async () => root.unmount());
+    restore();
+  }
+});
+
+test("native pagination requests added pages and publishes only complete accumulated results", async () => {
+  const restore = installDom();
+  const initialData = { ...snapshot, paginationVersion: 1 as const };
+  const published: FeedData[] = [];
+  const requests: number[] = [];
+  const firstPage = Array.from({ length: 10 }, (_, index) => ({
+    ...episode,
+    guid: `page-${index}`,
+    episodeNumber: index + 1,
+  }));
+  const allPages = Array.from({ length: 15 }, (_, index) => ({
+    ...episode,
+    guid: `page-${index}`,
+    episodeNumber: index + 1,
+  }));
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  const renderController = (limit: number, results: Episode[], status: "CanLoadMore" | "LoadingMore") =>
+    root.render(
+      <PaginatedFeedBridgeController
+        podcast="hakapit"
+        limit={limit}
+        initialData={initialData}
+        onData={(value) => published.push(value)}
+        pagination={{ results, status, loadMore: (count) => requests.push(count) }}
+      />,
+    );
+  try {
+    await act(async () => renderController(10, firstPage, "CanLoadMore"));
+    expect(published.at(-1)?.episodes).toHaveLength(10);
+
+    await act(async () => renderController(15, firstPage, "CanLoadMore"));
+    expect(requests).toEqual([5]);
+    expect(published.at(-1)?.episodes).toHaveLength(10);
+
+    await act(async () => renderController(15, allPages, "LoadingMore"));
+    expect(published.at(-1)?.episodes).toHaveLength(10);
+    await act(async () => renderController(15, allPages, "CanLoadMore"));
+    expect(published.at(-1)?.episodes).toHaveLength(15);
+    expect(new Set(published.at(-1)?.episodes.map((item) => item.guid)).size).toBe(15);
+    expect(published.at(-1)?.hasMore).toBe(true);
+    expect(published.at(-1)?.totalEpisodes).toBeUndefined();
+  } finally {
+    await act(async () => root.unmount());
+    restore();
+  }
+});
+
+test("audio URLs distinguish GUID-less episodes and resolved null does not restore the SSR latest episode", () => {
+  const currentEpisode = { episodeNumber: 2, title: "Current", audioUrl: "https://example.com/current.mp3" } as Episode;
+  const nextEpisode = { episodeNumber: 3, title: "Next", audioUrl: "https://example.com/next.mp3" } as Episode;
+  expect(currentEpisode.guid).toBeUndefined();
+  expect(nextEpisode.guid).toBeUndefined();
+  expect(isSameEpisode(currentEpisode, nextEpisode)).toBe(false);
+  expect(resolveLatestEpisode(null, episode)).toBeNull();
 });

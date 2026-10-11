@@ -1,6 +1,6 @@
 import { useQuery } from "convex/react";
 
-import { isConvexAvailable } from "~/server/convex-client";
+import { isConvexAvailable } from "~/lib/convex-url";
 
 import type { OptionalRestArgsOrSkip } from "convex/react";
 import type { FunctionReference } from "convex/server";

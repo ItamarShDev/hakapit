@@ -14,9 +14,7 @@ export const podcasts = defineTable({
   authorImageUrl: v.optional(v.string()),
   createdAt: v.number(),
   updatedAt: v.number(),
-})
-  .index("by_name", ["name"])
-  .index("by_title", ["title"]);
+}).index("by_name", ["name"]);
 
 export const episodes = defineTable({
   episodeNumber: v.number(),
@@ -33,8 +31,8 @@ export const episodes = defineTable({
   duration: v.optional(v.string()),
   podcastId: v.id("podcasts"),
 })
-  .index("by_podcastId", ["podcastId"])
-  .index("by_podcastId_and_number", ["podcastId", "episodeNumber"]);
+  .index("by_podcastId_and_number", ["podcastId", "episodeNumber"])
+  .index("by_podcastId_and_publishedAt", ["podcastId", "publishedAt"]);
 
 export const cacheTracking = defineTable({
   dataType: v.string(),
@@ -46,6 +44,12 @@ export const cacheTracking = defineTable({
   createdAt: v.number(),
   updatedAt: v.number(),
 }).index("by_dataType", ["dataType"]);
+
+export const refreshLocks = defineTable({
+  key: v.string(),
+  token: v.string(),
+  expiresAt: v.number(),
+}).index("by_key", ["key"]);
 
 export const transfers = defineTable({
   playerId: v.number(),
@@ -70,5 +74,6 @@ export default defineSchema({
   podcasts,
   episodes,
   cacheTracking,
+  refreshLocks,
   transfers,
 });

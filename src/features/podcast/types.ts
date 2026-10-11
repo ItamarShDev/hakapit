@@ -29,6 +29,8 @@ export interface PodcastWithEpisodes {
   authorImageUrl?: string | null;
   episodes: Episode[];
   totalEpisodes?: number;
+  hasMore?: boolean;
+  paginationVersion?: 1;
 }
 
 export type EpisodeWithPodcast = Episode;

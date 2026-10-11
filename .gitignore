@@ -1,4 +1,5 @@
 node_modules
+.bundle-stats/
 dist
 .output
 .cache

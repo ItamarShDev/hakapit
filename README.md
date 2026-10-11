@@ -42,3 +42,5 @@ The build writes the server entry point to `.output/server/index.mjs` and static
 - Podcast images use responsive size hints and promote only the initial or viewport-visible feed cards to high priority. Feed and latest-episode playback controls expose descriptive labels, and HTML descriptions are sanitized at render time.
 
 See [TESTING.md](./TESTING.md) for comparison revisions, commands, and pending browser/performance evidence. Benchmark and scoring work is maintained outside this repository.
+
+See [HARDENING.md](./HARDENING.md) for Convex rollout order, cursor pagination, refresh leases, and offline verification.

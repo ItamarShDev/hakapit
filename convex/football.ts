@@ -1,8 +1,6 @@
-import { v } from "convex/values";
-
 import { internal } from "./_generated/api";
-import { action, internalAction, internalMutation, internalQuery } from "./_generated/server";
-import { readCachedJson, upsertCacheEntry } from "./cache";
+import { action, internalAction } from "./_generated/server";
+import { parseCachedJson, withRefreshLease } from "./cache";
 
 import type { ActionCtx } from "./_generated/server";
 
@@ -40,7 +38,8 @@ async function fetchFootballCached<T>(
   ttl: number | ((value: T) => number),
   path: string,
 ): Promise<T | null> {
-  const cached = (await ctx.runQuery(internal.football.readCached, { key })) as T | null;
+  const cachedEntry = await ctx.runQuery(internal.cache.getCacheTracking, { dataType: key });
+  const cached = parseCachedJson(cachedEntry, Date.now()) as T | null;
   if (cached != null) return cached;
   const value = await fetchFootball<T>(path);
   if (value != null) {
@@ -165,7 +164,8 @@ async function buildSnapshot(ctx: FootballCtx): Promise<Snapshot> {
   const homeForm = await getPastMatches(ctx, matchDetails?.homeTeam?.id);
 
   const fresh: Snapshot = { team, leaguesData, nextMatchData: { matchDetails, awayForm, homeForm } };
-  const previous = (await ctx.runQuery(internal.football.readSnapshot, { allowStale: true })) as Snapshot | null;
+  const previousEntry = await ctx.runQuery(internal.cache.getCacheTracking, { dataType: SNAPSHOT_CACHE_KEY });
+  const previous = parseCachedJson(previousEntry, Date.now(), true) as Snapshot | null;
   return previous ? mergeWithPrevious(fresh, previous, leagueIds, nextGames != null) : fresh;
 }
 
@@ -205,52 +205,47 @@ function mergeWithPrevious(
 const SNAPSHOT_CACHE_KEY = "soccer-snapshot";
 const SNAPSHOT_TTL_MS = 20 * 60 * 1000;
 
-export const readCached = internalQuery({
-  args: { key: v.string() },
-  handler: async (ctx, args): Promise<unknown> => {
-    return await readCachedJson(ctx, args.key);
-  },
-});
+async function refreshSnapshotWithLease(ctx: FootballCtx): Promise<Snapshot> {
+  const result = await withRefreshLease<Snapshot>(ctx, {
+    key: SNAPSHOT_CACHE_KEY,
+    dataType: SNAPSHOT_CACHE_KEY,
+    source: "football-api",
+    requirePayload: true,
+    refresh: () => buildSnapshot(ctx),
+    expiresAt: (snapshot, now) => now + matchTtl(snapshot.nextMatchData?.matchDetails, SNAPSHOT_TTL_MS),
+    payload: (snapshot) => JSON.stringify(snapshot),
+  });
 
-export const readSnapshot = internalQuery({
-  args: { allowStale: v.optional(v.boolean()) },
-  handler: async (ctx, args): Promise<unknown> => {
-    return await readCachedJson(ctx, SNAPSHOT_CACHE_KEY, { allowStale: args.allowStale });
-  },
-});
-
-export const storeSnapshot = internalMutation({
-  args: { snapshot: v.any() },
-  handler: async (ctx, args) => {
-    await upsertCacheEntry(ctx, {
-      dataType: SNAPSHOT_CACHE_KEY,
-      source: "football-api",
-      payload: JSON.stringify(args.snapshot),
-      expiresAt: Date.now() + matchTtl((args.snapshot as Snapshot).nextMatchData?.matchDetails, SNAPSHOT_TTL_MS),
-    });
-    return args.snapshot;
-  },
-});
+  if (result.status === "busy") {
+    if (result.value) return result.value;
+    throw new Error("Soccer snapshot refresh in progress");
+  }
+  if (result.status === "failed") {
+    if (result.value) return result.value;
+    throw result.error instanceof Error ? result.error : new Error("Soccer snapshot refresh failed");
+  }
+  if (!result.value) throw new Error("Soccer snapshot refresh returned no data");
+  return result.value;
+}
 
 export const refreshSnapshot = internalAction({
   args: {},
   handler: async (ctx) => {
-    const snapshot = await buildSnapshot(ctx);
-    await ctx.runMutation(internal.football.storeSnapshot, { snapshot });
-    return snapshot;
+    return await refreshSnapshotWithLease(ctx);
   },
 });
 
 export const ensureSnapshot = action({
   args: {},
   handler: async (ctx): Promise<unknown> => {
-    const cached = await ctx.runQuery(internal.football.readSnapshot, {});
-    if (cached != null) return cached;
     try {
-      return await ctx.runAction(internal.football.refreshSnapshot);
+      return await refreshSnapshotWithLease(ctx);
     } catch (err) {
       console.warn("soccer snapshot refresh failed, serving stale snapshot", err);
-      return await ctx.runQuery(internal.football.readSnapshot, { allowStale: true });
+      const entry = await ctx.runQuery(internal.cache.getCacheTracking, { dataType: SNAPSHOT_CACHE_KEY });
+      const stale = parseCachedJson(entry, Date.now(), true);
+      if (stale != null) return stale;
+      throw err;
     }
   },
 });

@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 
-import { sanitizeContent, unwrapCdata } from "./html";
+import { sanitizeContent } from "./html";
+import { unwrapCdata } from "./rss-content";
 
 test("unwraps feed text without changing normal descriptions", () => {
   expect(unwrapCdata("<![CDATA[תיאור הפודקאסט]]>")).toBe("תיאור הפודקאסט");

@@ -19,9 +19,8 @@ export type SoccerSnapshot = {
   nextMatchData: NextMatchData | null;
 };
 
-const convex = getConvexClient("warn");
-
 export const getSoccerSnapshot = createServerFn({ method: "GET" }).handler(async (): Promise<SoccerSnapshot | null> => {
+  const convex = getConvexClient("warn");
   if (!convex) return null;
   return (await convex.action(api.football.ensureSnapshot)) as SoccerSnapshot;
 });

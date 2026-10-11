@@ -24,18 +24,32 @@ function TransferView({
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
-        <div className="relative cursor-pointer">
+        <button
+          type="button"
+          aria-label={`פרטי העברה: ${transfer.playerName}`}
+          className="relative cursor-pointer w-full"
+        >
           <Avatar className="aspect-square w-full h-auto">
-            <AvatarImage src={transfer.playerPhoto ?? undefined} loading="lazy" className="object-cover" />
+            <AvatarImage
+              src={transfer.playerPhoto ?? undefined}
+              alt={transfer.playerName}
+              loading="lazy"
+              className="object-cover"
+            />
           </Avatar>
-        </div>
+        </button>
       </PopoverTrigger>
       <PopoverContent side="bottom" className="w-80 p-0" align="center">
         <Card className="shadow-lg text-paragraph" dir="rtl">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-4">
               <Avatar className="w-16 h-16">
-                <AvatarImage src={transfer.playerPhoto ?? undefined} loading="lazy" className="object-cover" />
+                <AvatarImage
+                  src={transfer.playerPhoto ?? undefined}
+                  alt={transfer.playerName}
+                  loading="lazy"
+                  className="object-cover"
+                />
               </Avatar>
               <div className="flex-1">
                 <CardTitle className="text-lg">{transfer.playerName}</CardTitle>

@@ -5,6 +5,8 @@ import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
+import { bundleReport } from "./scripts/bundle-report";
+
 const config = defineConfig({
   resolve: {
     tsconfigPaths: true,
@@ -25,6 +27,7 @@ const config = defineConfig({
     tailwindcss(),
     tanstackStart(),
     viteReact(),
+    bundleReport(),
   ],
 });
 

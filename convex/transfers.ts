@@ -1,8 +1,8 @@
 import { v } from "convex/values";
 
-import { mutation, query } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 
-export const clearTransferPhoto = mutation({
+export const clearTransferPhoto = internalMutation({
   args: {
     transferId: v.id("transfers"),
   },
@@ -12,9 +12,7 @@ export const clearTransferPhoto = mutation({
       throw new Error("Transfer not found");
     }
 
-    const { playerPhoto: _playerPhoto, ...transferWithoutPhoto } = transfer;
-
-    await ctx.db.replace(args.transferId, transferWithoutPhoto);
+    await ctx.db.patch(args.transferId, { playerPhoto: undefined });
 
     return { success: true };
   },
@@ -46,7 +44,7 @@ export const getTransfersByTeamId = query({
   },
 });
 
-export const upsertTransfer = mutation({
+export const upsertTransfer = internalMutation({
   args: {
     playerId: v.number(),
     playerName: v.string(),
@@ -80,7 +78,7 @@ export const upsertTransfer = mutation({
   },
 });
 
-export const deleteTransfer = mutation({
+export const deleteTransfer = internalMutation({
   args: { playerId: v.number() },
   handler: async (ctx, args) => {
     const transfer = await ctx.db
