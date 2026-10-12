@@ -11,7 +11,7 @@
     "lint": "oxlint .",
     "check": "oxfmt --check . && oxlint .",
     "start": "vite",
-    "typecheck": "tsc",
+    "typecheck": "tsc && tsc -p convex/tsconfig.json",
     "sync-feed": "bun scripts/sync-feed.ts"
   },
   "dependencies": {

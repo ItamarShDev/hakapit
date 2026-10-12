@@ -24,6 +24,8 @@ Episode feeds and latest-episode reads use bounded indexed queries. The remainin
 
 The unused `next-themes` and direct router-plugin dependencies were removed; the three TanStack devtools packages are development-only. `convex-test` is pinned to `0.0.61` for offline function tests; existing `happy-dom@20.14.6` supports DOM regressions without adding Vitest.
 
+`bun run typecheck` checks the root application and test files, then checks deployable Convex code with `tsc -p convex/tsconfig.json`. The Convex project excludes `*.test.ts`; those Bun tests remain covered by the root TypeScript project and `bun test`.
+
 From the repository root, with Bun 1.4.3 and Node 24.21.0:
 
 ```powershell
@@ -42,3 +44,5 @@ bun run build
 ```
 
 The tests use the in-memory `convex-test` backend and local fixtures. They do not deploy Convex or contact football-data.
+
+Native schema, query, and mutation verification was also run against an anonymous local Convex deployment in a separate copy of commit `ce5d7386456509e3f0f421bccb4cbc089849c86d`. Only that validation copy omitted `convex/crons.ts` to prevent scheduled actions; fixture calls used the loopback backend and did not invoke external services.
