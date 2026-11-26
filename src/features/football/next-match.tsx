@@ -1,5 +1,6 @@
 import { Image } from "@unpic/react";
 
+import { formatMatchKickoff } from "./kickoff-time";
 import { getDisplayScore } from "./score";
 import Form from "~/features/football/stats/form";
 import TeamNameAndAvatar from "~/features/football/team-avatar";
@@ -48,6 +49,7 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
     return null;
   }
   const isRunning = nextGame.status === "IN_PLAY" || nextGame.status === "PAUSED";
+  const kickoff = nextGame.utcDate ? formatMatchKickoff(nextGame.utcDate) : null;
 
   return (
     <FullBleed data-testid="next-match-overview">
@@ -77,9 +79,12 @@ export function NextMatchOverview({ nextMatchData }: { nextMatchData: NextMatchD
           </div>
         </div>
 
-        {nextGame?.utcDate && (
+        {kickoff && (
           <div className="max-w-24 text-wrap text-xs">
-            {new Date(nextGame.utcDate).toLocaleDateString()} {new Date(nextGame.utcDate).toLocaleTimeString()}
+            <time dateTime={nextGame.utcDate} dir="ltr">
+              {kickoff}
+            </time>
+            <span className="block">שעון ישראל</span>
           </div>
         )}
         <div className="flex flex-col items-start gap-1">
